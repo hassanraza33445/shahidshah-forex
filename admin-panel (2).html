@@ -1,0 +1,2395 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — S M Shahid Shah Forex Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+  
+  [data-theme="dark"] {
+    --bg-main: #0a0e1a;
+    --bg-sidebar: #0d1320;
+    --bg-card: #111827;
+    --bg-elevated: #1a2235;
+    --bg-hover: #1f2937;
+    --bg-overlay: rgba(0,0,0,0.7);
+    --border: #1f2937;
+    --border-light: #2d3748;
+    --text-primary: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --text-muted: #6b7280;
+    --gold: #f59e0b;
+    --gold-light: #fbbf24;
+    --gold-dark: #d97706;
+    --gold-bg: rgba(245, 158, 11, 0.1);
+    --green: #10b981;
+    --green-bg: rgba(16, 185, 129, 0.1);
+    --red: #ef4444;
+    --red-bg: rgba(239, 68, 68, 0.1);
+    --blue: #3b82f6;
+    --blue-bg: rgba(59, 130, 246, 0.1);
+    --purple: #8b5cf6;
+    --purple-bg: rgba(139, 92, 246, 0.1);
+    --pink: #ec4899;
+    --pink-bg: rgba(236, 72, 153, 0.1);
+    --shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  
+  [data-theme="light"] {
+    --bg-main: #f8fafc;
+    --bg-sidebar: #ffffff;
+    --bg-card: #ffffff;
+    --bg-elevated: #f1f5f9;
+    --bg-hover: #e2e8f0;
+    --bg-overlay: rgba(0,0,0,0.5);
+    --border: #e2e8f0;
+    --border-light: #cbd5e1;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --gold: #d97706;
+    --gold-light: #f59e0b;
+    --gold-dark: #b45309;
+    --gold-bg: rgba(217, 119, 6, 0.1);
+    --green: #059669;
+    --green-bg: rgba(5, 150, 105, 0.1);
+    --red: #dc2626;
+    --red-bg: rgba(220, 38, 38, 0.1);
+    --blue: #2563eb;
+    --blue-bg: rgba(37, 99, 235, 0.1);
+    --purple: #7c3aed;
+    --purple-bg: rgba(124, 58, 237, 0.1);
+    --pink: #db2777;
+    --pink-bg: rgba(219, 39, 119, 0.1);
+    --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  
+  body { background: var(--bg-main); color: var(--text-primary); overflow-x: hidden; font-size: 14px; transition: background 0.3s, color 0.3s; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg-main); }
+  ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
+  
+  .demo-banner {
+    background: linear-gradient(90deg, var(--gold), var(--gold-dark));
+    color: #0a0e1a; padding: 8px 20px; text-align: center; font-weight: 700; font-size: 12px;
+    position: sticky; top: 0; z-index: 200;
+  }
+  
+  .app { display: flex; min-height: 100vh; }
+  
+  /* ========== SIDEBAR ========== */
+  .sidebar {
+    width: 270px; background: var(--bg-sidebar); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100;
+    top: 0; transition: background 0.3s, transform 0.3s;
+  }
+  
+  .brand { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+  .brand-logo {
+    width: 42px; height: 42px; background: linear-gradient(135deg, #ef4444, #b91c1c);
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: white; font-size: 18px;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  }
+  .brand-text h1 { font-size: 13px; font-weight: 700; line-height: 1.2; }
+  .brand-text p { font-size: 9px; color: var(--red); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 3px; }
+  
+  .admin-card {
+    margin: 14px; padding: 12px; background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 10px; display: flex; align-items: center; gap: 10px;
+  }
+  .admin-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: #0a0e1a; font-size: 13px;
+  }
+  .admin-info { flex: 1; min-width: 0; }
+  .admin-info h3 { font-size: 13px; font-weight: 600; }
+  .admin-info p { font-size: 10px; color: var(--text-muted); }
+  .admin-badge { background: var(--red-bg); color: var(--red); font-size: 9px; padding: 2px 8px; border-radius: 4px; font-weight: 700; }
+  
+  .menu-label { padding: 14px 20px 6px; font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
+  .menu { flex: 1; padding: 0 12px; overflow-y: auto; }
+  .menu-item {
+    display: flex; align-items: center; gap: 12px; padding: 9px 12px; margin: 1px 0;
+    border-radius: 8px; cursor: pointer; color: var(--text-secondary);
+    font-size: 13px; font-weight: 500; transition: all 0.2s; position: relative;
+  }
+  .menu-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+  .menu-item.active { background: var(--gold-bg); color: var(--gold); font-weight: 600; }
+  .menu-item.active::before { content: ''; position: absolute; left: -12px; top: 50%; transform: translateY(-50%); width: 3px; height: 20px; background: var(--gold); border-radius: 0 3px 3px 0; }
+  .menu-icon { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; }
+  .menu-item .badge-count { margin-left: auto; background: var(--red); color: white; font-size: 9px; padding: 2px 6px; border-radius: 10px; font-weight: 700; min-width: 20px; text-align: center; }
+  
+  .sidebar-footer { border-top: 1px solid var(--border); padding: 8px 12px; }
+  
+  /* ========== MAIN ========== */
+  .main { flex: 1; margin-left: 270px; min-height: 100vh; transition: background 0.3s; }
+  
+  .topbar {
+    height: 64px; background: var(--bg-sidebar); border-bottom: 1px solid var(--border);
+    padding: 0 20px; display: flex; align-items: center; gap: 16px;
+    position: sticky; top: 0; z-index: 50; transition: background 0.3s;
+  }
+  .page-title h2 { font-size: 18px; font-weight: 700; }
+  .page-title p { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  
+  .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .icon-btn {
+    width: 38px; height: 38px; background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text-secondary); position: relative; font-size: 16px; transition: all 0.2s;
+  }
+  .icon-btn:hover { background: var(--bg-elevated); color: var(--gold); border-color: var(--gold); }
+  .notif-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: var(--red); border-radius: 50%; border: 2px solid var(--bg-sidebar); }
+  
+  .search-box { flex: 1; max-width: 380px; position: relative; }
+  .search-box input {
+    width: 100%; padding: 9px 14px 9px 38px; background: var(--bg-card);
+    border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary);
+    font-size: 13px; font-family: inherit; outline: none;
+  }
+  .search-box input:focus { border-color: var(--gold); }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+  
+  .content { padding: 20px; }
+  .page { display: none; animation: fadeIn 0.3s; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  
+  /* ========== STATS CARDS ========== */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .stat-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px; transition: all 0.2s; cursor: pointer;
+  }
+  .stat-card:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: var(--shadow); }
+  .stat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .stat-icon.gold { background: var(--gold-bg); color: var(--gold); }
+  .stat-icon.blue { background: var(--blue-bg); color: var(--blue); }
+  .stat-icon.green { background: var(--green-bg); color: var(--green); }
+  .stat-icon.purple { background: var(--purple-bg); color: var(--purple); }
+  .stat-icon.red { background: var(--red-bg); color: var(--red); }
+  .stat-icon.pink { background: var(--pink-bg); color: var(--pink); }
+  .stat-tag { font-size: 9px; font-weight: 700; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; background: var(--bg-elevated); color: var(--text-muted); }
+  .stat-tag.up { background: var(--green-bg); color: var(--green); }
+  .stat-tag.down { background: var(--red-bg); color: var(--red); }
+  .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 6px; }
+  .stat-value { font-size: 26px; font-weight: 700; line-height: 1.2; }
+  .stat-meta { margin-top: 6px; font-size: 12px; color: var(--text-muted); }
+  
+  .two-col { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 14px; }
+  
+  .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; transition: background 0.3s, border 0.3s; margin-bottom: 14px; }
+  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
+  .card-title { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .card-meta { font-size: 11px; color: var(--text-muted); }
+  
+  .chart-container { height: 280px; position: relative; }
+  
+  /* ========== BUTTONS ========== */
+  .btn {
+    padding: 9px 18px; background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: #0a0e1a; border: none; border-radius: 8px;
+    font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); }
+  .btn-secondary { background: var(--bg-elevated); color: var(--text-primary); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--bg-hover); border-color: var(--gold); }
+  .btn-danger { background: var(--red); color: white; }
+  .btn-danger:hover { background: #dc2626; }
+  .btn-success { background: var(--green); color: white; }
+  .btn-success:hover { background: #059669; }
+  .btn-blue { background: var(--blue); color: white; }
+  .btn-blue:hover { background: #2563eb; }
+  .btn-sm { padding: 6px 12px; font-size: 11px; }
+  .btn-lg { padding: 11px 20px; font-size: 14px; }
+  
+  /* ========== TABLE ========== */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th { text-align: left; padding: 11px 12px; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; border-bottom: 1px solid var(--border); white-space: nowrap; background: var(--bg-elevated); }
+  .data-table td { padding: 12px; font-size: 13px; border-bottom: 1px solid var(--border); }
+  .data-table tr:hover { background: var(--bg-hover); }
+  
+  .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+  .badge.active { background: var(--green-bg); color: var(--green); }
+  .badge.pending { background: rgba(245,158,11,0.15); color: var(--gold); }
+  .badge.banned { background: var(--red-bg); color: var(--red); }
+  .badge.premium { background: var(--purple-bg); color: var(--purple); }
+  .badge.free { background: var(--bg-elevated); color: var(--text-muted); }
+  .badge.published { background: var(--green-bg); color: var(--green); }
+  .badge.draft { background: var(--gold-bg); color: var(--gold); }
+  .badge.high { background: var(--red-bg); color: var(--red); }
+  .badge.medium { background: var(--gold-bg); color: var(--gold); }
+  .badge.low { background: var(--green-bg); color: var(--green); }
+  
+  .action-btn { background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 6px 8px; border-radius: 4px; font-size: 14px; transition: all 0.2s; }
+  .action-btn:hover { background: var(--bg-hover); color: var(--gold); }
+  .action-btn.delete:hover { color: var(--red); }
+  
+  /* ========== FORMS ========== */
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 10px 12px; background: var(--bg-elevated);
+    border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary);
+    font-size: 13px; font-family: inherit; outline: none; transition: all 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold); }
+  
+  /* ========== TABLE CONTROLS ========== */
+  .table-controls { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+  .search-input {
+    padding: 9px 14px 9px 36px; background: var(--bg-elevated);
+    border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary);
+    font-size: 13px; font-family: inherit; outline: none; min-width: 240px;
+  }
+  .search-wrap { position: relative; }
+  .search-wrap::before { content: '🔍'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+  
+  /* ========== USER ROW ========== */
+  .user-cell { display: flex; align-items: center; gap: 10px; }
+  .user-cell-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 12px; flex-shrink: 0; }
+  .user-cell-name { font-weight: 600; font-size: 13px; }
+  .user-cell-email { font-size: 11px; color: var(--text-muted); }
+  
+  /* ========== COURSE CARDS ========== */
+  .courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+  .course-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; transition: all 0.2s; }
+  .course-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+  .course-thumb { height: 140px; border-radius: 10px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; font-size: 42px; position: relative; overflow: hidden; }
+  .course-thumb-bg-1 { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+  .course-thumb-bg-2 { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
+  .course-thumb-bg-3 { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+  .course-thumb-bg-4 { background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); }
+  .course-thumb-bg-5 { background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); }
+  .course-thumb-bg-6 { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); }
+  .course-thumb .level-badge { position: absolute; top: 10px; right: 10px; padding: 4px 10px; background: rgba(0,0,0,0.5); color: white; border-radius: 20px; font-size: 10px; font-weight: 700; }
+  .course-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .course-card p { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
+  .course-meta { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); padding-top: 10px; border-top: 1px solid var(--border); }
+  
+  /* ========== ACTIVITY FEED ========== */
+  .activity-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .activity-item:last-child { border: none; }
+  .activity-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .activity-content { flex: 1; }
+  .activity-text { font-size: 12px; color: var(--text-primary); line-height: 1.5; }
+  .activity-time { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+  
+  /* ========== TOGGLE SWITCH ========== */
+  .toggle { position: relative; display: inline-block; width: 40px; height: 22px; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-elevated); border-radius: 11px; cursor: pointer; transition: 0.3s; }
+  .toggle-slider::before { content: ''; position: absolute; height: 16px; width: 16px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: 0.3s; }
+  .toggle input:checked + .toggle-slider { background: var(--gold); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+  
+  /* ========== MODAL ========== */
+  .modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--bg-overlay); backdrop-filter: blur(4px); z-index: 1000;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 22px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto;
+    animation: modalIn 0.3s;
+  }
+  @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+  .modal-lg { max-width: 800px; }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .modal-header h2 { font-size: 17px; }
+  .close-btn { background: var(--bg-elevated); border: none; width: 32px; height: 32px; border-radius: 8px; color: var(--text-secondary); cursor: pointer; font-size: 18px; }
+  .close-btn:hover { background: var(--red-bg); color: var(--red); }
+  
+  /* ========== LOGIN OVERLAY ========== */
+  .login-overlay {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, #0a0e1a 0%, #111827 100%);
+    z-index: 9999; align-items: center; justify-content: center; padding: 20px;
+  }
+  .login-overlay.active { display: flex; }
+  .login-box {
+    width: 100%; max-width: 420px; background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 36px; box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .login-logo {
+    width: 70px; height: 70px; background: linear-gradient(135deg, #ef4444, #b91c1c);
+    border-radius: 16px; margin: 0 auto 18px; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: white; font-size: 28px;
+  }
+  
+  /* ========== TABS ========== */
+  .tabs { display: flex; gap: 4px; padding: 4px; background: var(--bg-elevated); border-radius: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 8px 14px; font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 8px; border: none; background: transparent; transition: all 0.2s; font-family: inherit; }
+  .tab.active { background: var(--gold); color: #0a0e1a; }
+  
+  /* ========== INBOX ========== */
+  .inbox-grid { display: grid; grid-template-columns: 320px 1fr; gap: 14px; }
+  .inbox-item { padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; }
+  .inbox-item:hover { background: var(--bg-hover); }
+  .inbox-item.unread { background: var(--gold-bg); border-left: 3px solid var(--gold); }
+  .inbox-item.selected { background: var(--gold-bg); }
+  
+  /* ========== MOBILE ========== */
+  .mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 20px; cursor: pointer; }
+  
+  @media (max-width: 1024px) {
+    .three-col { grid-template-columns: 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .inbox-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .mobile-toggle { display: block; }
+    .search-box { display: none; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .topbar { padding: 0 14px; }
+    .content { padding: 14px; }
+    .courses-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Demo Banner -->
+<!-- LOGIN OVERLAY (will hide once "Login" clicked) -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo">⚡</div>
+    <h1 style="text-align: center; font-size: 22px; margin-bottom: 6px;">Admin Panel</h1>
+    <p style="text-align: center; font-size: 12px; color: var(--text-muted); margin-bottom: 24px;">Sign in to manage your platform</p>
+    
+    <div id="loginError" style="display: none; padding: 10px 14px; background: var(--red-bg); color: var(--red); border-radius: 8px; margin-bottom: 14px; font-size: 12px;"></div>
+    
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" id="adminEmail" placeholder="your-admin@email.com">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="adminPassword" placeholder="••••••••">
+    </div>
+    <button class="btn btn-lg" style="width: 100%;" onclick="loginAdmin()" id="loginBtn">🔐 Sign In to Admin</button>
+    
+    <div style="margin-top: 16px; padding: 12px; background: var(--bg-elevated); border-radius: 8px; font-size: 11px; color: var(--text-muted); text-align: center;">
+      🔒 Only admin users can access this panel
+    </div>
+  </div>
+</div>
+
+<div class="app">
+  
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">⚡</div>
+      <div class="brand-text">
+        <h1>ADMIN PANEL</h1>
+        <p>S M Shahid Shah</p>
+      </div>
+    </div>
+    
+    <div class="admin-card">
+      <div class="admin-avatar">SS</div>
+      <div class="admin-info">
+        <h3>Shahid Shah</h3>
+        <p>Super Admin</p>
+      </div>
+      <span class="admin-badge">ADMIN</span>
+    </div>
+    
+    <div class="menu-label">Overview</div>
+    <nav class="menu">
+      <div class="menu-item active" data-page="dashboard" onclick="showPage('dashboard', this)"><span class="menu-icon">📊</span>Dashboard</div>
+      <div class="menu-item" data-page="analytics" onclick="showPage('analytics', this)"><span class="menu-icon">📈</span>Analytics</div>
+      
+      <div class="menu-label">Users & Trades</div>
+      <div class="menu-item" data-page="users" onclick="showPage('users', this)"><span class="menu-icon">👥</span>Users<span class="badge-count" id="sidebarUsersCount">0</span></div>
+      <div class="menu-item" data-page="trades" onclick="showPage('trades', this)"><span class="menu-icon">📈</span>All Trades</div>
+      <div class="menu-item" data-page="subscriptions" onclick="showPage('subscriptions', this)"><span class="menu-icon">💎</span>Subscriptions</div>
+      
+      <div class="menu-label">Content Management</div>
+      <div class="menu-item" data-page="courses" onclick="showPage('courses', this)"><span class="menu-icon">🎓</span>Courses</div>
+      <div class="menu-item" data-page="news" onclick="showPage('news', this)"><span class="menu-icon">📰</span>News & Events</div>
+      <div class="menu-item" data-page="quiz" onclick="showPage('quiz', this)"><span class="menu-icon">🎯</span>Quiz Questions</div>
+      <div class="menu-item" data-page="youtube" onclick="showPage('youtube', this)"><span class="menu-icon">▶️</span>YouTube Videos</div>
+      
+      <div class="menu-label">Communication</div>
+      <div class="menu-item" data-page="messages" onclick="showPage('messages', this)"><span class="menu-icon">💬</span>Messages</div>
+      <div class="menu-item" data-page="notifications" onclick="showPage('notifications', this)"><span class="menu-icon">🔔</span>Notifications</div>
+      <div class="menu-item" data-page="emails" onclick="showPage('emails', this)"><span class="menu-icon">📧</span>Email Campaigns</div>
+      
+      <div class="menu-label">System</div>
+      <div class="menu-item" data-page="settings" onclick="showPage('settings', this)"><span class="menu-icon">⚙️</span>Settings</div>
+      <div class="menu-item" data-page="appearance" onclick="showPage('appearance', this)"><span class="menu-icon">🎨</span>Appearance</div>
+      <div class="menu-item" data-page="logs" onclick="showPage('logs', this)"><span class="menu-icon">📋</span>Activity Logs</div>
+      <div class="menu-item" data-page="profile" onclick="showPage('profile', this)"><span class="menu-icon">👤</span>Admin Profile</div>
+    </nav>
+    
+    <div class="sidebar-footer">
+      <div class="menu-item" onclick="window.open('index.html', '_blank')" style="background: var(--green-bg); color: var(--green);"><span class="menu-icon">🌐</span>View User Site</div>
+      <div class="menu-item" onclick="logoutAdmin()"><span class="menu-icon">🚪</span>Logout</div>
+    </div>
+  </aside>
+  
+  <!-- ========== MAIN ========== -->
+  <main class="main">
+    
+    <div class="topbar">
+      <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+      <div class="page-title">
+        <h2 id="pageTitle">Admin Dashboard</h2>
+        <p id="pageSubtitle">Overview of your platform</p>
+      </div>
+      
+      <div class="search-box" style="margin-left: auto;">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search users, courses, trades...">
+      </div>
+      
+      <div class="topbar-actions">
+        <button class="icon-btn" onclick="alert('Notifications panel - 5 new')" title="Notifications">🔔<span class="notif-dot"></span></button>
+        <button class="icon-btn" onclick="alert('Quick messages - 12 unread')" title="Messages">💬</button>
+        <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">🌙</button>
+        <button class="btn btn-sm" onclick="alert('Quick add: User, Course, News, Quiz Question')">+ Quick Add</button>
+      </div>
+    </div>
+    
+    <div class="content" id="content">
+      
+      <!-- ========== DASHBOARD ========== -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card" onclick="showPage('users', document.querySelector('[data-page=users]'))">
+            <div class="stat-header">
+              <div class="stat-icon blue">👥</div>
+              <span class="stat-tag">Total</span>
+            </div>
+            <div class="stat-label">Total Users</div>
+            <div class="stat-value">1,247</div>
+            <div class="stat-meta">All registered users</div>
+          </div>
+          
+          <div class="stat-card" onclick="showPage('trades', document.querySelector('[data-page=trades]'))">
+            <div class="stat-header">
+              <div class="stat-icon green">📈</div>
+              <span class="stat-tag">Total</span>
+            </div>
+            <div class="stat-label">Total Trades</div>
+            <div class="stat-value">15,843</div>
+            <div class="stat-meta">Trades by all users</div>
+          </div>
+          
+          <div class="stat-card" onclick="showPage('subscriptions', document.querySelector('[data-page=subscriptions]'))">
+            <div class="stat-header">
+              <div class="stat-icon gold">💎</div>
+              <span class="stat-tag">Total</span>
+            </div>
+            <div class="stat-label">Premium Members</div>
+            <div class="stat-value">189</div>
+            <div class="stat-meta">Premium subscribers</div>
+          </div>
+          
+          <div class="stat-card" onclick="showPage('courses', document.querySelector('[data-page=courses]'))">
+            <div class="stat-header">
+              <div class="stat-icon purple">🎓</div>
+              <span class="stat-tag">12 active</span>
+            </div>
+            <div class="stat-label">Active Courses</div>
+            <div class="stat-value">12</div>
+            <div class="stat-meta">Published courses</div>
+          </div>
+        </div>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon green">💰</div>
+              <span class="stat-tag">MRR</span>
+            </div>
+            <div class="stat-label">Monthly Revenue</div>
+            <div class="stat-value" id="statRevenue">$0</div>
+            <div class="stat-meta">From premium subscriptions</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon pink">🎯</div>
+              <span class="stat-tag">Today</span>
+            </div>
+            <div class="stat-label">Quiz Plays</div>
+            <div class="stat-value" id="statQuizPlays">0</div>
+            <div class="stat-meta">Total quiz attempts</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon blue">📰</div>
+              <span class="stat-tag">Live</span>
+            </div>
+            <div class="stat-label">News Posts</div>
+            <div class="stat-value" id="statNewsCount">0</div>
+            <div class="stat-meta">Published news</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon red">🎯</div>
+              <span class="stat-tag">Bank</span>
+            </div>
+            <div class="stat-label">Quiz Questions</div>
+            <div class="stat-value" id="statQuizCount">0</div>
+            <div class="stat-meta">In question bank</div>
+          </div>
+        </div>
+        
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">📊 User Growth (Last 30 Days)</div>
+              <div class="tabs" style="margin-bottom: 0;">
+                <button class="tab">Daily</button>
+                <button class="tab active">Weekly</button>
+                <button class="tab">Monthly</button>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="growthChart"></canvas>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">🔔 Recent Signups</div>
+              <span class="card-meta">Latest registered users</span>
+            </div>
+            <div id="recentSignupsList">
+              <div class="empty-state" style="height: 150px;"><div class="empty-icon">👥</div><div style="font-size: 12px;">Loading...</div></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="three-col">
+          <div class="card">
+            <div class="card-title">🥇 Top Traded Pairs</div>
+            <div id="topPairsList" style="margin-top: 12px;">
+              <div class="empty-state" style="height: 120px;"><div style="font-size: 12px;">Loading...</div></div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-title">🏆 Top Users by Profit</div>
+            <div id="topUsersList" style="margin-top: 12px;">
+              <div class="empty-state" style="height: 120px;"><div style="font-size: 12px;">Loading...</div></div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-title">📈 Platform Stats</div>
+            <div id="platformStatsList" style="margin-top: 12px;">
+              <div class="empty-state" style="height: 120px;"><div style="font-size: 12px;">Loading...</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- ========== USERS ========== -->
+      <div class="page" id="page-users">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon blue">👥</div><span class="stat-tag">Total</span></div><div class="stat-label">All Users</div><div class="stat-value" id="usersAllCount">0</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon gold">💎</div><span class="stat-tag premium">Premium</span></div><div class="stat-label">Premium</div><div class="stat-value" id="usersPremiumCount">0</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon green">✅</div><span class="stat-tag">Free</span></div><div class="stat-label">Free Users</div><div class="stat-value" id="usersFreeCount">0</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon red">⚠️</div><span class="stat-tag">Banned</span></div><div class="stat-label">Banned</div><div class="stat-value" id="usersBannedCount">0</div></div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">All Registered Users</div>
+              <div class="card-meta" style="margin-top: 4px;">Manage your users below</div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-secondary btn-sm">📥 Export CSV</button>
+              <button class="btn btn-sm" onclick="alert('Add user form would open')">+ Add User</button>
+            </div>
+          </div>
+          
+          <div class="table-controls">
+            <div class="search-wrap"><input type="text" class="search-input" placeholder="Search by name or email..."></div>
+            <select style="padding: 9px 12px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 12px;">
+              <option>All Status</option><option>Active</option><option>Pending</option><option>Banned</option>
+            </select>
+            <select style="padding: 9px 12px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 12px;">
+              <option>All Plans</option><option>Free</option><option>Premium</option>
+            </select>
+            <select style="padding: 9px 12px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 12px;">
+              <option>All Countries</option><option>🇵🇰 Pakistan</option><option>🇮🇳 India</option><option>🇦🇪 UAE</option><option>🇸🇦 Saudi Arabia</option>
+            </select>
+          </div>
+          
+          <div style="overflow-x: auto;">
+            <table class="data-table">
+              <thead>
+                <tr><th><input type="checkbox"></th><th>User</th><th>Country</th><th>Joined</th><th>Trades</th><th>P&L</th><th>Plan</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody>
+                <tr><td colspan="9" style="text-align: center; padding: 40px; color: var(--text-muted);">Loading users...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div style="margin-top: 16px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted); flex-wrap: wrap; gap: 10px;">
+            <span><span id="usersShowing">Loading...</span></span>
+            <div></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- ========== TRADES ========== -->
+      <div class="page" id="page-trades">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon blue">📈</div><span class="stat-tag">Total</span></div><div class="stat-label">All Trades</div><div class="stat-value" id="tradesAllCount">0</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon green">✅</div><span class="stat-tag" id="tradesProfitablePct">0%</span></div><div class="stat-label">Profitable</div><div class="stat-value" id="tradesProfitableCount">0</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon red">❌</div><span class="stat-tag" id="tradesLossesPct">0%</span></div><div class="stat-label">Losses</div><div class="stat-value" id="tradesLossesCount">0</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon gold">💰</div><span class="stat-tag">Total P&L</span></div><div class="stat-label">Total P&L</div><div class="stat-value" id="tradesTotalPnL">$0</div></div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">All Trades (Live Feed)</div>
+            <div style="display: flex; gap: 8px;">
+              <select style="padding: 9px 12px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 12px;">
+                <option>All Pairs</option><option>XAU/USD</option><option>EUR/USD</option><option>BTC/USD</option>
+              </select>
+              <select style="padding: 9px 12px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 12px;">
+                <option>Today</option><option>This Week</option><option>This Month</option>
+              </select>
+              <button class="btn btn-secondary btn-sm">📥 Export</button>
+            </div>
+          </div>
+          <div style="overflow-x: auto;">
+            <table class="data-table">
+              <thead><tr><th>Time</th><th>User</th><th>Pair</th><th>Direction</th><th>Lot</th><th>Entry</th><th>Exit</th><th>P&L</th><th>Strategy</th></tr></thead>
+              <tbody>
+                <tr><td colspan="9" style="text-align: center; padding: 40px; color: var(--text-muted);">Loading trades...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <!-- ========== SUBSCRIPTIONS ========== -->
+      <div class="page" id="page-subscriptions">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon gold">💎</div><span class="stat-tag">Active</span></div><div class="stat-label">Premium Users</div><div class="stat-value" id="subsPremium">0</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon green">💰</div><span class="stat-tag">MRR</span></div><div class="stat-label">Monthly Revenue</div><div class="stat-value" id="subsMRR">$0</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon blue">📊</div><span class="stat-tag">Rate</span></div><div class="stat-label">Conversion</div><div class="stat-value" id="subsConversion">0%</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon red">⚠️</div><span class="stat-tag">Free</span></div><div class="stat-label">Free Users</div><div class="stat-value" id="subsFree">0</div></div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">💎 Subscription Plans</div>
+            <button class="btn btn-sm" onclick="alert('Add new plan form')">+ Add New Plan</button>
+          </div>
+          <div class="three-col">
+            <div style="padding: 22px; background: var(--bg-elevated); border-radius: 14px; border: 1px solid var(--border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="font-size: 18px;">Free Plan</h3>
+                <span class="badge free">Active</span>
+              </div>
+              <div style="font-size: 32px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">$0<span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">/month</span></div>
+              <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;"><span id="planFreeUsers">0</span> active users</p>
+              <ul style="font-size: 12px; color: var(--text-secondary); line-height: 1.9; list-style: none; margin-bottom: 16px;">
+                <li>✓ Basic dashboard</li>
+                <li>✓ 50 trades/month limit</li>
+                <li>✓ Standard charts</li>
+                <li>✓ Daily quiz</li>
+                <li>✓ Free courses access</li>
+              </ul>
+              <button class="btn btn-secondary btn-sm" style="width: 100%;">✏️ Edit Plan</button>
+            </div>
+            
+            <div style="padding: 22px; background: linear-gradient(135deg, var(--gold-bg), transparent); border-radius: 14px; border: 1px solid var(--gold); position: relative;">
+              <span style="position: absolute; top: -10px; right: 16px; padding: 4px 10px; background: var(--gold); color: #0a0e1a; border-radius: 20px; font-size: 10px; font-weight: 800;">⭐ POPULAR</span>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="font-size: 18px; color: var(--gold);">Premium</h3>
+                <span class="badge premium">Active</span>
+              </div>
+              <div style="font-size: 32px; font-weight: 800; color: var(--gold-light); margin-bottom: 4px;">$30<span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">/month</span></div>
+              <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;"><span id="planPremiumUsers">0</span> active users · <span id="planPremiumMRR">$0</span> MRR</p>
+              <ul style="font-size: 12px; color: var(--text-secondary); line-height: 1.9; list-style: none; margin-bottom: 16px;">
+                <li>✓ Unlimited trades</li>
+                <li>✓ All courses access</li>
+                <li>✓ Advanced analytics</li>
+                <li>✓ Priority support</li>
+                <li>✓ Custom indicators</li>
+                <li>✓ AI trade signals</li>
+              </ul>
+              <button class="btn btn-sm" style="width: 100%;">✏️ Edit Plan</button>
+            </div>
+            
+            <div style="padding: 22px; background: var(--bg-elevated); border-radius: 14px; border: 2px dashed var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <div style="font-size: 48px; color: var(--text-muted); margin-bottom: 12px;">+</div>
+              <h3 style="font-size: 14px; margin-bottom: 4px;">Add VIP Plan</h3>
+              <p style="font-size: 11px; color: var(--text-muted); text-align: center; margin-bottom: 12px;">Lifetime / Yearly / Custom</p>
+              <button class="btn btn-secondary btn-sm">Create Plan</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🎟️ Coupon Codes</div>
+            <button class="btn btn-sm">+ Create Coupon</button>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>Code</th><th>Discount</th><th>Used / Limit</th><th>Expires</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">No coupons yet — feature coming soon</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- ========== COURSES ========== -->
+      <div class="page" id="page-courses">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon purple">🎓</div><span class="stat-tag">Total</span></div><div class="stat-label">All Courses</div><div class="stat-value" id="coursesAllCount">0</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon green">✅</div><span class="stat-tag">Published</span></div><div class="stat-label">Active</div><div class="stat-value" id="coursesActiveCount">0</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon gold">⭐</div><span class="stat-tag">Draft</span></div><div class="stat-label">Drafts</div><div class="stat-value" id="coursesDraftsCount">0</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon blue">👥</div><span class="stat-tag">Total</span></div><div class="stat-label">Enrollments</div><div class="stat-value" id="coursesEnrollmentsCount">0</div></div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🎓 All Courses</div>
+              <div class="card-meta" style="margin-top: 4px;">Manage your educational content</div>
+            </div>
+            <button class="btn" onclick="openCourseForm()">+ Create New Course</button>
+          </div>
+          
+          <div class="courses-grid">
+            <div class="course-card">
+              <div class="course-thumb course-thumb-bg-1"><span style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">📊</span><span class="level-badge">Beginner</span></div>
+              <h3>Forex Basics for Beginners</h3>
+              <p>Pip, lots, leverage, currency pairs - learn the fundamentals from scratch</p>
+              <div class="course-meta">
+                <span>👥 423 enrolled</span>
+                <span class="badge published">Published</span>
+              </div>
+              <div style="display: flex; gap: 6px; margin-top: 12px;">
+                <button class="btn btn-secondary btn-sm" style="flex: 1;">✏️ Edit</button>
+                <button class="action-btn delete" style="padding: 6px 10px;">🗑️</button>
+              </div>
+            </div>
+            
+            <div class="course-card">
+              <div class="course-thumb course-thumb-bg-2"><span>📈</span><span class="level-badge">Intermediate</span></div>
+              <h3>Technical Analysis Mastery</h3>
+              <p>Charts, indicators, candlestick patterns explained step by step</p>
+              <div class="course-meta">
+                <span>👥 312 enrolled</span>
+                <span class="badge published">Published</span>
+              </div>
+              <div style="display: flex; gap: 6px; margin-top: 12px;">
+                <button class="btn btn-secondary btn-sm" style="flex: 1;">✏️ Edit</button>
+                <button class="action-btn delete" style="padding: 6px 10px;">🗑️</button>
+              </div>
+            </div>
+            
+            <div class="course-card">
+              <div class="course-thumb course-thumb-bg-3"><span>🎯</span><span class="level-badge">Advanced</span></div>
+              <h3>SMC / ICT Concepts</h3>
+              <p>Smart Money Concepts and Inner Circle Trader strategies for pros</p>
+              <div class="course-meta">
+                <span>👥 528 enrolled</span>
+                <span class="badge published">Published</span>
+              </div>
+              <div style="display: flex; gap: 6px; margin-top: 12px;">
+                <button class="btn btn-secondary btn-sm" style="flex: 1;">✏️ Edit</button>
+                <button class="action-btn delete" style="padding: 6px 10px;">🗑️</button>
+              </div>
+            </div>
+            
+            <div class="course-card">
+              <div class="course-thumb course-thumb-bg-4"><span>🧠</span><span class="level-badge">All Levels</span></div>
+              <h3>Trading Psychology</h3>
+              <p>Master your emotions, FOMO, fear, greed and discipline</p>
+              <div class="course-meta">
+                <span>👥 189 enrolled</span>
+                <span class="badge published">Published</span>
+              </div>
+              <div style="display: flex; gap: 6px; margin-top: 12px;">
+                <button class="btn btn-secondary btn-sm" style="flex: 1;">✏️ Edit</button>
+                <button class="action-btn delete" style="padding: 6px 10px;">🗑️</button>
+              </div>
+            </div>
+            
+            <div class="course-card">
+              <div class="course-thumb course-thumb-bg-5"><span>⚖️</span><span class="level-badge">Beginner</span></div>
+              <h3>Risk Management Pro</h3>
+              <p>Position sizing, stop loss strategies, capital preservation</p>
+              <div class="course-meta">
+                <span>👥 247 enrolled</span>
+                <span class="badge draft">Draft</span>
+              </div>
+              <div style="display: flex; gap: 6px; margin-top: 12px;">
+                <button class="btn btn-secondary btn-sm" style="flex: 1;">✏️ Edit</button>
+                <button class="action-btn delete" style="padding: 6px 10px;">🗑️</button>
+              </div>
+            </div>
+            
+            <div class="course-card">
+              <div class="course-thumb course-thumb-bg-6"><span>🚀</span><span class="level-badge">Premium</span></div>
+              <h3>Gold Trading Masterclass</h3>
+              <p>Complete guide to trading XAU/USD - strategies and setups</p>
+              <div class="course-meta">
+                <span>👥 642 enrolled</span>
+                <span class="badge published">Published</span>
+              </div>
+              <div style="display: flex; gap: 6px; margin-top: 12px;">
+                <button class="btn btn-secondary btn-sm" style="flex: 1;">✏️ Edit</button>
+                <button class="action-btn delete" style="padding: 6px 10px;">🗑️</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- ========== NEWS ========== -->
+      <div class="page" id="page-news">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📰 News Source Settings</div>
+            <button class="btn btn-secondary btn-sm">🔄 Refresh All</button>
+          </div>
+          <div class="three-col" style="margin-bottom: 0;">
+            <div style="padding: 14px; background: var(--bg-elevated); border-radius: 10px; display: flex; align-items: center; justify-content: space-between;">
+              <div><strong>Forex Factory API</strong><div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Auto-fetch every hour</div></div>
+              <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            </div>
+            <div style="padding: 14px; background: var(--bg-elevated); border-radius: 10px; display: flex; align-items: center; justify-content: space-between;">
+              <div><strong>Custom News Posts</strong><div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Manual posts by admin</div></div>
+              <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            </div>
+            <div style="padding: 14px; background: var(--bg-elevated); border-radius: 10px; display: flex; align-items: center; justify-content: space-between;">
+              <div><strong>Push Notifications</strong><div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">For high-impact news</div></div>
+              <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">📝 Custom News Posts</div>
+              <div class="card-meta" style="margin-top: 4px;">3 posts published this week</div>
+            </div>
+            <button class="btn" onclick="openNewsForm()">+ Add News Post</button>
+          </div>
+          
+          <table class="data-table">
+            <thead><tr><th>Title</th><th>Priority</th><th>Posted</th><th>Views</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">Loading news...</td></tr>
+              </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- ========== QUIZ ========== -->
+      <div class="page" id="page-quiz">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon gold">🎯</div></div><div class="stat-label">Total Questions</div><div class="stat-value" id="quizTotalCount">0</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon green">✅</div></div><div class="stat-label">Total Plays</div><div class="stat-value" id="quizPlaysAllCount">0</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon blue">📊</div></div><div class="stat-label">Avg Score</div><div class="stat-value" id="quizAvgScore">0%</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon purple">🏆</div></div><div class="stat-label">Top Scorer</div><div class="stat-value" id="quizTopScorer" style="font-size: 16px;">-</div></div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🎯 Quiz Question Bank</div>
+            <div style="display: flex; gap: 8px;">
+              <select style="padding: 9px 12px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 12px;">
+                <option>All Categories</option><option>Basics</option><option>Sessions</option><option>Risk</option><option>Technical</option><option>Psychology</option>
+              </select>
+              <button class="btn" onclick="openQuizForm()">+ Add Question</button>
+            </div>
+          </div>
+          
+          <table class="data-table">
+            <thead><tr><th>#</th><th>Question</th><th>Category</th><th>Difficulty</th><th>Times Asked</th><th>Correct %</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">Loading questions...</td></tr>
+              </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- ========== YOUTUBE ========== -->
+      <div class="page" id="page-youtube">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">▶️ Featured YouTube Videos</div>
+              <div class="card-meta" style="margin-top: 4px;">Videos shown on user dashboard</div>
+            </div>
+            <button class="btn" onclick="openYoutubeForm()">+ Add Video</button>
+          </div>
+          
+          <div class="three-col" id="youtubeVideosGrid" style="margin-bottom: 0;">
+            <div class="empty-state" style="grid-column: 1/-1; height: 150px;">
+              <div class="empty-icon">▶️</div>
+              <div>Loading videos...</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">📊 Channel Stats</div>
+          <div class="three-col" style="margin-top: 14px; margin-bottom: 0;">
+            <div style="text-align: center; padding: 18px; background: var(--bg-elevated); border-radius: 10px;">
+              <div style="font-size: 28px; font-weight: 800; color: var(--gold);" id="ytSubscribers">-</div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">SUBSCRIBERS</div>
+            </div>
+            <div style="text-align: center; padding: 18px; background: var(--bg-elevated); border-radius: 10px;">
+              <div style="font-size: 28px; font-weight: 800; color: var(--green);" id="ytTotalViews">-</div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">TOTAL VIEWS</div>
+            </div>
+            <div style="text-align: center; padding: 18px; background: var(--bg-elevated); border-radius: 10px;">
+              <div style="font-size: 28px; font-weight: 800; color: var(--blue);" id="ytVideoCount">0</div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">VIDEOS</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- ========== MESSAGES ========== -->
+      <div class="page" id="page-messages">
+        <div class="inbox-grid">
+          <div class="card" style="padding: 0; max-height: 700px; overflow-y: auto; margin-bottom: 0;">
+            <div style="padding: 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+              <div class="card-title">📥 Inbox</div>
+              <button class="action-btn">⚙️</button>
+            </div>
+            <div id="messagesInbox">
+              <div class="empty-state" style="height: 200px;"><div class="empty-icon">📭</div><div style="font-size: 12px;">No messages yet</div><div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">User messages will appear here</div></div>
+            </div>
+          </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Select a message</div>
+                <div class="card-meta">Click a message from inbox to view and reply</div>
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <button class="action-btn" title="Call">📞</button>
+                <button class="action-btn" title="Email">📧</button>
+                <button class="action-btn delete" title="Delete">🗑️</button>
+              </div>
+            </div>
+            
+            <div style="padding: 14px; background: var(--bg-elevated); border-radius: 10px; margin-bottom: 12px; font-size: 12px; color: var(--text-muted); text-align: center;">No message selected</div>
+            
+            <textarea placeholder="Type your reply here..." style="width: 100%; padding: 12px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); font-size: 13px; font-family: inherit; min-height: 100px; resize: vertical; outline: none;"></textarea>
+            <div style="display: flex; gap: 8px; margin-top: 10px; justify-content: space-between; align-items: center;">
+              <div>
+                <button class="btn btn-secondary btn-sm">📎 Attach</button>
+                <button class="btn btn-secondary btn-sm">📋 Template</button>
+              </div>
+              <button class="btn">📤 Send Reply</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- ========== NOTIFICATIONS ========== -->
+      <div class="page" id="page-notifications">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">📢 Send Push Notification</div>
+              <div class="card-meta" style="margin-top: 4px;">Send instant notifications to your users</div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Send To</label>
+            <select>
+              <option>📢 All Users</option>
+              <option>💎 Premium Users Only</option>
+              <option>🆓 Free Users</option>
+              <option>🇵🇰 Pakistan Users only</option>
+              <option>🎯 Custom Selection</option>
+            </select>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group"><label>Title</label><input type="text" placeholder="Important: Market Alert"></div>
+            <div class="form-group">
+              <label>Type</label>
+              <select><option>📢 General</option><option>🔴 Urgent / High Priority</option><option>🎓 Course Update</option><option>📈 Trading Signal</option><option>🎁 Promotion</option></select>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Message</label>
+            <textarea rows="4" placeholder="Your notification message here..."></textarea>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Schedule</label>
+              <select><option>📤 Send Now</option><option>⏰ Schedule for Later</option></select>
+            </div>
+            <div class="form-group">
+              <label>Action Link (Optional)</label>
+              <input type="url" placeholder="https://...">
+            </div>
+          </div>
+          
+          <div style="display: flex; gap: 8px; justify-content: flex-end;">
+            <button class="btn btn-secondary">Save as Draft</button>
+            <button class="btn btn-blue">👁️ Preview</button>
+            <button class="btn">📤 Send Now</button>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">📜 Recent Notifications</div>
+          <table class="data-table" style="margin-top: 12px;">
+            <thead><tr><th>Title</th><th>Sent To</th><th>Sent</th><th>Open Rate</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">No notifications sent yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- ========== EMAIL CAMPAIGNS ========== -->
+      <div class="page" id="page-emails">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon blue">📧</div></div><div class="stat-label">Total Sent</div><div class="stat-value">0</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon green">📬</div></div><div class="stat-label">Open Rate</div><div class="stat-value">-</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon gold">🎯</div></div><div class="stat-label">Click Rate</div><div class="stat-value">-</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon red">🚫</div></div><div class="stat-label">Unsubscribed</div><div class="stat-value">0</div></div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📧 Email Campaigns</div>
+            <button class="btn" onclick="alert('Open email campaign builder')">+ New Campaign</button>
+          </div>
+          
+          <table class="data-table">
+            <thead><tr><th>Campaign</th><th>Recipients</th><th>Sent</th><th>Open Rate</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">No email campaigns yet — coming soon</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- ========== ANALYTICS ========== -->
+      <div class="page" id="page-analytics">
+        <div class="card">
+          <div style="padding: 18px; background: var(--blue-bg); border: 1px solid rgba(59,130,246,0.3); border-radius: 10px; font-size: 12px; color: var(--blue);">
+            ℹ️ <strong>Note:</strong> Page Views, Bounce Rate, Sessions, Devices, and Sources tracking requires a separate analytics service (like Google Analytics or Plausible). Connect one to see this data. For now, showing real data from your database.
+          </div>
+        </div>
+        
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon blue">👥</div><span class="stat-tag">Total</span></div><div class="stat-label">Registered Users</div><div class="stat-value" id="anaTotalUsers">0</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon green">📈</div><span class="stat-tag">Total</span></div><div class="stat-label">Trades Recorded</div><div class="stat-value" id="anaTotalTrades">0</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon gold">💎</div><span class="stat-tag">Active</span></div><div class="stat-label">Premium Members</div><div class="stat-value" id="anaPremium">0</div></div>
+          <div class="stat-card"><div class="stat-header"><div class="stat-icon purple">🎓</div><span class="stat-tag">Live</span></div><div class="stat-label">Active Courses</div><div class="stat-value" id="anaCourses">0</div></div>
+        </div>
+        
+        <div class="two-col">
+          <div class="card">
+            <div class="card-title">📈 User Growth Trend</div>
+            <div class="chart-container" style="margin-top: 12px;"><canvas id="trafficChart"></canvas></div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 10px; text-align: center;">Trades activity by day of week</div>
+          </div>
+          
+          <div class="card">
+            <div class="card-title">🌐 Users by Country</div>
+            <div id="anaCountriesList" style="margin-top: 14px;">
+              <div class="empty-state" style="height: 150px;"><div style="font-size: 12px;">Loading...</div></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="three-col">
+          <div class="card">
+            <div class="card-title">🥇 Top Pairs Traded</div>
+            <div id="anaTopPairs" style="margin-top: 14px;">
+              <div class="empty-state" style="height: 100px;"><div style="font-size: 12px;">Loading...</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">📊 User Status</div>
+            <div id="anaUserStatus" style="margin-top: 14px;">
+              <div class="empty-state" style="height: 100px;"><div style="font-size: 12px;">Loading...</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">🎯 Quiz Stats</div>
+            <div id="anaQuizStats" style="margin-top: 14px;">
+              <div class="empty-state" style="height: 100px;"><div style="font-size: 12px;">Loading...</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- ========== SETTINGS ========== -->
+      <div class="page" id="page-settings">
+        <div class="card">
+          <div class="card-title">⚙️ Platform Settings</div>
+          <div class="form-row" style="margin-top: 16px;">
+            <div class="form-group"><label>Platform Name</label><input type="text" value="S M Shahid Shah Forex Hub"></div>
+            <div class="form-group"><label>Platform Tagline</label><input type="text" value="Your Free Forex Trading Hub"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Support Email</label><input type="email" value="support@shahidshah.com"></div>
+            <div class="form-group"><label>Contact Phone</label><input type="tel" value="+92 300 1234567"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>YouTube Channel</label><input type="url" value="https://youtube.com/@SMShahidShah"></div>
+            <div class="form-group"><label>WhatsApp Number</label><input type="tel" value="+92 300 1234567"></div>
+          </div>
+          
+          <h3 style="margin-top: 24px; margin-bottom: 14px; font-size: 14px;">⚡ Features Toggle</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div style="padding: 14px; background: var(--bg-elevated); border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+              <div><strong style="font-size: 13px;">Allow New Signups</strong><div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Users can register</div></div>
+              <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            </div>
+            <div style="padding: 14px; background: var(--bg-elevated); border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+              <div><strong style="font-size: 13px;">Daily Quiz Active</strong><div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Users can play quiz</div></div>
+              <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            </div>
+            <div style="padding: 14px; background: var(--bg-elevated); border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+              <div><strong style="font-size: 13px;">Premium Features</strong><div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Premium plan active</div></div>
+              <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            </div>
+            <div style="padding: 14px; background: var(--bg-elevated); border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+              <div><strong style="font-size: 13px;">Maintenance Mode</strong><div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Site offline for users</div></div>
+              <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+            </div>
+            <div style="padding: 14px; background: var(--bg-elevated); border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+              <div><strong style="font-size: 13px;">YouTube Banner</strong><div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Show YouTube CTA</div></div>
+              <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            </div>
+            <div style="padding: 14px; background: var(--bg-elevated); border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+              <div><strong style="font-size: 13px;">Email Verification</strong><div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Required for signup</div></div>
+              <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            </div>
+          </div>
+          
+          <button class="btn" style="margin-top: 18px;">💾 Save All Settings</button>
+        </div>
+      </div>
+      
+      <!-- ========== APPEARANCE ========== -->
+      <div class="page" id="page-appearance">
+        <div class="card">
+          <div class="card-title">🎨 Appearance & Branding</div>
+          
+          <h3 style="margin-top: 16px; margin-bottom: 12px; font-size: 13px; color: var(--gold);">🎨 Brand Colors</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Primary (Gold)</label><div style="display: flex; gap: 8px; align-items: center;"><input type="color" value="#f59e0b" style="width: 50px; height: 42px; padding: 4px;"><input type="text" value="#f59e0b" style="flex: 1;"></div></div>
+            <div class="form-group"><label>Background</label><div style="display: flex; gap: 8px; align-items: center;"><input type="color" value="#0a0e1a" style="width: 50px; height: 42px; padding: 4px;"><input type="text" value="#0a0e1a" style="flex: 1;"></div></div>
+          </div>
+          
+          <h3 style="margin-top: 20px; margin-bottom: 12px; font-size: 13px; color: var(--gold);">🏷️ Branding</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Logo Text</label><input type="text" value="S M SHAHID SHAH"></div>
+            <div class="form-group"><label>Sub Tagline</label><input type="text" value="Forex Hub"></div>
+          </div>
+          <div class="form-group"><label>Logo Image (PNG)</label><input type="file" accept="image/*"></div>
+          <div class="form-group"><label>Favicon (32x32)</label><input type="file" accept="image/*"></div>
+          
+          <h3 style="margin-top: 20px; margin-bottom: 12px; font-size: 13px; color: var(--gold);">📝 Footer Text</h3>
+          <div class="form-group"><label>Footer Tagline</label><input type="text" value="Made with ❤️ for the forex community"></div>
+          <div class="form-group"><label>Copyright Text</label><input type="text" value="© 2026 S M Shahid Shah. All rights reserved."></div>
+          
+          <button class="btn" style="margin-top: 18px;">💾 Save Appearance</button>
+        </div>
+      </div>
+      
+      <!-- ========== ACTIVITY LOGS ========== -->
+      <div class="page" id="page-logs">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📋 Activity Logs</div>
+            <div style="display: flex; gap: 8px;">
+              <select style="padding: 9px 12px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 12px;">
+                <option>All Activity</option><option>Logins</option><option>Failed Logins</option><option>Trades</option><option>Admin Actions</option>
+              </select>
+              <button class="btn btn-secondary btn-sm">📥 Export</button>
+            </div>
+          </div>
+          
+          <table class="data-table">
+            <thead><tr><th>Time</th><th>User</th><th>Action</th><th>IP Address</th><th>Device</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">Activity logging coming soon — currently disabled</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- ========== ADMIN PROFILE ========== -->
+      <div class="page" id="page-profile">
+        <div class="card">
+          <div style="display: flex; gap: 18px; align-items: center; padding: 8px;">
+            <div style="width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 800; color: #0a0e1a; flex-shrink: 0;">SS</div>
+            <div style="flex: 1;">
+              <h2 style="font-size: 22px; display: flex; align-items: center; gap: 10px;">Shahid Shah <span class="badge premium">Super Admin</span></h2>
+              <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">admin@shahidshah.com · @smshahidshah</div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Joined March 2024 · Last login: Today 09:15 AM</div>
+            </div>
+            <button class="btn btn-secondary btn-sm">📷 Change Photo</button>
+          </div>
+        </div>
+        
+        <div class="tabs">
+          <button class="tab active">👤 Profile</button>
+          <button class="tab">🔒 Security</button>
+          <button class="tab">📜 Login History</button>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">👤 Profile Information</div>
+          <div class="form-row" style="margin-top: 16px;">
+            <div class="form-group"><label>Full Name</label><input type="text" value="S M Shahid Shah"></div>
+            <div class="form-group"><label>Username</label><input type="text" value="smshahidshah"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Email</label><input type="email" value="admin@shahidshah.com"></div>
+            <div class="form-group"><label>Phone</label><input type="tel" value="+92 300 1234567"></div>
+          </div>
+          <div class="form-group"><label>Bio</label><textarea rows="3">Forex Analyst & Educator. Free education on YouTube @SMShahidShah</textarea></div>
+          
+          <h3 style="margin-top: 18px; margin-bottom: 12px; font-size: 13px; color: var(--gold);">🔒 Security</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Current Password</label><input type="password" placeholder="••••••••"></div>
+            <div class="form-group"><label>New Password</label><input type="password" placeholder="••••••••"></div>
+          </div>
+          <div style="padding: 14px; background: var(--green-bg); border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <div><strong style="color: var(--green); font-size: 13px;">🔒 Two-Factor Authentication</strong><div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Currently enabled via authenticator app</div></div>
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+          </div>
+          
+          <button class="btn">💾 Save Changes</button>
+        </div>
+      </div>
+      
+    </div>
+  </main>
+</div>
+
+<script>
+// ============ SUPABASE SETUP ============
+const SUPABASE_URL = 'https://qggtdwixwafcmorepkks.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_HnYmHQbt42OfjmRk09OfoQ_fq5TPYpb';
+
+let sb = null;
+try {
+  if (window.supabase && window.supabase.createClient) {
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log('✅ Supabase initialized');
+  }
+} catch (e) {
+  console.error('Supabase init error:', e);
+}
+
+let currentAdmin = null;
+let isLoggedIn = false;
+
+// On load, check if already logged in
+window.addEventListener('load', async () => {
+  if (!sb) {
+    document.getElementById('loginOverlay').classList.add('active');
+    return;
+  }
+  
+  // Check if user is already logged in from previous session
+  const { data: { user } } = await sb.auth.getUser();
+  if (user) {
+    // Verify they are admin
+    const { data: profile } = await sb.from('profiles').select('*').eq('id', user.id).single();
+    if (profile && profile.is_admin) {
+      currentAdmin = profile;
+      document.getElementById('loginOverlay').classList.remove('active');
+      isLoggedIn = true;
+      setTimeout(initCharts, 100);
+      loadDashboardStats();
+      return;
+    }
+  }
+  
+  document.getElementById('loginOverlay').classList.add('active');
+});
+
+async function loginAdmin() {
+  const email = document.getElementById('adminEmail').value.trim();
+  const password = document.getElementById('adminPassword').value;
+  const errorEl = document.getElementById('loginError');
+  const btn = document.getElementById('loginBtn');
+  
+  errorEl.style.display = 'none';
+  
+  if (!email || !password) {
+    errorEl.textContent = '❌ Please enter email and password';
+    errorEl.style.display = 'block';
+    return;
+  }
+  
+  btn.textContent = '⏳ Signing in...';
+  btn.disabled = true;
+  
+  try {
+    // Sign in with Supabase
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    
+    if (error) {
+      errorEl.textContent = '❌ ' + error.message;
+      errorEl.style.display = 'block';
+      btn.textContent = '🔐 Sign In to Admin';
+      btn.disabled = false;
+      return;
+    }
+    
+    // Check if user is admin
+    const { data: profile } = await sb.from('profiles').select('*').eq('id', data.user.id).single();
+    
+    if (!profile || !profile.is_admin) {
+      // Not an admin — sign out and reject
+      await sb.auth.signOut();
+      errorEl.textContent = '❌ You do not have admin access. Only authorized admins can login here.';
+      errorEl.style.display = 'block';
+      btn.textContent = '🔐 Sign In to Admin';
+      btn.disabled = false;
+      return;
+    }
+    
+    // Success! Admin verified
+    currentAdmin = profile;
+    document.getElementById('loginOverlay').classList.remove('active');
+    isLoggedIn = true;
+    setTimeout(initCharts, 100);
+    loadDashboardStats();
+    
+  } catch (e) {
+    errorEl.textContent = '❌ Network error: ' + e.message;
+    errorEl.style.display = 'block';
+    btn.textContent = '🔐 Sign In to Admin';
+    btn.disabled = false;
+  }
+}
+
+async function logoutAdmin() {
+  if (!confirm('Are you sure you want to logout?')) return;
+  await sb.auth.signOut();
+  currentAdmin = null;
+  isLoggedIn = false;
+  document.getElementById('loginOverlay').classList.add('active');
+  document.getElementById('adminEmail').value = '';
+  document.getElementById('adminPassword').value = '';
+}
+
+function showPage(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const pageEl = document.getElementById('page-' + page);
+  if (pageEl) pageEl.classList.add('active');
+  
+  document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+  if (el) el.classList.add('active');
+  
+  const titles = {
+    dashboard: ['Admin Dashboard', 'Overview of your platform'],
+    analytics: ['Analytics & Reports', 'Detailed insights and trends'],
+    users: ['User Management', 'Manage all registered users'],
+    trades: ['All Trades', 'Live feed of user trading activity'],
+    subscriptions: ['Subscriptions', 'Manage premium memberships and pricing'],
+    courses: ['Courses Manager', 'Create and manage learning content'],
+    news: ['News & Events', 'Manage economic calendar and news posts'],
+    quiz: ['Quiz Manager', 'Manage daily quiz question bank'],
+    youtube: ['YouTube Videos', 'Featured video management'],
+    messages: ['Messages / Support', 'User support tickets and inbox'],
+    notifications: ['Push Notifications', 'Send notifications to users'],
+    emails: ['Email Campaigns', 'Send mass emails and newsletters'],
+    settings: ['Platform Settings', 'Configure your platform'],
+    appearance: ['Appearance & Branding', 'Customize colors, logos, theme'],
+    logs: ['Activity Logs', 'System and user activity history'],
+    profile: ['Admin Profile', 'Your account settings']
+  };
+  const t = titles[page];
+  if (t) {
+    document.getElementById('pageTitle').textContent = t[0];
+    document.getElementById('pageSubtitle').textContent = t[1];
+  }
+  document.getElementById('sidebar').classList.remove('open');
+  window.scrollTo(0, 0);
+  
+  // Load real data for each page
+  if (page === 'dashboard') loadDashboardStats();
+  if (page === 'users') loadAdminUsers();
+  if (page === 'trades') loadAdminTrades();
+  if (page === 'courses') loadAdminCourses();
+  if (page === 'news') loadAdminNewsPosts();
+  if (page === 'quiz') loadAdminQuiz();
+  if (page === 'youtube') loadAdminYoutube();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', newTheme);
+  document.getElementById('themeBtn').textContent = newTheme === 'dark' ? '🌙' : '☀️';
+}
+
+// ============ LOAD REAL STATS FROM DATABASE ============
+async function loadDashboardStats() {
+  if (!sb) return;
+  
+  try {
+    // Counts
+    const { count: usersCount } = await sb.from('profiles').select('*', { count: 'exact', head: true });
+    const { count: tradesCount } = await sb.from('trades').select('*', { count: 'exact', head: true });
+    const { count: premiumCount } = await sb.from('profiles').select('*', { count: 'exact', head: true }).eq('is_premium', true);
+    const { count: coursesCount } = await sb.from('courses').select('*', { count: 'exact', head: true }).eq('is_published', true);
+    const { count: quizCount } = await sb.from('quiz_questions').select('*', { count: 'exact', head: true });
+    const { count: newsCount } = await sb.from('news_posts').select('*', { count: 'exact', head: true }).eq('is_published', true);
+    const { count: quizPlaysCount } = await sb.from('quiz_history').select('*', { count: 'exact', head: true });
+    
+    // Calculate revenue (premium users × $30 default)
+    const revenue = (premiumCount || 0) * 30;
+    
+    // Update top 4 stat cards
+    const statValues = document.querySelectorAll('#page-dashboard .stats-grid:first-of-type .stat-value');
+    if (statValues[0]) statValues[0].textContent = (usersCount || 0).toLocaleString();
+    const sidebarCount = document.getElementById('sidebarUsersCount');
+    if (sidebarCount) sidebarCount.textContent = (usersCount || 0).toLocaleString();
+    if (statValues[1]) statValues[1].textContent = (tradesCount || 0).toLocaleString();
+    if (statValues[2]) statValues[2].textContent = (premiumCount || 0).toLocaleString();
+    if (statValues[3]) statValues[3].textContent = (coursesCount || 0).toLocaleString();
+    
+    // Update bottom 4 stat cards
+    const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    setEl('statRevenue', '$' + revenue.toLocaleString());
+    setEl('statQuizPlays', (quizPlaysCount || 0).toLocaleString());
+    setEl('statNewsCount', (newsCount || 0).toLocaleString());
+    setEl('statQuizCount', (quizCount || 0).toLocaleString());
+    
+    // Recent signups
+    const { data: recentUsers } = await sb.from('profiles').select('full_name, email, created_at').order('created_at', { ascending: false }).limit(5);
+    const signupsList = document.getElementById('recentSignupsList');
+    if (signupsList) {
+      if (recentUsers && recentUsers.length > 0) {
+        signupsList.innerHTML = recentUsers.map(u => {
+          const initials = (u.full_name || u.email || 'U').slice(0, 2).toUpperCase();
+          const timeAgo = new Date(u.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          return `<div class="activity-item">
+            <div class="activity-icon" style="background: var(--green-bg); color: var(--green);">${initials}</div>
+            <div class="activity-content">
+              <div class="activity-text"><strong>${u.full_name || u.email.split('@')[0]}</strong> signed up</div>
+              <div class="activity-time">${timeAgo} · ${u.email}</div>
+            </div>
+          </div>`;
+        }).join('');
+      } else {
+        signupsList.innerHTML = '<div class="empty-state" style="height: 120px;"><div class="empty-icon">👥</div><div style="font-size: 12px;">No signups yet</div></div>';
+      }
+    }
+    
+    // Top traded pairs (group by pair)
+    const { data: allTrades } = await sb.from('trades').select('pair, pnl, user_id');
+    if (allTrades) {
+      const pairCounts = {};
+      const userPLs = {};
+      allTrades.forEach(t => {
+        pairCounts[t.pair] = (pairCounts[t.pair] || 0) + 1;
+        userPLs[t.user_id] = (userPLs[t.user_id] || 0) + parseFloat(t.pnl || 0);
+      });
+      const topPairs = Object.entries(pairCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      
+      const topPairsList = document.getElementById('topPairsList');
+      if (topPairsList) {
+        if (topPairs.length > 0) {
+          const medals = ['🥇', '🥈', '🥉', '4.', '5.'];
+          topPairsList.innerHTML = topPairs.map(([pair, count], i) => 
+            `<div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border);"><span>${medals[i]} ${pair}</span><strong>${count}</strong></div>`
+          ).join('');
+        } else {
+          topPairsList.innerHTML = '<div class="empty-state" style="height: 120px;"><div style="font-size: 12px;">No trades yet</div></div>';
+        }
+      }
+      
+      // Top users by profit
+      const topUserIds = Object.entries(userPLs).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      const topUsersList = document.getElementById('topUsersList');
+      if (topUsersList && topUserIds.length > 0) {
+        const userIds = topUserIds.map(([id]) => id);
+        const { data: topUserProfiles } = await sb.from('profiles').select('id, full_name, email').in('id', userIds);
+        const profileMap = {};
+        (topUserProfiles || []).forEach(p => { profileMap[p.id] = p; });
+        
+        const medals = ['🥇', '🥈', '🥉', '4.', '5.'];
+        topUsersList.innerHTML = topUserIds.map(([uid, pl], i) => {
+          const profile = profileMap[uid];
+          const name = profile ? (profile.full_name || profile.email.split('@')[0]) : 'Unknown';
+          const color = pl >= 0 ? 'var(--green)' : 'var(--red)';
+          const prefix = pl >= 0 ? '+$' : '-$';
+          return `<div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border);"><span>${medals[i]} ${name}</span><strong style="color: ${color};">${prefix}${Math.abs(pl).toFixed(2)}</strong></div>`;
+        }).join('');
+      } else if (topUsersList) {
+        topUsersList.innerHTML = '<div class="empty-state" style="height: 120px;"><div style="font-size: 12px;">No traders yet</div></div>';
+      }
+    }
+    
+    // Platform stats card
+    const platformStatsList = document.getElementById('platformStatsList');
+    if (platformStatsList) {
+      platformStatsList.innerHTML = `
+        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border);"><span>Total Signups</span><strong style="color: var(--green);">${usersCount || 0}</strong></div>
+        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border);"><span>Premium Users</span><strong style="color: var(--gold);">${premiumCount || 0}</strong></div>
+        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border);"><span>Total Trades</span><strong>${tradesCount || 0}</strong></div>
+        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border);"><span>Quiz Plays</span><strong>${quizPlaysCount || 0}</strong></div>
+        <div style="display: flex; justify-content: space-between; padding: 10px 0;"><span>Active Courses</span><strong>${coursesCount || 0}</strong></div>
+      `;
+    }
+    
+    console.log('✅ Dashboard stats loaded');
+  } catch (e) {
+    console.error('Stats load error:', e);
+  }
+}
+
+// ============ LOAD REAL USERS LIST ============
+async function loadAdminUsers() {
+  if (!sb) return;
+  
+  const { data: users, error } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
+  
+  if (error || !users) {
+    console.error('Users load error:', error);
+    return;
+  }
+  
+  const tbody = document.querySelector('#page-users table tbody');
+  if (!tbody) return;
+  
+  if (users.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 40px; color: var(--text-muted);">No users yet</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = users.map(u => {
+    const initials = (u.full_name || u.email || 'U').split(' ').map(s => s[0]).join('').toUpperCase().slice(0, 2);
+    const date = new Date(u.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const status = u.is_banned ? '<span class="badge banned">Banned</span>' : '<span class="badge active">Active</span>';
+    const plan = u.is_premium ? '<span class="badge premium">Premium</span>' : '<span class="badge free">Free</span>';
+    const adminBadge = u.is_admin ? '<span class="badge premium" style="margin-left: 4px;">⚡ ADMIN</span>' : '';
+    
+    return `<tr>
+      <td><input type="checkbox"></td>
+      <td><div class="user-cell"><div class="user-cell-avatar" style="background: linear-gradient(135deg, #f59e0b, #d97706);">${initials}</div><div><div class="user-cell-name">${u.full_name || 'No name'}${adminBadge}</div><div class="user-cell-email">${u.email || ''}</div></div></div></td>
+      <td>${u.country || '🌐 Unknown'}</td>
+      <td>${date}</td>
+      <td>-</td>
+      <td>-</td>
+      <td>${plan}</td>
+      <td>${status}</td>
+      <td><button class="action-btn" title="View">👁️</button><button class="action-btn" title="Edit">✏️</button><button class="action-btn delete" title="Ban">🚫</button></td>
+    </tr>`;
+  }).join('');
+  
+  console.log('✅ Loaded ' + users.length + ' users');
+}
+
+// ============ LOAD REAL TRADES LIST ============
+async function loadAdminTrades() {
+  if (!sb) return;
+  
+  const { data: trades, error } = await sb.from('trades').select('*, profiles(full_name, email)').order('created_at', { ascending: false }).limit(20);
+  
+  if (error || !trades) {
+    console.error('Trades load error:', error);
+    return;
+  }
+  
+  const tbody = document.querySelector('#page-trades table tbody');
+  if (!tbody) return;
+  
+  if (trades.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 40px; color: var(--text-muted);">No trades yet</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = trades.map(t => {
+    const time = new Date(t.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    const userName = t.profiles?.full_name || t.profiles?.email?.split('@')[0] || 'Unknown';
+    const dirBadge = t.direction === 'BUY' ? '<span class="badge active">BUY</span>' : '<span class="badge banned">SELL</span>';
+    const pnl = parseFloat(t.pnl) || 0;
+    const pnlColor = pnl >= 0 ? 'var(--green)' : 'var(--red)';
+    const pnlPrefix = pnl >= 0 ? '+$' : '-$';
+    
+    return `<tr>
+      <td>${time}</td>
+      <td>${userName}</td>
+      <td><strong>${t.pair}</strong></td>
+      <td>${dirBadge}</td>
+      <td>${t.lot_size}</td>
+      <td>${t.entry_price}</td>
+      <td>${t.exit_price || '-'}</td>
+      <td style="color: ${pnlColor}; font-weight: 700;">${pnlPrefix}${Math.abs(pnl).toFixed(2)}</td>
+      <td>${t.strategy || '-'}</td>
+    </tr>`;
+  }).join('');
+  
+  console.log('✅ Loaded ' + trades.length + ' trades');
+}
+
+// ============ LOAD ADMIN COURSES (with edit/delete actions) ============
+async function loadAdminCourses() {
+  if (!sb) return;
+  
+  const { data: courses, error } = await sb.from('courses').select('*').order('display_order');
+  
+  if (error || !courses) return;
+  
+  const grid = document.querySelector('#page-courses .courses-grid');
+  if (!grid) return;
+  
+  // Keep "Add new" card at end if exists, but use real courses
+  const colors = [1, 2, 3, 4, 5, 6];
+  grid.innerHTML = courses.map((c, i) => {
+    const colorIdx = (c.thumbnail_color || colors[i % 6]);
+    const statusBadge = c.is_published ? '<span class="badge published">Published</span>' : '<span class="badge draft">Draft</span>';
+    const premiumBadge = c.is_premium ? '<span style="position: absolute; top: 12px; right: 12px; padding: 3px 8px; background: var(--gold); color: #0a0e1a; font-size: 9px; font-weight: 800; border-radius: 4px;">⭐ PREMIUM</span>' : '';
+    return `<div class="course-card">
+      <div class="course-thumb course-thumb-bg-${colorIdx}" style="position: relative;">
+        <span>${c.thumbnail_emoji || '📚'}</span>
+        <span class="level-badge">${c.level || 'All Levels'}</span>
+        ${premiumBadge}
+      </div>
+      <h3>${c.title}</h3>
+      <p>${c.description || ''}</p>
+      <div class="course-meta">
+        <span>👥 ${c.enrollments_count || 0} enrolled</span>
+        ${statusBadge}
+      </div>
+      <div style="display: flex; gap: 6px; margin-top: 12px;">
+        <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="editCourse('${c.id}')">✏️ Edit</button>
+        <button class="action-btn delete" style="padding: 6px 10px;" onclick="deleteCourse('${c.id}', '${c.title.replace(/'/g, "")}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+  
+  console.log('✅ Loaded ' + courses.length + ' courses');
+}
+
+async function deleteCourse(id, title) {
+  if (!confirm('Delete course "' + title + '"? This cannot be undone.')) return;
+  
+  const { error } = await sb.from('courses').delete().eq('id', id);
+  if (error) {
+    alert('❌ Error: ' + error.message);
+    return;
+  }
+  alert('✅ Course deleted');
+  loadAdminCourses();
+}
+
+// Modal helpers
+function openModal(name) { document.getElementById('modal-' + name).classList.add('active'); }
+function closeModal(name) { document.getElementById('modal-' + name).classList.remove('active'); }
+
+// ============ COURSE FORM ============
+function openCourseForm(course) {
+  document.getElementById('courseFormError').style.display = 'none';
+  if (course) {
+    document.getElementById('courseFormTitle').textContent = 'Edit Course';
+    document.getElementById('courseId').value = course.id;
+    document.getElementById('courseTitle').value = course.title || '';
+    document.getElementById('courseDescription').value = course.description || '';
+    document.getElementById('courseLevel').value = course.level || 'Beginner';
+    document.getElementById('courseCategory').value = course.category || '';
+    document.getElementById('courseEmoji').value = course.thumbnail_emoji || '📚';
+    document.getElementById('courseColor').value = course.thumbnail_color || 1;
+    document.getElementById('courseYoutubeUrl').value = course.youtube_url || '';
+    document.getElementById('courseOrder').value = course.display_order || 0;
+    document.getElementById('courseEnrollments').value = course.enrollments_count || 0;
+    document.getElementById('coursePublished').checked = !!course.is_published;
+    document.getElementById('coursePremium').checked = !!course.is_premium;
+  } else {
+    document.getElementById('courseFormTitle').textContent = 'Add New Course';
+    ['courseId','courseTitle','courseDescription','courseCategory','courseYoutubeUrl'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('courseEmoji').value = '📚';
+    document.getElementById('courseColor').value = '1';
+    document.getElementById('courseLevel').value = 'Beginner';
+    document.getElementById('courseOrder').value = '0';
+    document.getElementById('courseEnrollments').value = '0';
+    document.getElementById('coursePublished').checked = true;
+    document.getElementById('coursePremium').checked = false;
+  }
+  openModal('courseForm');
+}
+
+async function editCourse(id) {
+  const { data: course, error } = await sb.from('courses').select('*').eq('id', id).single();
+  if (error) { alert('❌ Error: ' + error.message); return; }
+  openCourseForm(course);
+}
+
+async function saveCourse() {
+  const errEl = document.getElementById('courseFormError');
+  const btn = document.getElementById('saveCourseBtn');
+  errEl.style.display = 'none';
+  
+  const id = document.getElementById('courseId').value;
+  const title = document.getElementById('courseTitle').value.trim();
+  
+  if (!title) {
+    errEl.textContent = '❌ Title is required';
+    errEl.style.display = 'block';
+    return;
+  }
+  
+  btn.textContent = '⏳ Saving...';
+  btn.disabled = true;
+  
+  const data = {
+    title,
+    description: document.getElementById('courseDescription').value.trim(),
+    level: document.getElementById('courseLevel').value,
+    category: document.getElementById('courseCategory').value.trim(),
+    thumbnail_emoji: document.getElementById('courseEmoji').value || '📚',
+    thumbnail_color: parseInt(document.getElementById('courseColor').value),
+    youtube_url: document.getElementById('courseYoutubeUrl').value.trim() || null,
+    display_order: parseInt(document.getElementById('courseOrder').value) || 0,
+    enrollments_count: parseInt(document.getElementById('courseEnrollments').value) || 0,
+    is_published: document.getElementById('coursePublished').checked,
+    is_premium: document.getElementById('coursePremium').checked
+  };
+  
+  const result = id 
+    ? await sb.from('courses').update(data).eq('id', id)
+    : await sb.from('courses').insert(data);
+  
+  btn.textContent = '💾 Save Course';
+  btn.disabled = false;
+  
+  if (result.error) {
+    errEl.textContent = '❌ ' + result.error.message;
+    errEl.style.display = 'block';
+    return;
+  }
+  
+  closeModal('courseForm');
+  alert('✅ Course ' + (id ? 'updated' : 'added') + '!');
+  loadAdminCourses();
+}
+
+// ============ LOAD ADMIN NEWS (with edit/delete) ============
+async function loadAdminNewsPosts() {
+  if (!sb) return;
+  
+  const { data: news, error } = await sb.from('news_posts').select('*').order('created_at', { ascending: false });
+  
+  if (error || !news) return;
+  
+  const tbody = document.querySelector('#page-news table tbody');
+  if (!tbody) return;
+  
+  if (news.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">No news posts yet</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = news.map(n => {
+    const date = new Date(n.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const priorityBadge = `<span class="badge ${n.priority === 'High' ? 'high' : (n.priority === 'Medium' ? 'medium' : 'low')}">${n.priority}</span>`;
+    const statusBadge = n.is_published ? '<span class="badge published">Live</span>' : '<span class="badge draft">Draft</span>';
+    const icon = n.priority === 'High' ? '🔴' : (n.priority === 'Medium' ? '📊' : '📈');
+    
+    return `<tr>
+      <td><strong>${icon} ${n.title}</strong></td>
+      <td>${priorityBadge}</td>
+      <td>${date}</td>
+      <td>${n.views_count || 0}</td>
+      <td>${statusBadge}</td>
+      <td>
+        <button class="action-btn" onclick="editNews('${n.id}')">✏️</button>
+        <button class="action-btn delete" onclick="deleteNews('${n.id}', '${n.title.replace(/'/g, "")}')">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function deleteNews(id, title) {
+  if (!confirm('Delete news "' + title + '"?')) return;
+  const { error } = await sb.from('news_posts').delete().eq('id', id);
+  if (error) { alert('❌ ' + error.message); return; }
+  alert('✅ News deleted');
+  loadAdminNewsPosts();
+}
+
+// ============ NEWS FORM ============
+function openNewsForm(news) {
+  document.getElementById('newsFormError').style.display = 'none';
+  if (news) {
+    document.getElementById('newsFormTitle').textContent = 'Edit News Post';
+    document.getElementById('newsId').value = news.id;
+    document.getElementById('newsTitle').value = news.title || '';
+    document.getElementById('newsContent').value = news.content || '';
+    document.getElementById('newsPriority').value = news.priority || 'Medium';
+    document.getElementById('newsPublished').checked = !!news.is_published;
+  } else {
+    document.getElementById('newsFormTitle').textContent = 'Add News Post';
+    ['newsId','newsTitle','newsContent'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('newsPriority').value = 'Medium';
+    document.getElementById('newsPublished').checked = true;
+  }
+  openModal('newsForm');
+}
+
+async function editNews(id) {
+  const { data, error } = await sb.from('news_posts').select('*').eq('id', id).single();
+  if (error) { alert('❌ ' + error.message); return; }
+  openNewsForm(data);
+}
+
+async function saveNews() {
+  const errEl = document.getElementById('newsFormError');
+  const btn = document.getElementById('saveNewsBtn');
+  errEl.style.display = 'none';
+  
+  const id = document.getElementById('newsId').value;
+  const title = document.getElementById('newsTitle').value.trim();
+  
+  if (!title) {
+    errEl.textContent = '❌ Title is required';
+    errEl.style.display = 'block';
+    return;
+  }
+  
+  btn.textContent = '⏳ Saving...';
+  btn.disabled = true;
+  
+  const data = {
+    title,
+    content: document.getElementById('newsContent').value.trim(),
+    priority: document.getElementById('newsPriority').value,
+    is_published: document.getElementById('newsPublished').checked
+  };
+  
+  const result = id
+    ? await sb.from('news_posts').update(data).eq('id', id)
+    : await sb.from('news_posts').insert(data);
+  
+  btn.textContent = '💾 Save Post';
+  btn.disabled = false;
+  
+  if (result.error) {
+    errEl.textContent = '❌ ' + result.error.message;
+    errEl.style.display = 'block';
+    return;
+  }
+  
+  closeModal('newsForm');
+  alert('✅ News ' + (id ? 'updated' : 'added') + '!');
+  loadAdminNewsPosts();
+}
+
+// ============ LOAD ADMIN QUIZ QUESTIONS ============
+async function loadAdminQuiz() {
+  if (!sb) return;
+  
+  const { data: questions, error } = await sb.from('quiz_questions').select('*');
+  
+  if (error || !questions) return;
+  
+  const tbody = document.querySelector('#page-quiz table tbody');
+  if (!tbody) return;
+  
+  if (questions.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">No questions yet</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = questions.map((q, i) => {
+    const correctPct = q.times_asked > 0 ? Math.round((q.times_correct / q.times_asked) * 100) : 0;
+    const correctColor = correctPct >= 70 ? 'var(--green)' : (correctPct >= 50 ? 'var(--gold)' : 'var(--red)');
+    return `<tr>
+      <td>${i + 1}</td>
+      <td style="font-weight: 600;">${q.question}</td>
+      <td><span class="badge premium">${q.category || 'General'}</span></td>
+      <td>${q.difficulty || 'Easy'}</td>
+      <td>${q.times_asked || 0}</td>
+      <td style="color: ${correctColor};">${correctPct}%</td>
+      <td><button class="action-btn" onclick="editQuiz('${q.id}')">✏️</button><button class="action-btn delete" onclick="deleteQuiz('${q.id}')">🗑️</button></td>
+    </tr>`;
+  }).join('');
+}
+
+async function deleteQuiz(id) {
+  if (!confirm('Delete this question?')) return;
+  const { error } = await sb.from('quiz_questions').delete().eq('id', id);
+  if (error) { alert('❌ ' + error.message); return; }
+  alert('✅ Deleted');
+  loadAdminQuiz();
+}
+
+// ============ QUIZ FORM ============
+function openQuizForm(q) {
+  document.getElementById('quizFormError').style.display = 'none';
+  if (q) {
+    document.getElementById('quizFormTitle').textContent = 'Edit Question';
+    document.getElementById('quizId').value = q.id;
+    document.getElementById('quizQuestion').value = q.question || '';
+    document.getElementById('quizOptA').value = q.option_a || '';
+    document.getElementById('quizOptB').value = q.option_b || '';
+    document.getElementById('quizOptC').value = q.option_c || '';
+    document.getElementById('quizOptD').value = q.option_d || '';
+    document.getElementById('quizCorrect').value = q.correct_answer ?? 0;
+    document.getElementById('quizCategory').value = q.category || 'Basics';
+    document.getElementById('quizDifficulty').value = q.difficulty || 'Easy';
+  } else {
+    document.getElementById('quizFormTitle').textContent = 'Add Quiz Question';
+    ['quizId','quizQuestion','quizOptA','quizOptB','quizOptC','quizOptD'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('quizCorrect').value = '0';
+    document.getElementById('quizCategory').value = 'Basics';
+    document.getElementById('quizDifficulty').value = 'Easy';
+  }
+  openModal('quizForm');
+}
+
+async function editQuiz(id) {
+  const { data, error } = await sb.from('quiz_questions').select('*').eq('id', id).single();
+  if (error) { alert('❌ ' + error.message); return; }
+  openQuizForm(data);
+}
+
+async function saveQuizQ() {
+  const errEl = document.getElementById('quizFormError');
+  const btn = document.getElementById('saveQuizBtn');
+  errEl.style.display = 'none';
+  
+  const id = document.getElementById('quizId').value;
+  const question = document.getElementById('quizQuestion').value.trim();
+  const a = document.getElementById('quizOptA').value.trim();
+  const b = document.getElementById('quizOptB').value.trim();
+  const c = document.getElementById('quizOptC').value.trim();
+  const d = document.getElementById('quizOptD').value.trim();
+  
+  if (!question || !a || !b || !c || !d) {
+    errEl.textContent = '❌ All fields are required (question + 4 options)';
+    errEl.style.display = 'block';
+    return;
+  }
+  
+  btn.textContent = '⏳ Saving...';
+  btn.disabled = true;
+  
+  const data = {
+    question,
+    option_a: a, option_b: b, option_c: c, option_d: d,
+    correct_answer: parseInt(document.getElementById('quizCorrect').value),
+    category: document.getElementById('quizCategory').value.trim() || 'Basics',
+    difficulty: document.getElementById('quizDifficulty').value
+  };
+  
+  const result = id
+    ? await sb.from('quiz_questions').update(data).eq('id', id)
+    : await sb.from('quiz_questions').insert(data);
+  
+  btn.textContent = '💾 Save Question';
+  btn.disabled = false;
+  
+  if (result.error) {
+    errEl.textContent = '❌ ' + result.error.message;
+    errEl.style.display = 'block';
+    return;
+  }
+  
+  closeModal('quizForm');
+  alert('✅ Question ' + (id ? 'updated' : 'added') + '!');
+  loadAdminQuiz();
+}
+
+// ============ YOUTUBE VIDEOS LOADER ============
+async function loadAdminYoutube() {
+  if (!sb) return;
+  
+  const { data, error } = await sb.from('youtube_videos').select('*').order('display_order');
+  
+  const grid = document.getElementById('youtubeVideosGrid');
+  if (!grid) return;
+  
+  if (error || !data || data.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1; height: 150px;"><div class="empty-icon">📭</div><div>No videos yet. Click "+ Add Video" to start!</div></div>';
+    return;
+  }
+  
+  grid.innerHTML = data.map(v => {
+    const thumbnail = `https://img.youtube.com/vi/${v.youtube_id}/mqdefault.jpg`;
+    const youtubeWatchUrl = `https://www.youtube.com/watch?v=${v.youtube_id}`;
+    return `<div style="background: var(--bg-elevated); border-radius: 10px; overflow: hidden;">
+      <div style="position: relative; cursor: pointer;" onclick="window.open('${youtubeWatchUrl}', '_blank')">
+        <img src="${thumbnail}" style="width: 100%; height: 140px; object-fit: cover; display: block;" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #ff0000, #cc0000)'; this.parentElement.style.height='140px'; this.parentElement.style.display='flex'; this.parentElement.style.alignItems='center'; this.parentElement.style.justifyContent='center'; this.parentElement.innerHTML += '<span style=color:white;font-size:48px>▶</span>';">
+        ${!v.is_featured ? '<span style="position: absolute; top: 8px; left: 8px; padding: 3px 8px; background: rgba(0,0,0,0.7); color: var(--gold); border-radius: 4px; font-size: 9px; font-weight: 700;">HIDDEN</span>' : ''}
+      </div>
+      <div style="padding: 12px;">
+        <h4 style="font-size: 13px; margin-bottom: 4px; min-height: 36px;">${v.title}</h4>
+        <p style="font-size: 11px; color: var(--text-muted);">👁️ ${(v.views_count || 0).toLocaleString()} views</p>
+        <div style="display: flex; gap: 6px; margin-top: 10px;">
+          <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="editYoutube('${v.id}')">✏️ Edit</button>
+          <button class="action-btn delete" style="padding: 6px 10px;" onclick="deleteYoutube('${v.id}', '${v.title.replace(/'/g, "")}')">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function extractYoutubeId(url) {
+  if (!url) return null;
+  url = url.trim();
+  // Already just an ID (11 chars typical)
+  if (/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
+  // Various URL formats
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+function openYoutubeForm(video) {
+  document.getElementById('youtubeFormError').style.display = 'none';
+  if (video) {
+    document.getElementById('youtubeFormTitle').textContent = 'Edit YouTube Video';
+    document.getElementById('youtubeId').value = video.id;
+    document.getElementById('youtubeUrl').value = video.youtube_id || '';
+    document.getElementById('youtubeTitle').value = video.title || '';
+    document.getElementById('youtubeDescription').value = video.description || '';
+    document.getElementById('youtubeViews').value = video.views_count || 0;
+    document.getElementById('youtubeOrder').value = video.display_order || 0;
+    document.getElementById('youtubeFeatured').checked = !!video.is_featured;
+  } else {
+    document.getElementById('youtubeFormTitle').textContent = 'Add YouTube Video';
+    ['youtubeId','youtubeUrl','youtubeTitle','youtubeDescription'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('youtubeViews').value = '0';
+    document.getElementById('youtubeOrder').value = '0';
+    document.getElementById('youtubeFeatured').checked = true;
+  }
+  openModal('youtubeForm');
+}
+
+async function editYoutube(id) {
+  const { data, error } = await sb.from('youtube_videos').select('*').eq('id', id).single();
+  if (error) { alert('❌ ' + error.message); return; }
+  openYoutubeForm(data);
+}
+
+async function deleteYoutube(id, title) {
+  if (!confirm('Delete video "' + title + '"?')) return;
+  const { error } = await sb.from('youtube_videos').delete().eq('id', id);
+  if (error) { alert('❌ ' + error.message); return; }
+  alert('✅ Video deleted');
+  loadAdminYoutube();
+}
+
+async function saveYoutube() {
+  const errEl = document.getElementById('youtubeFormError');
+  const btn = document.getElementById('saveYoutubeBtn');
+  errEl.style.display = 'none';
+  
+  const id = document.getElementById('youtubeId').value;
+  const url = document.getElementById('youtubeUrl').value.trim();
+  const title = document.getElementById('youtubeTitle').value.trim();
+  
+  if (!url || !title) {
+    errEl.textContent = '❌ URL and Title are required';
+    errEl.style.display = 'block';
+    return;
+  }
+  
+  const ytId = extractYoutubeId(url);
+  if (!ytId) {
+    errEl.textContent = '❌ Invalid YouTube URL or video ID';
+    errEl.style.display = 'block';
+    return;
+  }
+  
+  btn.textContent = '⏳ Saving...';
+  btn.disabled = true;
+  
+  const data = {
+    youtube_id: ytId,
+    title,
+    description: document.getElementById('youtubeDescription').value.trim(),
+    views_count: parseInt(document.getElementById('youtubeViews').value) || 0,
+    display_order: parseInt(document.getElementById('youtubeOrder').value) || 0,
+    is_featured: document.getElementById('youtubeFeatured').checked,
+    thumbnail_url: `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`
+  };
+  
+  const result = id
+    ? await sb.from('youtube_videos').update(data).eq('id', id)
+    : await sb.from('youtube_videos').insert(data);
+  
+  btn.textContent = '💾 Save Video';
+  btn.disabled = false;
+  
+  if (result.error) {
+    errEl.textContent = '❌ ' + result.error.message;
+    errEl.style.display = 'block';
+    return;
+  }
+  
+  closeModal('youtubeForm');
+  alert('✅ Video ' + (id ? 'updated' : 'added') + '!');
+  loadAdminYoutube();
+}
+
+async function initCharts() {
+  // User Growth Chart - REAL DATA from signups
+  const ctx1 = document.getElementById('growthChart');
+  if (ctx1) {
+    const { data: users } = await sb.from('profiles').select('created_at').order('created_at', { ascending: true });
+    
+    // Group signups by week (last 4 weeks)
+    const now = new Date();
+    const weeks = [];
+    const weekLabels = [];
+    let cumulative = 0;
+    for (let i = 3; i >= 0; i--) {
+      const weekEnd = new Date(now.getTime() - (i * 7 * 86400000));
+      const count = (users || []).filter(u => new Date(u.created_at) <= weekEnd).length;
+      weeks.push(count);
+      weekLabels.push('Wk ' + (4 - i));
+    }
+    
+    new Chart(ctx1, {
+      type: 'line',
+      data: {
+        labels: weekLabels,
+        datasets: [{
+          label: 'Total Users',
+          data: weeks,
+          borderColor: '#f59e0b',
+          backgroundColor: 'rgba(245, 158, 11, 0.1)',
+          fill: true, tension: 0.4, pointRadius: 5, borderWidth: 2,
+          pointBackgroundColor: '#f59e0b'
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: '#1f2937' }, ticks: { color: '#6b7280', stepSize: 1 } },
+          x: { grid: { display: false }, ticks: { color: '#6b7280' } }
+        }
+      }
+    });
+  }
+  
+  // Traffic Chart - REAL DATA from trades by day
+  const ctx2 = document.getElementById('trafficChart');
+  if (ctx2) {
+    const { data: trades } = await sb.from('trades').select('created_at');
+    
+    // Group trades by day of week (M T W T F S S)
+    const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    const dayCounts = [0, 0, 0, 0, 0, 0, 0];
+    (trades || []).forEach(t => {
+      const day = new Date(t.created_at).getDay(); // 0=Sun, 1=Mon
+      const idx = day === 0 ? 6 : day - 1;
+      dayCounts[idx]++;
+    });
+    
+    new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: dayLabels,
+        datasets: [{
+          data: dayCounts,
+          backgroundColor: 'rgba(245, 158, 11, 0.7)',
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: '#1f2937' }, ticks: { color: '#6b7280', stepSize: 1 } },
+          x: { grid: { display: false }, ticks: { color: '#6b7280' } }
+        }
+      }
+    });
+  }
+}
+</script>
+
+<!-- ========== COURSE FORM MODAL ========== -->
+<div class="modal-overlay" id="modal-courseForm">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h2 id="courseFormTitle">Add New Course</h2>
+      <button class="close-btn" onclick="closeModal('courseForm')">×</button>
+    </div>
+    <div id="courseFormError" style="display: none; padding: 10px 14px; background: var(--red-bg); color: var(--red); border-radius: 8px; margin-bottom: 14px; font-size: 12px;"></div>
+    <input type="hidden" id="courseId">
+    <div class="form-group"><label>Title *</label><input type="text" id="courseTitle" placeholder="e.g. Forex Basics"></div>
+    <div class="form-group"><label>Description</label><textarea id="courseDescription" rows="3" placeholder="What will students learn..."></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label>Level</label><select id="courseLevel"><option>Beginner</option><option>Intermediate</option><option>Advanced</option><option>All Levels</option><option>Premium</option></select></div>
+      <div class="form-group"><label>Category</label><input type="text" id="courseCategory" placeholder="e.g. Technical, Risk"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Emoji Icon</label><input type="text" id="courseEmoji" placeholder="📊" maxlength="2" value="📚"></div>
+      <div class="form-group"><label>Color (1-6)</label><select id="courseColor"><option value="1">🟧 Gold</option><option value="2">🟦 Blue</option><option value="3">🟩 Green</option><option value="4">🟪 Purple</option><option value="5">🟥 Pink</option><option value="6">🔴 Red</option></select></div>
+    </div>
+    <div class="form-group"><label>YouTube URL</label><input type="url" id="courseYoutubeUrl" placeholder="https://youtube.com/..."></div>
+    <div class="form-row">
+      <div class="form-group"><label>Display Order</label><input type="number" id="courseOrder" value="0"></div>
+      <div class="form-group"><label>Enrollments</label><input type="number" id="courseEnrollments" value="0"></div>
+    </div>
+    <div style="display: flex; gap: 14px; margin-bottom: 14px;">
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;"><input type="checkbox" id="coursePublished" checked> Published</label>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;"><input type="checkbox" id="coursePremium"> Premium Only</label>
+    </div>
+    <div style="display: flex; gap: 8px; justify-content: flex-end;">
+      <button class="btn btn-secondary" onclick="closeModal('courseForm')">Cancel</button>
+      <button class="btn" onclick="saveCourse()" id="saveCourseBtn">💾 Save Course</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== NEWS FORM MODAL ========== -->
+<div class="modal-overlay" id="modal-newsForm">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="newsFormTitle">Add News Post</h2>
+      <button class="close-btn" onclick="closeModal('newsForm')">×</button>
+    </div>
+    <div id="newsFormError" style="display: none; padding: 10px 14px; background: var(--red-bg); color: var(--red); border-radius: 8px; margin-bottom: 14px; font-size: 12px;"></div>
+    <input type="hidden" id="newsId">
+    <div class="form-group"><label>Title *</label><input type="text" id="newsTitle" placeholder="e.g. FOMC Meeting Tomorrow"></div>
+    <div class="form-group"><label>Content</label><textarea id="newsContent" rows="4" placeholder="News details..."></textarea></div>
+    <div class="form-group">
+      <label>Priority</label>
+      <select id="newsPriority">
+        <option value="High">🔴 High Priority</option>
+        <option value="Medium" selected>🟡 Medium Priority</option>
+        <option value="Low">🟢 Low Priority</option>
+      </select>
+    </div>
+    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; margin-bottom: 14px;"><input type="checkbox" id="newsPublished" checked> Publish immediately</label>
+    <div style="display: flex; gap: 8px; justify-content: flex-end;">
+      <button class="btn btn-secondary" onclick="closeModal('newsForm')">Cancel</button>
+      <button class="btn" onclick="saveNews()" id="saveNewsBtn">💾 Save Post</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== QUIZ FORM MODAL ========== -->
+<div class="modal-overlay" id="modal-quizForm">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="quizFormTitle">Add Quiz Question</h2>
+      <button class="close-btn" onclick="closeModal('quizForm')">×</button>
+    </div>
+    <div id="quizFormError" style="display: none; padding: 10px 14px; background: var(--red-bg); color: var(--red); border-radius: 8px; margin-bottom: 14px; font-size: 12px;"></div>
+    <input type="hidden" id="quizId">
+    <div class="form-group"><label>Question *</label><textarea id="quizQuestion" rows="2" placeholder="What does 'pip' stand for?"></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label>Option A</label><input type="text" id="quizOptA" placeholder="Option A"></div>
+      <div class="form-group"><label>Option B</label><input type="text" id="quizOptB" placeholder="Option B"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Option C</label><input type="text" id="quizOptC" placeholder="Option C"></div>
+      <div class="form-group"><label>Option D</label><input type="text" id="quizOptD" placeholder="Option D"></div>
+    </div>
+    <div class="form-group">
+      <label>Correct Answer *</label>
+      <select id="quizCorrect">
+        <option value="0">Option A</option>
+        <option value="1">Option B</option>
+        <option value="2">Option C</option>
+        <option value="3">Option D</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Category</label><input type="text" id="quizCategory" placeholder="e.g. Basics, Risk" value="Basics"></div>
+      <div class="form-group"><label>Difficulty</label><select id="quizDifficulty"><option>Easy</option><option>Medium</option><option>Hard</option></select></div>
+    </div>
+    <div style="display: flex; gap: 8px; justify-content: flex-end;">
+      <button class="btn btn-secondary" onclick="closeModal('quizForm')">Cancel</button>
+      <button class="btn" onclick="saveQuizQ()" id="saveQuizBtn">💾 Save Question</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== YOUTUBE FORM MODAL ========== -->
+<div class="modal-overlay" id="modal-youtubeForm">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="youtubeFormTitle">Add YouTube Video</h2>
+      <button class="close-btn" onclick="closeModal('youtubeForm')">×</button>
+    </div>
+    <div id="youtubeFormError" style="display: none; padding: 10px 14px; background: var(--red-bg); color: var(--red); border-radius: 8px; margin-bottom: 14px; font-size: 12px;"></div>
+    <input type="hidden" id="youtubeId">
+    <div class="form-group">
+      <label>YouTube URL or Video ID *</label>
+      <input type="text" id="youtubeUrl" placeholder="https://youtube.com/watch?v=... or just video ID">
+      <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Paste full URL or just the video ID (e.g. dQw4w9WgXcQ)</div>
+    </div>
+    <div class="form-group"><label>Title *</label><input type="text" id="youtubeTitle" placeholder="e.g. XAU/USD Live Analysis"></div>
+    <div class="form-group"><label>Description</label><textarea id="youtubeDescription" rows="2" placeholder="Brief description"></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label>Views Count</label><input type="number" id="youtubeViews" value="0"></div>
+      <div class="form-group"><label>Display Order</label><input type="number" id="youtubeOrder" value="0"></div>
+    </div>
+    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; margin-bottom: 14px;"><input type="checkbox" id="youtubeFeatured" checked> Featured (show on website)</label>
+    <div style="display: flex; gap: 8px; justify-content: flex-end;">
+      <button class="btn btn-secondary" onclick="closeModal('youtubeForm')">Cancel</button>
+      <button class="btn" onclick="saveYoutube()" id="saveYoutubeBtn">💾 Save Video</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
