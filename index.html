@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>S M Shahid Shah — Forex Hub</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#f59e0b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Forex Hub">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -6301,5 +6308,48 @@
   }, 5 * 60 * 1000); // 5 minutes
 </script>
 
+<!-- PWA Install Banner -->
+<div id="pwaInstallBanner" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;background:var(--bg-card);border:1px solid var(--gold);border-radius:14px;padding:14px 20px;box-shadow:0 8px 30px rgba(0,0,0,0.4);display:none;align-items:center;gap:14px;max-width:340px;width:90%">
+  <div style="width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#0a0e1a;font-size:16px;flex-shrink:0">FX</div>
+  <div style="flex:1">
+    <div style="font-size:13px;font-weight:700;color:var(--text-primary)">Install Forex Hub App</div>
+    <div style="font-size:11px;color:var(--text-muted)">Add to home screen for quick access</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <button id="pwaInstallBtn" style="background:var(--gold);border:none;color:#0a0e1a;padding:7px 14px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap">Install</button>
+    <button onclick="document.getElementById('pwaInstallBanner').style.display='none'" style="background:transparent;border:none;color:var(--text-muted);font-size:11px;cursor:pointer;font-family:inherit">Not now</button>
+  </div>
+</div>
+
+<script>
+// Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+
+// PWA Install Prompt
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const banner = document.getElementById('pwaInstallBanner');
+  if (banner) banner.style.display = 'flex';
+});
+
+document.getElementById('pwaInstallBtn')?.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('pwaInstallBanner').style.display = 'none';
+});
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('pwaInstallBanner').style.display = 'none';
+  deferredPrompt = null;
+});
+</script>
 </body>
 </html>
