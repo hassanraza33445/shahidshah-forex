@@ -1949,7 +1949,7 @@
           <div class="card" style="padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:#ec4899" id="nhSU">0</div><div style="font-size:9px;color:var(--text-muted);text-transform:uppercase;margin-top:2px">US News</div></div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 320px;gap:14px" id="nhLayout">
+        <div style="display:grid;grid-template-columns:1fr 320px;gap:14px;transition:all 0.3s" id="nhLayout">
           <!-- Left Feed -->
           <div>
             <div class="card" style="padding:0;overflow:hidden">
@@ -6090,7 +6090,10 @@
   // ============ LISTEN FOR AUTH STATE CHANGES ============
   if (sb) {
     sb.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+      if (event === 'PASSWORD_RECOVERY') {
+        // Show password reset form instead of logging in
+        showPasswordResetForm();
+      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         loadUserProfile();
       } else if (event === 'SIGNED_OUT') {
         currentUser = null;
@@ -6102,6 +6105,68 @@
   
   // ============================================================
   // ============ END SUPABASE AUTH ============
+
+  // ============ PASSWORD RESET FORM ============
+  function showPasswordResetForm() {
+    // Create modal if not exists
+    let modal = document.getElementById('modal-password-reset');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'modal-password-reset';
+      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px';
+      modal.innerHTML = `
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:32px;width:100%;max-width:400px;text-align:center">
+          <div style="width:56px;height:56px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 16px">🔐</div>
+          <h2 style="font-size:20px;font-weight:800;margin-bottom:8px">Set New Password</h2>
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:24px">Enter your new password below</p>
+          <div style="text-align:left;margin-bottom:14px">
+            <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">New Password</label>
+            <input type="password" id="newPasswordInput" placeholder="Min 8 characters" style="width:100%;padding:12px 14px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:14px;font-family:inherit;outline:none">
+          </div>
+          <div style="text-align:left;margin-bottom:20px">
+            <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Confirm Password</label>
+            <input type="password" id="confirmPasswordInput" placeholder="Re-enter password" style="width:100%;padding:12px 14px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:14px;font-family:inherit;outline:none">
+          </div>
+          <div id="resetMsg" style="font-size:12px;margin-bottom:12px;min-height:20px"></div>
+          <button onclick="submitNewPassword()" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0a0e1a;border:none;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit">Update Password</button>
+        </div>`;
+      document.body.appendChild(modal);
+    }
+    modal.style.display = 'flex';
+    // Make sure landing page is hidden
+    const landing = document.getElementById('landingPage');
+    if (landing) landing.style.display = 'none';
+  }
+
+  async function submitNewPassword() {
+    const newPass = document.getElementById('newPasswordInput')?.value;
+    const confirmPass = document.getElementById('confirmPasswordInput')?.value;
+    const msg = document.getElementById('resetMsg');
+
+    if (!newPass || newPass.length < 8) {
+      msg.innerHTML = '<span style="color:var(--red)">❌ Password must be at least 8 characters</span>';
+      return;
+    }
+    if (newPass !== confirmPass) {
+      msg.innerHTML = '<span style="color:var(--red)">❌ Passwords do not match</span>';
+      return;
+    }
+
+    msg.innerHTML = '<span style="color:var(--text-muted)">Updating...</span>';
+
+    try {
+      const { error } = await sb.auth.updateUser({ password: newPass });
+      if (error) throw error;
+      msg.innerHTML = '<span style="color:var(--green)">✅ Password updated successfully!</span>';
+      setTimeout(() => {
+        document.getElementById('modal-password-reset').style.display = 'none';
+        loadUserProfile();
+      }, 1500);
+    } catch(e) {
+      msg.innerHTML = `<span style="color:var(--red)">❌ ${e.message}</span>`;
+    }
+  }
+  // ============================================================
   // ============================================================
   
   // ============ INIT ============
