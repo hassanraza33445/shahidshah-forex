@@ -5944,17 +5944,17 @@
   // ============ LOGOUT ============
   async function logoutUser() {
     if (!confirm('Are you sure you want to logout?')) return;
-    
     try {
       await sb.auth.signOut();
       currentUser = null;
       currentProfile = null;
-      trades = [];  // Clear trades on logout
+      trades = [];
       updateAuthUI();
       updateDashboard();
       updateTradesTable();
       buildCalendar();
-      alert('✅ Logged out successfully');
+      // Show landing page on logout
+      showLandingPage();
     } catch (error) {
       console.error('Logout error:', error);
       alert('Logout failed: ' + error.message);
@@ -6098,14 +6098,17 @@
   if (sb) {
     sb.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY') {
-        // Show password reset form instead of logging in
         showPasswordResetForm();
       } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         loadUserProfile();
+        // Hide landing page on login
+        hideLandingAfterLogin();
       } else if (event === 'SIGNED_OUT') {
         currentUser = null;
         currentProfile = null;
         updateAuthUI();
+        // Show landing page on logout
+        showLandingPage();
       }
     });
   }
