@@ -745,7 +745,7 @@
 <!-- ========================================================================
      LANDING PAGE - Shows on first visit (sessionStorage check)
      ======================================================================== -->
-<div id="landingPage" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--bg-main);overflow-y:auto;overflow-x:hidden;">
+<div id="landingPage" style="display:block;position:fixed;inset:0;z-index:9999;background:var(--bg-main);overflow-y:auto;overflow-x:hidden;">
   <!-- Top Navigation -->
   <nav style="position:sticky;top:0;z-index:100;background:rgba(10,14,26,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;">
     <div style="display:flex;align-items:center;gap:10px;">
@@ -1077,6 +1077,77 @@
         <p style="font-size:14px;color:var(--gold);font-weight:600;margin-bottom:8px;">🔒 Sign Up Required</p>
         <p style="font-size:12px;color:var(--text-muted);">Free signup gives you full access to all these tools. No credit card needed.</p>
       </div>
+
+      <!-- World News Hub Preview -->
+      <div style="margin-top:30px;background:linear-gradient(135deg,rgba(239,68,68,0.04),var(--bg-card));border:1px solid rgba(239,68,68,0.2);border-radius:16px;padding:24px;text-align:left;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:20px;">📡</span>
+            <div>
+              <div style="font-size:15px;font-weight:800;color:var(--text-primary);">World News Hub</div>
+              <div style="font-size:11px;color:var(--text-muted);">Live global events • Forex impact analysis</div>
+            </div>
+            <span style="background:var(--red);color:white;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;animation:pulse 2s infinite;">LIVE</span>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span style="font-size:10px;padding:4px 10px;background:rgba(239,68,68,0.1);color:var(--red);border-radius:20px;font-weight:700;">⚔️ Conflict</span>
+            <span style="font-size:10px;padding:4px 10px;background:rgba(139,92,246,0.1);color:var(--purple);border-radius:20px;font-weight:700;">🌍 Geopolitics</span>
+            <span style="font-size:10px;padding:4px 10px;background:rgba(245,158,11,0.1);color:var(--gold);border-radius:20px;font-weight:700;">💹 Forex</span>
+            <span style="font-size:10px;padding:4px 10px;background:rgba(236,72,153,0.1);color:#ec4899;border-radius:20px;font-weight:700;">🇺🇸 US News</span>
+          </div>
+        </div>
+        <!-- Fake news items -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="padding:12px;background:var(--bg-elevated);border-radius:10px;border-left:3px solid var(--red);">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap;">
+                <span style="font-size:8px;font-weight:800;padding:2px 6px;border-radius:3px;background:rgba(239,68,68,0.12);color:var(--red);text-transform:uppercase;">⚔️ Conflict</span>
+                <span style="font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:rgba(249,115,22,0.2);color:#f97316;">S3</span>
+                <span style="margin-left:auto;font-size:9px;color:var(--text-muted);">23 min ago</span>
+              </div>
+              <div style="font-size:12px;font-weight:600;color:var(--text-primary);line-height:1.4;">Israel Orders Evacuation of 9 Towns in Southern Lebanon</div>
+              <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">📍 Southern Lebanon · BBC World</div>
+            </div>
+            <div style="padding:12px;background:var(--bg-elevated);border-radius:10px;border-left:3px solid var(--purple);">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap;">
+                <span style="font-size:8px;font-weight:800;padding:2px 6px;border-radius:3px;background:rgba(139,92,246,0.12);color:var(--purple);text-transform:uppercase;">🌍 Geopolitics</span>
+                <span style="font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:rgba(245,158,11,0.2);color:#f59e0b;">S2</span>
+                <span style="margin-left:auto;font-size:9px;color:var(--text-muted);">1 hr ago</span>
+              </div>
+              <div style="font-size:12px;font-weight:600;color:var(--text-primary);line-height:1.4;">US Treasury Imposes Sanctions on Iran Weapons Network</div>
+              <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">📍 Washington · Al Jazeera</div>
+            </div>
+            <div style="padding:12px;background:var(--bg-elevated);border-radius:10px;border-left:3px solid #ec4899;">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap;">
+                <span style="font-size:8px;font-weight:800;padding:2px 6px;border-radius:3px;background:rgba(236,72,153,0.12);color:#ec4899;text-transform:uppercase;">🇺🇸 US News</span>
+                <span style="font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:rgba(245,158,11,0.2);color:#f59e0b;">S2</span>
+                <span style="margin-left:auto;font-size:9px;color:var(--text-muted);">2 hr ago</span>
+              </div>
+              <div style="font-size:12px;font-weight:600;color:var(--text-primary);line-height:1.4;">Trump Announces New Tariffs on Chinese Tech Imports</div>
+              <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">📍 Washington · NPR News</div>
+            </div>
+          </div>
+          <!-- Right side: Impact panel -->
+          <div>
+            <div style="background:var(--bg-elevated);border-radius:10px;padding:14px;margin-bottom:10px;">
+              <div style="font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:10px;">💹 Forex Market Impact</div>
+              <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:11px;"><span style="font-weight:700;color:var(--text-secondary);">XAU/USD</span><span style="color:var(--green);font-weight:600;">▲ Bullish — Risk-off</span></div>
+              <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:11px;"><span style="font-weight:700;color:var(--text-secondary);">EUR/USD</span><span style="color:var(--red);font-weight:600;">▼ Bearish — Trade war</span></div>
+              <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:11px;"><span style="font-weight:700;color:var(--text-secondary);">USD/JPY</span><span style="color:var(--red);font-weight:600;">▼ Bearish — Safe haven JPY</span></div>
+              <div style="display:flex;justify-content:space-between;padding:7px 0;font-size:11px;"><span style="font-weight:700;color:var(--text-secondary);">USD Index</span><span style="color:var(--green);font-weight:600;">▲ Bullish — Geopolitical</span></div>
+            </div>
+            <div style="background:var(--bg-elevated);border-radius:10px;padding:12px;">
+              <div style="font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">📊 Today's Events</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;text-align:center;">
+                <div style="background:var(--bg-card);border-radius:8px;padding:8px;"><div style="font-size:18px;font-weight:800;color:var(--red);">12</div><div style="font-size:9px;color:var(--text-muted);">CONFLICT</div></div>
+                <div style="background:var(--bg-card);border-radius:8px;padding:8px;"><div style="font-size:18px;font-weight:800;color:var(--purple);">8</div><div style="font-size:9px;color:var(--text-muted);">GEOPOLITICS</div></div>
+                <div style="background:var(--bg-card);border-radius:8px;padding:8px;"><div style="font-size:18px;font-weight:800;color:var(--gold);">15</div><div style="font-size:9px;color:var(--text-muted);">FOREX</div></div>
+                <div style="background:var(--bg-card);border-radius:8px;padding:8px;"><div style="font-size:18px;font-weight:800;color:#ec4899;">9</div><div style="font-size:9px;color:var(--text-muted);">US NEWS</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1261,7 +1332,7 @@
   }
 </style>
 
-<div class="app">
+<div class="app" id="mainApp" style="display:none;">
 <div id="sidebarOverlay" onclick="toggleSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:180;"></div>
   
   <!-- ========== SIDEBAR ========== -->
@@ -1292,6 +1363,7 @@
       <div class="menu-item" data-page="analysis" onclick="showPage('analysis', this)"><span class="menu-icon">📉</span>Trades Analysis</div>
       <div class="menu-item" data-page="charts" onclick="showPage('charts', this)"><span class="menu-icon">📊</span>Live Charts</div>
       <div class="menu-item" data-page="news" onclick="showPage('news', this)"><span class="menu-icon">📰</span>Economic News<span class="dot"></span></div>
+      <div class="menu-item" data-page="newshub" onclick="showPage('newshub', this)"><span class="menu-icon">📡</span>World News Hub<span style="margin-left:auto;font-size:8px;padding:2px 6px;background:var(--red);color:white;border-radius:10px;font-weight:700;animation:pulse 2s infinite;">LIVE</span></div>
       <div class="menu-item" data-page="strength" onclick="showPage('strength', this)"><span class="menu-icon">💪</span>Currency Strength</div>
       <div class="menu-item" data-page="market" onclick="showPage('market', this)"><span class="menu-icon">🌐</span>Live Market</div>
       
@@ -1809,6 +1881,231 @@
         </div>
       </div>
       
+      <!-- ========== WORLD NEWS HUB ========== -->
+      <div class="page" id="page-newshub">
+        <style>
+          .nh-tabs{display:flex;gap:4px;background:var(--bg-elevated);padding:4px;border-radius:10px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none}
+          .nh-tabs::-webkit-scrollbar{display:none}
+          .nh-tab{flex-shrink:0;padding:7px 14px;font-size:11px;font-weight:700;color:var(--text-muted);cursor:pointer;border-radius:7px;border:none;background:transparent;transition:all .2s;font-family:inherit;white-space:nowrap}
+          .nh-tab.active{background:var(--gold);color:#0a0e1a}
+          .nh-nitem{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+          .nh-nitem:hover{background:var(--bg-elevated)}
+          .nh-nitem.active{background:var(--bg-elevated);border-left:3px solid var(--gold)}
+          .nh-cat{font-size:9px;font-weight:800;padding:2px 7px;border-radius:3px;text-transform:uppercase}
+          .nh-sev{font-size:9px;font-weight:800;padding:2px 5px;border-radius:3px}
+          .nh-s1{background:rgba(16,185,129,.2);color:#10b981}.nh-s2{background:rgba(245,158,11,.2);color:#f59e0b}.nh-s3{background:rgba(249,115,22,.2);color:#f97316}.nh-s4{background:rgba(239,68,68,.2);color:#ef4444}
+          .nh-impact-row{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--border);font-size:12px}
+          .nh-impact-row:last-child{border-bottom:none}
+          .nh-bull{color:var(--green);font-weight:600}.nh-bear{color:var(--red);font-weight:600}.nh-neut{color:var(--text-muted)}
+          .nh-fcard{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s;margin-bottom:10px}
+          .nh-fcard:hover{border-color:var(--gold)}
+          .nh-spin{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto 8px}
+          .nh-loading{padding:32px;text-align:center;color:var(--text-muted);font-size:12px}
+          .nh-err{padding:14px;background:var(--red-bg);border:1px solid rgba(239,68,68,.2);border-radius:10px;color:var(--red);font-size:12px;text-align:center}
+          .nh-kw-chip{display:inline-flex;align-items:center;gap:4px;background:var(--gold-bg);color:var(--gold);padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;margin:2px}
+          .nh-kw-chip button{background:none;border:none;color:var(--gold);cursor:pointer;font-size:12px;padding:0;line-height:1}
+        </style>
+
+        <!-- Header -->
+        <div class="card" style="margin-bottom:14px;background:linear-gradient(135deg,rgba(239,68,68,0.05),var(--bg-card));border-color:rgba(239,68,68,0.2)">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="font-size:22px">📡</div>
+              <div>
+                <div style="font-size:16px;font-weight:800">World News Hub</div>
+                <div style="font-size:11px;color:var(--text-muted)">Live global events • Forex impact • Real-time alerts</div>
+              </div>
+              <span style="background:var(--red);color:white;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;animation:pulse 2s infinite">LIVE</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <span style="font-size:11px;color:var(--text-muted)" id="nhLastUp">-</span>
+              <button onclick="nhToggleNotif()" style="background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-secondary);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit">🔔 Alerts</button>
+              <button onclick="nhLoad()" id="nhRefBtn" style="background:var(--gold);border:none;color:#0a0e1a;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit">🔄 Refresh</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notification Panel -->
+        <div class="card" id="nhNotifPanel" style="display:none;margin-bottom:14px">
+          <div style="font-size:12px;font-weight:700;margin-bottom:10px">🔔 Alert Settings</div>
+          <div style="margin-bottom:10px">
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Watch Keywords</div>
+            <div id="nhKwChips" style="margin-bottom:8px"></div>
+            <div style="display:flex;gap:6px">
+              <input id="nhKwInput" placeholder="e.g. Iran, Gold, Trump..." class="form-control" style="font-size:12px" onkeydown="if(event.key==='Enter')nhAddKw()">
+              <button onclick="nhAddKw()" class="btn btn-primary" style="padding:6px 12px;font-size:11px">+ Add</button>
+            </div>
+          </div>
+          <div id="nhNotifStatus" style="font-size:11px;text-align:center">
+            <button onclick="nhRequestNotif()" class="btn" style="width:100%;background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-secondary);padding:8px;font-size:12px">Enable Browser Notifications</button>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
+          <div class="card" style="padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--red)" id="nhSC">0</div><div style="font-size:9px;color:var(--text-muted);text-transform:uppercase;margin-top:2px">Conflict</div></div>
+          <div class="card" style="padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--purple)" id="nhSG">0</div><div style="font-size:9px;color:var(--text-muted);text-transform:uppercase;margin-top:2px">Geopolitics</div></div>
+          <div class="card" style="padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--gold)" id="nhSF">0</div><div style="font-size:9px;color:var(--text-muted);text-transform:uppercase;margin-top:2px">Forex</div></div>
+          <div class="card" style="padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:#ec4899" id="nhSU">0</div><div style="font-size:9px;color:var(--text-muted);text-transform:uppercase;margin-top:2px">US News</div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 320px;gap:14px" id="nhLayout">
+          <!-- Left Feed -->
+          <div>
+            <div class="card" style="padding:0;overflow:hidden">
+              <div style="padding:10px;border-bottom:1px solid var(--border);background:var(--bg-card)">
+                <div class="nh-tabs">
+                  <button class="nh-tab active" onclick="nhSetFilter('all',this)">📡 All</button>
+                  <button class="nh-tab" onclick="nhSetFilter('geopolitics',this)">🌍 Geo</button>
+                  <button class="nh-tab" onclick="nhSetFilter('conflict',this)">⚔️ War</button>
+                  <button class="nh-tab" onclick="nhSetFilter('forex',this)">💹 Forex</button>
+                  <button class="nh-tab" onclick="nhSetFilter('fundamental',this)">📊 Fund</button>
+                  <button class="nh-tab" onclick="nhSetFilter('usnews',this)">🇺🇸 US</button>
+                  <button class="nh-tab" onclick="nhSetFilter('political',this)">🏛️ Pol</button>
+                  <button class="nh-tab" onclick="nhSetFilter('disaster',this)">🌪️ Dis</button>
+                </div>
+              </div>
+              <div style="padding:8px 14px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text-muted);display:flex;justify-content:space-between">
+                <span><b id="nhEC" style="color:var(--gold)">0</b> events</span><span>Auto-refresh: 3min</span>
+              </div>
+              <div id="nhList" style="max-height:550px;overflow-y:auto">
+                <div class="nh-loading"><div class="nh-spin"></div>Fetching live news...</div>
+              </div>
+            </div>
+          </div>
+          <!-- Right Panel -->
+          <div>
+            <div class="card" id="nhDetail" style="margin-bottom:14px">
+              <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:140px;color:var(--text-muted);gap:8px;font-size:12px;text-align:center">
+                <div style="font-size:28px">📰</div><div>Click any news to read</div>
+              </div>
+            </div>
+            <div class="card" style="padding:0;overflow:hidden;margin-bottom:14px">
+              <div style="padding:12px 14px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700">💹 Forex Impact</div>
+              <div id="nhImpact"><div class="nh-impact-row"><span style="font-weight:700;color:var(--text-secondary)">Loading...</span></div></div>
+            </div>
+            <div class="card" style="padding:14px">
+              <div style="font-size:12px;font-weight:700;margin-bottom:10px">📈 Forex & Fundamental</div>
+              <div id="nhForex"><div class="nh-loading" style="height:60px"><div class="nh-spin"></div></div></div>
+            </div>
+          </div>
+        </div>
+        <div id="nhToasts" style="position:fixed;bottom:80px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:300px"></div>
+
+        <script>
+        const NH_PROXY = 'https://forex-proxy-fc5v.vercel.app/api/news';
+        const NH_CATS={conflict:{bg:'rgba(239,68,68,0.12)',c:'var(--red)',l:'⚔️ Conflict',w:['war','strike','attack','military','troops','bomb','missile','killed','wounded','battle','invasion','explosion','coup','rebel','terror','drone','army','shooting','hostage','airstrike','shelling']},geopolitics:{bg:'rgba(139,92,246,0.12)',c:'var(--purple)',l:'🌍 Geopolitics',w:['geopolit','nato','sanction','diplomatic','foreign policy','alliance','treaty','un security','g7','g20','territorial','nuclear deal','peace talks','ceasefire','strait','blockade','embargo']},forex:{bg:'rgba(245,158,11,0.12)',c:'var(--gold)',l:'💹 Forex',w:['forex','xau/usd','xauusd','eurusd','gbpusd','usdjpy','gold price','currency','dollar index','pip','spread','fx market','forexlive','fxstreet','exchange rate']},fundamental:{bg:'rgba(20,184,166,0.12)',c:'#14b8a6',l:'📊 Fundamental',w:['gdp','inflation','cpi','ppi','nonfarm','interest rate','federal reserve','fed rate','central bank','monetary policy','rate hike','rate cut','fomc','ecb','boe','unemployment','jobs report','retail sales']},usnews:{bg:'rgba(236,72,153,0.12)',c:'#ec4899',l:'🇺🇸 US News',w:['trump','biden','white house','congress','senate','us economy','federal','pentagon','wall street','new york','california','washington dc','republican','democrat','tariff']},political:{bg:'rgba(59,130,246,0.12)',c:'var(--blue)',l:'🏛️ Political',w:['president','parliament','election','vote','government','minister','prime minister','summit','policy','political','ruling party','opposition']},disaster:{bg:'rgba(249,115,22,0.12)',c:'var(--orange)',l:'🌪️ Disaster',w:['earthquake','flood','hurricane','cyclone','tsunami','storm','wildfire','drought','eruption','disaster','emergency','rescue','evacuate','death toll','tornado']},economic:{bg:'rgba(16,185,129,0.12)',c:'var(--green)',l:'💰 Economic',w:['economy','market','stock','oil price','crude','opec','budget','fiscal','imf','world bank','trade deal','recession']}};
+        let nhNews=[],nhFilter='all',nhFetching=false;
+        let nhKws=JSON.parse(localStorage.getItem('nhKws')||'["Iran","Gold","Trump","War","Fed"]');
+        let nhNotifOn=false,nhSeen=new Set();
+
+        function nhCls(t,d){const tx=(t+' '+d).toLowerCase();const o=['forex','fundamental','usnews','geopolitics','conflict','disaster','political','economic'];for(const c of o){if(NH_CATS[c].w.some(w=>tx.includes(w)))return c;}return'political';}
+        function nhSevFn(t,d,cat){const tx=(t+' '+d).toLowerCase();const h=['killed','dead','explosion','attack','strike','crisis','massive','critical'];const m=['injured','conflict','tension','warning'];if(['conflict','disaster'].includes(cat)){if(h.filter(w=>tx.includes(w)).length>=2)return'S4';if(h.some(w=>tx.includes(w)))return'S3';if(m.some(w=>tx.includes(w)))return'S2';return'S1';}if(h.some(w=>tx.includes(w)))return'S2';return'S1';}
+        function nhLoc(t,d){const pl=['Ukraine','Russia','Iran','Israel','Gaza','Syria','Iraq','China','Taiwan','North Korea','Pakistan','India','Washington','London','France','Germany','Turkey','Saudi Arabia','Yemen','Sudan','Libya','Afghanistan','Somalia','Panama','Mexico','Japan','South Korea','NATO'];const tx=t+' '+d;for(const p of pl)if(tx.includes(p))return p;return'Global';}
+        function nhAgo(d){const s=Math.floor((Date.now()-new Date(d))/1000);if(s<60)return'just now';if(s<3600)return Math.floor(s/60)+' min ago';if(s<86400)return Math.floor(s/3600)+' hr ago';return Math.floor(s/86400)+'d ago';}
+
+        async function nhLoad(){
+          if(nhFetching)return;nhFetching=true;
+          const btn=document.getElementById('nhRefBtn');if(btn){btn.disabled=true;btn.textContent='⏳';}
+          document.getElementById('nhList').innerHTML='<div class="nh-loading"><div class="nh-spin"></div>Fetching live news...</div>';
+          try{
+            const r=await fetch(NH_PROXY,{signal:AbortSignal.timeout(9000)});
+            const d=await r.json();
+            if(!d.success||!d.items?.length)throw new Error(d.error||'No data');
+            nhNews=d.items.map(n=>({...n,cat:nhCls(n.title,n.desc),sv:nhSevFn(n.title,n.desc,nhCls(n.title,n.desc)),lc:nhLoc(n.title,n.desc),id:n.title.slice(0,40).replace(/[^a-zA-Z0-9]/g,'').toLowerCase()}));
+            nhNews.forEach(n=>{if(!nhSeen.has(n.id)){nhSeen.add(n.id);nhCheckNotif(n);}});
+            const now=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+            const el=document.getElementById('nhLastUp');if(el)el.textContent='Updated '+now;
+            nhUpdateStats();nhRender();nhRenderForex();nhUpdateImpact();
+          }catch(e){
+            document.getElementById('nhList').innerHTML=`<div class="nh-err" style="margin:12px">❌ Could not load news<br><small style="opacity:.7">${e.message}</small></div>`;
+          }finally{
+            nhFetching=false;if(btn){btn.disabled=false;btn.textContent='🔄 Refresh';}
+          }
+        }
+
+        function nhUpdateStats(){
+          const s=id=>{const el=document.getElementById(id);if(el)el.textContent=nhNews.filter(n=>n.cat===id.replace('nhS','').toLowerCase()).length;};
+          const ec=document.getElementById('nhEC');if(ec)ec.textContent=nhNews.length;
+          ['nhSC','nhSG','nhSF','nhSU'].forEach(id=>{
+            const map={nhSC:'conflict',nhSG:'geopolitics',nhSF:'forex',nhSU:'usnews'};
+            const el=document.getElementById(id);if(el)el.textContent=nhNews.filter(n=>n.cat===map[id]).length;
+          });
+        }
+
+        function nhUpdateImpact(){
+          const cc=nhNews.filter(n=>n.cat==='conflict').length;
+          const me=nhNews.some(n=>['iran','israel','gaza','saudi','yemen'].some(w=>n.title.toLowerCase().includes(w)));
+          const tr=nhNews.some(n=>['tariff','trade war'].some(w=>n.title.toLowerCase().includes(w)));
+          const uk=nhNews.some(n=>['ukraine','russia'].some(w=>n.title.toLowerCase().includes(w)));
+          const fed=nhNews.some(n=>['federal reserve','fomc','rate hike','rate cut'].some(w=>n.title.toLowerCase().includes(w)));
+          const el=document.getElementById('nhImpact');if(!el)return;
+          el.innerHTML=`
+            <div class="nh-impact-row"><span style="font-weight:700;color:var(--text-secondary)">XAU/USD</span><span class="${cc>4||me?'nh-bull':'nh-neut'}">${cc>4||me?'▲ Bullish — Risk-off':'— Neutral'}</span></div>
+            <div class="nh-impact-row"><span style="font-weight:700;color:var(--text-secondary)">EUR/USD</span><span class="${tr?'nh-bear':fed?'nh-bull':'nh-neut'}">${tr?'▼ Bearish — Trade war':fed?'▲ Watch Fed signals':'— Neutral'}</span></div>
+            <div class="nh-impact-row"><span style="font-weight:700;color:var(--text-secondary)">USD/JPY</span><span class="${cc>3||uk?'nh-bear':'nh-neut'}">${cc>3||uk?'▼ Bearish — Safe haven JPY':'— Neutral'}</span></div>
+            <div class="nh-impact-row"><span style="font-weight:700;color:var(--text-secondary)">USD Index</span><span class="${me||cc>5?'nh-bull':'nh-neut'}">${me||cc>5?'▲ Bullish — Geopolitical':'— Neutral'}</span></div>
+            <div class="nh-impact-row"><span style="font-weight:700;color:var(--text-secondary)">Oil (WTI)</span><span class="${me||uk?'nh-bull':'nh-neut'}">${me||uk?'▲ Bullish — Supply risk':'— Neutral'}</span></div>`;
+        }
+
+        function nhRender(){
+          const items=nhFilter==='all'?nhNews:nhNews.filter(n=>n.cat===nhFilter);
+          const el=document.getElementById('nhList');if(!el)return;
+          if(!items.length){el.innerHTML='<div class="nh-loading">No news in this category</div>';return;}
+          el.innerHTML=items.map((item)=>{
+            const idx=nhNews.indexOf(item);const s=NH_CATS[item.cat]||NH_CATS.political;
+            return`<div class="nh-nitem" onclick="nhDetail(${idx})" id="nhni${idx}">
+              <div style="display:flex;align-items:center;gap:5px;margin-bottom:5px;flex-wrap:wrap">
+                <span class="nh-cat" style="background:${s.bg};color:${s.c}">${s.l}</span>
+                <span class="nh-sev nh-${item.sv.toLowerCase()}">${item.sv}</span>
+                <span style="margin-left:auto;font-size:9px;color:var(--text-muted)">${nhAgo(item.date)}</span>
+              </div>
+              <div style="font-size:12px;font-weight:600;line-height:1.4;margin-bottom:4px;color:var(--text-primary)">${item.title}</div>
+              <div style="font-size:10px;color:var(--text-muted);display:flex;gap:4px">📍 ${item.lc}<span style="margin-left:auto">${item.source}</span></div>
+            </div>`;
+          }).join('');
+        }
+
+        function nhRenderForex(){
+          const pairs=['XAU/USD','EUR/USD','USD/JPY','GBP/USD','USD/CAD','AUD/USD'];
+          const items=nhNews.filter(n=>n.cat==='forex'||n.cat==='fundamental').slice(0,4);
+          const el=document.getElementById('nhForex');if(!el)return;
+          if(!items.length){el.innerHTML='<div style="font-size:12px;color:var(--text-muted);text-align:center;padding:10px">No forex news yet</div>';return;}
+          el.innerHTML=items.map((n,i)=>`<div class="nh-fcard" onclick="nhDetail(${nhNews.indexOf(n)})"><div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-bottom:4px">${pairs[i%6]}</div><div style="font-size:12px;color:var(--text-primary);line-height:1.3">${n.title.slice(0,65)}...</div><div style="font-size:10px;color:var(--text-muted);margin-top:4px">${nhAgo(n.date)} · ${n.source}</div></div>`).join('');
+        }
+
+        function nhDetail(idx){
+          const n=nhNews[idx];if(!n)return;
+          document.querySelectorAll('[id^="nhni"]').forEach(e=>e.classList.remove('active'));
+          const el=document.getElementById('nhni'+idx);if(el){el.classList.add('active');el.scrollIntoView({block:'nearest'});}
+          const s=NH_CATS[n.cat]||NH_CATS.political;
+          const d=document.getElementById('nhDetail');if(!d)return;
+          d.innerHTML=`
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:12px;flex-wrap:wrap">
+              <span class="nh-cat" style="background:${s.bg};color:${s.c};font-size:10px;padding:3px 10px">${s.l}</span>
+              <span class="nh-sev nh-${n.sv.toLowerCase()}" style="font-size:10px">${n.sv}</span>
+              <span style="margin-left:auto;font-size:10px;color:var(--text-muted)">${nhAgo(n.date)} · ${n.source}</span>
+            </div>
+            <div style="font-size:16px;font-weight:700;line-height:1.3;margin-bottom:8px;color:var(--text-primary)">${n.title}</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;display:flex;gap:12px;flex-wrap:wrap"><span>📍 ${n.lc}</span><span>🕐 ${new Date(n.date).toLocaleString()}</span></div>
+            ${n.desc?`<div style="font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:14px">${n.desc}...</div>`:''}
+            <a href="${n.link}" target="_blank" class="btn btn-primary" style="font-size:13px">Read Full Story ↗</a>`;
+        }
+
+        function nhSetFilter(cat,el){nhFilter=cat;document.querySelectorAll('.nh-tab').forEach(t=>t.classList.remove('active'));if(el)el.classList.add('active');nhRender();}
+        function nhToggleNotif(){const p=document.getElementById('nhNotifPanel');if(p)p.style.display=p.style.display==='none'?'block':'none';nhRenderNotif();}
+        function nhRenderNotif(){const chips=nhKws.map((kw,i)=>`<span class="nh-kw-chip">${kw}<button onclick="nhRemoveKw(${i})">×</button></span>`).join('');const el=document.getElementById('nhKwChips');if(el)el.innerHTML=chips;const status=document.getElementById('nhNotifStatus');if(status&&Notification.permission==='granted'){status.innerHTML='<span style="color:var(--green);font-size:12px">✅ Notifications enabled</span>';nhNotifOn=true;}}
+        function nhAddKw(){const inp=document.getElementById('nhKwInput');if(!inp)return;const v=inp.value.trim();if(v&&!nhKws.includes(v)){nhKws.push(v);localStorage.setItem('nhKws',JSON.stringify(nhKws));inp.value='';nhRenderNotif();}}
+        function nhRemoveKw(i){nhKws.splice(i,1);localStorage.setItem('nhKws',JSON.stringify(nhKws));nhRenderNotif();}
+        async function nhRequestNotif(){const p=await Notification.requestPermission();if(p==='granted')nhNotifOn=true;nhRenderNotif();}
+        function nhCheckNotif(item){const tx=(item.title+' '+item.desc).toLowerCase();const match=nhKws.some(kw=>tx.includes(kw.toLowerCase()))||['conflict','geopolitics'].includes(item.cat);if(!match)return;nhShowToast(item);if(Notification.permission==='granted'){try{new Notification('📡 '+item.title.slice(0,80),{body:item.source,tag:item.id});}catch(e){}}}
+        function nhShowToast(item){const s=NH_CATS[item.cat]||NH_CATS.political;const t=document.createElement('div');t.style.cssText=`background:var(--bg-card);border:1px solid var(--border);border-left:3px solid ${s.c};border-radius:10px;padding:12px 14px;pointer-events:all;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.4)`;t.innerHTML=`<div style="font-size:9px;font-weight:800;text-transform:uppercase;color:${s.c};margin-bottom:4px">${s.l}</div><div style="font-size:12px;font-weight:600;line-height:1.4;color:var(--text-primary)">${item.title.slice(0,90)}</div><div style="font-size:10px;color:var(--text-muted);margin-top:3px">${item.source}</div>`;t.onclick=()=>t.remove();const tc=document.getElementById('nhToasts');if(tc)tc.appendChild(t);setTimeout(()=>t.remove(),8000);}
+
+        let nhLoaded=false;
+        window.nhInitLoad=function(){if(!nhLoaded){nhLoaded=true;nhLoad();setInterval(nhLoad,3*60*1000);}};
+        </script>
+      </div>
+
       <!-- ========== CURRENCY STRENGTH ========== -->
       <div class="page" id="page-strength">
         <div class="card">
@@ -2966,7 +3263,7 @@
     
     const titles = {
       dashboard: 'Dashboard', trades: 'My Trades',
-      analysis: 'Trades Analysis', news: 'Economic News', strength: 'Currency Strength',
+      analysis: 'Trades Analysis', news: 'Economic News', newshub: 'World News Hub', strength: 'Currency Strength',
       market: 'Live Market', charts: 'Live Charts', tools: 'Tools', learn: 'Learn Forex',
       settings: 'Settings', about: 'About'
     };
@@ -2977,6 +3274,7 @@
     if (page === 'news' && newsRawData.length === 0) loadNews();
     if (page === 'news') loadAdminNews();
     if (page === 'learn') loadCourses();
+    if (page === 'newshub' && window.nhInitLoad) window.nhInitLoad();
     if (page === 'strength') loadStrength();
     if (page === 'charts') loadChart();
     if (page === 'market') { loadGoldPrice(); loadMarketTicker(); }
@@ -5810,30 +6108,26 @@
   // ============ LANDING PAGE LOGIC ============
   function showLandingPage() {
     const landing = document.getElementById('landingPage');
+    const app = document.getElementById('mainApp');
     if (landing) landing.style.display = 'block';
+    if (app) app.style.display = 'none';
     document.body.style.overflow = 'hidden';
   }
   
   function enterApp() {
-    // Check if user is logged in
     if (!currentUser) {
-      // Open auth modal - signup/login required
       if (typeof openAuthModal === 'function') {
         openAuthModal();
       } else {
-        // Fallback - directly show modal
         const modal = document.getElementById('modal-auth');
-        if (modal) {
-          modal.classList.add('active');
-          modal.style.display = 'flex';
-          modal.style.zIndex = '99999';
-        }
+        if (modal) { modal.classList.add('active'); modal.style.display = 'flex'; modal.style.zIndex = '99999'; }
       }
       return;
     }
-    // User is logged in - hide landing page
     const landing = document.getElementById('landingPage');
+    const app = document.getElementById('mainApp');
     if (landing) landing.style.display = 'none';
+    if (app) app.style.display = 'flex';
     document.body.style.overflow = '';
     try { sessionStorage.setItem('hasEnteredApp', 'true'); } catch(e) {}
     window.scrollTo(0, 0);
@@ -5842,8 +6136,10 @@
   // Auto-hide landing page when user logs in
   function hideLandingAfterLogin() {
     const landing = document.getElementById('landingPage');
+    const app = document.getElementById('mainApp');
     if (landing && currentUser) {
       landing.style.display = 'none';
+      if (app) app.style.display = 'flex';
       document.body.style.overflow = '';
       try { sessionStorage.setItem('hasEnteredApp', 'true'); } catch(e) {}
     }
