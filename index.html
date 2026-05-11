@@ -2688,12 +2688,12 @@
         <div class="card" id="settings-security" style="display: none;">
           <div class="card-title" style="margin-bottom: 16px;">🔒 Security Settings</div>
           <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
-            Login system and password management will be available when admin panel is set up.
+            Update your account password below.
           </p>
-          <div class="form-group"><label>Current Password</label><input type="password" placeholder="••••••••"></div>
-          <div class="form-group"><label>New Password</label><input type="password" placeholder="••••••••"></div>
-          <div class="form-group"><label>Confirm New Password</label><input type="password" placeholder="••••••••"></div>
-          <button class="btn" onclick="alert('Password change available with admin panel setup!')">🔐 Update Password</button>
+          <div class="form-group"><label>New Password</label><input type="password" id="settingsNewPass" placeholder="Min 8 characters"></div>
+          <div class="form-group"><label>Confirm New Password</label><input type="password" id="settingsConfirmPass" placeholder="Re-enter new password"></div>
+          <div id="settingsPassMsg" style="font-size:12px;margin-bottom:12px;min-height:18px"></div>
+          <button class="btn" onclick="updateSettingsPassword()">🔐 Update Password</button>
         </div>
       </div>
       
@@ -6105,6 +6105,31 @@
   
   // ============================================================
   // ============ END SUPABASE AUTH ============
+
+  async function updateSettingsPassword() {
+    const newPass = document.getElementById('settingsNewPass')?.value;
+    const confirmPass = document.getElementById('settingsConfirmPass')?.value;
+    const msg = document.getElementById('settingsPassMsg');
+
+    if (!newPass || newPass.length < 8) {
+      msg.innerHTML = '<span style="color:var(--red)">❌ Password must be at least 8 characters</span>';
+      return;
+    }
+    if (newPass !== confirmPass) {
+      msg.innerHTML = '<span style="color:var(--red)">❌ Passwords do not match</span>';
+      return;
+    }
+    msg.innerHTML = '<span style="color:var(--text-muted)">Updating...</span>';
+    try {
+      const { error } = await sb.auth.updateUser({ password: newPass });
+      if (error) throw error;
+      msg.innerHTML = '<span style="color:var(--green)">✅ Password updated successfully!</span>';
+      document.getElementById('settingsNewPass').value = '';
+      document.getElementById('settingsConfirmPass').value = '';
+    } catch(e) {
+      msg.innerHTML = `<span style="color:var(--red)">❌ ${e.message}</span>`;
+    }
+  }
 
   // ============ PASSWORD RESET FORM ============
   function showPasswordResetForm() {
