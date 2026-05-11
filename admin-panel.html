@@ -427,6 +427,7 @@
       <div class="menu-label">Content Management</div>
       <div class="menu-item" data-page="courses" onclick="showPage('courses', this)"><span class="menu-icon">🎓</span>Courses</div>
       <div class="menu-item" data-page="news" onclick="showPage('news', this)"><span class="menu-icon">📰</span>News & Events</div>
+      <div class="menu-item" data-page="newshub" onclick="showPage('newshub', this)"><span class="menu-icon">📡</span>World News Hub<span style="margin-left:auto;font-size:8px;padding:2px 6px;background:var(--red);color:white;border-radius:10px;font-weight:700;">LIVE</span></div>
       <div class="menu-item" data-page="quiz" onclick="showPage('quiz', this)"><span class="menu-icon">🎯</span>Quiz Questions</div>
       <div class="menu-item" data-page="youtube" onclick="showPage('youtube', this)"><span class="menu-icon">▶️</span>YouTube Videos</div>
       
@@ -982,6 +983,262 @@
         </div>
       </div>
       
+      <!-- ========== WORLD NEWS HUB ========== -->
+      <div class="page" id="page-newshub">
+
+        <!-- Stats Row -->
+        <div class="four-col" style="margin-bottom:14px">
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center">
+            <div style="font-size:26px;font-weight:800;color:var(--red)" id="anhConflict">0</div>
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-top:4px">Conflict</div>
+          </div>
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center">
+            <div style="font-size:26px;font-weight:800;color:var(--purple)" id="anhGeo">0</div>
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-top:4px">Geopolitics</div>
+          </div>
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center">
+            <div style="font-size:26px;font-weight:800;color:var(--gold)" id="anhForex">0</div>
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-top:4px">Forex</div>
+          </div>
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center">
+            <div style="font-size:26px;font-weight:800;color:#ec4899" id="anhUS">0</div>
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-top:4px">US News</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 360px;gap:14px">
+          <!-- Left: Live Feed -->
+          <div>
+            <div class="card" style="padding:0;overflow:hidden">
+              <div class="card-header" style="padding:14px 16px">
+                <div>
+                  <div class="card-title">📡 Live World News Feed</div>
+                  <div class="card-meta" style="margin-top:4px">Real-time global events — <span id="anhCount" style="color:var(--gold);font-weight:700">0</span> articles loaded · <span id="anhUpdated">-</span></div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <select id="anhFilter" onchange="anhRender()" style="background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-primary);padding:6px 10px;border-radius:8px;font-size:12px;font-family:inherit;cursor:pointer">
+                    <option value="all">All Categories</option>
+                    <option value="conflict">⚔️ Conflict</option>
+                    <option value="geopolitics">🌍 Geopolitics</option>
+                    <option value="forex">💹 Forex</option>
+                    <option value="fundamental">📊 Fundamental</option>
+                    <option value="usnews">🇺🇸 US News</option>
+                    <option value="political">🏛️ Political</option>
+                    <option value="disaster">🌪️ Disaster</option>
+                  </select>
+                  <button class="btn" onclick="anhLoad()" id="anhRefBtn">🔄 Refresh</button>
+                </div>
+              </div>
+              <div id="anhList" style="max-height:620px;overflow-y:auto">
+                <div class="empty-state" style="height:200px">
+                  <div class="empty-icon">📡</div>
+                  <div>Loading live news...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Detail + Actions + Impact -->
+          <div>
+            <!-- Selected Article Actions -->
+            <div class="card" id="anhDetail" style="margin-bottom:14px">
+              <div class="empty-state" style="height:120px">
+                <div class="empty-icon" style="font-size:28px">📰</div>
+                <div style="font-size:12px">Click any news item</div>
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card" style="margin-bottom:14px">
+              <div class="card-title" style="margin-bottom:12px">⚡ Quick Actions</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <button onclick="anhPushNotif()" class="btn" style="background:linear-gradient(135deg,var(--red),#dc2626);border:none;width:100%;justify-content:center">🔔 Push Notification to Users</button>
+                <button onclick="anhShareWhatsApp()" class="btn" style="background:#25D366;border:none;width:100%;justify-content:center">💬 Share on WhatsApp</button>
+                <button onclick="anhCopyLink()" class="btn btn-secondary" style="width:100%;justify-content:center">🔗 Copy Article Link</button>
+              </div>
+            </div>
+
+            <!-- Forex Impact -->
+            <div class="card" style="margin-bottom:14px;padding:0;overflow:hidden">
+              <div style="padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700">💹 Forex Market Impact</div>
+              <div id="anhImpact">
+                <div style="padding:14px;text-align:center;color:var(--text-muted);font-size:12px">Load news to see impact</div>
+              </div>
+            </div>
+
+            <!-- Sources Status -->
+            <div class="card" style="padding:14px">
+              <div class="card-title" style="margin-bottom:12px">📡 Feed Sources Status</div>
+              <div style="display:flex;flex-direction:column;gap:6px" id="anhSources">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--bg-elevated);border-radius:8px;font-size:12px"><span>BBC World</span><span style="color:var(--text-muted)">—</span></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--bg-elevated);border-radius:8px;font-size:12px"><span>Al Jazeera</span><span style="color:var(--text-muted)">—</span></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--bg-elevated);border-radius:8px;font-size:12px"><span>ForexLive</span><span style="color:var(--text-muted)">—</span></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--bg-elevated);border-radius:8px;font-size:12px"><span>NPR News</span><span style="color:var(--text-muted)">—</span></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--bg-elevated);border-radius:8px;font-size:12px"><span>Sky News</span><span style="color:var(--text-muted)">—</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <script>
+        const ANH_PROXY = 'https://forex-proxy-fc5v.vercel.app/api/news';
+        const ANH_CATS = {
+          conflict:    {bg:'rgba(239,68,68,0.12)',   c:'#ef4444', l:'⚔️ Conflict'},
+          geopolitics: {bg:'rgba(139,92,246,0.12)',  c:'#8b5cf6', l:'🌍 Geopolitics'},
+          forex:       {bg:'rgba(245,158,11,0.12)',  c:'#f59e0b', l:'💹 Forex'},
+          fundamental: {bg:'rgba(20,184,166,0.12)',  c:'#14b8a6', l:'📊 Fundamental'},
+          usnews:      {bg:'rgba(236,72,153,0.12)',  c:'#ec4899', l:'🇺🇸 US News'},
+          political:   {bg:'rgba(59,130,246,0.12)',  c:'#3b82f6', l:'🏛️ Political'},
+          disaster:    {bg:'rgba(249,115,22,0.12)',  c:'#f97316', l:'🌪️ Disaster'},
+          economic:    {bg:'rgba(16,185,129,0.12)',  c:'#10b981', l:'💰 Economic'},
+        };
+        const ANH_CLS_W = {
+          conflict:    ['war','strike','attack','military','killed','bomb','missile','wounded','battle','invasion','explosion','coup','terror','drone','shooting','hostage','airstrike'],
+          geopolitics: ['geopolit','nato','sanction','diplomatic','foreign policy','alliance','treaty','nuclear deal','peace talks','ceasefire','strait','blockade','embargo','g7','g20'],
+          forex:       ['forex','xau/usd','xauusd','eurusd','gbpusd','usdjpy','gold price','currency','dollar index','pip','fx market','forexlive','fxstreet','exchange rate'],
+          fundamental: ['gdp','inflation','cpi','ppi','nonfarm','interest rate','federal reserve','fed rate','central bank','fomc','ecb','boe','unemployment','jobs report','retail sales'],
+          usnews:      ['trump','biden','white house','congress','senate','us economy','federal','pentagon','wall street','republican','democrat','tariff'],
+          political:   ['president','parliament','election','vote','government','minister','prime minister','summit','policy','political','ruling party'],
+          disaster:    ['earthquake','flood','hurricane','cyclone','tsunami','storm','wildfire','eruption','disaster','emergency','death toll','tornado'],
+          economic:    ['economy','market','stock','oil price','crude','opec','budget','fiscal','imf','trade deal','recession'],
+        };
+        let anhNews=[], anhSelected=null, anhFetching=false;
+
+        function anhCls(t,d){
+          const tx=(t+' '+d).toLowerCase();
+          const order=['forex','fundamental','usnews','geopolitics','conflict','disaster','political','economic'];
+          for(const c of order){if(ANH_CLS_W[c]&&ANH_CLS_W[c].some(w=>tx.includes(w)))return c;}
+          return'political';
+        }
+        function anhSev(t,d,cat){
+          const tx=(t+' '+d).toLowerCase();
+          const h=['killed','dead','explosion','attack','strike','crisis','massive','critical','emergency'];
+          const m=['injured','conflict','tension','warning'];
+          if(['conflict','disaster'].includes(cat)){if(h.filter(w=>tx.includes(w)).length>=2)return'S4';if(h.some(w=>tx.includes(w)))return'S3';if(m.some(w=>tx.includes(w)))return'S2';return'S1';}
+          if(h.some(w=>tx.includes(w)))return'S2';return'S1';
+        }
+        function anhLoc(t,d){
+          const pl=['Ukraine','Russia','Iran','Israel','Gaza','Syria','Iraq','China','Taiwan','North Korea','Pakistan','India','Washington','London','France','Germany','Turkey','Saudi Arabia','Yemen','Sudan','Libya','Afghanistan','Japan','South Korea','NATO'];
+          const tx=t+' '+d;for(const p of pl)if(tx.includes(p))return p;return'Global';
+        }
+        function anhAgo(d){const s=Math.floor((Date.now()-new Date(d))/1000);if(s<60)return'just now';if(s<3600)return Math.floor(s/60)+' min ago';if(s<86400)return Math.floor(s/3600)+' hr ago';return Math.floor(s/86400)+'d ago';}
+
+        async function anhLoad(){
+          if(anhFetching)return;anhFetching=true;
+          const btn=document.getElementById('anhRefBtn');if(btn){btn.disabled=true;btn.textContent='⏳';}
+          document.getElementById('anhList').innerHTML='<div class="empty-state" style="height:150px"><div style="width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px"></div><div>Fetching live news...</div></div>';
+          try{
+            const r=await fetch(ANH_PROXY,{signal:AbortSignal.timeout(10000)});
+            const d=await r.json();
+            if(!d.success||!d.items?.length)throw new Error(d.error||'No data');
+            anhNews=d.items.map(n=>({...n,cat:anhCls(n.title,n.desc),sv:anhSev(n.title,n.desc,anhCls(n.title,n.desc)),lc:anhLoc(n.title,n.desc)}));
+            const now=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+            document.getElementById('anhUpdated').textContent='Updated '+now;
+            anhUpdateStats();anhRender();anhUpdateImpact();anhUpdateSources();
+          }catch(e){
+            document.getElementById('anhList').innerHTML=`<div style="padding:20px;text-align:center;color:var(--red);font-size:12px">❌ Could not load news<br><small style="opacity:.7">${e.message}</small></div>`;
+          }finally{
+            anhFetching=false;if(btn){btn.disabled=false;btn.textContent='🔄 Refresh';}
+          }
+        }
+
+        function anhUpdateStats(){
+          document.getElementById('anhCount').textContent=anhNews.length;
+          document.getElementById('anhConflict').textContent=anhNews.filter(n=>n.cat==='conflict').length;
+          document.getElementById('anhGeo').textContent=anhNews.filter(n=>n.cat==='geopolitics').length;
+          document.getElementById('anhForex').textContent=anhNews.filter(n=>n.cat==='forex').length;
+          document.getElementById('anhUS').textContent=anhNews.filter(n=>n.cat==='usnews').length;
+        }
+
+        function anhRender(){
+          const filter=document.getElementById('anhFilter')?.value||'all';
+          const items=filter==='all'?anhNews:anhNews.filter(n=>n.cat===filter);
+          const el=document.getElementById('anhList');if(!el)return;
+          if(!items.length){el.innerHTML='<div class="empty-state" style="height:100px"><div>No news in this category</div></div>';return;}
+          el.innerHTML=items.map((item,i)=>{
+            const idx=anhNews.indexOf(item);const s=ANH_CATS[item.cat]||ANH_CATS.political;
+            const sevColors={S1:'#10b981',S2:'#f59e0b',S3:'#f97316',S4:'#ef4444'};
+            return`<div onclick="anhSelectItem(${idx})" id="anhi${idx}" style="padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background=''" >
+              <div style="display:flex;align-items:center;gap:5px;margin-bottom:5px;flex-wrap:wrap">
+                <span style="font-size:8px;font-weight:800;padding:2px 7px;border-radius:3px;text-transform:uppercase;background:${s.bg};color:${s.c}">${s.l}</span>
+                <span style="font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:rgba(${item.sv==='S4'?'239,68,68':item.sv==='S3'?'249,115,22':item.sv==='S2'?'245,158,11':'16,185,129'},.2);color:${sevColors[item.sv]}">${item.sv}</span>
+                <span style="margin-left:auto;font-size:9px;color:var(--text-muted)">${anhAgo(item.date)}</span>
+              </div>
+              <div style="font-size:12px;font-weight:600;line-height:1.4;margin-bottom:4px;color:var(--text-primary)">${item.title}</div>
+              <div style="font-size:10px;color:var(--text-muted);display:flex;gap:4px">📍 ${item.lc}<span style="margin-left:auto">${item.source}</span></div>
+            </div>`;
+          }).join('');
+        }
+
+        function anhSelectItem(idx){
+          const n=anhNews[idx];if(!n)return;
+          anhSelected=n;
+          // Highlight
+          document.querySelectorAll('[id^="anhi"]').forEach(e=>e.style.background='');
+          const el=document.getElementById('anhi'+idx);
+          if(el){el.style.background='var(--bg-elevated)';el.style.borderLeft='3px solid var(--gold)';el.scrollIntoView({block:'nearest'});}
+          // Detail
+          const s=ANH_CATS[n.cat]||ANH_CATS.political;
+          const sevColors={S1:'#10b981',S2:'#f59e0b',S3:'#f97316',S4:'#ef4444'};
+          document.getElementById('anhDetail').innerHTML=`
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+              <span style="font-size:9px;font-weight:800;padding:2px 8px;border-radius:3px;text-transform:uppercase;background:${s.bg};color:${s.c}">${s.l}</span>
+              <span style="font-size:9px;font-weight:800;padding:2px 6px;border-radius:3px;color:${sevColors[n.sv]}">${n.sv}</span>
+              <span style="margin-left:auto;font-size:10px;color:var(--text-muted)">${anhAgo(n.date)}</span>
+            </div>
+            <div style="font-size:14px;font-weight:700;line-height:1.3;margin-bottom:8px;color:var(--text-primary)">${n.title}</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px">📍 ${n.lc} · ${n.source} · ${new Date(n.date).toLocaleString()}</div>
+            ${n.desc?`<div style="font-size:12px;color:var(--text-secondary);line-height:1.6;margin-bottom:10px">${n.desc.slice(0,200)}...</div>`:''}
+            <a href="${n.link}" target="_blank" class="btn" style="font-size:12px">🔗 Open Article</a>`;
+        }
+
+        function anhUpdateImpact(){
+          const cc=anhNews.filter(n=>n.cat==='conflict').length;
+          const me=anhNews.some(n=>['iran','israel','gaza','saudi','yemen'].some(w=>n.title.toLowerCase().includes(w)));
+          const tr=anhNews.some(n=>['tariff','trade war'].some(w=>n.title.toLowerCase().includes(w)));
+          const uk=anhNews.some(n=>['ukraine','russia'].some(w=>n.title.toLowerCase().includes(w)));
+          document.getElementById('anhImpact').innerHTML=`
+            <div style="display:flex;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--border);font-size:12px"><span style="font-weight:700;color:var(--text-secondary)">XAU/USD</span><span style="color:${cc>4||me?'#10b981':'var(--text-muted)';font-weight:600}">${cc>4||me?'▲ Bullish':'— Neutral'}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--border);font-size:12px"><span style="font-weight:700;color:var(--text-secondary)">EUR/USD</span><span style="color:${tr?'#ef4444':'var(--text-muted)'};font-weight:600">${tr?'▼ Bearish':'— Neutral'}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--border);font-size:12px"><span style="font-weight:700;color:var(--text-secondary)">USD/JPY</span><span style="color:${cc>3||uk?'#ef4444':'var(--text-muted)'};font-weight:600">${cc>3||uk?'▼ Bearish':'— Neutral'}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:8px 14px;font-size:12px"><span style="font-weight:700;color:var(--text-secondary)">USD Index</span><span style="color:${me||cc>5?'#10b981':'var(--text-muted)'};font-weight:600">${me||cc>5?'▲ Bullish':'— Neutral'}</span></div>`;
+        }
+
+        function anhUpdateSources(){
+          const sources=['BBC World','Al Jazeera','ForexLive','NPR News','Sky News'];
+          const counts={};
+          anhNews.forEach(n=>{counts[n.source]=(counts[n.source]||0)+1;});
+          document.getElementById('anhSources').innerHTML=sources.map(src=>{
+            const count=Object.entries(counts).find(([k])=>k.includes(src.split(' ')[0]))?.[1]||0;
+            return`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--bg-elevated);border-radius:8px;font-size:12px">
+              <span>${src}</span>
+              <span style="color:${count>0?'var(--green)':'var(--text-muted)'};font-weight:600">${count>0?count+' articles':'—'}</span>
+            </div>`;
+          }).join('');
+        }
+
+        function anhPushNotif(){
+          if(!anhSelected){alert('⚠️ Pehle koi news item select karo!');return;}
+          const msg=`📡 ${anhSelected.title.slice(0,80)}\n\n📍 ${anhSelected.lc} · ${anhSelected.source}\n\n${anhSelected.link}`;
+          if(confirm(`Yeh notification users ko bhejna chahte ho?\n\n"${anhSelected.title.slice(0,60)}..."`)){
+            navigator.clipboard.writeText(msg).then(()=>alert('✅ Notification message clipboard mein copy ho gaya!\nAb Supabase notifications mein paste karo.')).catch(()=>alert('Message:\n\n'+msg));
+          }
+        }
+        function anhShareWhatsApp(){
+          if(!anhSelected){alert('⚠️ Pehle koi news item select karo!');return;}
+          const text=encodeURIComponent(`📡 *World News Update*\n\n*${anhSelected.title}*\n\n📍 ${anhSelected.lc} · ${anhSelected.source}\n\n🔗 ${anhSelected.link}`);
+          window.open(`https://wa.me/?text=${text}`,'_blank');
+        }
+        function anhCopyLink(){
+          if(!anhSelected){alert('⚠️ Pehle koi news item select karo!');return;}
+          navigator.clipboard.writeText(anhSelected.link).then(()=>alert('✅ Link copied!')).catch(()=>prompt('Link:',anhSelected.link));
+        }
+
+        let anhLoaded=false;
+        window.anhInitLoad=function(){if(!anhLoaded){anhLoaded=true;anhLoad();setInterval(anhLoad,5*60*1000);}};
+        </script>
+      </div>
+
       <!-- ========== MESSAGES ========== -->
       <div class="page" id="page-messages">
         <div class="inbox-grid">
@@ -1436,6 +1693,7 @@ function showPage(page, el) {
     subscriptions: ['Subscriptions', 'Manage premium memberships and pricing'],
     courses: ['Courses Manager', 'Create and manage learning content'],
     news: ['News & Events', 'Manage economic calendar and news posts'],
+    newshub: ['World News Hub', 'Live global news feed with forex impact analysis'],
     quiz: ['Quiz Manager', 'Manage daily quiz question bank'],
     youtube: ['YouTube Videos', 'Featured video management'],
     messages: ['Messages / Support', 'User support tickets and inbox'],
@@ -1462,6 +1720,7 @@ function showPage(page, el) {
   if (page === 'news') loadAdminNewsPosts();
   if (page === 'quiz') loadAdminQuiz();
   if (page === 'youtube') loadAdminYoutube();
+  if (page === 'newshub' && window.anhInitLoad) window.anhInitLoad();
 }
 
 function toggleSidebar() {
