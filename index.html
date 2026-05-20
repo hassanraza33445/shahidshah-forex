@@ -1345,7 +1345,7 @@
   <!-- ========== SIDEBAR ========== -->
   <aside class="sidebar" id="sidebar">
     <div class="brand">
-      <div class="brand-logo">SS</div>
+      <div class="brand-logo" style="background:none;padding:0;overflow:hidden"><img src="icon-192.png" style="width:36px;height:36px;border-radius:8px;object-fit:cover"></div>
       <div class="brand-text">
         <h1>S M SHAHID SHAH</h1>
         <p>Forex Hub</p>
@@ -4830,7 +4830,11 @@
           show_popup_button: true,
           popup_width: '1200',
           popup_height: '800',
-          // Add drawing tools, indicators, all features
+          client_id: 'smshahidshah.com',
+          user_id: currentUser ? currentUser.id : 'guest',
+          charts_storage_url: 'https://saveload.tradingview.com',
+          charts_storage_api_version: '1.1',
+          load_last_chart: true,
           studies: [
             'MASimple@tv-basicstudies',
             'RSI@tv-basicstudies',
@@ -4883,10 +4887,11 @@
             'chart_property_page_timezone_sessions',
             'chart_property_page_trading',
             'side_toolbar_in_fullscreen_mode',
-            'use_localstorage_for_settings'
+            'use_localstorage_for_settings',
+            'save_chart_properties_to_local_storage'
           ],
           disabled_features: [
-            'use_localstorage_for_settings'
+            'header_saveload'
           ]
         });
       } catch(e) {
@@ -6313,7 +6318,7 @@
 
 <!-- PWA Install Banner -->
 <div id="pwaInstallBanner" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;background:var(--bg-card);border:1px solid var(--gold);border-radius:14px;padding:14px 20px;box-shadow:0 8px 30px rgba(0,0,0,0.4);display:none;align-items:center;gap:14px;max-width:340px;width:90%">
-  <div style="width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#0a0e1a;font-size:16px;flex-shrink:0">FX</div>
+  <div style="width:44px;height:44px;border-radius:10px;overflow:hidden;flex-shrink:0"><img src="icon-192.png" style="width:100%;height:100%;object-fit:cover"></div>
   <div style="flex:1">
     <div style="font-size:13px;font-weight:700;color:var(--text-primary)">Install Forex Hub App</div>
     <div style="font-size:11px;color:var(--text-muted)">Add to home screen for quick access</div>
