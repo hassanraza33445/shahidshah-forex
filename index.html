@@ -2269,6 +2269,18 @@
         
         <!-- Chart -->
         <div class="card" style="margin-bottom: 14px; padding: 0; overflow: hidden;">
+          <!-- Drawing Save/Load Bar -->
+          <div style="padding:8px 14px;background:var(--bg-elevated);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:11px;font-weight:700;color:var(--text-muted)">💾 Drawings:</span>
+            <button onclick="saveDrawingNote()" style="background:var(--gold);border:none;color:#0a0e1a;padding:5px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">+ Save Note</button>
+            <button onclick="toggleDrawingPanel()" style="background:var(--bg-card);border:1px solid var(--border);color:var(--text-secondary);padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">📋 My Notes</button>
+            <span style="font-size:10px;color:var(--text-muted);margin-left:auto">Tip: Save your analysis notes here — they persist across sessions</span>
+          </div>
+          <!-- Drawing Notes Panel -->
+          <div id="drawingNotesPanel" style="display:none;padding:12px 14px;background:var(--bg-card);border-bottom:1px solid var(--border);max-height:200px;overflow-y:auto">
+            <div id="drawingNotesList" style="display:flex;flex-direction:column;gap:6px"></div>
+            <div id="drawingNotesEmpty" style="font-size:12px;color:var(--text-muted);text-align:center;padding:10px">No notes saved yet. Click "+ Save Note" to add one.</div>
+          </div>
           <div style="background: var(--bg-elevated); overflow: hidden;">
             <div id="tradingview-chart" style="height: 550px;"></div>
           </div>
@@ -4793,6 +4805,78 @@
     container.innerHTML = html;
   }
   
+  // ============ CHART DRAWING NOTES ============
+  function getDrawingNotes() {
+    try { return JSON.parse(localStorage.getItem('chartDrawingNotes') || '[]'); } catch { return []; }
+  }
+  function saveDrawingNotes(notes) {
+    localStorage.setItem('chartDrawingNotes', JSON.stringify(notes));
+  }
+
+  function saveDrawingNote() {
+    const symbol = document.getElementById('chartSymbol')?.value || 'XAUUSD';
+    const tf = document.getElementById('chartTimeframe')?.value || '60';
+    const symbolLabel = document.getElementById('chartSymbol')?.options[document.getElementById('chartSymbol')?.selectedIndex]?.text || symbol;
+    
+    const note = prompt(`Add analysis note for ${symbolLabel}:\n(e.g. "Strong support at 2320, resistance at 2380, bullish bias")`);
+    if (!note || !note.trim()) return;
+
+    const notes = getDrawingNotes();
+    notes.unshift({
+      id: Date.now(),
+      symbol,
+      symbolLabel,
+      tf,
+      note: note.trim(),
+      date: new Date().toLocaleString(),
+      color: 'gold'
+    });
+    saveDrawingNotes(notes);
+    renderDrawingNotes();
+    // Show panel
+    document.getElementById('drawingNotesPanel').style.display = 'block';
+  }
+
+  function deleteDrawingNote(id) {
+    const notes = getDrawingNotes().filter(n => n.id !== id);
+    saveDrawingNotes(notes);
+    renderDrawingNotes();
+  }
+
+  function renderDrawingNotes() {
+    const notes = getDrawingNotes();
+    const list = document.getElementById('drawingNotesList');
+    const empty = document.getElementById('drawingNotesEmpty');
+    if (!list) return;
+    if (!notes.length) {
+      list.innerHTML = '';
+      if (empty) empty.style.display = 'block';
+      return;
+    }
+    if (empty) empty.style.display = 'none';
+    list.innerHTML = notes.map(n => `
+      <div style="background:var(--bg-elevated);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:8px;padding:10px 12px;display:flex;align-items:flex-start;gap:10px">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">
+            <span style="font-size:10px;font-weight:800;background:var(--gold-bg);color:var(--gold);padding:2px 7px;border-radius:4px">${n.symbolLabel?.split('(')[0]?.trim() || n.symbol}</span>
+            <span style="font-size:10px;color:var(--text-muted)">${n.tf === 'D' ? 'Daily' : n.tf === 'W' ? 'Weekly' : n.tf + ' Min'}</span>
+            <span style="font-size:10px;color:var(--text-muted);margin-left:auto">${n.date}</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-primary);line-height:1.5">${n.note}</div>
+        </div>
+        <button onclick="deleteDrawingNote(${n.id})" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:0;line-height:1;flex-shrink:0" title="Delete">×</button>
+      </div>`).join('');
+  }
+
+  function toggleDrawingPanel() {
+    const panel = document.getElementById('drawingNotesPanel');
+    if (!panel) return;
+    const isHidden = panel.style.display === 'none';
+    panel.style.display = isHidden ? 'block' : 'none';
+    if (isHidden) renderDrawingNotes();
+  }
+  // =============================================
+
   // ============ TRADINGVIEW CHART ============
   function loadChart() {
     const symbol = document.getElementById('chartSymbol').value;
