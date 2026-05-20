@@ -1,7 +1,7 @@
 {
   "name": "S M Shahid Shah - Forex Hub",
-  "short_name": "Forex Hub",
-  "description": "Professional Forex Trading Tools by S M Shahid Shah - Live Charts, Trade Journal, News Hub & More",
+  "short_name": "Shahid Shah FX",
+  "description": "Professional Forex Trading Tools by S M Shahid Shah",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0e1a",
@@ -22,6 +22,5 @@
     }
   ],
   "categories": ["finance", "education"],
-  "screenshots": [],
   "lang": "en"
 }
