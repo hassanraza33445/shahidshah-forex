@@ -134,3 +134,9 @@ The Zoom link is not included in the public configuration response. It is return
 - Session timing has a redesigned date tile and countdown.
 - Registered users can view and copy the Zoom link.
 - Review cards, social icons and page animations have been upgraded.
+
+## Existing Review Result Upgrade
+
+After uploading the latest `index.html`, run `supabase-review-result-upgrade.sql` once in **Supabase Dashboard → SQL Editor**. This enables an already-submitted participant to enter the same registered email and reopen their saved score/result instead of seeing an “already submitted” error.
+
+The latest page also includes stronger premium motion: scroll reveals, hero shimmer, floating event card, animated counters, selected-answer feedback, social icon motion, and result chart animation. Layout dimensions are unchanged.

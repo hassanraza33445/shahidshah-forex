@@ -290,6 +290,55 @@ begin
 end;
 $$;
 
+-- ---------- Public RPC: load an already-submitted review result ----------
+-- This lets a registered participant reopen their saved result by email.
+create or replace function public.get_webinar_review_result(p_email text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_registration public.webinar_registrations%rowtype;
+  v_review public.webinar_reviews%rowtype;
+begin
+  select * into v_registration
+  from public.webinar_registrations
+  where email_normalized = lower(btrim(coalesce(p_email, '')));
+
+  if not found then
+    return jsonb_build_object(
+      'success', false,
+      'code', 'not_registered',
+      'message', 'No registration was found with this email address.'
+    );
+  end if;
+
+  select * into v_review
+  from public.webinar_reviews
+  where registration_id = v_registration.id;
+
+  if not found then
+    return jsonb_build_object(
+      'success', false,
+      'code', 'not_submitted',
+      'message', 'No submitted review result was found for this email address.'
+    );
+  end if;
+
+  return jsonb_build_object(
+    'success', true,
+    'name', v_review.name,
+    'email', v_review.email,
+    'understood', v_review.understood_count,
+    'confused', v_review.confused_count,
+    'not_clear', v_review.not_clear_count,
+    'score', v_review.clarity_score,
+    'submitted_at', v_review.submitted_at
+  );
+end;
+$$;
+
 -- ---------- Public RPC: submit review safely ----------
 create or replace function public.submit_webinar_review(
   p_email text,
@@ -482,11 +531,13 @@ grant select on public.webinar_review_items to anon;
 revoke all on function public.get_webinar_public_config() from public;
 revoke all on function public.reserve_webinar_seat(text, text, text) from public;
 revoke all on function public.get_webinar_access(text) from public;
+revoke all on function public.get_webinar_review_result(text) from public;
 revoke all on function public.submit_webinar_review(text, jsonb) from public;
 
 grant execute on function public.get_webinar_public_config() to anon, authenticated;
 grant execute on function public.reserve_webinar_seat(text, text, text) to anon, authenticated;
 grant execute on function public.get_webinar_access(text) to anon, authenticated;
+grant execute on function public.get_webinar_review_result(text) to anon, authenticated;
 grant execute on function public.submit_webinar_review(text, jsonb) to anon, authenticated;
 
 -- ---------- Make your existing user an admin ----------
