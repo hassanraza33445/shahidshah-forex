@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090d18">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Webinar Admin — S M Shahid Shah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg: #070b14;
+      --sidebar: #0b1120;
+      --card: #11192a;
+      --card-2: #172136;
+      --line: rgba(255,255,255,.09);
+      --line-gold: rgba(229,183,74,.36);
+      --text: #f8fafc;
+      --muted: #97a4b8;
+      --muted-2: #647187;
+      --gold: #e5b74a;
+      --gold-bright: #ffd77a;
+      --gold-deep: #b77a16;
+      --gold-soft: rgba(229,183,74,.11);
+      --green: #34d399;
+      --green-soft: rgba(52,211,153,.12);
+      --red: #fb7185;
+      --red-soft: rgba(251,113,133,.12);
+      --blue: #60a5fa;
+      --blue-soft: rgba(96,165,250,.12);
+      --purple: #a78bfa;
+      --shadow: 0 22px 70px rgba(0,0,0,.34);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 9% 3%, rgba(229,183,74,.11), transparent 27%),
+        linear-gradient(180deg, #070b14, #090e19 55%, #070b14);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+    }
+    button, input, textarea, select { font: inherit; }
+    button { border: 0; }
+    a { color: inherit; text-decoration: none; }
+    .hidden { display: none !important; }
+
+    .login-screen { min-height: 100vh; display: grid; place-items: center; padding: 22px; }
+    .login-card { width: min(460px, 100%); padding: 32px; border: 1px solid var(--line-gold); border-radius: 26px; background: rgba(17,25,42,.95); box-shadow: var(--shadow); }
+    .login-logo { width: 58px; height: 58px; display: grid; place-items: center; border-radius: 17px; color: #11151c; background: linear-gradient(135deg,var(--gold-bright),var(--gold),var(--gold-deep)); font-size: 18px; font-weight: 900; box-shadow: 0 13px 38px rgba(229,183,74,.25); }
+    .login-card h1 { margin-top: 20px; font-size: 28px; letter-spacing: -1px; }
+    .login-card > p { color: var(--muted); margin-top: 8px; font-size: 12px; }
+
+    .field { margin-top: 14px; }
+    .field label { display: block; color: #cdd5e2; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .85px; margin-bottom: 7px; }
+    .field input, .field textarea, .field select {
+      width: 100%;
+      color: var(--text);
+      border: 1px solid var(--line);
+      outline: none;
+      background: rgba(5,9,16,.55);
+      border-radius: 11px;
+      padding: 12px 13px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .field textarea { min-height: 120px; resize: vertical; line-height: 1.55; }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(229,183,74,.1); }
+    .field-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .checkbox-row { display: flex; align-items: center; gap: 9px; margin-top: 18px; color: #d4dbe7; font-size: 12px; }
+    .checkbox-row input { width: 17px; height: 17px; accent-color: var(--gold); }
+
+    .btn { min-height: 43px; padding: 0 16px; border-radius: 11px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; font-weight: 800; font-size: 11px; transition: .2s; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    .btn-gold { color: #11151c; background: linear-gradient(135deg,var(--gold-bright),var(--gold),var(--gold-deep)); box-shadow: 0 10px 28px rgba(229,183,74,.2); }
+    .btn-dark { color: var(--text); border: 1px solid var(--line); background: rgba(255,255,255,.04); }
+    .btn-red { color: var(--red); border: 1px solid rgba(251,113,133,.28); background: var(--red-soft); }
+    .btn-green { color: var(--green); border: 1px solid rgba(52,211,153,.26); background: var(--green-soft); }
+    .btn-block { width: 100%; margin-top: 18px; }
+    .status { min-height: 20px; margin-top: 12px; font-size: 11px; }
+    .status.error { color: var(--red); }
+    .status.success { color: var(--green); }
+
+    .app { min-height: 100vh; display: flex; }
+    .sidebar { width: 260px; height: 100vh; position: fixed; left: 0; top: 0; z-index: 30; display: flex; flex-direction: column; border-right: 1px solid var(--line); background: rgba(11,17,32,.97); backdrop-filter: blur(16px); }
+    .brand { min-height: 74px; padding: 0 18px; display: flex; align-items: center; gap: 11px; border-bottom: 1px solid var(--line); }
+    .brand-mark { width: 42px; height: 42px; flex: 0 0 42px; border-radius: 12px; display: grid; place-items: center; color: #11151c; background: linear-gradient(135deg,var(--gold-bright),var(--gold),var(--gold-deep)); font-weight: 900; }
+    .brand strong { display: block; font-size: 12px; }
+    .brand span { display: block; color: var(--gold); font-size: 8px; letter-spacing: 1.45px; font-weight: 800; margin-top: 3px; }
+    .admin-user { margin: 14px; padding: 12px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,255,255,.025); }
+    .admin-avatar { width: 35px; height: 35px; display: grid; place-items: center; border-radius: 11px; color: var(--gold); background: var(--gold-soft); font-weight: 900; }
+    .admin-user div { min-width: 0; }
+    .admin-user strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
+    .admin-user span { color: var(--muted-2); font-size: 9px; }
+    .menu-label { padding: 10px 18px 5px; color: var(--muted-2); font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.4px; }
+    .menu { padding: 0 10px; overflow-y: auto; flex: 1; }
+    .menu-btn { width: 100%; min-height: 42px; display: flex; align-items: center; gap: 11px; padding: 0 12px; margin: 2px 0; border-radius: 10px; cursor: pointer; color: var(--muted); background: transparent; font-size: 11px; font-weight: 700; text-align: left; }
+    .menu-btn:hover { color: var(--text); background: rgba(255,255,255,.04); }
+    .menu-btn.active { color: var(--gold-bright); background: var(--gold-soft); }
+    .menu-icon { width: 21px; text-align: center; }
+    .sidebar-footer { padding: 10px; border-top: 1px solid var(--line); display: grid; gap: 7px; }
+
+    .main { flex: 1; margin-left: 260px; min-width: 0; }
+    .topbar { min-height: 74px; position: sticky; top: 0; z-index: 20; padding: 0 22px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--line); background: rgba(7,11,20,.8); backdrop-filter: blur(18px); }
+    .mobile-menu { display: none; width: 39px; height: 39px; border-radius: 10px; cursor: pointer; color: var(--text); background: rgba(255,255,255,.04); }
+    .page-title h1 { font-size: 19px; letter-spacing: -.5px; }
+    .page-title p { color: var(--muted-2); font-size: 9px; margin-top: 2px; }
+    .top-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+    .sync-status { color: var(--green); font-size: 9px; font-weight: 800; padding: 7px 9px; border-radius: 999px; border: 1px solid rgba(52,211,153,.22); background: var(--green-soft); }
+
+    .content { padding: 22px; }
+    .page { display: none; animation: enter .25s ease; }
+    .page.active { display: block; }
+    @keyframes enter { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; }
+    .stat-card { padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); box-shadow: 0 13px 38px rgba(0,0,0,.13); }
+    .stat-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .stat-icon { width: 37px; height: 37px; display: grid; place-items: center; border-radius: 11px; color: var(--gold); background: var(--gold-soft); }
+    .stat-tag { color: var(--muted-2); font-size: 8px; font-weight: 800; letter-spacing: .7px; }
+    .stat-card h3 { font-size: 28px; margin-top: 13px; line-height: 1; }
+    .stat-card p { color: var(--muted); font-size: 10px; margin-top: 7px; }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 14px; }
+    .card { border: 1px solid var(--line); border-radius: 17px; background: var(--card); padding: 18px; }
+    .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 16px; }
+    .card-head h2 { font-size: 15px; }
+    .card-head p { color: var(--muted-2); font-size: 9px; margin-top: 4px; }
+    .card-actions { display: flex; gap: 7px; flex-wrap: wrap; }
+
+    .section-intro { display: flex; justify-content: space-between; gap: 18px; align-items: flex-start; margin-bottom: 17px; }
+    .section-intro h2 { font-size: 22px; letter-spacing: -.7px; }
+    .section-intro p { color: var(--muted); font-size: 10px; margin-top: 5px; }
+
+    .settings-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+    .settings-section { border: 1px solid var(--line); border-radius: 16px; padding: 18px; background: var(--card); }
+    .settings-section.full { grid-column: 1 / -1; }
+    .settings-section h3 { font-size: 14px; }
+    .settings-section > p { color: var(--muted-2); font-size: 9px; margin-top: 4px; }
+
+    .editor-layout { display: grid; grid-template-columns: minmax(320px,.75fr) minmax(0,1.25fr); gap: 14px; align-items: start; }
+    .editor-form { position: sticky; top: 94px; }
+    .item-list { display: grid; gap: 10px; }
+    .content-item { border: 1px solid var(--line); border-radius: 14px; padding: 14px; background: rgba(255,255,255,.022); }
+    .content-item.inactive { opacity: .58; }
+    .content-item-head { display: flex; justify-content: space-between; gap: 14px; align-items: flex-start; }
+    .order-badge { color: var(--gold); background: var(--gold-soft); border: 1px solid var(--line-gold); border-radius: 8px; padding: 4px 7px; font-size: 8px; font-weight: 900; }
+    .content-item h3 { font-size: 13px; }
+    .content-item p { color: var(--muted); font-size: 10px; margin-top: 7px; white-space: pre-line; }
+    .item-actions { display: flex; gap: 6px; margin-top: 12px; }
+    .mini-btn { min-height: 31px; padding: 0 10px; border-radius: 8px; cursor: pointer; font-size: 9px; font-weight: 800; }
+
+    .table-card { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--card); }
+    .table-toolbar { padding: 13px; display: flex; gap: 9px; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); }
+    .search { width: min(340px, 100%); color: var(--text); border: 1px solid var(--line); outline: none; background: rgba(5,9,16,.5); border-radius: 10px; padding: 10px 12px; font-size: 10px; }
+    .search:focus { border-color: var(--gold); }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 800px; }
+    th { padding: 11px 13px; color: var(--muted-2); background: rgba(255,255,255,.025); font-size: 8px; text-transform: uppercase; letter-spacing: .8px; text-align: left; white-space: nowrap; }
+    td { padding: 12px 13px; border-top: 1px solid var(--line); color: #d7deea; font-size: 10px; vertical-align: top; }
+    td strong { display: block; color: var(--text); font-size: 10px; }
+    td span { display: block; color: var(--muted-2); margin-top: 3px; }
+    .score-pill { display: inline-flex; align-items: center; justify-content: center; min-width: 52px; padding: 5px 7px; border-radius: 999px; font-size: 9px; font-weight: 900; }
+    .score-high { color: var(--green); background: var(--green-soft); }
+    .score-mid { color: var(--gold-bright); background: var(--gold-soft); }
+    .score-low { color: var(--red); background: var(--red-soft); }
+    .empty { padding: 34px; text-align: center; color: var(--muted-2); font-size: 11px; }
+
+    .modal { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; background: rgba(1,4,9,.8); backdrop-filter: blur(10px); }
+    .modal-card { width: min(700px,100%); max-height: 88vh; overflow-y: auto; border: 1px solid var(--line-gold); border-radius: 20px; padding: 22px; background: var(--card); box-shadow: var(--shadow); }
+    .modal-head { display: flex; justify-content: space-between; gap: 15px; align-items: flex-start; }
+    .modal-head h3 { font-size: 18px; }
+    .close-btn { width: 34px; height: 34px; border-radius: 9px; cursor: pointer; color: var(--text); background: rgba(255,255,255,.05); }
+    .answer-detail { margin-top: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 13px; }
+    .answer-detail h4 { font-size: 11px; }
+    .answer-detail p { color: var(--muted); font-size: 10px; margin-top: 6px; }
+    .answer-detail span { display: inline-block; margin-top: 9px; border-radius: 999px; padding: 4px 8px; font-size: 8px; font-weight: 900; background: var(--gold-soft); color: var(--gold-bright); }
+
+    .toast { position: fixed; right: 17px; bottom: 17px; z-index: 130; width: min(360px,calc(100% - 34px)); padding: 13px 15px; border: 1px solid var(--line); border-radius: 12px; background: #121a2a; box-shadow: 0 18px 50px rgba(0,0,0,.38); color: #e8edf5; font-size: 10px; transform: translateY(26px); opacity: 0; pointer-events: none; transition: .22s; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-color: rgba(52,211,153,.35); }
+    .toast.error { border-color: rgba(251,113,133,.35); }
+
+    @media (max-width: 1100px) {
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .editor-layout { grid-template-columns: 1fr; }
+      .editor-form { position: static; }
+    }
+    @media (max-width: 820px) {
+      .sidebar { transform: translateX(-100%); transition: transform .25s; }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; }
+      .mobile-menu { display: inline-grid; place-items: center; }
+      .settings-grid, .grid-2 { grid-template-columns: 1fr; }
+      .settings-section.full { grid-column: auto; }
+    }
+    @media (max-width: 560px) {
+      .content { padding: 14px; }
+      .topbar { padding: 0 14px; }
+      .stats-grid, .field-row { grid-template-columns: 1fr; }
+      .sync-status { display: none; }
+      .table-toolbar, .section-intro { flex-direction: column; align-items: stretch; }
+      .card-head { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <section class="login-screen" id="loginScreen">
+    <form class="login-card" id="loginForm" novalidate>
+      <div class="login-logo">SM</div>
+      <h1>Webinar Admin</h1>
+      <p>Sign in with your existing Supabase admin account. Access is allowed only when <strong>profiles.is_admin = true</strong>.</p>
+      <div class="field">
+        <label for="loginEmail">Admin Email</label>
+        <input id="loginEmail" type="email" autocomplete="username" placeholder="admin@example.com" required>
+      </div>
+      <div class="field">
+        <label for="loginPassword">Password</label>
+        <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Enter your password" required>
+      </div>
+      <button class="btn btn-gold btn-block" id="loginSubmit" type="submit">Sign In to Admin</button>
+      <div class="status" id="loginStatus" aria-live="polite"></div>
+    </form>
+  </section>
+
+  <div class="app hidden" id="adminApp">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">SM</div>
+        <div><strong>S M Shahid Shah</strong><span>WEBINAR ADMIN</span></div>
+      </div>
+      <div class="admin-user">
+        <div class="admin-avatar">A</div>
+        <div><strong id="adminEmail">Admin</strong><span>Authorized account</span></div>
+      </div>
+      <div class="menu-label">Management</div>
+      <nav class="menu">
+        <button class="menu-btn active" data-page="dashboard"><span class="menu-icon">◫</span>Dashboard</button>
+        <button class="menu-btn" data-page="settings"><span class="menu-icon">⚙</span>Event Settings</button>
+        <button class="menu-btn" data-page="videos"><span class="menu-icon">▶</span>YouTube Videos</button>
+        <button class="menu-btn" data-page="content"><span class="menu-icon">≡</span>Review Content</button>
+        <button class="menu-btn" data-page="registrations"><span class="menu-icon">◎</span>Registrations</button>
+        <button class="menu-btn" data-page="reviews"><span class="menu-icon">✓</span>Review Results</button>
+      </nav>
+      <div class="sidebar-footer">
+        <a class="btn btn-dark" href="index.html" target="_blank">Open Public Website</a>
+        <button class="btn btn-red" id="logoutBtn" type="button">Sign Out</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenuBtn" type="button">☰</button>
+        <div class="page-title"><h1 id="topPageTitle">Dashboard</h1><p>Manage the complete webinar system from one place.</p></div>
+        <div class="top-actions">
+          <span class="sync-status">SUPABASE CONNECTED</span>
+          <button class="btn btn-dark" id="refreshBtn" type="button">Refresh</button>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="page active" id="page-dashboard">
+          <div class="stats-grid">
+            <div class="stat-card"><div class="stat-head"><div class="stat-icon">◎</div><div class="stat-tag">TOTAL</div></div><h3 id="statRegistrations">0</h3><p>Reserved webinar seats</p></div>
+            <div class="stat-card"><div class="stat-head"><div class="stat-icon">✓</div><div class="stat-tag">SUBMITTED</div></div><h3 id="statReviews">0</h3><p>Completed session reviews</p></div>
+            <div class="stat-card"><div class="stat-head"><div class="stat-icon">%</div><div class="stat-tag">AVERAGE</div></div><h3 id="statAverage">0%</h3><p>Average clarity score</p></div>
+            <div class="stat-card"><div class="stat-head"><div class="stat-icon">▶</div><div class="stat-tag">ACTIVE</div></div><h3 id="statVideos">0</h3><p>Published YouTube videos</p></div>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head"><div><h2>Upcoming Session</h2><p>Pakistan Standard Time</p></div></div>
+              <div style="font-size:22px;font-weight:800;color:var(--gold-bright)" id="dashboardSessionTime">—</div>
+              <p style="color:var(--muted);font-size:10px;margin-top:9px" id="dashboardEventTitle">—</p>
+              <div style="margin-top:15px"><button class="btn btn-dark" type="button" data-go-page="settings">Edit Session Settings</button></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><div><h2>Review Access</h2><p>Automatic post-session unlock</p></div></div>
+              <div style="font-size:22px;font-weight:800;color:var(--green)" id="dashboardUnlockTime">—</div>
+              <p style="color:var(--muted);font-size:10px;margin-top:9px">Only previously registered emails can open and submit the review.</p>
+              <div style="margin-top:15px"><button class="btn btn-dark" type="button" data-go-page="content">Manage Review Content</button></div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:14px">
+            <div class="card-head"><div><h2>Recent Registrations</h2><p>Latest reserved seats</p></div><button class="btn btn-dark" type="button" data-go-page="registrations">View All</button></div>
+            <div class="table-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>WhatsApp</th><th>Registered</th></tr></thead><tbody id="recentRegistrationsBody"></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="page" id="page-settings">
+          <div class="section-intro"><div><h2>Event Settings</h2><p>Control the public page, meeting schedule, Zoom access and social links.</p></div><button class="btn btn-gold" id="saveSettingsTop" type="button">Save All Settings</button></div>
+          <form id="settingsForm" class="settings-grid">
+            <div class="settings-section full">
+              <h3>Public Page Content</h3><p>Main heading and webinar introduction shown on the landing page.</p>
+              <div class="field-row">
+                <div class="field"><label for="settingBadge">Event Badge</label><input id="settingBadge" maxlength="100"></div>
+                <div class="field"><label for="settingTitle">Event Title</label><input id="settingTitle" maxlength="220"></div>
+              </div>
+              <div class="field"><label for="settingSubtitle">Event Description</label><textarea id="settingSubtitle"></textarea></div>
+              <div class="field-row">
+                <div class="field"><label for="settingMentorName">Mentor Name</label><input id="settingMentorName" maxlength="160"></div>
+                <div class="field"><label for="settingMentorBio">Mentor Bio</label><textarea id="settingMentorBio"></textarea></div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h3>Meeting Access</h3><p>The Zoom link is returned only after a registered email is verified.</p>
+              <div class="field"><label for="settingZoom">Zoom Meeting Link</label><input id="settingZoom" type="url" placeholder="https://zoom.us/j/..."></div>
+              <div class="field"><label for="settingAccessNote">Participant Access Note</label><textarea id="settingAccessNote"></textarea></div>
+            </div>
+
+            <div class="settings-section">
+              <h3>Date & Time</h3><p>Enter both times in Pakistan Standard Time.</p>
+              <div class="field"><label for="settingSessionStart">Session Start — Pakistan Time</label><input id="settingSessionStart" type="datetime-local"></div>
+              <div class="field"><label for="settingReviewUnlock">Review Unlock — Pakistan Time</label><input id="settingReviewUnlock" type="datetime-local"></div>
+            </div>
+
+            <div class="settings-section full">
+              <h3>Official Links</h3><p>These links appear in the social cards and participant access area.</p>
+              <div class="field-row">
+                <div class="field"><label for="settingWhatsapp">WhatsApp Channel</label><input id="settingWhatsapp" type="url"></div>
+                <div class="field"><label for="settingYoutube">YouTube Channel</label><input id="settingYoutube" type="url"></div>
+                <div class="field"><label for="settingFacebook">Facebook Page</label><input id="settingFacebook" type="url"></div>
+                <div class="field"><label for="settingInstagram">Instagram Profile</label><input id="settingInstagram" type="url"></div>
+              </div>
+            </div>
+
+            <div class="settings-section full">
+              <h3>Registration Control</h3><p>Temporarily open or close new seat reservations.</p>
+              <label class="checkbox-row"><input id="settingRegistrationOpen" type="checkbox"> Registration is open</label>
+              <div class="field"><label for="settingClosedMessage">Closed Message</label><input id="settingClosedMessage" maxlength="240"></div>
+            </div>
+          </form>
+          <div style="margin-top:14px;display:flex;gap:9px;align-items:center"><button class="btn btn-gold" id="saveSettingsBottom" type="button">Save All Settings</button><div class="status" id="settingsStatus"></div></div>
+        </section>
+
+        <section class="page" id="page-videos">
+          <div class="section-intro"><div><h2>YouTube Videos</h2><p>Add, edit, hide, delete and reorder video cards shown on the public website.</p></div></div>
+          <div class="editor-layout">
+            <form class="card editor-form" id="videoForm" novalidate>
+              <div class="card-head"><div><h2 id="videoFormTitle">Add Video</h2><p>You can paste a full YouTube link or the video ID.</p></div></div>
+              <input id="videoEditId" type="hidden">
+              <div class="field"><label for="videoTitle">Video Title</label><input id="videoTitle" maxlength="180" required></div>
+              <div class="field"><label for="videoDescription">Video Description</label><textarea id="videoDescription"></textarea></div>
+              <div class="field"><label for="videoUrl">YouTube Link or ID</label><input id="videoUrl" required placeholder="https://youtu.be/..."></div>
+              <div class="field-row">
+                <div class="field"><label for="videoOrder">Sort Order</label><input id="videoOrder" type="number" value="0"></div>
+                <label class="checkbox-row"><input id="videoActive" type="checkbox" checked> Active</label>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:16px"><button class="btn btn-gold" id="videoSaveBtn" type="submit">Save Video</button><button class="btn btn-dark hidden" id="videoCancelBtn" type="button">Cancel Edit</button></div>
+              <div class="status" id="videoStatus"></div>
+            </form>
+            <div class="card">
+              <div class="card-head"><div><h2>Video Cards</h2><p id="videoCountText">0 videos</p></div></div>
+              <div class="item-list" id="videoList"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-content">
+          <div class="section-intro"><div><h2>Review Content</h2><p>Create long webinar notes. Participants will select Understood, Confused or Not Clear for every point.</p></div></div>
+          <div class="editor-layout">
+            <form class="card editor-form" id="contentForm" novalidate>
+              <div class="card-head"><div><h2 id="contentFormTitle">Add Review Point</h2><p>Long content and multiple paragraphs are supported.</p></div></div>
+              <input id="contentEditId" type="hidden">
+              <div class="field"><label for="contentTitle">Point Title</label><input id="contentTitle" maxlength="240" required></div>
+              <div class="field"><label for="contentBody">Detailed Content</label><textarea id="contentBody" style="min-height:260px" required></textarea></div>
+              <div class="field-row">
+                <div class="field"><label for="contentOrder">Sort Order</label><input id="contentOrder" type="number" value="0"></div>
+                <label class="checkbox-row"><input id="contentActive" type="checkbox" checked> Active</label>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:16px"><button class="btn btn-gold" id="contentSaveBtn" type="submit">Save Review Point</button><button class="btn btn-dark hidden" id="contentCancelBtn" type="button">Cancel Edit</button></div>
+              <div class="status" id="contentStatus"></div>
+            </form>
+            <div class="card">
+              <div class="card-head"><div><h2>Review Points</h2><p id="contentCountText">0 points</p></div></div>
+              <div class="item-list" id="contentList"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-registrations">
+          <div class="section-intro"><div><h2>Webinar Registrations</h2><p>All users who reserved a seat through the public website.</p></div><button class="btn btn-green" id="exportRegistrationsBtn" type="button">Export CSV</button></div>
+          <div class="table-card">
+            <div class="table-toolbar"><input class="search" id="registrationSearch" placeholder="Search name, email or WhatsApp"><span style="color:var(--muted-2);font-size:9px" id="registrationCountText">0 records</span></div>
+            <div class="table-wrap"><table><thead><tr><th>#</th><th>Name</th><th>Email</th><th>WhatsApp</th><th>Registered At</th></tr></thead><tbody id="registrationsBody"></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="page" id="page-reviews">
+          <div class="section-intro"><div><h2>Review Results</h2><p>Participant feedback, clarity scores and detailed answers.</p></div><button class="btn btn-green" id="exportReviewsBtn" type="button">Export CSV</button></div>
+          <div class="table-card">
+            <div class="table-toolbar"><input class="search" id="reviewSearch" placeholder="Search name or email"><span style="color:var(--muted-2);font-size:9px" id="reviewCountText">0 records</span></div>
+            <div class="table-wrap"><table><thead><tr><th>Participant</th><th>Score</th><th>Understood</th><th>Confused</th><th>Not Clear</th><th>Submitted</th><th>Details</th></tr></thead><tbody id="reviewsBody"></tbody></table></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal hidden" id="reviewModal">
+    <div class="modal-card">
+      <div class="modal-head"><div><h3 id="modalParticipant">Review Details</h3><p style="color:var(--muted);font-size:10px;margin-top:4px" id="modalMeta"></p></div><button class="close-btn" id="closeReviewModal" type="button">×</button></div>
+      <div id="modalAnswers"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    'use strict';
+
+    const SUPABASE_URL = 'https://qggtdwixwafcmorepkks.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_HnYmHQbt42OfjmRk09OfoQ_fq5TPYpb';
+    const PAKISTAN_OFFSET = '+05:00';
+    const PAKISTAN_TIMEZONE = 'Asia/Karachi';
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const state = {
+      session: null,
+      user: null,
+      settings: null,
+      videos: [],
+      reviewItems: [],
+      registrations: [],
+      reviews: [],
+      currentPage: 'dashboard'
+    };
+
+    const $ = id => document.getElementById(id);
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function formatPakistanDate(value) {
+      if (!value) return '—';
+      return new Intl.DateTimeFormat('en-GB', {
+        timeZone: PAKISTAN_TIMEZONE,
+        day: '2-digit', month: 'short', year: 'numeric',
+        hour: 'numeric', minute: '2-digit', hour12: true
+      }).format(new Date(value)) + ' PKT';
+    }
+
+    function formatDateTime(value) {
+      if (!value) return '—';
+      return new Intl.DateTimeFormat('en-GB', {
+        day: '2-digit', month: 'short', year: 'numeric',
+        hour: 'numeric', minute: '2-digit', hour12: true
+      }).format(new Date(value));
+    }
+
+    function toPakistanInput(value) {
+      if (!value) return '';
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: PAKISTAN_TIMEZONE,
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', hour12: false
+      }).formatToParts(new Date(value));
+      const map = Object.fromEntries(parts.map(part => [part.type, part.value]));
+      return `${map.year}-${map.month}-${map.day}T${map.hour}:${map.minute}`;
+    }
+
+    function pakistanInputToIso(value) {
+      if (!value) return null;
+      return new Date(`${value}:00${PAKISTAN_OFFSET}`).toISOString();
+    }
+
+    function extractYouTubeId(value) {
+      const raw = String(value || '').trim();
+      if (/^[A-Za-z0-9_-]{11}$/.test(raw)) return raw;
+      try {
+        const url = new URL(raw);
+        if (url.hostname.includes('youtu.be')) return url.pathname.split('/').filter(Boolean)[0] || '';
+        if (url.searchParams.get('v')) return url.searchParams.get('v');
+        const parts = url.pathname.split('/').filter(Boolean);
+        const marker = parts.findIndex(part => ['embed','shorts','live'].includes(part));
+        if (marker >= 0) return parts[marker + 1] || '';
+      } catch (_) {}
+      return '';
+    }
+
+    function setLoading(button, loading, loadingText, normalText) {
+      button.disabled = loading;
+      button.textContent = loading ? loadingText : normalText;
+    }
+
+    function showToast(message, type = '') {
+      const toast = $('toast');
+      toast.textContent = message;
+      toast.className = 'toast show ' + type;
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => { toast.className = 'toast'; }, 3500);
+    }
+
+    function csvEscape(value) {
+      const text = String(value ?? '').replaceAll('"', '""');
+      return `"${text}"`;
+    }
+
+    function downloadCsv(filename, headers, rows) {
+      const csv = [headers, ...rows].map(row => row.map(csvEscape).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    async function isAdmin() {
+      const { data, error } = await sb.rpc('is_webinar_admin');
+      if (error) throw new Error(error.message);
+      return data === true;
+    }
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      const button = $('loginSubmit');
+      const status = $('loginStatus');
+      status.className = 'status';
+      status.textContent = '';
+      setLoading(button, true, 'Signing In…', 'Sign In to Admin');
+
+      try {
+        const { data, error } = await sb.auth.signInWithPassword({
+          email: $('loginEmail').value.trim(),
+          password: $('loginPassword').value
+        });
+        if (error) throw new Error(error.message);
+        state.session = data.session;
+        state.user = data.user;
+        if (!(await isAdmin())) {
+          await sb.auth.signOut();
+          throw new Error('This account does not have webinar admin permission.');
+        }
+        await enterAdmin();
+      } catch (error) {
+        status.className = 'status error';
+        status.textContent = error.message;
+      } finally {
+        setLoading(button, false, 'Signing In…', 'Sign In to Admin');
+      }
+    }
+
+    async function enterAdmin() {
+      $('loginScreen').classList.add('hidden');
+      $('adminApp').classList.remove('hidden');
+      $('adminEmail').textContent = state.user?.email || 'Admin';
+      await refreshAll();
+    }
+
+    async function restoreSession() {
+      const { data } = await sb.auth.getSession();
+      if (!data.session) return;
+      state.session = data.session;
+      state.user = data.session.user;
+      try {
+        if (await isAdmin()) await enterAdmin();
+        else await sb.auth.signOut();
+      } catch (error) {
+        console.error(error);
+        await sb.auth.signOut();
+      }
+    }
+
+    async function logout() {
+      await sb.auth.signOut();
+      location.reload();
+    }
+
+    function showPage(pageName) {
+      state.currentPage = pageName;
+      document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+      document.querySelectorAll('.menu-btn').forEach(button => button.classList.remove('active'));
+      $(`page-${pageName}`).classList.add('active');
+      document.querySelector(`.menu-btn[data-page="${pageName}"]`)?.classList.add('active');
+      $('topPageTitle').textContent = {
+        dashboard: 'Dashboard', settings: 'Event Settings', videos: 'YouTube Videos',
+        content: 'Review Content', registrations: 'Registrations', reviews: 'Review Results'
+      }[pageName] || 'Webinar Admin';
+      $('sidebar').classList.remove('open');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function loadSettings() {
+      const { data, error } = await sb.from('webinar_settings').select('*').eq('id', 1).single();
+      if (error) throw new Error(error.message);
+      state.settings = data;
+      fillSettingsForm();
+      $('dashboardSessionTime').textContent = formatPakistanDate(data.session_start);
+      $('dashboardUnlockTime').textContent = formatPakistanDate(data.review_unlock_at);
+      $('dashboardEventTitle').textContent = data.event_title;
+    }
+
+    function fillSettingsForm() {
+      const s = state.settings;
+      $('settingBadge').value = s.event_badge || '';
+      $('settingTitle').value = s.event_title || '';
+      $('settingSubtitle').value = s.event_subtitle || '';
+      $('settingMentorName').value = s.mentor_name || '';
+      $('settingMentorBio').value = s.mentor_bio || '';
+      $('settingSessionStart').value = toPakistanInput(s.session_start);
+      $('settingReviewUnlock').value = toPakistanInput(s.review_unlock_at);
+      $('settingZoom').value = s.zoom_link || '';
+      $('settingAccessNote').value = s.access_note || '';
+      $('settingWhatsapp').value = s.whatsapp_channel || '';
+      $('settingYoutube').value = s.youtube_channel || '';
+      $('settingFacebook').value = s.facebook_link || '';
+      $('settingInstagram').value = s.instagram_link || '';
+      $('settingRegistrationOpen').checked = s.registration_open;
+      $('settingClosedMessage').value = s.registration_closed_message || '';
+    }
+
+    async function saveSettings() {
+      const buttons = [$('saveSettingsTop'), $('saveSettingsBottom')];
+      const status = $('settingsStatus');
+      status.className = 'status';
+      status.textContent = '';
+      buttons.forEach(btn => setLoading(btn, true, 'Saving…', 'Save All Settings'));
+
+      try {
+        const sessionStart = pakistanInputToIso($('settingSessionStart').value);
+        const reviewUnlock = pakistanInputToIso($('settingReviewUnlock').value);
+        if (!sessionStart || !reviewUnlock) throw new Error('Please enter both session and review unlock times.');
+        if (new Date(reviewUnlock) < new Date(sessionStart)) throw new Error('Review unlock time cannot be earlier than the session start.');
+
+        const payload = {
+          event_badge: $('settingBadge').value.trim(),
+          event_title: $('settingTitle').value.trim(),
+          event_subtitle: $('settingSubtitle').value.trim(),
+          mentor_name: $('settingMentorName').value.trim(),
+          mentor_bio: $('settingMentorBio').value.trim(),
+          session_start: sessionStart,
+          review_unlock_at: reviewUnlock,
+          zoom_link: $('settingZoom').value.trim(),
+          access_note: $('settingAccessNote').value.trim(),
+          whatsapp_channel: $('settingWhatsapp').value.trim(),
+          youtube_channel: $('settingYoutube').value.trim(),
+          facebook_link: $('settingFacebook').value.trim(),
+          instagram_link: $('settingInstagram').value.trim(),
+          registration_open: $('settingRegistrationOpen').checked,
+          registration_closed_message: $('settingClosedMessage').value.trim(),
+          updated_by: state.user.id
+        };
+
+        const { error } = await sb.from('webinar_settings').update(payload).eq('id', 1);
+        if (error) throw new Error(error.message);
+        await loadSettings();
+        status.className = 'status success';
+        status.textContent = 'Settings saved successfully.';
+        showToast('Webinar settings updated.', 'success');
+      } catch (error) {
+        status.className = 'status error';
+        status.textContent = error.message;
+      } finally {
+        buttons.forEach(btn => setLoading(btn, false, 'Saving…', 'Save All Settings'));
+      }
+    }
+
+    async function loadVideos() {
+      const { data, error } = await sb.from('webinar_videos').select('*').order('sort_order').order('created_at');
+      if (error) throw new Error(error.message);
+      state.videos = data || [];
+      renderVideos();
+      $('statVideos').textContent = state.videos.filter(video => video.is_active).length;
+    }
+
+    function renderVideos() {
+      $('videoCountText').textContent = `${state.videos.length} video${state.videos.length === 1 ? '' : 's'}`;
+      if (!state.videos.length) {
+        $('videoList').innerHTML = '<div class="empty">No videos have been added.</div>';
+        return;
+      }
+      $('videoList').innerHTML = state.videos.map(video => `
+        <article class="content-item ${video.is_active ? '' : 'inactive'}">
+          <div class="content-item-head">
+            <div><h3>${escapeHtml(video.title)}</h3><p>${escapeHtml(video.description || 'No description')}</p></div>
+            <span class="order-badge">ORDER ${video.sort_order}</span>
+          </div>
+          <p style="color:var(--gold-bright)">YouTube ID: ${escapeHtml(video.youtube_id)} · ${video.is_active ? 'Active' : 'Hidden'}</p>
+          <div class="item-actions">
+            <button class="mini-btn btn-dark" data-edit-video="${video.id}" type="button">Edit</button>
+            <a class="mini-btn btn-dark" href="https://youtu.be/${encodeURIComponent(video.youtube_id)}" target="_blank" rel="noopener">Preview</a>
+            <button class="mini-btn btn-red" data-delete-video="${video.id}" type="button">Delete</button>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function resetVideoForm() {
+      $('videoForm').reset();
+      $('videoEditId').value = '';
+      $('videoOrder').value = '0';
+      $('videoActive').checked = true;
+      $('videoFormTitle').textContent = 'Add Video';
+      $('videoSaveBtn').textContent = 'Save Video';
+      $('videoCancelBtn').classList.add('hidden');
+      $('videoStatus').textContent = '';
+    }
+
+    function editVideo(id) {
+      const video = state.videos.find(item => item.id === id);
+      if (!video) return;
+      $('videoEditId').value = video.id;
+      $('videoTitle').value = video.title;
+      $('videoDescription').value = video.description || '';
+      $('videoUrl').value = `https://youtu.be/${video.youtube_id}`;
+      $('videoOrder').value = video.sort_order;
+      $('videoActive').checked = video.is_active;
+      $('videoFormTitle').textContent = 'Edit Video';
+      $('videoSaveBtn').textContent = 'Update Video';
+      $('videoCancelBtn').classList.remove('hidden');
+      $('videoForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    async function saveVideo(event) {
+      event.preventDefault();
+      const status = $('videoStatus');
+      const button = $('videoSaveBtn');
+      status.className = 'status';
+      status.textContent = '';
+      const youtubeId = extractYouTubeId($('videoUrl').value);
+      if (!youtubeId) {
+        status.className = 'status error';
+        status.textContent = 'Please enter a valid YouTube link or 11-character video ID.';
+        return;
+      }
+
+      const payload = {
+        title: $('videoTitle').value.trim(),
+        description: $('videoDescription').value.trim(),
+        youtube_id: youtubeId,
+        sort_order: Number($('videoOrder').value || 0),
+        is_active: $('videoActive').checked
+      };
+      if (!payload.title) return;
+
+      setLoading(button, true, 'Saving…', $('videoEditId').value ? 'Update Video' : 'Save Video');
+      try {
+        let query;
+        if ($('videoEditId').value) query = sb.from('webinar_videos').update(payload).eq('id', $('videoEditId').value);
+        else query = sb.from('webinar_videos').insert(payload);
+        const { error } = await query;
+        if (error) throw new Error(error.message);
+        resetVideoForm();
+        await loadVideos();
+        showToast('Video saved successfully.', 'success');
+      } catch (error) {
+        status.className = 'status error';
+        status.textContent = error.message;
+      } finally {
+        button.disabled = false;
+        button.textContent = $('videoEditId').value ? 'Update Video' : 'Save Video';
+      }
+    }
+
+    async function deleteVideo(id) {
+      if (!confirm('Delete this video card permanently?')) return;
+      const { error } = await sb.from('webinar_videos').delete().eq('id', id);
+      if (error) return showToast(error.message, 'error');
+      await loadVideos();
+      showToast('Video deleted.', 'success');
+    }
+
+    async function loadReviewItems() {
+      const { data, error } = await sb.from('webinar_review_items').select('*').order('sort_order').order('created_at');
+      if (error) throw new Error(error.message);
+      state.reviewItems = data || [];
+      renderReviewItems();
+    }
+
+    function renderReviewItems() {
+      $('contentCountText').textContent = `${state.reviewItems.length} point${state.reviewItems.length === 1 ? '' : 's'}`;
+      if (!state.reviewItems.length) {
+        $('contentList').innerHTML = '<div class="empty">No review content has been added.</div>';
+        return;
+      }
+      $('contentList').innerHTML = state.reviewItems.map(item => `
+        <article class="content-item ${item.is_active ? '' : 'inactive'}">
+          <div class="content-item-head">
+            <div><h3>${escapeHtml(item.title)}</h3></div>
+            <span class="order-badge">ORDER ${item.sort_order}</span>
+          </div>
+          <p>${escapeHtml(item.content)}</p>
+          <p style="color:var(--gold-bright)">${item.is_active ? 'Active' : 'Hidden from participants'}</p>
+          <div class="item-actions">
+            <button class="mini-btn btn-dark" data-edit-content="${item.id}" type="button">Edit</button>
+            <button class="mini-btn btn-red" data-delete-content="${item.id}" type="button">Delete</button>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function resetContentForm() {
+      $('contentForm').reset();
+      $('contentEditId').value = '';
+      $('contentOrder').value = '0';
+      $('contentActive').checked = true;
+      $('contentFormTitle').textContent = 'Add Review Point';
+      $('contentSaveBtn').textContent = 'Save Review Point';
+      $('contentCancelBtn').classList.add('hidden');
+      $('contentStatus').textContent = '';
+    }
+
+    function editContent(id) {
+      const item = state.reviewItems.find(record => record.id === id);
+      if (!item) return;
+      $('contentEditId').value = item.id;
+      $('contentTitle').value = item.title;
+      $('contentBody').value = item.content;
+      $('contentOrder').value = item.sort_order;
+      $('contentActive').checked = item.is_active;
+      $('contentFormTitle').textContent = 'Edit Review Point';
+      $('contentSaveBtn').textContent = 'Update Review Point';
+      $('contentCancelBtn').classList.remove('hidden');
+      $('contentForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    async function saveContent(event) {
+      event.preventDefault();
+      const button = $('contentSaveBtn');
+      const status = $('contentStatus');
+      status.className = 'status';
+      status.textContent = '';
+      const payload = {
+        title: $('contentTitle').value.trim(),
+        content: $('contentBody').value.trim(),
+        sort_order: Number($('contentOrder').value || 0),
+        is_active: $('contentActive').checked
+      };
+      if (!payload.title || !payload.content) {
+        status.className = 'status error';
+        status.textContent = 'Title and detailed content are required.';
+        return;
+      }
+
+      const editing = Boolean($('contentEditId').value);
+      setLoading(button, true, 'Saving…', editing ? 'Update Review Point' : 'Save Review Point');
+      try {
+        let query;
+        if (editing) query = sb.from('webinar_review_items').update(payload).eq('id', $('contentEditId').value);
+        else query = sb.from('webinar_review_items').insert(payload);
+        const { error } = await query;
+        if (error) throw new Error(error.message);
+        resetContentForm();
+        await loadReviewItems();
+        showToast('Review content saved successfully.', 'success');
+      } catch (error) {
+        status.className = 'status error';
+        status.textContent = error.message;
+      } finally {
+        button.disabled = false;
+        button.textContent = editing ? 'Update Review Point' : 'Save Review Point';
+      }
+    }
+
+    async function deleteContent(id) {
+      if (!confirm('Delete this review point permanently? Existing submitted reviews will keep their saved answer IDs, but the title may no longer be available.')) return;
+      const { error } = await sb.from('webinar_review_items').delete().eq('id', id);
+      if (error) return showToast(error.message, 'error');
+      await loadReviewItems();
+      showToast('Review point deleted.', 'success');
+    }
+
+    async function loadRegistrations() {
+      const { data, error } = await sb.from('webinar_registrations').select('*').order('created_at', { ascending: false });
+      if (error) throw new Error(error.message);
+      state.registrations = data || [];
+      renderRegistrations();
+      renderRecentRegistrations();
+      $('statRegistrations').textContent = state.registrations.length;
+    }
+
+    function filteredRegistrations() {
+      const q = $('registrationSearch').value.trim().toLowerCase();
+      if (!q) return state.registrations;
+      return state.registrations.filter(row => [row.name,row.email,row.whatsapp].some(value => String(value || '').toLowerCase().includes(q)));
+    }
+
+    function renderRegistrations() {
+      const rows = filteredRegistrations();
+      $('registrationCountText').textContent = `${rows.length} record${rows.length === 1 ? '' : 's'}`;
+      $('registrationsBody').innerHTML = rows.length ? rows.map((row,index) => `
+        <tr><td>${index + 1}</td><td><strong>${escapeHtml(row.name)}</strong></td><td>${escapeHtml(row.email)}</td><td>${escapeHtml(row.whatsapp)}</td><td>${escapeHtml(formatDateTime(row.created_at))}</td></tr>
+      `).join('') : '<tr><td colspan="5"><div class="empty">No registrations found.</div></td></tr>';
+    }
+
+    function renderRecentRegistrations() {
+      const rows = state.registrations.slice(0,5);
+      $('recentRegistrationsBody').innerHTML = rows.length ? rows.map(row => `
+        <tr><td><strong>${escapeHtml(row.name)}</strong></td><td>${escapeHtml(row.email)}</td><td>${escapeHtml(row.whatsapp)}</td><td>${escapeHtml(formatDateTime(row.created_at))}</td></tr>
+      `).join('') : '<tr><td colspan="4"><div class="empty">No registrations yet.</div></td></tr>';
+    }
+
+    async function loadReviews() {
+      const { data, error } = await sb.from('webinar_reviews').select('*').order('submitted_at', { ascending: false });
+      if (error) throw new Error(error.message);
+      state.reviews = data || [];
+      renderReviews();
+      $('statReviews').textContent = state.reviews.length;
+      const average = state.reviews.length ? Math.round(state.reviews.reduce((sum,row) => sum + row.clarity_score, 0) / state.reviews.length) : 0;
+      $('statAverage').textContent = average + '%';
+    }
+
+    function filteredReviews() {
+      const q = $('reviewSearch').value.trim().toLowerCase();
+      if (!q) return state.reviews;
+      return state.reviews.filter(row => [row.name,row.email].some(value => String(value || '').toLowerCase().includes(q)));
+    }
+
+    function scoreClass(score) {
+      if (score >= 75) return 'score-high';
+      if (score >= 45) return 'score-mid';
+      return 'score-low';
+    }
+
+    function renderReviews() {
+      const rows = filteredReviews();
+      $('reviewCountText').textContent = `${rows.length} record${rows.length === 1 ? '' : 's'}`;
+      $('reviewsBody').innerHTML = rows.length ? rows.map(row => `
+        <tr>
+          <td><strong>${escapeHtml(row.name)}</strong><span>${escapeHtml(row.email)}</span></td>
+          <td><span class="score-pill ${scoreClass(row.clarity_score)}">${row.clarity_score}%</span></td>
+          <td>${row.understood_count}</td><td>${row.confused_count}</td><td>${row.not_clear_count}</td>
+          <td>${escapeHtml(formatDateTime(row.submitted_at))}</td>
+          <td><button class="mini-btn btn-dark" data-view-review="${row.id}" type="button">View</button></td>
+        </tr>
+      `).join('') : '<tr><td colspan="7"><div class="empty">No review results found.</div></td></tr>';
+    }
+
+    function answerLabel(value) {
+      return { understood: 'Understood', confused: 'Confused', not_clear: 'Not Clear' }[value] || value;
+    }
+
+    function openReviewDetails(id) {
+      const review = state.reviews.find(row => row.id === id);
+      if (!review) return;
+      $('modalParticipant').textContent = `${review.name} — ${review.clarity_score}%`;
+      $('modalMeta').textContent = `${review.email} · Submitted ${formatDateTime(review.submitted_at)}`;
+      const itemMap = new Map(state.reviewItems.map(item => [item.id,item]));
+      const answers = Array.isArray(review.answers) ? review.answers : [];
+      $('modalAnswers').innerHTML = answers.length ? answers.map((answer,index) => {
+        const item = itemMap.get(answer.item_id);
+        return `<div class="answer-detail"><h4>${index + 1}. ${escapeHtml(item?.title || 'Review point')}</h4><p>${escapeHtml(item?.content || 'This review point is no longer available in the current content list.')}</p><span>${escapeHtml(answerLabel(answer.answer))}</span></div>`;
+      }).join('') : '<div class="empty">No detailed answers were saved.</div>';
+      $('reviewModal').classList.remove('hidden');
+    }
+
+    function exportRegistrations() {
+      downloadCsv('webinar-registrations.csv', ['Name','Email','WhatsApp','Registered At'], state.registrations.map(row => [row.name,row.email,row.whatsapp,row.created_at]));
+    }
+
+    function exportReviews() {
+      downloadCsv('webinar-review-results.csv', ['Name','Email','Clarity Score','Understood','Confused','Not Clear','Submitted At','Answers JSON'], state.reviews.map(row => [row.name,row.email,row.clarity_score,row.understood_count,row.confused_count,row.not_clear_count,row.submitted_at,JSON.stringify(row.answers)]));
+    }
+
+    async function refreshAll() {
+      const button = $('refreshBtn');
+      setLoading(button, true, 'Refreshing…', 'Refresh');
+      try {
+        await Promise.all([loadSettings(), loadVideos(), loadReviewItems(), loadRegistrations(), loadReviews()]);
+        showToast('Dashboard data refreshed.', 'success');
+      } catch (error) {
+        console.error(error);
+        showToast(error.message, 'error');
+      } finally {
+        setLoading(button, false, 'Refreshing…', 'Refresh');
+      }
+    }
+
+    function bindEvents() {
+      $('loginForm').addEventListener('submit', handleLogin);
+      $('logoutBtn').addEventListener('click', logout);
+      $('refreshBtn').addEventListener('click', refreshAll);
+      $('mobileMenuBtn').addEventListener('click', () => $('sidebar').classList.toggle('open'));
+      document.querySelectorAll('.menu-btn').forEach(button => button.addEventListener('click', () => showPage(button.dataset.page)));
+      document.querySelectorAll('[data-go-page]').forEach(button => button.addEventListener('click', () => showPage(button.dataset.goPage)));
+
+      $('saveSettingsTop').addEventListener('click', saveSettings);
+      $('saveSettingsBottom').addEventListener('click', saveSettings);
+      $('videoForm').addEventListener('submit', saveVideo);
+      $('videoCancelBtn').addEventListener('click', resetVideoForm);
+      $('videoList').addEventListener('click', event => {
+        const edit = event.target.closest('[data-edit-video]');
+        const del = event.target.closest('[data-delete-video]');
+        if (edit) editVideo(edit.dataset.editVideo);
+        if (del) deleteVideo(del.dataset.deleteVideo);
+      });
+
+      $('contentForm').addEventListener('submit', saveContent);
+      $('contentCancelBtn').addEventListener('click', resetContentForm);
+      $('contentList').addEventListener('click', event => {
+        const edit = event.target.closest('[data-edit-content]');
+        const del = event.target.closest('[data-delete-content]');
+        if (edit) editContent(edit.dataset.editContent);
+        if (del) deleteContent(del.dataset.deleteContent);
+      });
+
+      $('registrationSearch').addEventListener('input', renderRegistrations);
+      $('reviewSearch').addEventListener('input', renderReviews);
+      $('exportRegistrationsBtn').addEventListener('click', exportRegistrations);
+      $('exportReviewsBtn').addEventListener('click', exportReviews);
+      $('reviewsBody').addEventListener('click', event => {
+        const button = event.target.closest('[data-view-review]');
+        if (button) openReviewDetails(button.dataset.viewReview);
+      });
+      $('closeReviewModal').addEventListener('click', () => $('reviewModal').classList.add('hidden'));
+      $('reviewModal').addEventListener('click', event => {
+        if (event.target === $('reviewModal')) $('reviewModal').classList.add('hidden');
+      });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') {
+          $('reviewModal').classList.add('hidden');
+          $('sidebar').classList.remove('open');
+        }
+      });
+    }
+
+    bindEvents();
+    restoreSession();
+  </script>
+</body>
+</html>
