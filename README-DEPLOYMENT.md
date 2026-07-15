@@ -125,3 +125,12 @@ The Zoom link is not included in the public configuration response. It is return
 - The publishable/anon key in the files is intended for frontend use.
 - Security is enforced through database RLS and RPC functions.
 - The email access system intentionally has no OTP, as requested. Anyone who knows a registered email can access that participant's webinar link/review gate.
+
+
+## July 2026 UI Update
+- Dark theme is the default; light theme is available from the theme toggle.
+- The supplied S M Shahid Shah portrait is used for the profile image and app icons.
+- Registration and review email inputs now use matching premium theme styles.
+- Session timing has a redesigned date tile and countdown.
+- Registered users can view and copy the Zoom link.
+- Review cards, social icons and page animations have been upgraded.
