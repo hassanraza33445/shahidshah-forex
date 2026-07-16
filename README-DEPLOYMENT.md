@@ -160,3 +160,12 @@ The latest page also includes stronger premium motion: scroll reveals, hero shim
 ## Support Contacts
 - Ms. Maryam Javed — +60 11 2050 6427
 - Ms. Malaika Shahid — +60 11-5695 8905
+
+
+## Website Visitor Analytics
+
+The public `index.html` now records anonymous page visits in Supabase. The admin Dashboard shows total visits, approximate unique visitors, today’s visits, last 7 days, device types and top traffic sources.
+
+For an existing database, run `supabase-visitor-analytics-upgrade.sql` once in Supabase SQL Editor. A new installation can use the updated `supabase-webinar-setup.sql`, which already includes the visitor analytics setup.
+
+Unique visitors are approximate and use a browser-generated ID stored in localStorage. Clearing browser storage or visiting from another device creates a new visitor ID. No email, WhatsApp number, precise location or IP address is recorded by this visitor analytics feature.
