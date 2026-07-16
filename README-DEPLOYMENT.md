@@ -155,3 +155,8 @@ The latest page also includes stronger premium motion: scroll reveals, hero shim
 - +60 11-5695 8905
 
 > The page stores registrations in Supabase. Automatic Zoom-link delivery by email or WhatsApp requires a separate email/WhatsApp automation service or Supabase Edge Function.
+
+
+## Support Contacts
+- Ms. Maryam Javed — +60 11 2050 6427
+- Ms. Malaika Shahid — +60 11-5695 8905
