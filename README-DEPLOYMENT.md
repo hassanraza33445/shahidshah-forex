@@ -140,3 +140,18 @@ The Zoom link is not included in the public configuration response. It is return
 After uploading the latest `index.html`, run `supabase-review-result-upgrade.sql` once in **Supabase Dashboard → SQL Editor**. This enables an already-submitted participant to enter the same registered email and reopen their saved score/result instead of seeing an “already submitted” error.
 
 The latest page also includes stronger premium motion: scroll reveals, hero shimmer, floating event card, animated counters, selected-answer feedback, social icon motion, and result chart animation. Layout dimensions are unchanged.
+
+## Current Landing Page Flow
+
+1. Hero and live-session countdown
+2. Social media community cards
+3. Featured YouTube videos
+4. One centered registration form
+5. Registration thank-you panel with WhatsApp channel and support contacts
+6. Post-session review and saved result display
+
+**Support contacts shown on the page:**
+- +60 11 2050 6427
+- +60 11-5695 8905
+
+> The page stores registrations in Supabase. Automatic Zoom-link delivery by email or WhatsApp requires a separate email/WhatsApp automation service or Supabase Edge Function.
