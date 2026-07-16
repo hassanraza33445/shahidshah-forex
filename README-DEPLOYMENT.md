@@ -169,3 +169,33 @@ The public `index.html` now records anonymous page visits in Supabase. The admin
 For an existing database, run `supabase-visitor-analytics-upgrade.sql` once in Supabase SQL Editor. A new installation can use the updated `supabase-webinar-setup.sql`, which already includes the visitor analytics setup.
 
 Unique visitors are approximate and use a browser-generated ID stored in localStorage. Clearing browser storage or visiting from another device creates a new visitor ID. No email, WhatsApp number, precise location or IP address is recorded by this visitor analytics feature.
+
+## Visitor Analytics Tab
+
+The admin panel now includes a separate **Visitor Analytics** tab with:
+
+- Total, unique, today, and last 7 days visits
+- Mobile, desktop, and tablet breakdown
+- Top traffic sources
+- Latest 100 anonymous visit records
+- Live updates through Supabase Realtime
+- Automatic 30-second refresh fallback if Realtime is unavailable
+
+For an existing installation, run `supabase-visitor-realtime-upgrade.sql` once in Supabase SQL Editor, then upload the updated `webinar-admin.html`.
+
+
+## Detailed Engagement Analytics Upgrade
+
+Run `supabase-engagement-analytics-upgrade.sql` once in Supabase SQL Editor, then upload the latest `index.html` and `webinar-admin.html`.
+
+The new **Engagement Details** admin tab records in real time:
+
+- Social-media, YouTube, external-link, navigation and button clicks
+- The exact clicked label and destination URL
+- Section views across Hero, Community, Videos, Registration and Review
+- Scroll milestones at 25%, 50%, 75%, 90% and 100%
+- Registration form start and successful seat reservation
+- Review access and review submission
+- Theme changes and visitor device type
+
+Visitors remain anonymous until they reserve a seat or verify their registered email. After identification, earlier events from the same browser visitor ID are linked to their name/email. Passwords, entered form values, IP addresses and precise locations are not stored.

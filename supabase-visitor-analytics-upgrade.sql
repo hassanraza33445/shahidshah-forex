@@ -110,3 +110,18 @@ grant execute on function public.get_webinar_visit_stats() to authenticated;
 
 -- Visitor IDs are browser-generated anonymous identifiers. No email, phone,
 -- precise location or IP address is stored by this setup.
+
+-- Enable live INSERT notifications for the admin Visitor Analytics tab.
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_publication_tables
+    where pubname = 'supabase_realtime'
+      and schemaname = 'public'
+      and tablename = 'webinar_visits'
+  ) then
+    execute 'alter publication supabase_realtime add table public.webinar_visits';
+  end if;
+end $$;
+
