@@ -28,6 +28,16 @@
     @media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.editor-layout{grid-template-columns:1fr}.editor-form{position:static}}@media(max-width:820px){.sidebar{transform:translateX(-100%);transition:transform .25s}.sidebar.open{transform:none}.main{margin-left:0}.mobile-menu{display:inline-grid;place-items:center}.settings-grid,.grid-2{grid-template-columns:1fr}.settings-section.full{grid-column:auto}}@media(max-width:560px){.content{padding:14px}.topbar{padding:0 14px}.stats-grid,.field-row{grid-template-columns:1fr}.sync-status{display:none}.table-toolbar,.section-intro{flex-direction:column;align-items:stretch}.card-head{flex-direction:column}}
 
     .analytics-title{margin:19px 0 11px}.analytics-title h2{font-size:16px}.analytics-title p{color:var(--text-muted);font-size:9px;margin-top:3px}.analytics-list{display:grid;gap:9px}.analytics-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 11px;border:1px solid var(--border);border-radius:11px;background:var(--glass);font-size:10px}.analytics-row span{color:var(--text-secondary)}.analytics-row strong{color:var(--text-primary)}.live-badge{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid color-mix(in srgb,var(--success) 45%,var(--border));border-radius:999px;background:var(--green-glow);color:var(--success);font-size:8px;font-weight:900;letter-spacing:.75px}.live-dot{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 0 0 var(--green-glow);animation:livePulse 1.8s infinite}.live-badge.offline{color:var(--gold);border-color:color-mix(in srgb,var(--gold) 45%,var(--border));background:var(--gold-glow)}@keyframes livePulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--success) 45%,transparent)}70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}.analytics-stat-note{margin-top:8px;color:var(--text-muted);font-size:8px}.activity-device{display:inline-flex;align-items:center;padding:4px 7px;border-radius:999px;background:var(--glass);border:1px solid var(--border);color:var(--text-secondary);font-size:8px;font-weight:800;text-transform:capitalize}
+  
+    .hub-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:15px}
+    .hub-summary .stat-card h3{font-size:24px}
+    .hub-type-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+    .hub-type-tab{min-height:34px;padding:0 12px;border-radius:9px;border:1px solid var(--border);background:var(--glass);color:var(--text-secondary);cursor:pointer;font-size:9px;font-weight:800}
+    .hub-type-tab.active{color:var(--gold);border-color:var(--gold);background:var(--gold-glow)}
+    .hub-preview{margin-top:11px;padding:11px;border:1px solid var(--border);border-radius:10px;background:var(--input-bg);color:var(--text-secondary);font-size:9px;line-height:1.6;white-space:pre-wrap;max-height:90px;overflow:hidden}
+    @media(max-width:900px){.hub-summary{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:560px){.hub-summary{grid-template-columns:1fr}}
+
   </style>
 </head>
 <body>
@@ -68,7 +78,7 @@
         <button class="menu-btn" data-page="videos"><span class="menu-icon">▶</span>YouTube Videos</button>
         <button class="menu-btn" data-page="content"><span class="menu-icon">≡</span>Review Content</button>
         <button class="menu-btn" data-page="registrations"><span class="menu-icon">◎</span>Registrations</button>
-        <button class="menu-btn" data-page="reviews"><span class="menu-icon">✓</span>Review Results</button>
+        <button class="menu-btn" data-page="reviews"><span class="menu-icon">✓</span>Review Results</button><button class="menu-btn" data-page="learning"><span class="menu-icon">◆</span>Learning Hub</button><button class="menu-btn" data-page="downloads"><span class="menu-icon">↓</span>Downloads</button>
       </nav>
       <div class="sidebar-footer">
         <a class="btn btn-dark" href="index.html" target="_blank">Open Public Website</a>
@@ -131,7 +141,7 @@
             <div class="card"><div class="card-head"><div><h2>Top Traffic Sources</h2><p>Where visitors came from</p></div></div><div class="analytics-list" id="visitorSources"><div class="empty">No visitor data yet.</div></div></div>
           </div>
           <div class="table-card" style="margin-top:14px">
-            <div class="table-toolbar"><div><strong style="font-size:12px">Recent Visitor Activity</strong><div class="analytics-stat-note">Latest 100 anonymous visits. No email, phone or IP address is stored.</div></div><button class="btn btn-dark" id="refreshAnalyticsBtn" type="button">Refresh Analytics</button></div>
+            <div class="table-toolbar"><div><strong style="font-size:12px">Visitor Activity</strong><div class="analytics-stat-note" id="visitorFilterNote">Traffic from today. No email, phone or IP address is stored.</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><select id="visitorTimeFilter" style="min-width:150px"><option value="hour">Last Hour</option><option value="today" selected>Today</option><option value="7days">Last 7 Days</option><option value="all">All Recent</option></select><button class="btn btn-dark" id="refreshAnalyticsBtn" type="button">Refresh Analytics</button></div></div>
             <div class="table-wrap"><table><thead><tr><th>Visited At</th><th>Device</th><th>Traffic Source</th><th>Page</th><th>Screen</th><th>Language</th></tr></thead><tbody id="visitorActivityBody"></tbody></table></div>
           </div>
         </section>
@@ -237,7 +247,7 @@
           <div class="section-intro"><div><h2>Review Content</h2><p>Create long webinar notes. Participants will select Understood, Confused or Not Clear for every point.</p></div></div>
           <div class="editor-layout">
             <form class="card editor-form" id="contentForm" novalidate>
-              <div class="card-head"><div><h2 id="contentFormTitle">Add Review Point</h2><p>Long content and multiple paragraphs are supported.</p></div></div>
+              <div class="card-head"><div><h2 id="contentFormTitle">Add Review Point</h2><p>Write clear points as separate lines. The public review shows every line with its own three answer choices.</p></div></div>
               <input id="contentEditId" type="hidden">
               <div class="field"><label for="contentTitle">Point Title</label><input id="contentTitle" maxlength="240" required></div>
               <div class="field"><label for="contentBody">Detailed Content</label><textarea id="contentBody" style="min-height:260px" required></textarea></div>
@@ -252,6 +262,81 @@
               <div class="card-head"><div><h2>Review Points</h2><p id="contentCountText">0 points</p></div></div>
               <div class="item-list" id="contentList"></div>
             </div>
+          </div>
+        </section>
+
+
+        <section class="page" id="page-learning">
+          <div class="section-intro">
+            <div><h2>Learning Hub</h2><p>Manage AI prompts, video scripts, business roadmap steps and free resources from the same admin panel.</p></div>
+            <a class="btn btn-dark" href="learning-hub.html" target="_blank">Open Public Learning Hub</a>
+          </div>
+
+          <div class="hub-summary">
+            <div class="stat-card"><div class="stat-head"><div class="stat-icon">AI</div><div class="stat-tag">PROMPTS</div></div><h3 id="hubStatPrompts">0</h3><p>AI prompt items</p></div>
+            <div class="stat-card"><div class="stat-head"><div class="stat-icon">▶</div><div class="stat-tag">SCRIPTS</div></div><h3 id="hubStatScripts">0</h3><p>Video script items</p></div>
+            <div class="stat-card"><div class="stat-head"><div class="stat-icon">↗</div><div class="stat-tag">ROADMAP</div></div><h3 id="hubStatRoadmap">0</h3><p>Business roadmap steps</p></div>
+            <div class="stat-card"><div class="stat-head"><div class="stat-icon">↓</div><div class="stat-tag">RESOURCES</div></div><h3 id="hubStatResources">0</h3><p>Downloadable resources</p></div>
+          </div>
+
+          <div class="editor-layout">
+            <form class="card editor-form" id="learningForm">
+              <div class="card-head"><div><h2 id="learningFormTitle">Add Learning Hub Item</h2><p>Create or update content without changing website code.</p></div></div>
+              <input id="learningEditId" type="hidden">
+              <div class="field"><label for="learningType">Content Type</label><select id="learningType">
+                <option value="ai_prompt">AI Prompt</option>
+                <option value="video_script">Video Script</option>
+                <option value="roadmap">Roadmap Step</option>
+                <option value="resource">Free Resource</option>
+              </select></div>
+              <div class="field-row">
+                <div class="field"><label for="learningCategory">Category</label><input id="learningCategory" required placeholder="e.g. Marketing"></div>
+                <div class="field"><label for="learningOrder">Display Order</label><input id="learningOrder" type="number" value="1"></div>
+              </div>
+              <div class="field"><label for="learningTitle">Title</label><input id="learningTitle" required maxlength="240"></div>
+              <div class="field"><label for="learningDescription">Short Description</label><textarea id="learningDescription" style="min-height:90px"></textarea></div>
+              <div class="field"><label for="learningContent">Prompt / Script / Roadmap Details</label><textarea id="learningContent" style="min-height:180px"></textarea></div>
+              <div class="field-row">
+                <div class="field"><label for="learningResourceUrl">Resource URL</label><input id="learningResourceUrl" placeholder="Resources only"></div>
+                <div class="field"><label for="learningDuration">Duration</label><input id="learningDuration" placeholder="Scripts only"></div>
+              </div>
+              <label class="checkbox-row"><input id="learningPublished" type="checkbox" checked> Published on public Learning Hub</label>
+              <div style="display:flex;gap:8px;margin-top:16px">
+                <button class="btn btn-gold" id="learningSaveBtn" type="submit">Save Item</button>
+                <button class="btn btn-dark hidden" id="learningCancelBtn" type="button">Cancel Edit</button>
+              </div>
+              <div class="status" id="learningStatus"></div>
+            </form>
+
+            <div class="card">
+              <div class="card-head"><div><h2>Learning Hub Content</h2><p id="learningCountText">0 items</p></div></div>
+              <div class="hub-type-tabs">
+                <button class="hub-type-tab active" type="button" data-learning-filter="">All</button>
+                <button class="hub-type-tab" type="button" data-learning-filter="ai_prompt">AI Prompts</button>
+                <button class="hub-type-tab" type="button" data-learning-filter="video_script">Video Scripts</button>
+                <button class="hub-type-tab" type="button" data-learning-filter="roadmap">Roadmap</button>
+                <button class="hub-type-tab" type="button" data-learning-filter="resource">Resources</button>
+              </div>
+              <div class="item-list" id="learningList"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-downloads">
+          <div class="section-intro"><div><h2>Downloads</h2><p>Manage the three public resource cards, including thumbnail, title, caption and link.</p></div><a class="btn btn-dark" href="learning-hub.html#downloads" target="_blank">Open Public Downloads</a></div>
+          <div class="editor-layout">
+            <form class="card editor-form" id="downloadForm">
+              <div class="card-head"><div><h2 id="downloadFormTitle">Add Download Card</h2><p>Upload the thumbnail and Excel file directly. Maximum three cards are shown publicly.</p></div></div>
+              <input id="downloadEditId" type="hidden"><input id="downloadThumbnail" type="hidden"><input id="downloadUrl" type="hidden">
+              <div class="field"><label for="downloadTitle">Title</label><input id="downloadTitle" required maxlength="180" placeholder="e.g. Trading Journal Sheet"></div>
+              <div class="field"><label for="downloadCaption">Short Caption</label><textarea id="downloadCaption" required style="min-height:100px"></textarea></div>
+              <div class="field"><label for="downloadThumbnailFile">Thumbnail Image</label><input id="downloadThumbnailFile" type="file" accept="image/png,image/jpeg,image/webp"><small style="color:var(--muted);font-size:8px">PNG, JPG or WebP · maximum 2 MB</small></div>
+              <div class="field"><label for="downloadExcelFile">Excel / CSV File</label><input id="downloadExcelFile" type="file" accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv"><small style="color:var(--muted);font-size:8px">XLSX, XLS or CSV · maximum 10 MB</small></div>
+              <div class="field"><label for="downloadOrder">Display Order</label><input id="downloadOrder" type="number" min="1" max="3" value="1"></div>
+              <label class="checkbox-row"><input id="downloadPublished" type="checkbox" checked> Published</label>
+              <div style="display:flex;gap:8px;margin-top:16px"><button class="btn btn-gold" id="downloadSaveBtn" type="submit">Upload & Save Card</button><button class="btn btn-dark hidden" id="downloadCancelBtn" type="button">Cancel Edit</button></div>
+            </form>
+            <div class="card"><div class="card-head"><div><h2>Download Cards</h2><p id="downloadCountText">0 of 3 cards</p></div></div><div class="item-list" id="downloadList"></div></div>
           </div>
         </section>
 
@@ -317,6 +402,9 @@
       engagementStats: null,
       engagementEvents: [],
       engagementChannel: null,
+      learningItems: [],
+      downloadItems: [],
+      learningFilter: '',
       currentPage: 'dashboard'
     };
 
@@ -483,7 +571,7 @@
       document.querySelector(`.menu-btn[data-page="${pageName}"]`)?.classList.add('active');
       $('topPageTitle').textContent = {
         dashboard: 'Dashboard', analytics: 'Visitor Analytics', engagement: 'Engagement Details', settings: 'Event Settings', videos: 'YouTube Videos',
-        content: 'Review Content', registrations: 'Registrations', reviews: 'Review Results'
+        content: 'Review Content', registrations: 'Registrations', reviews: 'Review Results', learning: 'Learning Hub', downloads: 'Downloads'
       }[pageName] || 'Webinar Admin';
       $('sidebar').classList.remove('open');
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -796,8 +884,10 @@
       renderVisitorStats();
     }
 
+    function visitorFilterStart(){const filter=$('visitorTimeFilter')?.value||'today',now=new Date();if(filter==='hour')return new Date(now-3600000);if(filter==='7days')return new Date(now-7*86400000);if(filter==='today'){const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Karachi',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now),get=t=>parts.find(x=>x.type===t)?.value;return new Date(`${get('year')}-${get('month')}-${get('day')}T00:00:00+05:00`)}return null}
     function renderVisitorActivity() {
-      const rows = state.visitorActivity || [];
+      const start=visitorFilterStart(),rows=(state.visitorActivity || []).filter(row=>!start||new Date(row.visited_at)>=start);
+      const label={hour:'last hour',today:'today', '7days':'last 7 days',all:'all recent traffic'}[$('visitorTimeFilter')?.value||'today'];if($('visitorFilterNote'))$('visitorFilterNote').textContent=`${rows.length} visits from ${label}. No email, phone or IP address is stored.`;
       $('visitorActivityBody').innerHTML = rows.length ? rows.map(row => `
         <tr>
           <td><strong>${escapeHtml(formatDateTime(row.visited_at))}</strong></td>
@@ -811,10 +901,8 @@
     }
 
     async function loadVisitorActivity() {
-      const { data, error } = await sb.from('webinar_visits')
-        .select('id,visitor_id,session_id,path,referrer,device_type,browser_language,screen_size,visited_at')
-        .order('visited_at', { ascending: false })
-        .limit(100);
+      let query=sb.from('webinar_visits').select('id,visitor_id,session_id,path,referrer,device_type,browser_language,screen_size,visited_at').order('visited_at',{ascending:false}).limit(1000),start=visitorFilterStart();if(start)query=query.gte('visited_at',start.toISOString());
+      const { data, error } = await query;
       if (error) throw new Error(error.message);
       state.visitorActivity = data || [];
       renderVisitorActivity();
@@ -846,7 +934,7 @@
       clearInterval(state.visitorRefreshTimer);
       state.visitorRefreshTimer = setInterval(() => {
         if (!$('adminApp').classList.contains('hidden')) {
-          Promise.all([loadVisitorStats(), loadVisitorActivity(), loadEngagementStats(), loadEngagementEvents()]).catch(console.error);
+          Promise.all([loadVisitorStats(), loadVisitorActivity(), loadEngagementStats(), loadEngagementEvents(), loadLearningItems()]).catch(console.error);
         }
       }, 30000);
     }
@@ -1034,11 +1122,127 @@
       downloadCsv('webinar-review-results.csv', ['Name','Email','Clarity Score','Understood','Confused','Not Clear','Submitted At','Answers JSON'], state.reviews.map(row => [row.name,row.email,row.clarity_score,row.understood_count,row.confused_count,row.not_clear_count,row.submitted_at,JSON.stringify(row.answers)]));
     }
 
+
+    function learningTypeLabel(type) {
+      return {
+        ai_prompt: 'AI Prompt',
+        video_script: 'Video Script',
+        roadmap: 'Roadmap Step',
+        resource: 'Free Resource'
+      }[type] || type;
+    }
+
+    async function loadLearningItems() {
+      const { data, error } = await sb.from('learning_hub_items').select('*').order('content_type').order('display_order');
+      if (error) throw new Error(error.message);
+      state.learningItems = data || [];
+      renderLearningItems();
+      $('hubStatPrompts').textContent = state.learningItems.filter(i => i.content_type === 'ai_prompt').length;
+      $('hubStatScripts').textContent = state.learningItems.filter(i => i.content_type === 'video_script').length;
+      $('hubStatRoadmap').textContent = state.learningItems.filter(i => i.content_type === 'roadmap').length;
+      $('hubStatResources').textContent = state.learningItems.filter(i => i.content_type === 'resource').length;
+    }
+
+    function renderLearningItems() {
+      const rows = state.learningItems.filter(item => !state.learningFilter || item.content_type === state.learningFilter);
+      $('learningCountText').textContent = `${rows.length} item${rows.length === 1 ? '' : 's'}`;
+      $('learningList').innerHTML = rows.length ? rows.map(item => `
+        <article class="content-item ${item.is_published ? '' : 'inactive'}">
+          <div class="content-item-head">
+            <div>
+              <span class="order-badge">${escapeHtml(learningTypeLabel(item.content_type))} · #${Number(item.display_order || 0)}</span>
+              <h3 style="margin-top:9px">${escapeHtml(item.title)}</h3>
+              <p>${escapeHtml(item.category || 'General')} · ${item.is_published ? 'Published' : 'Hidden'}</p>
+            </div>
+          </div>
+          <div class="hub-preview">${escapeHtml(item.description || item.content || 'No description')}</div>
+          <div class="item-actions">
+            <button class="mini-btn btn-dark" type="button" data-edit-learning="${item.id}">Edit</button>
+            <button class="mini-btn btn-red" type="button" data-delete-learning="${item.id}">Delete</button>
+          </div>
+        </article>
+      `).join('') : '<div class="empty">No Learning Hub content found.</div>';
+    }
+
+    function resetLearningForm() {
+      $('learningForm').reset();
+      $('learningEditId').value = '';
+      $('learningOrder').value = '1';
+      $('learningPublished').checked = true;
+      $('learningFormTitle').textContent = 'Add Learning Hub Item';
+      $('learningCancelBtn').classList.add('hidden');
+      $('learningStatus').textContent = '';
+    }
+
+    function editLearningItem(id) {
+      const item = state.learningItems.find(row => String(row.id) === String(id));
+      if (!item) return;
+      $('learningEditId').value = item.id;
+      $('learningType').value = item.content_type || 'ai_prompt';
+      $('learningCategory').value = item.category || '';
+      $('learningOrder').value = item.display_order ?? 1;
+      $('learningTitle').value = item.title || '';
+      $('learningDescription').value = item.description || '';
+      $('learningContent').value = item.content || '';
+      $('learningResourceUrl').value = item.resource_url || '';
+      $('learningDuration').value = item.duration || '';
+      $('learningPublished').checked = Boolean(item.is_published);
+      $('learningFormTitle').textContent = 'Edit Learning Hub Item';
+      $('learningCancelBtn').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function saveLearningItem(event) {
+      event.preventDefault();
+      const id = $('learningEditId').value;
+      const payload = {
+        content_type: $('learningType').value,
+        category: $('learningCategory').value.trim(),
+        title: $('learningTitle').value.trim(),
+        description: $('learningDescription').value.trim(),
+        content: $('learningContent').value.trim(),
+        resource_url: $('learningResourceUrl').value.trim() || null,
+        duration: $('learningDuration').value.trim() || null,
+        display_order: Number($('learningOrder').value || 0),
+        is_published: $('learningPublished').checked
+      };
+      if (!payload.title || !payload.category) return showToast('Title and category are required.', 'error');
+      setLoading($('learningSaveBtn'), true, 'Saving…', 'Save Item');
+      try {
+        const query = id ? sb.from('learning_hub_items').update(payload).eq('id', id) : sb.from('learning_hub_items').insert(payload);
+        const { error } = await query;
+        if (error) throw new Error(error.message);
+        resetLearningForm();
+        await loadLearningItems();
+        showToast(id ? 'Learning Hub item updated.' : 'Learning Hub item created.', 'success');
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        setLoading($('learningSaveBtn'), false, 'Saving…', 'Save Item');
+      }
+    }
+
+    async function deleteLearningItem(id) {
+      if (!confirm('Delete this Learning Hub item?')) return;
+      const { error } = await sb.from('learning_hub_items').delete().eq('id', id);
+      if (error) return showToast(error.message, 'error');
+      await loadLearningItems();
+      showToast('Learning Hub item deleted.', 'success');
+    }
+
+    async function loadDownloadItems(){const{data,error}=await sb.from('download_resources').select('*').order('display_order');if(error)throw new Error(error.message);state.downloadItems=data||[];$('downloadCountText').textContent=`${state.downloadItems.length} of 3 cards`;$('downloadList').innerHTML=state.downloadItems.length?state.downloadItems.map(item=>`<article class="content-item ${item.is_published?'':'inactive'}"><div class="content-item-head"><div><span class="order-badge">#${Number(item.display_order||0)}</span><h3 style="margin-top:9px">${escapeHtml(item.title)}</h3><p>${escapeHtml(item.caption||'')} · ${item.is_published?'Published':'Hidden'}</p></div></div><div class="item-actions"><button class="mini-btn btn-dark" type="button" data-edit-download="${item.id}">Edit</button><button class="mini-btn btn-red" type="button" data-delete-download="${item.id}">Delete</button></div></article>`).join(''):'<div class="empty">No download cards yet.</div>'}
+    function resetDownloadForm(){$('downloadForm').reset();$('downloadEditId').value='';$('downloadThumbnail').value='';$('downloadUrl').value='';$('downloadOrder').value='1';$('downloadPublished').checked=true;$('downloadFormTitle').textContent='Add Download Card';$('downloadCancelBtn').classList.add('hidden')}
+    function editDownloadItem(id){const item=state.downloadItems.find(x=>String(x.id)===String(id));if(!item)return;$('downloadEditId').value=item.id;$('downloadTitle').value=item.title||'';$('downloadCaption').value=item.caption||'';$('downloadThumbnail').value=item.thumbnail_url||'';$('downloadUrl').value=item.download_url||'';$('downloadOrder').value=item.display_order||1;$('downloadPublished').checked=!!item.is_published;$('downloadFormTitle').textContent='Edit Download Card';$('downloadCancelBtn').classList.remove('hidden');$('downloadForm').scrollIntoView({behavior:'smooth',block:'start'})}
+    async function uploadDownloadAsset(file,folder,maxBytes,extensions){if(!file)return null;if(file.size>maxBytes)throw new Error(`${folder==='thumbnails'?'Thumbnail':'Excel file'} is too large.`);const ext=(file.name.split('.').pop()||'bin').toLowerCase();if(!extensions.includes(ext))throw new Error(`Unsupported .${ext} file.`);const safeName=`${folder}/${Date.now()}-${crypto.randomUUID?.()||Math.random().toString(36).slice(2)}.${ext}`;const{error}=await sb.storage.from('download-assets').upload(safeName,file,{cacheControl:'3600',upsert:false,contentType:file.type||undefined});if(error)throw new Error(error.message);return sb.storage.from('download-assets').getPublicUrl(safeName).data.publicUrl}
+    async function saveDownloadItem(event){event.preventDefault();const id=$('downloadEditId').value;if(!id&&state.downloadItems.length>=3)return showToast('Maximum three download cards are allowed.','error');const thumbFile=$('downloadThumbnailFile').files[0],excelFile=$('downloadExcelFile').files[0];if(!id&&(!thumbFile||!excelFile))return showToast('Please select both a thumbnail and an Excel/CSV file.','error');setLoading($('downloadSaveBtn'),true,'Uploading…','Upload & Save Card');try{const thumbnailUrl=thumbFile?await uploadDownloadAsset(thumbFile,'thumbnails',2*1024*1024,['png','jpg','jpeg','webp']):$('downloadThumbnail').value;const downloadUrl=excelFile?await uploadDownloadAsset(excelFile,'sheets',10*1024*1024,['xlsx','xls','csv']):$('downloadUrl').value;const payload={title:$('downloadTitle').value.trim(),caption:$('downloadCaption').value.trim(),thumbnail_url:thumbnailUrl,download_url:downloadUrl,display_order:Number($('downloadOrder').value||1),is_published:$('downloadPublished').checked};const query=id?sb.from('download_resources').update(payload).eq('id',id):sb.from('download_resources').insert(payload);const{error}=await query;if(error)throw new Error(error.message);resetDownloadForm();await loadDownloadItems();showToast('Files uploaded and download card saved.','success')}catch(error){showToast(error.message,'error')}finally{setLoading($('downloadSaveBtn'),false,'Uploading…','Upload & Save Card')}}
+    async function deleteDownloadItem(id){if(!confirm('Delete this download card?'))return;const{error}=await sb.from('download_resources').delete().eq('id',id);if(error)return showToast(error.message,'error');await loadDownloadItems();showToast('Download card deleted.','success')}
+
+
     async function refreshAll() {
       const button = $('refreshBtn');
       setLoading(button, true, 'Refreshing…', 'Refresh');
       try {
-        await Promise.all([loadSettings(), loadVideos(), loadReviewItems(), loadRegistrations(), loadReviews(), loadVisitorStats(), loadVisitorActivity(), loadEngagementStats(), loadEngagementEvents()]);
+        await Promise.all([loadSettings(), loadVideos(), loadReviewItems(), loadRegistrations(), loadReviews(), loadVisitorStats(), loadVisitorActivity(), loadEngagementStats(), loadEngagementEvents(), loadLearningItems(), loadDownloadItems()]);
         showToast('Dashboard data refreshed.', 'success');
       } catch (error) {
         console.error(error);
@@ -1064,11 +1268,12 @@
           setLoading(button, false, 'Refreshing…', 'Refresh Analytics');
         }
       });
+      $('visitorTimeFilter').addEventListener('change', async()=>{try{await loadVisitorActivity()}catch(error){showToast(error.message,'error')}});
       $('refreshEngagementBtn').addEventListener('click', async () => {
         const button = $('refreshEngagementBtn');
         setLoading(button, true, 'Refreshing…', 'Refresh Details');
         try {
-          await Promise.all([loadEngagementStats(), loadEngagementEvents()]);
+          await Promise.all([loadEngagementStats(), loadEngagementEvents(), loadLearningItems()]);
           showToast('Engagement details refreshed.', 'success');
         } catch (error) {
           showToast(error.message, 'error');
@@ -1102,6 +1307,24 @@
         if (edit) editContent(edit.dataset.editContent);
         if (del) deleteContent(del.dataset.deleteContent);
       });
+
+
+      $('learningForm').addEventListener('submit', saveLearningItem);
+      $('learningCancelBtn').addEventListener('click', resetLearningForm);
+      $('learningList').addEventListener('click', event => {
+        const edit = event.target.closest('[data-edit-learning]');
+        const del = event.target.closest('[data-delete-learning]');
+        if (edit) editLearningItem(edit.dataset.editLearning);
+        if (del) deleteLearningItem(del.dataset.deleteLearning);
+      });
+      document.querySelectorAll('[data-learning-filter]').forEach(button => button.addEventListener('click', () => {
+        state.learningFilter = button.dataset.learningFilter;
+        document.querySelectorAll('[data-learning-filter]').forEach(tab => tab.classList.toggle('active', tab === button));
+        renderLearningItems();
+      }));
+      $('downloadForm').addEventListener('submit', saveDownloadItem);
+      $('downloadCancelBtn').addEventListener('click', resetDownloadForm);
+      $('downloadList').addEventListener('click', event => {const edit=event.target.closest('[data-edit-download]'),del=event.target.closest('[data-delete-download]');if(edit)editDownloadItem(edit.dataset.editDownload);if(del)deleteDownloadItem(del.dataset.deleteDownload)});
 
       $('registrationSearch').addEventListener('input', renderRegistrations);
       $('reviewSearch').addEventListener('input', renderReviews);

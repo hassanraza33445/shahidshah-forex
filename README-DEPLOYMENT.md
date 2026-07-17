@@ -199,3 +199,29 @@ The new **Engagement Details** admin tab records in real time:
 - Theme changes and visitor device type
 
 Visitors remain anonymous until they reserve a seat or verify their registered email. After identification, earlier events from the same browser visitor ID are linked to their name/email. Passwords, entered form values, IP addresses and precise locations are not stored.
+
+
+## Social Media Prompt Builder (latest)
+1. Run `supabase-prompt-builder-upgrade.sql` once in **Supabase Dashboard → SQL Editor**.
+2. Upload the updated `learning-hub.html`, `webinar-admin.html`, and complete `assets` folder.
+3. Open the existing `webinar-admin.html` and select **Learning Hub** to manage all six prompt builders.
+4. Keep `{{DETAILS}}` inside every master prompt; this is where the visitor's answers are inserted.
+
+The public page contains built-in fallback templates, so it remains usable if the new CMS table is temporarily unavailable. The migration enables admin editing of titles, descriptions, questions, master prompts, publishing status, order and disclaimers.
+
+This additive module does not modify Zoom, SMTP email, webinar registration, reviews or analytics. There is no separate Learning Hub admin login or admin file.
+
+## AI Downloads and Footer Update
+
+1. Run the latest `supabase-prompt-builder-upgrade.sql` in **Supabase Dashboard → SQL Editor**. It safely adds the `download_resources` table and does not replace the existing webinar tables.
+2. Upload `learning-hub.html`, `webinar-admin.html`, `index.html`, and the complete `assets` folder.
+3. In the existing admin panel, open **Learning Hub → AI Downloads**.
+4. Add up to three cards. For each card the admin can set the title, short caption, upload a thumbnail image, upload an XLSX/XLS/CSV file, choose display order, and set published status. No external file link is required.
+
+The same SQL migration creates the public `download-assets` Storage bucket and admin-only upload policies. Run the latest migration before testing file uploads.
+
+Visitor Analytics includes Last Hour, Today, Last 7 Days, and All Recent traffic filters.
+
+The public **AI Downloads** tab displays the supplied 1300×500 light or dark banner, followed by the three responsive resource cards. A complete responsive footer is included on both the landing page and AI Scripts page.
+
+All prompt-builder example text is trading/forex focused. The generated instructions tell the selected AI tool to produce the requested final script, banner, article, analysis, content plan, or indicator work directly instead of returning another prompt.
