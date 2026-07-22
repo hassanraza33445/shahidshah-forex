@@ -34,6 +34,8 @@
     .hub-type-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
     .hub-type-tab{min-height:34px;padding:0 12px;border-radius:9px;border:1px solid var(--border);background:var(--glass);color:var(--text-secondary);cursor:pointer;font-size:9px;font-weight:800}
     .hub-type-tab.active{color:var(--gold);border-color:var(--gold);background:var(--gold-glow)}
+    .reschedule-card{margin-bottom:14px;border:1px solid color-mix(in srgb,var(--gold) 48%,var(--border));border-radius:16px;padding:18px;background:linear-gradient(135deg,var(--gold-glow),var(--bg-card) 62%);box-shadow:0 13px 38px var(--shadow-color)}
+    .reschedule-card-head{display:flex;align-items:center;justify-content:space-between;gap:18px}.reschedule-card h3{font-size:15px}.reschedule-card p{margin-top:6px;color:var(--text-secondary);font-size:10px;line-height:1.6}.reschedule-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.reschedule-pill{padding:6px 9px;border:1px solid var(--border);border-radius:999px;background:var(--glass);color:var(--text-secondary);font-size:9px;font-weight:800}.reschedule-progress{height:8px;margin-top:14px;overflow:hidden;border-radius:99px;background:var(--bg-elevated)}.reschedule-progress span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--gold),var(--success));transition:width .3s}.warning-box{margin-top:16px;padding:13px;border:1px solid color-mix(in srgb,var(--gold) 55%,var(--border));border-radius:12px;background:var(--gold-glow);color:var(--text-secondary);font-size:10px;line-height:1.65}.confirm-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
     .hub-preview{margin-top:11px;padding:11px;border:1px solid var(--border);border-radius:10px;background:var(--input-bg);color:var(--text-secondary);font-size:9px;line-height:1.6;white-space:pre-wrap;max-height:90px;overflow:hidden}
     @media(max-width:900px){.hub-summary{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:560px){.hub-summary{grid-template-columns:1fr}}
@@ -342,6 +344,11 @@
 
         <section class="page" id="page-registrations">
           <div class="section-intro"><div><h2>Webinar Registrations</h2><p>All users who reserved a seat through the public website.</p></div><button class="btn btn-green" id="exportRegistrationsBtn" type="button">Export CSV</button></div>
+          <div class="reschedule-card">
+            <div class="reschedule-card-head"><div><h3>Send Webinar Reschedule Email</h3><p>Register old website participants in the new Zoom Webinar and email each person their personal joining link.</p></div><button class="btn btn-gold" id="openRescheduleBtn" type="button">Send Reschedule Email</button></div>
+            <div class="reschedule-meta"><span class="reschedule-pill">26 July 2026</span><span class="reschedule-pill">8:00 PM Pakistan Time</span><span class="reschedule-pill">Webinar 970 6537 5574</span><span class="reschedule-pill" id="rescheduleStatus">Checking status…</span></div>
+            <div class="reschedule-progress"><span id="rescheduleProgressBar"></span></div>
+          </div>
           <div class="table-card">
             <div class="table-toolbar"><input class="search" id="registrationSearch" placeholder="Search name, email or WhatsApp"><span style="color:var(--muted-2);font-size:9px" id="registrationCountText">0 records</span></div>
             <div class="table-wrap"><table><thead><tr><th>#</th><th>Name</th><th>Email</th><th>WhatsApp</th><th>Registered At</th></tr></thead><tbody id="registrationsBody"></tbody></table></div>
@@ -363,6 +370,15 @@
     <div class="modal-card">
       <div class="modal-head"><div><h3 id="modalParticipant">Review Details</h3><p style="color:var(--muted);font-size:10px;margin-top:4px" id="modalMeta"></p></div><button class="close-btn" id="closeReviewModal" type="button">×</button></div>
       <div id="modalAnswers"></div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="rescheduleModal">
+    <div class="modal-card" style="width:min(560px,100%)">
+      <div class="modal-head"><div><h3>Confirm Reschedule Email</h3><p style="color:var(--text-muted);font-size:10px;margin-top:4px">This action processes only participants who have not received this update.</p></div><button class="close-btn" id="closeRescheduleModal" type="button">×</button></div>
+      <div class="warning-box"><strong style="display:block;color:var(--text-primary);margin-bottom:5px">Before sending, please confirm:</strong>Old registrants will be added to Zoom Webinar <strong>970 6537 5574</strong> and receive the reschedule email for <strong>26 July 2026 at 8:00 PM Pakistan Time</strong>. Successfully processed users will be skipped automatically on every retry.</div>
+      <div class="reschedule-meta"><span class="reschedule-pill" id="reschedulePendingCount">Pending: —</span><span class="reschedule-pill" id="rescheduleSentCount">Sent: —</span><span class="reschedule-pill" id="rescheduleFailedCount">Failed: —</span></div>
+      <div class="confirm-actions"><button class="btn btn-dark" id="cancelRescheduleBtn" type="button">Cancel</button><button class="btn btn-gold" id="sendRescheduleNowBtn" type="button">Send Now</button></div>
     </div>
   </div>
 
@@ -1037,6 +1053,59 @@
       renderRegistrations();
       renderRecentRegistrations();
       $('statRegistrations').textContent = state.registrations.length;
+      await loadRescheduleStatus();
+    }
+
+    async function callRescheduleFunction(action) {
+      const { data, error } = await sb.functions.invoke('bulk-webinar-reschedule', { body: { action } });
+      if (error) throw new Error(error.message || 'Unable to contact the reschedule service.');
+      if (!data?.success) throw new Error(data?.error || 'Reschedule request failed.');
+      return data;
+    }
+
+    function updateRescheduleStatus(result = {}) {
+      const total = Number(result.total ?? state.registrations.length ?? 0);
+      const sent = Number(result.sent ?? 0);
+      const failed = Number(result.failed ?? 0);
+      const pending = Math.max(0, Number(result.pending ?? total - sent));
+      const percentage = total ? Math.round((sent / total) * 100) : 0;
+      $('rescheduleStatus').textContent = pending ? `${pending} pending · ${sent} sent` : (failed ? `${sent} sent · ${failed} failed` : `${sent} sent · Complete`);
+      $('reschedulePendingCount').textContent = `Pending: ${pending}`;
+      $('rescheduleSentCount').textContent = `Sent: ${sent}`;
+      $('rescheduleFailedCount').textContent = `Failed: ${failed}`;
+      $('rescheduleProgressBar').style.width = `${percentage}%`;
+      $('openRescheduleBtn').disabled = total > 0 && pending === 0;
+      $('openRescheduleBtn').textContent = total > 0 && pending === 0 ? (failed ? 'Completed with Errors' : 'All Emails Sent') : 'Send Reschedule Email';
+      return { total, sent, failed, pending };
+    }
+
+    async function loadRescheduleStatus() {
+      try { return updateRescheduleStatus(await callRescheduleFunction('status')); }
+      catch (error) { $('rescheduleStatus').textContent = 'Setup required'; return null; }
+    }
+
+    async function openRescheduleModal() {
+      const status = await loadRescheduleStatus();
+      if (!status) return showToast('Deploy the bulk-webinar-reschedule function and run its SQL setup first.', 'error');
+      if (!status.pending) return showToast('All registered users have already received this update.', 'success');
+      $('rescheduleModal').classList.remove('hidden');
+    }
+
+    async function sendRescheduleNow() {
+      const button = $('sendRescheduleNowBtn');
+      setLoading(button, true, 'Sending…', 'Send Now');
+      try {
+        let status;
+        do {
+          status = updateRescheduleStatus(await callRescheduleFunction('send'));
+          button.textContent = status.pending ? `Sending… ${status.sent}/${status.total}` : 'Complete';
+        } while (status.pending > 0);
+        $('rescheduleModal').classList.add('hidden');
+        showToast(`Reschedule email completed: ${status.sent} sent, ${status.failed} failed.`, status.failed ? 'error' : 'success');
+      } catch (error) {
+        showToast(error.message, 'error');
+        await loadRescheduleStatus();
+      } finally { setLoading(button, false, 'Sending…', 'Send Now'); }
     }
 
     function filteredRegistrations() {
@@ -1329,6 +1398,11 @@
       $('registrationSearch').addEventListener('input', renderRegistrations);
       $('reviewSearch').addEventListener('input', renderReviews);
       $('exportRegistrationsBtn').addEventListener('click', exportRegistrations);
+      $('openRescheduleBtn').addEventListener('click', openRescheduleModal);
+      $('sendRescheduleNowBtn').addEventListener('click', sendRescheduleNow);
+      $('closeRescheduleModal').addEventListener('click', () => $('rescheduleModal').classList.add('hidden'));
+      $('cancelRescheduleBtn').addEventListener('click', () => $('rescheduleModal').classList.add('hidden'));
+      $('rescheduleModal').addEventListener('click', event => { if (event.target === $('rescheduleModal')) $('rescheduleModal').classList.add('hidden'); });
       $('exportReviewsBtn').addEventListener('click', exportReviews);
       $('reviewsBody').addEventListener('click', event => {
         const button = event.target.closest('[data-view-review]');
@@ -1341,6 +1415,7 @@
       document.addEventListener('keydown', event => {
         if (event.key === 'Escape') {
           $('reviewModal').classList.add('hidden');
+          $('rescheduleModal').classList.add('hidden');
           $('sidebar').classList.remove('open');
         }
       });
