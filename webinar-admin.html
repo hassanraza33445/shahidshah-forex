@@ -34,8 +34,6 @@
     .hub-type-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
     .hub-type-tab{min-height:34px;padding:0 12px;border-radius:9px;border:1px solid var(--border);background:var(--glass);color:var(--text-secondary);cursor:pointer;font-size:9px;font-weight:800}
     .hub-type-tab.active{color:var(--gold);border-color:var(--gold);background:var(--gold-glow)}
-    .reschedule-card{margin-bottom:14px;border:1px solid color-mix(in srgb,var(--gold) 48%,var(--border));border-radius:16px;padding:18px;background:linear-gradient(135deg,var(--gold-glow),var(--bg-card) 62%);box-shadow:0 13px 38px var(--shadow-color)}
-    .reschedule-card-head{display:flex;align-items:center;justify-content:space-between;gap:18px}.reschedule-card h3{font-size:15px}.reschedule-card p{margin-top:6px;color:var(--text-secondary);font-size:10px;line-height:1.6}.reschedule-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.reschedule-pill{padding:6px 9px;border:1px solid var(--border);border-radius:999px;background:var(--glass);color:var(--text-secondary);font-size:9px;font-weight:800}.reschedule-progress{height:8px;margin-top:14px;overflow:hidden;border-radius:99px;background:var(--bg-elevated)}.reschedule-progress span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--gold),var(--success));transition:width .3s}.warning-box{margin-top:16px;padding:13px;border:1px solid color-mix(in srgb,var(--gold) 55%,var(--border));border-radius:12px;background:var(--gold-glow);color:var(--text-secondary);font-size:10px;line-height:1.65}.confirm-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
     .hub-preview{margin-top:11px;padding:11px;border:1px solid var(--border);border-radius:10px;background:var(--input-bg);color:var(--text-secondary);font-size:9px;line-height:1.6;white-space:pre-wrap;max-height:90px;overflow:hidden}
     @media(max-width:900px){.hub-summary{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:560px){.hub-summary{grid-template-columns:1fr}}
@@ -325,15 +323,15 @@
         </section>
 
         <section class="page" id="page-downloads">
-          <div class="section-intro"><div><h2>Downloads</h2><p>Manage the three public resource cards, including thumbnail, title, caption and link.</p></div><a class="btn btn-dark" href="learning-hub.html#downloads" target="_blank">Open Public Downloads</a></div>
+          <div class="section-intro"><div><h2>Downloads</h2><p>Manage the three public resource cards, including thumbnail, title, caption and an Excel, CSV or PDF file.</p></div><a class="btn btn-dark" href="learning-hub.html#downloads" target="_blank">Open Public Downloads</a></div>
           <div class="editor-layout">
             <form class="card editor-form" id="downloadForm">
-              <div class="card-head"><div><h2 id="downloadFormTitle">Add Download Card</h2><p>Upload the thumbnail and Excel file directly. Maximum three cards are shown publicly.</p></div></div>
+              <div class="card-head"><div><h2 id="downloadFormTitle">Add Download Card</h2><p>Upload the thumbnail and an Excel, CSV or PDF file directly. Maximum three cards are shown publicly.</p></div></div>
               <input id="downloadEditId" type="hidden"><input id="downloadThumbnail" type="hidden"><input id="downloadUrl" type="hidden">
               <div class="field"><label for="downloadTitle">Title</label><input id="downloadTitle" required maxlength="180" placeholder="e.g. Trading Journal Sheet"></div>
               <div class="field"><label for="downloadCaption">Short Caption</label><textarea id="downloadCaption" required style="min-height:100px"></textarea></div>
               <div class="field"><label for="downloadThumbnailFile">Thumbnail Image</label><input id="downloadThumbnailFile" type="file" accept="image/png,image/jpeg,image/webp"><small style="color:var(--muted);font-size:8px">PNG, JPG or WebP · maximum 2 MB</small></div>
-              <div class="field"><label for="downloadExcelFile">Excel / CSV File</label><input id="downloadExcelFile" type="file" accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv"><small style="color:var(--muted);font-size:8px">XLSX, XLS or CSV · maximum 10 MB</small></div>
+              <div class="field"><label for="downloadExcelFile">Excel / CSV / PDF File</label><input id="downloadExcelFile" type="file" accept=".xlsx,.xls,.csv,.pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv,application/pdf"><small style="color:var(--muted);font-size:8px">XLSX, XLS, CSV or PDF · maximum 10 MB</small></div>
               <div class="field"><label for="downloadOrder">Display Order</label><input id="downloadOrder" type="number" min="1" max="3" value="1"></div>
               <label class="checkbox-row"><input id="downloadPublished" type="checkbox" checked> Published</label>
               <div style="display:flex;gap:8px;margin-top:16px"><button class="btn btn-gold" id="downloadSaveBtn" type="submit">Upload & Save Card</button><button class="btn btn-dark hidden" id="downloadCancelBtn" type="button">Cancel Edit</button></div>
@@ -344,11 +342,6 @@
 
         <section class="page" id="page-registrations">
           <div class="section-intro"><div><h2>Webinar Registrations</h2><p>All users who reserved a seat through the public website.</p></div><button class="btn btn-green" id="exportRegistrationsBtn" type="button">Export CSV</button></div>
-          <div class="reschedule-card">
-            <div class="reschedule-card-head"><div><h3>Send Webinar Reschedule Email</h3><p>Register old website participants in the new Zoom Webinar and email each person their personal joining link.</p></div><button class="btn btn-gold" id="openRescheduleBtn" type="button">Send Reschedule Email</button></div>
-            <div class="reschedule-meta"><span class="reschedule-pill">26 July 2026</span><span class="reschedule-pill">8:00 PM Pakistan Time</span><span class="reschedule-pill">Webinar 970 6537 5574</span><span class="reschedule-pill" id="rescheduleStatus">Checking status…</span></div>
-            <div class="reschedule-progress"><span id="rescheduleProgressBar"></span></div>
-          </div>
           <div class="table-card">
             <div class="table-toolbar"><input class="search" id="registrationSearch" placeholder="Search name, email or WhatsApp"><span style="color:var(--muted-2);font-size:9px" id="registrationCountText">0 records</span></div>
             <div class="table-wrap"><table><thead><tr><th>#</th><th>Name</th><th>Email</th><th>WhatsApp</th><th>Registered At</th></tr></thead><tbody id="registrationsBody"></tbody></table></div>
@@ -370,15 +363,6 @@
     <div class="modal-card">
       <div class="modal-head"><div><h3 id="modalParticipant">Review Details</h3><p style="color:var(--muted);font-size:10px;margin-top:4px" id="modalMeta"></p></div><button class="close-btn" id="closeReviewModal" type="button">×</button></div>
       <div id="modalAnswers"></div>
-    </div>
-  </div>
-
-  <div class="modal hidden" id="rescheduleModal">
-    <div class="modal-card" style="width:min(560px,100%)">
-      <div class="modal-head"><div><h3>Confirm Reschedule Email</h3><p style="color:var(--text-muted);font-size:10px;margin-top:4px">This action processes only participants who have not received this update.</p></div><button class="close-btn" id="closeRescheduleModal" type="button">×</button></div>
-      <div class="warning-box"><strong style="display:block;color:var(--text-primary);margin-bottom:5px">Before sending, please confirm:</strong>Old registrants will be added to Zoom Webinar <strong>970 6537 5574</strong> and receive the reschedule email for <strong>26 July 2026 at 8:00 PM Pakistan Time</strong>. Successfully processed users will be skipped automatically on every retry.</div>
-      <div class="reschedule-meta"><span class="reschedule-pill" id="reschedulePendingCount">Pending: —</span><span class="reschedule-pill" id="rescheduleSentCount">Sent: —</span><span class="reschedule-pill" id="rescheduleFailedCount">Failed: —</span></div>
-      <div class="confirm-actions"><button class="btn btn-dark" id="cancelRescheduleBtn" type="button">Cancel</button><button class="btn btn-gold" id="sendRescheduleNowBtn" type="button">Send Now</button></div>
     </div>
   </div>
 
@@ -1053,59 +1037,6 @@
       renderRegistrations();
       renderRecentRegistrations();
       $('statRegistrations').textContent = state.registrations.length;
-      await loadRescheduleStatus();
-    }
-
-    async function callRescheduleFunction(action) {
-      const { data, error } = await sb.functions.invoke('bulk-webinar-reschedule', { body: { action } });
-      if (error) throw new Error(error.message || 'Unable to contact the reschedule service.');
-      if (!data?.success) throw new Error(data?.error || 'Reschedule request failed.');
-      return data;
-    }
-
-    function updateRescheduleStatus(result = {}) {
-      const total = Number(result.total ?? state.registrations.length ?? 0);
-      const sent = Number(result.sent ?? 0);
-      const failed = Number(result.failed ?? 0);
-      const pending = Math.max(0, Number(result.pending ?? total - sent));
-      const percentage = total ? Math.round((sent / total) * 100) : 0;
-      $('rescheduleStatus').textContent = pending ? `${pending} pending · ${sent} sent` : (failed ? `${sent} sent · ${failed} failed` : `${sent} sent · Complete`);
-      $('reschedulePendingCount').textContent = `Pending: ${pending}`;
-      $('rescheduleSentCount').textContent = `Sent: ${sent}`;
-      $('rescheduleFailedCount').textContent = `Failed: ${failed}`;
-      $('rescheduleProgressBar').style.width = `${percentage}%`;
-      $('openRescheduleBtn').disabled = total > 0 && pending === 0;
-      $('openRescheduleBtn').textContent = total > 0 && pending === 0 ? (failed ? 'Completed with Errors' : 'All Emails Sent') : 'Send Reschedule Email';
-      return { total, sent, failed, pending };
-    }
-
-    async function loadRescheduleStatus() {
-      try { return updateRescheduleStatus(await callRescheduleFunction('status')); }
-      catch (error) { $('rescheduleStatus').textContent = 'Setup required'; return null; }
-    }
-
-    async function openRescheduleModal() {
-      const status = await loadRescheduleStatus();
-      if (!status) return showToast('Deploy the bulk-webinar-reschedule function and run its SQL setup first.', 'error');
-      if (!status.pending) return showToast('All registered users have already received this update.', 'success');
-      $('rescheduleModal').classList.remove('hidden');
-    }
-
-    async function sendRescheduleNow() {
-      const button = $('sendRescheduleNowBtn');
-      setLoading(button, true, 'Sending…', 'Send Now');
-      try {
-        let status;
-        do {
-          status = updateRescheduleStatus(await callRescheduleFunction('send'));
-          button.textContent = status.pending ? `Sending… ${status.sent}/${status.total}` : 'Complete';
-        } while (status.pending > 0);
-        $('rescheduleModal').classList.add('hidden');
-        showToast(`Reschedule email completed: ${status.sent} sent, ${status.failed} failed.`, status.failed ? 'error' : 'success');
-      } catch (error) {
-        showToast(error.message, 'error');
-        await loadRescheduleStatus();
-      } finally { setLoading(button, false, 'Sending…', 'Send Now'); }
     }
 
     function filteredRegistrations() {
@@ -1302,8 +1233,8 @@
     async function loadDownloadItems(){const{data,error}=await sb.from('download_resources').select('*').order('display_order');if(error)throw new Error(error.message);state.downloadItems=data||[];$('downloadCountText').textContent=`${state.downloadItems.length} of 3 cards`;$('downloadList').innerHTML=state.downloadItems.length?state.downloadItems.map(item=>`<article class="content-item ${item.is_published?'':'inactive'}"><div class="content-item-head"><div><span class="order-badge">#${Number(item.display_order||0)}</span><h3 style="margin-top:9px">${escapeHtml(item.title)}</h3><p>${escapeHtml(item.caption||'')} · ${item.is_published?'Published':'Hidden'}</p></div></div><div class="item-actions"><button class="mini-btn btn-dark" type="button" data-edit-download="${item.id}">Edit</button><button class="mini-btn btn-red" type="button" data-delete-download="${item.id}">Delete</button></div></article>`).join(''):'<div class="empty">No download cards yet.</div>'}
     function resetDownloadForm(){$('downloadForm').reset();$('downloadEditId').value='';$('downloadThumbnail').value='';$('downloadUrl').value='';$('downloadOrder').value='1';$('downloadPublished').checked=true;$('downloadFormTitle').textContent='Add Download Card';$('downloadCancelBtn').classList.add('hidden')}
     function editDownloadItem(id){const item=state.downloadItems.find(x=>String(x.id)===String(id));if(!item)return;$('downloadEditId').value=item.id;$('downloadTitle').value=item.title||'';$('downloadCaption').value=item.caption||'';$('downloadThumbnail').value=item.thumbnail_url||'';$('downloadUrl').value=item.download_url||'';$('downloadOrder').value=item.display_order||1;$('downloadPublished').checked=!!item.is_published;$('downloadFormTitle').textContent='Edit Download Card';$('downloadCancelBtn').classList.remove('hidden');$('downloadForm').scrollIntoView({behavior:'smooth',block:'start'})}
-    async function uploadDownloadAsset(file,folder,maxBytes,extensions){if(!file)return null;if(file.size>maxBytes)throw new Error(`${folder==='thumbnails'?'Thumbnail':'Excel file'} is too large.`);const ext=(file.name.split('.').pop()||'bin').toLowerCase();if(!extensions.includes(ext))throw new Error(`Unsupported .${ext} file.`);const safeName=`${folder}/${Date.now()}-${crypto.randomUUID?.()||Math.random().toString(36).slice(2)}.${ext}`;const{error}=await sb.storage.from('download-assets').upload(safeName,file,{cacheControl:'3600',upsert:false,contentType:file.type||undefined});if(error)throw new Error(error.message);return sb.storage.from('download-assets').getPublicUrl(safeName).data.publicUrl}
-    async function saveDownloadItem(event){event.preventDefault();const id=$('downloadEditId').value;if(!id&&state.downloadItems.length>=3)return showToast('Maximum three download cards are allowed.','error');const thumbFile=$('downloadThumbnailFile').files[0],excelFile=$('downloadExcelFile').files[0];if(!id&&(!thumbFile||!excelFile))return showToast('Please select both a thumbnail and an Excel/CSV file.','error');setLoading($('downloadSaveBtn'),true,'Uploading…','Upload & Save Card');try{const thumbnailUrl=thumbFile?await uploadDownloadAsset(thumbFile,'thumbnails',2*1024*1024,['png','jpg','jpeg','webp']):$('downloadThumbnail').value;const downloadUrl=excelFile?await uploadDownloadAsset(excelFile,'sheets',10*1024*1024,['xlsx','xls','csv']):$('downloadUrl').value;const payload={title:$('downloadTitle').value.trim(),caption:$('downloadCaption').value.trim(),thumbnail_url:thumbnailUrl,download_url:downloadUrl,display_order:Number($('downloadOrder').value||1),is_published:$('downloadPublished').checked};const query=id?sb.from('download_resources').update(payload).eq('id',id):sb.from('download_resources').insert(payload);const{error}=await query;if(error)throw new Error(error.message);resetDownloadForm();await loadDownloadItems();showToast('Files uploaded and download card saved.','success')}catch(error){showToast(error.message,'error')}finally{setLoading($('downloadSaveBtn'),false,'Uploading…','Upload & Save Card')}}
+    async function uploadDownloadAsset(file,folder,maxBytes,extensions){if(!file)return null;if(file.size>maxBytes)throw new Error(`${folder==='thumbnails'?'Thumbnail':'Download file'} is too large.`);const ext=(file.name.split('.').pop()||'bin').toLowerCase();if(!extensions.includes(ext))throw new Error(`Unsupported .${ext} file.`);const safeName=`${folder}/${Date.now()}-${crypto.randomUUID?.()||Math.random().toString(36).slice(2)}.${ext}`;const{error}=await sb.storage.from('download-assets').upload(safeName,file,{cacheControl:'3600',upsert:false,contentType:file.type||undefined});if(error)throw new Error(error.message);return sb.storage.from('download-assets').getPublicUrl(safeName).data.publicUrl}
+    async function saveDownloadItem(event){event.preventDefault();const id=$('downloadEditId').value;if(!id&&state.downloadItems.length>=3)return showToast('Maximum three download cards are allowed.','error');const thumbFile=$('downloadThumbnailFile').files[0],resourceFile=$('downloadExcelFile').files[0];if(!id&&(!thumbFile||!resourceFile))return showToast('Please select both a thumbnail and an Excel, CSV or PDF file.','error');setLoading($('downloadSaveBtn'),true,'Uploading…','Upload & Save Card');try{const thumbnailUrl=thumbFile?await uploadDownloadAsset(thumbFile,'thumbnails',2*1024*1024,['png','jpg','jpeg','webp']):$('downloadThumbnail').value;const downloadUrl=resourceFile?await uploadDownloadAsset(resourceFile,'resources',10*1024*1024,['xlsx','xls','csv','pdf']):$('downloadUrl').value;const payload={title:$('downloadTitle').value.trim(),caption:$('downloadCaption').value.trim(),thumbnail_url:thumbnailUrl,download_url:downloadUrl,display_order:Number($('downloadOrder').value||1),is_published:$('downloadPublished').checked};const query=id?sb.from('download_resources').update(payload).eq('id',id):sb.from('download_resources').insert(payload);const{error}=await query;if(error)throw new Error(error.message);resetDownloadForm();await loadDownloadItems();showToast('Files uploaded and download card saved.','success')}catch(error){showToast(error.message,'error')}finally{setLoading($('downloadSaveBtn'),false,'Uploading…','Upload & Save Card')}}
     async function deleteDownloadItem(id){if(!confirm('Delete this download card?'))return;const{error}=await sb.from('download_resources').delete().eq('id',id);if(error)return showToast(error.message,'error');await loadDownloadItems();showToast('Download card deleted.','success')}
 
 
@@ -1398,11 +1329,6 @@
       $('registrationSearch').addEventListener('input', renderRegistrations);
       $('reviewSearch').addEventListener('input', renderReviews);
       $('exportRegistrationsBtn').addEventListener('click', exportRegistrations);
-      $('openRescheduleBtn').addEventListener('click', openRescheduleModal);
-      $('sendRescheduleNowBtn').addEventListener('click', sendRescheduleNow);
-      $('closeRescheduleModal').addEventListener('click', () => $('rescheduleModal').classList.add('hidden'));
-      $('cancelRescheduleBtn').addEventListener('click', () => $('rescheduleModal').classList.add('hidden'));
-      $('rescheduleModal').addEventListener('click', event => { if (event.target === $('rescheduleModal')) $('rescheduleModal').classList.add('hidden'); });
       $('exportReviewsBtn').addEventListener('click', exportReviews);
       $('reviewsBody').addEventListener('click', event => {
         const button = event.target.closest('[data-view-review]');
@@ -1415,7 +1341,6 @@
       document.addEventListener('keydown', event => {
         if (event.key === 'Escape') {
           $('reviewModal').classList.add('hidden');
-          $('rescheduleModal').classList.add('hidden');
           $('sidebar').classList.remove('open');
         }
       });

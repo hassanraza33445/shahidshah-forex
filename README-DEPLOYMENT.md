@@ -211,14 +211,14 @@ The public page contains built-in fallback templates, so it remains usable if th
 
 This additive module does not modify Zoom, SMTP email, webinar registration, reviews or analytics. There is no separate Learning Hub admin login or admin file.
 
-## AI Downloads and Footer Update
+## Downloads and Footer Update
 
 1. Run the latest `supabase-prompt-builder-upgrade.sql` in **Supabase Dashboard → SQL Editor**. It safely adds the `download_resources` table and does not replace the existing webinar tables.
 2. Upload `learning-hub.html`, `webinar-admin.html`, `index.html`, and the complete `assets` folder.
 3. In the existing admin panel, open **Learning Hub → AI Downloads**.
-4. Add up to three cards. For each card the admin can set the title, short caption, upload a thumbnail image, upload an XLSX/XLS/CSV file, choose display order, and set published status. No external file link is required.
+4. Add up to three cards. For each card the admin can set the title, short caption, upload a thumbnail image, upload an XLSX/XLS/CSV or PDF file, choose display order, and set published status. No external file link is required.
 
-The same SQL migration creates the public `download-assets` Storage bucket and admin-only upload policies. Run the latest migration before testing file uploads.
+The same SQL migration creates the public `download-assets` Storage bucket and admin-only upload policies. Run the latest migration before testing file uploads. If the original migration was already installed, run only `enable-pdf-downloads.sql` once to allow PDF uploads.
 
 Visitor Analytics includes Last Hour, Today, Last 7 Days, and All Recent traffic filters.
 

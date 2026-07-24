@@ -160,7 +160,7 @@ grant insert,update,delete on public.download_resources to authenticated;
 insert into storage.buckets (id,name,public,file_size_limit,allowed_mime_types)
 values ('download-assets','download-assets',true,10485760,array[
   'image/png','image/jpeg','image/webp','text/csv','application/vnd.ms-excel',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','application/pdf'
 ]) on conflict (id) do update set public=true,file_size_limit=excluded.file_size_limit,allowed_mime_types=excluded.allowed_mime_types;
 
 drop policy if exists "Public reads download assets" on storage.objects;
