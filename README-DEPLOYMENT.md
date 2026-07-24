@@ -225,3 +225,15 @@ Visitor Analytics includes Last Hour, Today, Last 7 Days, and All Recent traffic
 The public **AI Downloads** tab displays the supplied 1300×500 light or dark banner, followed by the three responsive resource cards. A complete responsive footer is included on both the landing page and AI Scripts page.
 
 All prompt-builder example text is trading/forex focused. The generated instructions tell the selected AI tool to produce the requested final script, banner, article, analysis, content plan, or indicator work directly instead of returning another prompt.
+
+
+## AI Tools Free Access Gate (v5)
+
+Run `ai-tools-free-access.sql` once in Supabase SQL Editor. This creates the AI access lead table and the two secure RPC functions used by `learning-hub.html`.
+
+New behavior:
+- Webinar registrants receive AI tools access automatically in the same browser.
+- Existing webinar registrants can unlock with the same email or WhatsApp number.
+- New visitors must submit name, email and WhatsApp once; the browser remembers access.
+- Download cards force Supabase files to download instead of opening PDF previews in the same tab.
+- “Share to ChatGPT” copies the prompt and opens ChatGPT in a new tab.

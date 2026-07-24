@@ -1,0 +1,10 @@
+S M Shahid Shah Webinar Prompt Builder — v6
+
+AI prompt action button update:
+- The large action button now reads “ChatGPT” and only opens ChatGPT in a new tab.
+- The separate “Copy Prompt” button is placed in the previously marked middle position.
+- The ChatGPT button no longer copies the prompt automatically.
+- “Start Again” remains as a separate button on the right.
+- Mobile layout keeps ChatGPT full width, with Copy Prompt and Start Again below it.
+
+No new SQL query is required for this button-only update.

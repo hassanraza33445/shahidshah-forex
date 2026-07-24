@@ -1,0 +1,7 @@
+Version v7 changes:
+- Added “SALE & BUSINESS CONSULT” subtitle under the top profile/name in the main header.
+- Changed the Featured Content headline to “Watch YouTube Videos”.
+- Updated the About profile role to “Forex Educator & Brokerage Professional”.
+- Changed the footer profile subtitle to “SALE & BUSINESS CONSULT”.
+- Reordered the AI tool action buttons to: Copy Prompt, ChatGPT, Start Again.
+- Kept ChatGPT and Copy Prompt as separate buttons.

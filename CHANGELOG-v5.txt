@@ -1,0 +1,22 @@
+S M Shahid Shah Webinar Prompt Builder — v5 Changes
+
+1. AI Tools access popup
+- AI tool remains visible for 2 seconds, then a compulsory access popup appears.
+- Popup shows AI Tools Fee $150 crossed out and FREE access.
+- Required fields: Full Name, Email Address, WhatsApp Number.
+- Existing webinar registrants can use the same email or WhatsApp number.
+- Successful access is remembered in the same browser.
+- Webinar registration now automatically unlocks AI tools in the same browser.
+- Downloads tab remains accessible without the AI access popup.
+
+2. Prompt action buttons
+- Start Again button repositioned.
+- Added Share to ChatGPT button.
+- Button copies the generated prompt and opens ChatGPT in a new tab.
+
+3. Forced downloads
+- PDF, Excel and CSV resources download directly instead of opening in the same tab.
+- Supabase Storage download URLs use the official download query parameter.
+
+4. Supabase migration
+- Run ai-tools-free-access.sql once in Supabase SQL Editor before deploying/testing the AI access popup.
