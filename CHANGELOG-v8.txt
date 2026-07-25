@@ -1,0 +1,2 @@
+Version v8 changes:
+- Updated all profile subtitle text from “SALE & BUSINESS CONSULT” to “SALE & BUSINESS CONSULTANT”.
