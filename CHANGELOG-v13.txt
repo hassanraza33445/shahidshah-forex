@@ -1,0 +1,4 @@
+Version v13 changes:
+- Rebuilt the home hero overlay to match the approved reference layout more precisely.
+- Corrected heading line breaks, text width, description position, button sizes, and right-side statistics card position.
+- Added matching live SVG icons while retaining animated HTML text, buttons, and cards over the supplied light/dark backgrounds.

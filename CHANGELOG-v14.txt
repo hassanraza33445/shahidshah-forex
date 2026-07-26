@@ -1,0 +1,6 @@
+Version v14 changes:
+- Fixed Premium stat text clipping by widening the final column and adjusting its font size.
+- Added animated Market Insights, Business Growth, and AI Tools floating cards over the hero banner.
+- Explore AI Tools now opens the AI Video Scripts tab directly.
+- Watch YouTube Videos continues to scroll to the video section.
+- Removed dash punctuation from the hero description and Premium Tools label.

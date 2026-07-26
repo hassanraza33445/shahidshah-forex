@@ -1,0 +1,7 @@
+Version v12 changes:
+- Removed the completed webinar hero/countdown block from the home page.
+- Added the exact user-supplied light and dark hero background banners.
+- Theme switching automatically swaps the correct hero background.
+- Added live HTML heading, description, CTA buttons and four highlight cards over the banner.
+- Added staggered text entrance, floating badge, CTA glow and stats-card animations.
+- Preserved the rest of the home page and made the old webinar configuration/countdown code safe after hero removal.
