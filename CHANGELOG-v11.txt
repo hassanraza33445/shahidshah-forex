@@ -1,0 +1,4 @@
+Version v11 changes:
+- Mobile now uses an exact 1440px desktop canvas scaled automatically by the browser.
+- Preserves the same desktop composition on phones for all AI tabs and the home page/footer.
+- Desktop remains unchanged.

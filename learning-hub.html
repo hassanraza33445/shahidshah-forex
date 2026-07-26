@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#07101e"><meta name="description" content="Free professional AI prompt builders for creators, businesses and traders.">
+  <meta charset="utf-8"><meta id="siteViewport" name="viewport" content="width=device-width,initial-scale=1"><script>(function(){var m=document.getElementById('siteViewport');if(!m)return;var mobile=Math.min(screen.width||9999,screen.height||9999)<=768||/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);m.setAttribute('content',mobile?'width=1440':'width=device-width,initial-scale=1');})();</script>
+  <meta name="theme-color" content="#f7f2e8"><meta name="description" content="Free professional AI prompt builders for creators, businesses and traders.">
   <title>Social Media Content Tools | S M Shahid Shah</title>
-  <script>(()=>{try{const saved=localStorage.getItem('smshahid-site-theme')||localStorage.getItem('site-theme');const tab=String(window.name||'').match(/^smshahid-theme:(dark|light)$/)?.[1];document.documentElement.dataset.theme=saved||tab||'dark'}catch(_){document.documentElement.dataset.theme='dark'}})();</script>
+  <script>(()=>{try{const saved=localStorage.getItem('smshahid-site-theme')||localStorage.getItem('site-theme');const tab=String(window.name||'').match(/^smshahid-theme:(dark|light)$/)?.[1];document.documentElement.dataset.theme=saved||tab||'light'}catch(_){document.documentElement.dataset.theme='light'}})();</script>
   <link rel="icon" href="icon-192.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Google tag (gtag.js) -->
@@ -31,7 +31,95 @@
   .field input,.field select,.field textarea{font-size:13px;padding:11px 13px}.field input,.field select{height:45px}.field input::placeholder,.field textarea::placeholder{font-size:12px;color:color-mix(in srgb,var(--muted) 58%,transparent)}
   .tabs{justify-content:center}
   @media(max-width:650px){.nav{flex-wrap:wrap;padding:8px 0}.main-nav{display:flex;order:3;width:100%;justify-content:center;overflow-x:auto}.main-nav a{flex:0 0 auto;font-size:8px;padding:7px}.social-mini{display:none}.tabs-wrap{top:106px}.tabs{justify-content:flex-start}.download-grid{grid-template-columns:1fr}.actions{grid-template-columns:1fr 1fr}.actions .btn.chatgpt{grid-column:1/-1;order:3}.actions #copyBtn{order:1}.actions #resetBtn{order:2}.ai-gate-card{padding:22px 18px}.footer-rich{grid-template-columns:1fr;gap:24px;padding-top:36px}.footer-rich>div:first-child{grid-column:auto}.footer-copy{display:block;text-align:center}.footer-copy span{display:block;margin:5px 0}}
-  </style>
+  
+  /* Compact premium mobile UI matching the approved sample */
+  @media(max-width:650px){
+    html,body{min-width:0;overflow-x:hidden}
+    body{font-size:8px;line-height:1.45}
+    .wrap{width:calc(100% - 12px)}
+    .nav{min-height:42px;gap:6px;flex-wrap:nowrap;padding:6px 0}
+    .brand{gap:6px;min-width:0;margin-right:0;flex:0 0 auto}
+    .brand img{width:24px;height:24px;border-radius:7px}
+    .brand b{font-size:6.8px;line-height:1.1;white-space:nowrap}
+    .brand small{font-size:4px;line-height:1.1;letter-spacing:.55px;white-space:nowrap;margin-top:1px}
+    .main-nav{display:flex!important;gap:2px;order:0;width:auto;justify-content:flex-start;overflow:visible}
+    .main-nav a{flex:0 0 auto;font-size:6px;padding:5px 5px;white-space:nowrap}
+    .social-mini{display:flex!important;gap:3px;flex:0 0 auto}
+    .social-mini a{width:20px;height:20px;border-radius:6px;font-size:6px}
+    .theme{width:22px;height:22px;border-radius:7px;flex:0 0 auto}
+    .theme svg{width:10px;height:10px}
+    .tabs-wrap{top:43px}
+    .tabs{gap:4px;padding:7px 0}
+    .tab{padding:6px 8px;font-size:6px;border-radius:8px}
+    main{padding:10px 0 36px}
+    .banner-shell{border-radius:12px;padding:3px}
+    .banner-shell img{border-radius:9px;aspect-ratio:13/5}
+    .intro{display:grid;grid-template-columns:minmax(0,1fr) 122px;align-items:end;gap:10px;padding:14px 0 10px}
+    .eyebrow{font-size:5px}
+    .intro h1{font-size:22px;line-height:1.02;margin:4px 0}
+    .intro p{font-size:7px;line-height:1.45}
+    .ai-offer-card{width:122px;min-width:0;flex:none;padding:10px 9px 9px;border-radius:12px}
+    .ai-offer-kicker{font-size:5px;margin-bottom:5px}
+    .ai-offer-price{font-size:5px;gap:4px}
+    .ai-offer-price s{font-size:11px}
+    .ai-offer-free{font-size:23px;margin-top:1px}
+    .ai-offer-note{font-size:5px;margin-top:4px}
+    .workspace{grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr)!important;gap:10px}
+    .panel{border-radius:12px}
+    .form-panel,.result-panel{padding:11px}
+    .result-panel{min-height:320px}
+    .panel-head{gap:8px;margin-bottom:10px}
+    .step-no{width:24px;height:24px;border-radius:8px;font-size:10px}
+    .panel-head h2,.result-top h2{font-size:11px}
+    .panel-head p,.ready{font-size:5.5px}
+    .fields{grid-template-columns:1fr 1fr!important;gap:7px}
+    .field.full{grid-column:1/-1}
+    .field label{font-size:5px;margin-bottom:4px}
+    .optional{font-size:4.5px}
+    .field input,.field select{height:28px;padding:7px 8px;border-radius:8px;font-size:6px}
+    .field textarea{min-height:55px;padding:7px 8px;border-radius:8px;font-size:6px}
+    .hint{font-size:4.5px;margin-top:3px}
+    .generate{height:34px;margin-top:10px;border-radius:9px;font-size:7px}
+    .result-top{margin-bottom:10px}
+    .prompt{border-radius:10px;padding:10px;font-size:6.3px;line-height:1.55;max-height:300px;min-height:210px}
+    .empty{max-width:170px;font-size:6px}
+    .empty-icon{width:30px;height:30px;border-radius:10px;font-size:13px;margin-bottom:8px}
+    .actions{grid-template-columns:1fr 1fr 1fr!important;gap:6px;margin-top:8px}
+    .actions .btn.chatgpt{grid-column:auto!important;order:initial!important}
+    .actions #copyBtn,.actions #resetBtn{order:initial!important}
+    .btn{min-height:30px;padding:0 6px;border-radius:8px;font-size:6px}
+    .how{grid-template-columns:1fr 1fr 1fr!important;gap:7px;margin-top:10px}
+    .mini{padding:9px 8px;border-radius:10px}
+    .mini h3{font-size:6px}
+    .mini p{font-size:5px;line-height:1.4}
+    .disclaimer{margin-top:10px;padding:9px 10px;border-radius:10px;gap:7px}
+    .disclaimer b{font-size:5.5px}
+    .disclaimer p{font-size:4.7px;line-height:1.35}
+    .download-grid{grid-template-columns:1fr 1fr 1fr!important;gap:8px}
+    .download-card{border-radius:11px}
+    .download-thumb{height:70px}
+    .download-copy{padding:8px}
+    .download-copy h3{font-size:7px}
+    .download-copy p{font-size:5px;line-height:1.35}
+    .download-action{min-height:26px;font-size:5.5px}
+    .ai-gate-card{padding:18px 16px;border-radius:14px;max-width:min(88vw,360px)}
+    .footer-rich{grid-template-columns:1.1fr .8fr .8fr .9fr!important;gap:12px;padding:18px 0 14px}
+    .footer-rich>div:first-child{grid-column:auto!important}
+    .footer-rich h3{font-size:6px;margin-bottom:8px}
+    .footer-rich p,.footer-rich a{font-size:5px;line-height:1.45}
+    .footer-logo{gap:7px}
+    .footer-logo img{width:28px;height:28px;border-radius:9px}
+    .footer-logo b{font-size:7px}
+    .footer-logo small{font-size:4px;letter-spacing:.55px;margin-top:1px}
+    .footer-socials{gap:4px;margin-top:8px}
+    .footer-socials a{width:20px;height:20px;border-radius:6px}
+    .footer-socials svg{width:9px;height:9px}
+    .footer-cta{padding:10px;border-radius:10px}
+    .footer-cta .footer-button{padding:8px;border-radius:8px;font-size:5.5px}
+    .footer-copy{display:flex!important;justify-content:space-between;gap:10px;font-size:4.5px;padding:10px 0 2px;text-align:left}
+    .footer-copy span{display:block!important;margin:0!important}
+  }
+</style>
 </head>
 <body>
 <header><div class="wrap nav"><a class="brand" href="index.html"><img src="shahid-shah-profile.jpg" alt="S M Shahid Shah"><span><b>S M Shahid Shah</b><small>SALE &amp; BUSINESS CONSULTANT</small></span></a><nav class="main-nav" aria-label="Main navigation"><a href="index.html#top">Home</a><a class="active" href="learning-hub.html">Content</a><a href="index.html#register">Registration</a><a href="index.html#videos">Session</a><a href="index.html#review">Review</a></nav><nav class="social-mini" aria-label="Social media"><a id="hubYt" target="_blank">YT</a><a id="hubWa" target="_blank">WA</a><a id="hubFb" target="_blank">FB</a><a id="hubIg" target="_blank">IG</a></nav><button class="theme" id="themeBtn" aria-label="Switch colour theme"><svg id="hubThemeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"></svg></button></div></header>

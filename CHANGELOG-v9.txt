@@ -1,0 +1,4 @@
+Version v9 changes:
+- Set AI Tools pages to use the light premium layout by default for all tabs.
+- Set the website default theme fallback to light (theme toggle still works and saved choice still persists).
+- Home page footer now uses the same premium footer style family with the light look by default.

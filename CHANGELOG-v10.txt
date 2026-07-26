@@ -1,0 +1,3 @@
+Version v10 changes:
+- Reworked learning-hub mobile CSS to match the approved compact premium sample layout.
+- Kept all AI tabs in the same compact two-column mobile UI with visible nav, tabs, offer card, side-by-side form/result area, 3-button row, 3 info cards row, and compact multi-column footer.
