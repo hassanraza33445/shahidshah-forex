@@ -1,0 +1,12 @@
+Version v15 changes:
+- Registration and Post-Session Review are removed from the visible public home page.
+- Registration and Review links are removed from the public header and footer.
+- Public URLs are now clean and readable:
+  /, /course, /community, /videos, /about
+  /ai-tools, /ai-video-scripts, /ai-banner-scripts, /ai-30-days-content
+  /ai-daily-article, /ai-daily-h1-analysis, /ai-indicator-prompts, /downloads
+  /webinar-admin
+- AI tab switching now updates to clean URLs instead of learning-hub.html#... hashes.
+- Direct links, refresh, and browser back/forward are supported.
+- Added Netlify, Vercel and static-folder route fallbacks.
+- No database/SQL changes are required.

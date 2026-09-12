@@ -1,0 +1,56 @@
+{
+  "rewrites": [
+    {
+      "source": "/course",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/community",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/videos",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/ai-tools",
+      "destination": "/learning-hub.html"
+    },
+    {
+      "source": "/ai-video-scripts",
+      "destination": "/learning-hub.html"
+    },
+    {
+      "source": "/ai-banner-scripts",
+      "destination": "/learning-hub.html"
+    },
+    {
+      "source": "/ai-30-days-content",
+      "destination": "/learning-hub.html"
+    },
+    {
+      "source": "/ai-daily-article",
+      "destination": "/learning-hub.html"
+    },
+    {
+      "source": "/ai-daily-h1-analysis",
+      "destination": "/learning-hub.html"
+    },
+    {
+      "source": "/ai-indicator-prompts",
+      "destination": "/learning-hub.html"
+    },
+    {
+      "source": "/downloads",
+      "destination": "/learning-hub.html"
+    },
+    {
+      "source": "/webinar-admin",
+      "destination": "/webinar-admin.html"
+    }
+  ]
+}

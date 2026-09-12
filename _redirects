@@ -1,0 +1,14 @@
+# Clean public routes
+/course /index.html 200
+/community /index.html 200
+/videos /index.html 200
+/about /index.html 200
+/ai-tools /learning-hub.html 200
+/ai-video-scripts /learning-hub.html 200
+/ai-banner-scripts /learning-hub.html 200
+/ai-30-days-content /learning-hub.html 200
+/ai-daily-article /learning-hub.html 200
+/ai-daily-h1-analysis /learning-hub.html 200
+/ai-indicator-prompts /learning-hub.html 200
+/downloads /learning-hub.html 200
+/webinar-admin /webinar-admin.html 200
