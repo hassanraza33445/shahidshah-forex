@@ -1,0 +1,8 @@
+Version v19 — Supabase navigation error fix
+- Root cause fixed: v16+ cleanup removed loadVideos() but the page initializer still called it. That JavaScript ReferenceError was caught by a generic catch block and incorrectly displayed “Unable to connect with Supabase.”
+- Restored the video loader on Home, Course, Community, Videos, and About routes.
+- Replaced the misleading generic Supabase toast with resilient background loading.
+- Public config and video content now load independently via Promise.allSettled(), so one optional request cannot break page navigation.
+- Full Supabase error objects are logged to the browser console for real database debugging while public visitors do not see false technical errors.
+- Visitor analytics remain non-blocking.
+- No SQL/database migration is required.
