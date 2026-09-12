@@ -1,22 +1,6 @@
 {
   "rewrites": [
     {
-      "source": "/course",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/community",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/videos",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/about",
-      "destination": "/index.html"
-    },
-    {
       "source": "/ai-tools",
       "destination": "/learning-hub.html"
     },
@@ -51,6 +35,17 @@
     {
       "source": "/webinar-admin",
       "destination": "/webinar-admin.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
     }
   ]
 }
