@@ -29,9 +29,40 @@
     .links{display:grid;gap:12px}.social{--brand:var(--gold);position:relative;display:grid;grid-template-columns:52px minmax(0,1fr) 30px;align-items:center;gap:13px;min-height:76px;padding:11px 15px 11px 11px;border:1px solid var(--border);border-radius:18px;background:linear-gradient(145deg,color-mix(in srgb,var(--card) 97%,transparent),color-mix(in srgb,var(--chip) 92%,transparent));box-shadow:0 12px 30px var(--shadow);text-decoration:none;overflow:hidden;isolation:isolate;transition:transform .2s,border-color .2s,box-shadow .2s}.social:before{content:"";position:absolute;left:0;top:15%;bottom:15%;width:3px;border-radius:99px;background:var(--brand)}.social:active{transform:scale(.985)}@media(hover:hover){.social:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--brand) 60%,var(--border));box-shadow:0 16px 38px color-mix(in srgb,var(--brand) 12%,var(--shadow))}}
     .icon{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 13%,var(--card));color:var(--brand)}.icon svg{width:27px;height:27px}.copy{min-width:0}.copy strong{display:block;font-size:14px;line-height:1.2}.copy span{display:block;margin-top:5px;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.go{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:color-mix(in srgb,var(--brand) 9%,transparent);color:var(--brand)}.go svg{width:15px;height:15px}
     .youtube{--brand:#ff0033}.whatsapp{--brand:#19b96c}.community{--brand:#19b96c}.facebook{--brand:#1877f2}.instagram{--brand:#d62f83}.tiktok{--brand:#111111}.linkedin{--brand:#0a66c2}[data-theme="dark"] .tiktok{--brand:#f4f4f4}
+    .instagram .icon,.tiktok .icon{background:color-mix(in srgb,var(--card) 92%,#fff)}
     .footer{text-align:center;margin-top:22px;padding:18px 8px 3px;border-top:1px solid var(--border);color:var(--muted);font-size:9px;line-height:1.6}.footer b{color:var(--gold)}
     @media(min-width:600px){.page{padding-top:28px}.social{min-height:80px}.profile h1{font-size:26px}}
     @media(max-width:380px){.page{width:min(100% - 20px,520px)}.social{grid-template-columns:48px minmax(0,1fr) 27px;gap:10px;padding-right:11px}.icon{width:48px;height:48px}.profile h1{font-size:22px}}
+
+    /* v22 compact mobile fit: designed to show all 7 links with little/no scrolling */
+    @media(max-width:599px){
+      body{min-height:100dvh;overflow-x:hidden}
+      .page{width:min(100% - 20px,500px);padding:max(8px,env(safe-area-inset-top)) 0 max(8px,env(safe-area-inset-bottom))}
+      .topbar{margin-bottom:8px}
+      .home-link,.theme-btn{height:32px;border-radius:10px;font-size:10px;box-shadow:0 5px 14px var(--shadow)}
+      .home-link{padding:0 10px}.theme-btn{width:32px}.home-link svg,.theme-btn svg{width:14px;height:14px}
+      .profile{padding:0 5px 9px}
+      .avatar-wrap{width:72px;height:72px;margin-bottom:7px;padding:3px;box-shadow:0 8px 20px color-mix(in srgb,var(--gold) 20%,transparent)}
+      .avatar{border-width:3px}
+      .profile h1{font-size:19px;letter-spacing:-.5px}
+      .profile .role{font-size:8px;letter-spacing:.5px;margin-top:3px}
+      .profile .intro{font-size:9px;line-height:1.35;margin-top:6px;max-width:330px}
+      .links{gap:6px}
+      .social{grid-template-columns:38px minmax(0,1fr) 24px;gap:9px;min-height:50px;padding:6px 10px 6px 7px;border-radius:13px;box-shadow:0 6px 16px var(--shadow)}
+      .social:before{top:18%;bottom:18%;width:2.5px}
+      .icon{width:38px;height:38px;border-radius:11px}.icon svg{width:22px;height:22px}
+      .copy strong{font-size:11.5px}.copy span{font-size:8px;margin-top:2px}
+      .go{width:24px;height:24px;border-radius:7px}.go svg{width:12px;height:12px}
+      .footer{margin-top:9px;padding:8px 6px 0;font-size:7.5px;line-height:1.35}
+    }
+    @media(max-width:380px){
+      .page{width:calc(100% - 14px)}
+      .avatar-wrap{width:66px;height:66px}
+      .profile h1{font-size:18px}
+      .social{grid-template-columns:36px minmax(0,1fr) 22px;min-height:47px;gap:8px;padding:5px 8px 5px 6px}
+      .icon{width:36px;height:36px}.icon svg{width:21px;height:21px}
+      .copy strong{font-size:11px}.copy span{font-size:7.5px}
+    }
   </style>
 </head>
 <body>
@@ -60,7 +91,7 @@
       </a>
 
       <a class="social community" href="https://chat.whatsapp.com/J0EAX9fjGoi7OV26FZ0JGt" target="_blank" rel="noopener noreferrer">
-        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+        <span class="icon"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.84 9.84 0 0 0-8.42 14.94L2 22l5.2-1.58A9.99 9.99 0 1 0 12.04 2Zm5.73 14.14c-.24.69-1.42 1.32-1.96 1.4-.5.08-1.14.12-1.84-.11-.43-.14-.98-.32-1.69-.63-2.97-1.28-4.9-4.27-5.05-4.47-.15-.2-1.2-1.6-1.2-3.05 0-1.45.76-2.16 1.03-2.46.27-.3.59-.37.79-.37h.56c.18 0 .42-.07.66.5.24.58.81 1.99.88 2.14.07.15.12.32.02.52-.1.2-.15.32-.3.5-.15.17-.32.38-.46.51-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.02 1.12 1 2.07 1.31 2.37 1.46.3.15.47.12.65-.07.17-.2.74-.87.94-1.16.2-.3.4-.25.67-.15.27.1 1.72.81 2.01.96.3.15.5.22.57.35.08.12.08.72-.16 1.4Z"/></svg></span>
         <span class="copy"><strong>WhatsApp Community</strong><span>Join the official community</span></span><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
       </a>
 
@@ -70,12 +101,12 @@
       </a>
 
       <a class="social instagram" href="https://www.instagram.com/s_m_shahid_shah/" target="_blank" rel="noopener noreferrer">
-        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></span>
+        <span class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="igGrad" x1="2" y1="22" x2="22" y2="2" gradientUnits="userSpaceOnUse"><stop stop-color="#FFD600"/><stop offset=".28" stop-color="#FF7A00"/><stop offset=".55" stop-color="#FF0169"/><stop offset=".78" stop-color="#D300C5"/><stop offset="1" stop-color="#7638FA"/></linearGradient></defs><rect x="2.2" y="2.2" width="19.6" height="19.6" rx="6" fill="url(#igGrad)"/><rect x="6.3" y="6.3" width="11.4" height="11.4" rx="3.8" fill="none" stroke="#fff" stroke-width="1.7"/><circle cx="12" cy="12" r="2.8" fill="none" stroke="#fff" stroke-width="1.7"/><circle cx="16.65" cy="7.35" r="1" fill="#fff"/></svg></span>
         <span class="copy"><strong>Instagram</strong><span>@s_m_shahid_shah</span></span><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
       </a>
 
       <a class="social tiktok" href="https://www.tiktok.com/@smshahidshah" target="_blank" rel="noopener noreferrer">
-        <span class="icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14.5 2h3.1c.2 1.5 1 2.8 2.1 3.7A7.1 7.1 0 0 0 24 7.2v3.1a10.2 10.2 0 0 1-6.2-2v7.3a8.4 8.4 0 1 1-7.3-8.3v3.2a5.2 5.2 0 1 0 4 5.1V2Z"/></svg></span>
+        <span class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 3.1c.45 2.5 1.9 4.15 4.5 4.75v3.15a9.8 9.8 0 0 1-4.45-1.35v6.45a6.2 6.2 0 1 1-5.4-6.15v3.12a3.15 3.15 0 1 0 2.25 3.03V3.1h3.1Z" fill="#25F4EE" transform="translate(-.7 .35)"/><path d="M15.5 3.1c.45 2.5 1.9 4.15 4.5 4.75v3.15a9.8 9.8 0 0 1-4.45-1.35v6.45a6.2 6.2 0 1 1-5.4-6.15v3.12a3.15 3.15 0 1 0 2.25 3.03V3.1h3.1Z" fill="#FE2C55" transform="translate(.7 -.35)"/><path d="M15.5 3.1c.45 2.5 1.9 4.15 4.5 4.75v3.15a9.8 9.8 0 0 1-4.45-1.35v6.45a6.2 6.2 0 1 1-5.4-6.15v3.12a3.15 3.15 0 1 0 2.25 3.03V3.1h3.1Z" fill="#111"/></svg></span>
         <span class="copy"><strong>TikTok</strong><span>@smshahidshah</span></span><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
       </a>
 

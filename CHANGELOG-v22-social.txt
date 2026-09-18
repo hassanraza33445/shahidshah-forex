@@ -1,0 +1,6 @@
+Version v22 Social compact patch:
+- Replaced TikTok icon with a proper branded TikTok-style logo.
+- Replaced Instagram icon with the official-style multicolor gradient camera logo.
+- WhatsApp Community now uses the same WhatsApp logo as the direct WhatsApp card.
+- Made the mobile page much more compact so all 7 links fit on most phone screens with little or no scrolling.
+- Reduced profile, card, gap and footer spacing while keeping touch targets readable.
