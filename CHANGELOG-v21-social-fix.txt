@@ -1,0 +1,6 @@
+Version v21 Social route fix:
+- Fixed GitHub Pages /social clean route compatibility.
+- Canonical social URL is now /social/.
+- Added custom 404 redirect so /social automatically forwards to /social/.
+- Added social.html fallback redirect.
+- No database or SQL changes.
