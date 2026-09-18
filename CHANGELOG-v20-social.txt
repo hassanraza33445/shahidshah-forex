@@ -1,0 +1,5 @@
+Version v20 Social Links patch:
+- Added /social mobile-first official link-in-bio page.
+- Added YouTube, WhatsApp, WhatsApp Community, Facebook, Instagram, TikTok and LinkedIn.
+- Updated direct WhatsApp number to +60 11-5864 6564.
+- Added light/dark theme support and clean /social routing.

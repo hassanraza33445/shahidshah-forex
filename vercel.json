@@ -35,6 +35,10 @@
     {
       "source": "/webinar-admin",
       "destination": "/webinar-admin.html"
+    },
+    {
+      "source": "/social",
+      "destination": "/social/index.html"
     }
   ],
   "headers": [
