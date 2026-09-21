@@ -1,0 +1,7 @@
+Version v27 — Stable cross-browser compact layout
+
+- Restored a static 1440px virtual viewport on all public website and AI pages so the approved compact desktop-style mobile layout is rendered consistently.
+- Kept /social/ as a true device-width mobile-first page.
+- Removed v26 device-width/mobile override blocks that caused hero cards and headings to overlap on Samsung Internet.
+- Retained v26 syntax/path fixes, including the corrected CSS closing brace and nested asset fixes.
+- Added a lightweight handheld fallback to preserve the 1440px desktop canvas in browsers that attempt small-screen reflow.

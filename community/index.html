@@ -2,7 +2,7 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=1440">
 <meta name="theme-color" content="#0A0E1A">
 <title>S M Shahid Shah — Business Webinar</title>
 <script>(()=>{try{const saved=localStorage.getItem('smshahid-site-theme')||localStorage.getItem('site-theme');const tab=String(window.name||'').match(/^smshahid-theme:(dark|light)$/)?.[1];document.documentElement.dataset.theme=saved||tab||'light'}catch(_){document.documentElement.dataset.theme='light'}})();</script>
@@ -387,77 +387,11 @@ header{animation:navDrop .7s cubic-bezier(.2,.8,.2,1) both}
 
 
 </style>
-<style id="cross-browser-mobile-v26">
-/* Cross-browser mobile rendering: Samsung Internet, Chrome, Opera/Opera Mini high mode. */
+
+<style id="stable-mobile-v27">
+/* Fixed virtual desktop canvas for consistent compact mobile rendering across Chromium/Samsung/Opera. */
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
-body{font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;min-width:0;overflow-x:hidden;}
-/* Solid fallbacks are deliberately placed before modern effects. */
-header{background-color:var(--bg-sidebar);}
-.panel,.card,.video,.social-card,.about-shell,.about-profile,.footer-cta{background-color:var(--bg-card);}
-.home-hero-card{background-color:var(--bg-card);}
-
-@media screen and (max-width:700px), screen and (max-device-width:700px){
-  html,body{width:100%;max-width:100%;overflow-x:hidden;}
-  .wrap{width:calc(100% - 12px)!important;max-width:none!important;}
-  header{position:sticky!important;top:0!important;}
-  .nav{min-height:42px!important;display:flex!important;flex-wrap:nowrap!important;align-items:center!important;gap:5px!important;}
-  .brand{flex:0 0 auto!important;margin-right:auto!important;gap:6px!important;min-width:0!important;}
-  .brand-avatar{width:27px!important;height:27px!important;border-radius:7px!important;}
-  .brand b{font-size:7px!important;line-height:1.1!important;white-space:nowrap!important;}
-  .brand small{font-size:4.3px!important;line-height:1.1!important;letter-spacing:.55px!important;white-space:nowrap!important;}
-  .learning-nav{display:flex!important;order:initial!important;width:auto!important;margin-left:0!important;padding:0!important;overflow:visible!important;gap:2px!important;}
-  .learning-nav a{flex:0 0 auto!important;font-size:6px!important;padding:5px!important;border-radius:6px!important;}
-  .nav-actions{display:flex!important;align-items:center!important;gap:3px!important;flex:0 0 auto!important;}
-  .social-dock{display:flex!important;gap:3px!important;}
-  .social-link,.theme-toggle{width:22px!important;height:22px!important;border-radius:6px!important;}
-  .social-link svg,.theme-toggle svg{width:10px!important;height:10px!important;}
-
-  .home-hero{padding:10px 0 14px!important;}
-  .home-hero-card{aspect-ratio:1170/450;min-height:138px;border-radius:12px!important;}
-  .home-hero-copy h1{font-size:clamp(24px,7.2vw,30px)!important;}
-  .home-hero-copy p{font-size:8px!important;}
-
-  .course-promo-link{grid-template-columns:18% minmax(0,1fr) 21%!important;}
-  .social-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;}
-  .videos{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
-  .about-shell{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr)!important;}
-  .about-profile{max-width:none!important;width:auto!important;justify-self:stretch!important;}
-
-  .footer-rich{grid-template-columns:minmax(0,1.15fr) .62fr .72fr .9fr!important;gap:12px!important;padding:18px 0 14px!important;}
-  .footer-rich>div:first-child{grid-column:auto!important;}
-  .footer-rich h3{font-size:5.7px!important;margin-bottom:7px!important;}
-  .footer-rich p,.footer-rich a{font-size:4.8px!important;line-height:1.45!important;}
-  .footer-rich>div:first-child>p{margin:8px 0 0!important;}
-  .footer-logo{gap:7px!important;}
-  .footer-logo img{width:28px!important;height:28px!important;border-radius:8px!important;}
-  .footer-logo b{font-size:7px!important;}
-  .footer-logo small{font-size:3.8px!important;letter-spacing:.5px!important;margin-top:1px!important;}
-  .footer-socials{gap:4px!important;margin-top:8px!important;}
-  .footer-socials a{width:20px!important;height:20px!important;border-radius:6px!important;}
-  .footer-socials svg{width:9px!important;height:9px!important;}
-  .footer-cta{padding:9px!important;border-radius:9px!important;}
-  .footer-cta .footer-button{padding:7px!important;border-radius:7px!important;font-size:5px!important;}
-  .footer-copy{display:flex!important;justify-content:space-between!important;gap:8px!important;text-align:left!important;font-size:4.2px!important;padding:9px 0 2px!important;}
-  .footer-copy span{display:block!important;margin:0!important;}
-}
-
-/* Fallback for browsers that do not implement aspect-ratio reliably. */
-@supports not (aspect-ratio: 1 / 1){
-  @media screen and (max-width:700px){.home-hero-card{height:38.5vw!important;min-height:138px!important;}}
-}
-</style>
-<style media="handheld" id="opera-mini-handheld-v26">
-/* Opera Mini Mobile View fallback: prevent automatic one-column reflow where possible. */
-html,body{width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%;}
-.nav,.learning-nav,.nav-actions,.social-dock{display:flex!important;flex-wrap:nowrap!important;}
-.social-grid{display:flex!important;flex-wrap:nowrap!important;}
-.social-grid>.social-card{width:25%!important;flex:0 0 25%!important;}
-.videos{display:flex!important;flex-wrap:nowrap!important;}
-.videos>.video{width:33.333%!important;flex:0 0 33.333%!important;}
-.about-shell{display:flex!important;flex-wrap:nowrap!important;}
-.about-copy{width:57%!important;}.about-profile{width:43%!important;}
-.footer-rich{display:flex!important;flex-wrap:nowrap!important;}
-.footer-rich>div{min-width:0!important;flex:1 1 0!important;}
+@media handheld{html,body{min-width:1440px!important;} .wrap{max-width:1180px!important;}}
 </style>
 </head>
 <body>
