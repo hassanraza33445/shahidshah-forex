@@ -1,0 +1,10 @@
+v25 — Consistent mobile navigation/layout fix
+
+- Replaced JS-mutated viewport with a static width=1440 viewport on every public desktop-style page.
+  This removes browser/custom-tab timing differences and keeps the approved mini-desktop mobile composition identical.
+- Applied to Home, Videos, About, Community, Course, every AI Tools route, Downloads, and learning-hub.html.
+- Kept /social/ as its purpose-built device-width mobile link page.
+- Social “Website” button now opens https://smshahidshah.com/ directly in the same tab.
+- Updated all internal clean-route links to real trailing-slash directory URLs so GitHub Pages does not need an extra redirect before rendering.
+- Expanded GitHub Pages 404 fallback route list and aligned Netlify/Vercel route behavior.
+- No database or SQL changes.

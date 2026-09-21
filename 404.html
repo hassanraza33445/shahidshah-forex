@@ -5,7 +5,7 @@
 <script>
 (function(){
   var p=location.pathname.replace(/\/+$/,'');
-  var dirs=['/social','/videos','/about','/community','/course','/downloads','/webinar-admin'];
+  var dirs=['/social','/videos','/about','/community','/course','/ai-tools','/ai-video-scripts','/ai-banner-scripts','/ai-30-days-content','/ai-daily-article','/ai-daily-h1-analysis','/ai-indicator-prompts','/downloads','/webinar-admin'];
   if(dirs.indexOf(p)!==-1){ location.replace(p+'/' + location.search + location.hash); return; }
   document.title='Page not found';
   document.querySelector('h1').textContent='404';

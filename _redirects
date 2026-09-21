@@ -1,12 +1,15 @@
-# Clean public routes
-/ai-tools /learning-hub.html 200
-/ai-video-scripts /learning-hub.html 200
-/ai-banner-scripts /learning-hub.html 200
-/ai-30-days-content /learning-hub.html 200
-/ai-daily-article /learning-hub.html 200
-/ai-daily-h1-analysis /learning-hub.html 200
-/ai-indicator-prompts /learning-hub.html 200
-/downloads /learning-hub.html 200
-/webinar-admin /webinar-admin.html 200
-
-/social /social/index.html 200
+# Canonical clean public routes
+/ai-tools /ai-tools/ 301
+/ai-video-scripts /ai-video-scripts/ 301
+/ai-banner-scripts /ai-banner-scripts/ 301
+/ai-30-days-content /ai-30-days-content/ 301
+/ai-daily-article /ai-daily-article/ 301
+/ai-daily-h1-analysis /ai-daily-h1-analysis/ 301
+/ai-indicator-prompts /ai-indicator-prompts/ 301
+/downloads /downloads/ 301
+/videos /videos/ 301
+/about /about/ 301
+/community /community/ 301
+/course /course/ 301
+/social /social/ 301
+/webinar-admin /webinar-admin/ 301
