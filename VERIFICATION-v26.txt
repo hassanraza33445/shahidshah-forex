@@ -1,0 +1,23 @@
+SM Shahid Shah — v26 Cross-Browser Final Verification
+
+Root cause fixed:
+1. Removed fixed numeric viewport width=1440, which depended on browser-specific scaling/overview behavior.
+2. Fixed an extra closing brace in the Home-family CSS that created a stylesheet parse error and could be recovered differently by browsers.
+3. Added final device-width mobile overrides to preserve the approved compact multi-column composition without browser zoom tricks.
+4. Added text-size-adjust controls for Samsung Internet/mobile text autosizing differences.
+5. Added handheld fallbacks for Opera Mini mobile reflow mode.
+6. Fixed nested AI route asset paths for favicon, profile image and AI banner assets.
+7. Fixed webinar-admin nested profile/icon asset paths.
+
+Final verification:
+PASS - One device-width viewport per public page
+PASS - No width=1440 viewport remains
+PASS - CSS parse: 0 errors
+PASS - JavaScript syntax: 50 inline scripts checked, 0 errors
+PASS - Local asset references: 0 missing
+PASS - Internal clean routes: 0 broken
+PASS - Nested AI asset paths are root-absolute
+PASS - Social Website button targets canonical root
+PASS - Registration/Review removed sections remain removed
+
+No SQL/database changes required.

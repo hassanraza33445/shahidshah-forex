@@ -1,0 +1,10 @@
+Version v26 — cross-browser final mobile compatibility
+
+- Removed the browser-dependent fixed numeric viewport (width=1440) from all public pages.
+- Standardized viewport to device-width + initial-scale=1 + viewport-fit=cover.
+- Added final mobile CSS overrides that preserve the approved compact desktop-style composition on phones without relying on browser zoom behavior.
+- Added -webkit-text-size-adjust/text-size-adjust to prevent Samsung Internet text autosizing from changing layout proportions.
+- Added solid background/font fallbacks for browsers that ignore advanced effects.
+- Added Opera Mini handheld fallbacks so its mobile reflow mode keeps multi-column content where supported.
+- Social page remains purpose-built mobile-first.
+- No database/SQL changes.
