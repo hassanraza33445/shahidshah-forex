@@ -1,0 +1,7 @@
+Version v23 — Mobile navigation/layout fix
+
+- Removed the forced mobile viewport width=1440 from the Home-family pages only.
+- Home, Videos, About, Community and Course now use the standard device-width mobile viewport and their existing approved mobile CSS.
+- Kept the AI Tools/Learning Hub viewport behavior unchanged so its approved compact desktop-style mobile UI is not disturbed.
+- Social page Website button now points explicitly to https://smshahidshah.com/ in the same tab.
+- No database or SQL changes.
