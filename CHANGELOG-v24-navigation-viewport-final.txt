@@ -1,0 +1,12 @@
+Version v24 — Navigation / viewport final fix
+
+Root cause:
+- The approved Home mobile layout was intentionally using a 1440px layout viewport scaled down by the mobile browser.
+- v23 replaced that with device-width. A fresh navigation from /social therefore rendered the Home page with the small-screen CSS instead of the approved mini-desktop composition.
+- Typing the domain directly could still show a cached older copy, which made the two entry paths appear different.
+
+Fixes:
+- Restored the approved mobile viewport behavior on Home, Videos, About, Community and Course routes.
+- Kept /social on a true device-width mobile viewport so its link-in-bio layout remains compact.
+- Website button on /social now points directly to the canonical https://www.smshahidshah.com/ host.
+- No database or SQL changes.
