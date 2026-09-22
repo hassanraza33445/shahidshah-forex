@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f7f2e8">
+  <meta name="description" content="Expo registration form for S M Shahid Shah.">
+  <meta property="og:title" content="S M Shahid Shah | Expo Registration">
+  <meta property="og:description" content="Complete your details to continue to the registration page.">
+  <meta property="og:image" content="https://smshahidshah.com/shahid-shah-profile.jpg">
+  <link rel="canonical" href="https://smshahidshah.com/expo/">
+  <link rel="icon" href="/icon-192.png">
+  <title>S M Shahid Shah | Expo Registration</title>
+  <script>
+    (()=>{try{const saved=localStorage.getItem('smshahid-site-theme')||localStorage.getItem('site-theme');document.documentElement.dataset.theme=saved==='dark'?'dark':'light'}catch(_){document.documentElement.dataset.theme='light'}})();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root{--bg:#f8f3e9;--bg2:#f2e8d8;--card:#fffdfa;--text:#251d15;--muted:#7c6d5b;--gold:#c98111;--gold2:#e3a536;--border:#ead9bd;--shadow:rgba(102,65,20,.13);--input:#fffaf0;--ok:#0f9f67;--danger:#c83d31}
+    [data-theme="dark"]{--bg:#07101d;--bg2:#0b1829;--card:#0e1a2c;--text:#f7f4ee;--muted:#9ba8b9;--gold:#f1a62a;--gold2:#ffc65c;--border:#243650;--shadow:rgba(0,0,0,.36);--input:#0a1626;--ok:#18c98c;--danger:#ff7468}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--text);background:var(--bg)}
+    body{min-height:100dvh;background:radial-gradient(circle at 50% -10%,color-mix(in srgb,var(--gold) 13%,transparent),transparent 34%),linear-gradient(160deg,var(--bg),var(--bg2));transition:background .25s,color .25s}
+    button,input{font:inherit}.page{width:min(100% - 28px,520px);margin:auto;padding:max(18px,env(safe-area-inset-top)) 0 max(26px,env(safe-area-inset-bottom))}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.home-link,.theme-btn{height:38px;border:1px solid var(--border);border-radius:12px;background:color-mix(in srgb,var(--card) 88%,transparent);box-shadow:0 8px 24px var(--shadow);display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--muted);font-weight:800;font-size:11px;backdrop-filter:blur(12px)}.home-link{padding:0 13px;gap:7px}.theme-btn{width:38px;cursor:pointer;color:var(--gold)}.home-link svg,.theme-btn svg{width:16px;height:16px}
+    .profile{text-align:center;padding:4px 8px 14px}.avatar-wrap{width:86px;height:86px;margin:0 auto 10px;padding:4px;border-radius:50%;background:linear-gradient(145deg,var(--gold2),var(--gold));box-shadow:0 13px 34px color-mix(in srgb,var(--gold) 22%,transparent)}.avatar{display:block;width:100%;height:100%;object-fit:cover;object-position:center top;border-radius:50%;border:3px solid var(--card)}
+    .profile h1{margin:0;font-size:22px;letter-spacing:-.7px}.profile .role{margin:5px 0 0;color:var(--gold);font-size:9px;font-weight:800;letter-spacing:.65px;text-transform:uppercase}.profile .intro{margin:8px auto 0;max-width:380px;color:var(--muted);font-size:10px;line-height:1.5}
+    .card{border:1px solid var(--border);border-radius:20px;background:linear-gradient(145deg,color-mix(in srgb,var(--card) 98%,transparent),color-mix(in srgb,var(--bg2) 40%,var(--card)));box-shadow:0 16px 38px var(--shadow);padding:18px;overflow:hidden;position:relative}.card:before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2),transparent)}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;background:color-mix(in srgb,var(--gold) 11%,transparent);color:var(--gold);font-size:8px;font-weight:800;letter-spacing:.55px;text-transform:uppercase}.badge i{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 5px color-mix(in srgb,var(--gold) 10%,transparent)}
+    .card h2{font-size:19px;letter-spacing:-.55px;margin:10px 0 5px}.card>p{color:var(--muted);font-size:10px;line-height:1.55;margin:0 0 14px}
+    .form{display:grid;gap:11px}.field label{display:block;font-size:8px;font-weight:800;margin-bottom:5px;letter-spacing:.35px;text-transform:uppercase}.field input{width:100%;height:46px;border:1px solid var(--border);border-radius:12px;background:var(--input);color:var(--text);padding:0 13px;outline:0;font-size:11px;transition:.2s}.field input::placeholder{color:color-mix(in srgb,var(--muted) 72%,transparent)}.field input:focus{border-color:var(--gold);box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 10%,transparent)}
+    .submit{height:48px;border:0;border-radius:13px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#211607;font-weight:800;font-size:11px;cursor:pointer;box-shadow:0 12px 28px color-mix(in srgb,var(--gold) 22%,transparent);transition:.2s}.submit:hover{transform:translateY(-2px)}.submit:disabled{opacity:.65;cursor:not-allowed;transform:none}
+    .status{min-height:18px;text-align:center;font-size:9px;color:var(--muted)}.status.ok{color:var(--ok)}.status.error{color:var(--danger)}
+    .privacy{text-align:center;color:var(--muted);font-size:8px;line-height:1.5;margin:10px 4px 0}.footer{text-align:center;margin-top:13px;padding:10px 8px 1px;border-top:1px solid var(--border);color:var(--muted);font-size:8px;line-height:1.5}.footer b{color:var(--gold)}
+    .hp{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
+    @media(max-width:599px){.page{width:min(100% - 20px,500px);padding:max(8px,env(safe-area-inset-top)) 0 max(9px,env(safe-area-inset-bottom))}.topbar{margin-bottom:8px}.home-link,.theme-btn{height:32px;border-radius:10px;font-size:10px}.home-link{padding:0 10px}.theme-btn{width:32px}.profile{padding:0 5px 10px}.avatar-wrap{width:72px;height:72px;margin-bottom:7px;padding:3px}.profile h1{font-size:19px}.profile .role{font-size:8px;margin-top:3px}.profile .intro{font-size:9px;line-height:1.35;margin-top:6px}.card{padding:14px;border-radius:16px}.card h2{font-size:17px;margin-top:8px}.card>p{font-size:9px;margin-bottom:11px}.form{gap:8px}.field label{font-size:7px;margin-bottom:4px}.field input{height:40px;border-radius:10px;font-size:10px}.submit{height:42px;border-radius:11px;font-size:10px}.privacy{font-size:7px;margin-top:7px}.footer{margin-top:8px;padding-top:7px;font-size:7px}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <a class="home-link" href="/" aria-label="Back to website"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Website</a>
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="Switch theme"><svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg></button>
+    </div>
+
+    <section class="profile">
+      <div class="avatar-wrap"><img class="avatar" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"></div>
+      <h1>S M Shahid Shah</h1>
+      <p class="role">Sale &amp; Business Consultant</p>
+      <p class="intro">Complete your details below to continue to the Expo registration page.</p>
+    </section>
+
+    <section class="card">
+      <span class="badge"><i></i> Expo Registration</span>
+      <h2>Continue Your Registration</h2>
+      <p>Please enter your correct contact details. Your active WhatsApp number will help the team contact you if needed.</p>
+      <form class="form" id="expoForm" novalidate>
+        <div class="field"><label for="name">Name</label><input id="name" name="name" autocomplete="name" maxlength="120" required placeholder="Enter your full name"></div>
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" maxlength="180" required placeholder="name@example.com"></div>
+        <div class="field"><label for="whatsapp">Active WhatsApp Number</label><input id="whatsapp" name="whatsapp" autocomplete="tel" inputmode="tel" maxlength="30" required placeholder="e.g. +60 11 5864 6564"></div>
+        <div class="hp" aria-hidden="true"><label for="websiteField">Website</label><input id="websiteField" name="website" tabindex="-1" autocomplete="off"></div>
+        <button class="submit" id="submitBtn" type="submit">Submit &amp; Continue →</button>
+        <div class="status" id="status" aria-live="polite"></div>
+      </form>
+      <p class="privacy">Your details are saved securely for Expo follow-up. After successful submission, you will be redirected automatically.</p>
+    </section>
+
+    <footer class="footer">Official Expo page for <b>S M Shahid Shah</b><br>© 2026 All rights reserved.</footer>
+  </main>
+
+  <script>
+    'use strict';
+    const SUPABASE_URL='https://qggtdwixwafcmorepkks.supabase.co';
+    const SUPABASE_KEY='sb_publishable_HnYmHQbt42OfjmRk09OfoQ_fq5TPYpb';
+    const REDIRECT_URL='https://my.dooprime.com/marketing/links/go/2608';
+    const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+    const $=id=>document.getElementById(id);
+
+    const btn=$('themeBtn'),icon=$('themeIcon'),meta=document.querySelector('meta[name="theme-color"]');
+    function paint(){const dark=document.documentElement.dataset.theme==='dark';icon.innerHTML=dark?'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"/>':'<path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z"/>';meta.content=dark?'#07101d':'#f7f2e8'}
+    btn.addEventListener('click',()=>{const theme=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=theme;try{localStorage.setItem('smshahid-site-theme',theme);localStorage.setItem('site-theme',theme)}catch(_){}paint()});paint();
+
+    function setStatus(message,type=''){const el=$('status');el.textContent=message;el.className='status '+type}
+    function validPhone(value){const digits=String(value||'').replace(/\D/g,'');return digits.length>=7&&digits.length<=18}
+
+    $('expoForm').addEventListener('submit',async event=>{
+      event.preventDefault();
+      if($('websiteField').value)return;
+      const name=$('name').value.trim(),email=$('email').value.trim().toLowerCase(),whatsapp=$('whatsapp').value.trim();
+      if(name.length<2){setStatus('Please enter your full name.','error');$('name').focus();return}
+      if(!$('email').checkValidity()){setStatus('Please enter a valid email address.','error');$('email').focus();return}
+      if(!validPhone(whatsapp)){setStatus('Please enter a valid active WhatsApp number.','error');$('whatsapp').focus();return}
+      const submit=$('submitBtn');submit.disabled=true;submit.textContent='Saving Details…';setStatus('Saving your details…');
+      try{
+        const {data,error}=await sb.rpc('submit_expo_client',{p_name:name,p_email:email,p_whatsapp:whatsapp});
+        if(error)throw error;
+        if(data && data.success===false)throw new Error(data.message||'Unable to save your details.');
+        try{localStorage.setItem('smshahid_expo_submitted','1');localStorage.setItem('smshahid_expo_email',email)}catch(_){}
+        setStatus('Details saved successfully. Redirecting…','ok');
+        setTimeout(()=>window.location.assign(REDIRECT_URL),450);
+      }catch(error){console.error(error);setStatus(error.message||'Unable to save your details. Please try again.','error');submit.disabled=false;submit.textContent='Submit & Continue →'}
+    });
+  </script>
+</body>
+</html>

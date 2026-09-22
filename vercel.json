@@ -1,19 +1,55 @@
 {
-  "redirects": [
-    {"source":"/ai-tools","destination":"/ai-tools/","permanent":true},
-    {"source":"/ai-video-scripts","destination":"/ai-video-scripts/","permanent":true},
-    {"source":"/ai-banner-scripts","destination":"/ai-banner-scripts/","permanent":true},
-    {"source":"/ai-30-days-content","destination":"/ai-30-days-content/","permanent":true},
-    {"source":"/ai-daily-article","destination":"/ai-daily-article/","permanent":true},
-    {"source":"/ai-daily-h1-analysis","destination":"/ai-daily-h1-analysis/","permanent":true},
-    {"source":"/ai-indicator-prompts","destination":"/ai-indicator-prompts/","permanent":true},
-    {"source":"/downloads","destination":"/downloads/","permanent":true},
-    {"source":"/videos","destination":"/videos/","permanent":true},
-    {"source":"/about","destination":"/about/","permanent":true},
-    {"source":"/community","destination":"/community/","permanent":true},
-    {"source":"/course","destination":"/course/","permanent":true},
-    {"source":"/social","destination":"/social/","permanent":true},
-    {"source":"/webinar-admin","destination":"/webinar-admin/","permanent":true}
+  "rewrites": [
+    {
+      "source": "/ai-tools",
+      "destination": "/learning-hub.html"
+    },
+    {
+      "source": "/ai-video-scripts",
+      "destination": "/learning-hub.html"
+    },
+    {
+      "source": "/ai-banner-scripts",
+      "destination": "/learning-hub.html"
+    },
+    {
+      "source": "/ai-30-days-content",
+      "destination": "/learning-hub.html"
+    },
+    {
+      "source": "/ai-daily-article",
+      "destination": "/learning-hub.html"
+    },
+    {
+      "source": "/ai-daily-h1-analysis",
+      "destination": "/learning-hub.html"
+    },
+    {
+      "source": "/ai-indicator-prompts",
+      "destination": "/learning-hub.html"
+    },
+    {
+      "source": "/downloads",
+      "destination": "/learning-hub.html"
+    },
+    {
+      "source": "/webinar-admin",
+      "destination": "/webinar-admin.html"
+    },
+    {
+      "source": "/expo",
+      "destination": "/expo/index.html"
+    }
   ],
-  "headers": [{"source":"/(.*)","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]}]
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    }
+  ]
 }

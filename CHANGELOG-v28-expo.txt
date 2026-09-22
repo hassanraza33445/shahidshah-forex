@@ -1,0 +1,10 @@
+S M Shahid Shah v28 — Expo Clients
+
+- Added new public /expo/ page in the same premium mobile-first style family as the Social Links page.
+- Form requires Name, Email and Active WhatsApp Number.
+- Submission is validated and saved in Supabase through submit_expo_client().
+- User redirects to https://my.dooprime.com/marketing/links/go/2608 only after a successful database save.
+- Added Expo Clients tab to Webinar Admin / management panel.
+- Expo Clients supports search, record count and CSV export.
+- Added GitHub Pages 404 clean-route fallback for /expo -> /expo/.
+- Run expo-clients.sql once before using the form.

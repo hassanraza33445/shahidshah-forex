@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <base href="/">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0A0E1A">
-  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
-  <link rel="apple-touch-icon" href="/icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <meta name="robots" content="noindex,nofollow">
   <title>Webinar Admin — S M Shahid Shah</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,12 +39,11 @@
     @media(max-width:560px){.hub-summary{grid-template-columns:1fr}}
 
   </style>
-<style id="cross-browser-mobile-v26">html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{min-width:0;overflow-x:hidden}</style>
 </head>
 <body>
   <section class="login-screen" id="loginScreen">
     <form class="login-card" id="loginForm" novalidate>
-      <button class="theme-btn login-theme" id="themeToggleLogin" type="button" aria-label="Switch theme">☼</button><div class="login-logo"><img src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"></div>
+      <button class="theme-btn login-theme" id="themeToggleLogin" type="button" aria-label="Switch theme">☼</button><div class="login-logo"><img src="shahid-shah-profile.jpg" alt="S M Shahid Shah"></div>
       <h1>Webinar Admin</h1>
       <p>Sign in with your existing Supabase admin account. Access is allowed only when <strong>profiles.is_admin = true</strong>.</p>
       <div class="field">
@@ -64,11 +62,11 @@
   <div class="app hidden" id="adminApp">
     <aside class="sidebar" id="sidebar">
       <div class="brand">
-        <div class="brand-mark"><img src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"></div>
+        <div class="brand-mark"><img src="shahid-shah-profile.jpg" alt="S M Shahid Shah"></div>
         <div><strong>S M Shahid Shah</strong><span>WEBINAR ADMIN</span></div>
       </div>
       <div class="admin-user">
-        <div class="admin-avatar"><img src="/shahid-shah-profile.jpg" alt="Admin"></div>
+        <div class="admin-avatar"><img src="shahid-shah-profile.jpg" alt="Admin"></div>
         <div><strong id="adminEmail">Admin</strong><span>Authorized account</span></div>
       </div>
       <div class="menu-label">Management</div>
@@ -80,6 +78,7 @@
         <button class="menu-btn" data-page="videos"><span class="menu-icon">▶</span>YouTube Videos</button>
         <button class="menu-btn" data-page="content"><span class="menu-icon">≡</span>Review Content</button>
         <button class="menu-btn" data-page="registrations"><span class="menu-icon">◎</span>Registrations</button>
+        <button class="menu-btn" data-page="expo-clients"><span class="menu-icon">◈</span>Expo Clients</button>
         <button class="menu-btn" data-page="reviews"><span class="menu-icon">✓</span>Review Results</button><button class="menu-btn" data-page="learning"><span class="menu-icon">◆</span>Learning Hub</button><button class="menu-btn" data-page="downloads"><span class="menu-icon">↓</span>Downloads</button>
       </nav>
       <div class="sidebar-footer">
@@ -350,6 +349,14 @@
           </div>
         </section>
 
+        <section class="page" id="page-expo-clients">
+          <div class="section-intro"><div><h2>Expo Clients</h2><p>Leads submitted through the public Expo form before continuing to the DPrime registration page.</p></div><button class="btn btn-green" id="exportExpoClientsBtn" type="button">Export CSV</button></div>
+          <div class="table-card">
+            <div class="table-toolbar"><input class="search" id="expoClientSearch" placeholder="Search name, email or WhatsApp"><span style="color:var(--text-muted);font-size:9px" id="expoClientCountText">0 records</span></div>
+            <div class="table-wrap"><table><thead><tr><th>#</th><th>Name</th><th>Email</th><th>Active WhatsApp</th><th>Submitted At</th></tr></thead><tbody id="expoClientsBody"></tbody></table></div>
+          </div>
+        </section>
+
         <section class="page" id="page-reviews">
           <div class="section-intro"><div><h2>Review Results</h2><p>Participant feedback, clarity scores and detailed answers.</p></div><button class="btn btn-green" id="exportReviewsBtn" type="button">Export CSV</button></div>
           <div class="table-card">
@@ -396,6 +403,7 @@
       videos: [],
       reviewItems: [],
       registrations: [],
+      expoClients: [],
       reviews: [],
       visitorStats: null,
       visitorActivity: [],
@@ -573,7 +581,7 @@
       document.querySelector(`.menu-btn[data-page="${pageName}"]`)?.classList.add('active');
       $('topPageTitle').textContent = {
         dashboard: 'Dashboard', analytics: 'Visitor Analytics', engagement: 'Engagement Details', settings: 'Event Settings', videos: 'YouTube Videos',
-        content: 'Review Content', registrations: 'Registrations', reviews: 'Review Results', learning: 'Learning Hub', downloads: 'Downloads'
+        content: 'Review Content', registrations: 'Registrations', 'expo-clients': 'Expo Clients', reviews: 'Review Results', learning: 'Learning Hub', downloads: 'Downloads'
       }[pageName] || 'Webinar Admin';
       $('sidebar').classList.remove('open');
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1062,6 +1070,39 @@
       `).join('') : '<tr><td colspan="4"><div class="empty">No registrations yet.</div></td></tr>';
     }
 
+    async function loadExpoClients() {
+      const { data, error } = await sb.from('expo_clients').select('id,name,email,whatsapp,created_at').order('created_at', { ascending: false });
+      if (error) {
+        if (String(error.message || '').toLowerCase().includes('expo_clients')) {
+          state.expoClients = [];
+          renderExpoClients();
+          console.warn('Expo Clients table is not available yet. Run expo-clients.sql.');
+          return;
+        }
+        throw new Error(error.message);
+      }
+      state.expoClients = data || [];
+      renderExpoClients();
+    }
+
+    function filteredExpoClients() {
+      const q = $('expoClientSearch').value.trim().toLowerCase();
+      if (!q) return state.expoClients;
+      return state.expoClients.filter(row => [row.name,row.email,row.whatsapp].some(value => String(value || '').toLowerCase().includes(q)));
+    }
+
+    function renderExpoClients() {
+      const rows = filteredExpoClients();
+      $('expoClientCountText').textContent = `${rows.length} record${rows.length === 1 ? '' : 's'}`;
+      $('expoClientsBody').innerHTML = rows.length ? rows.map((row,index) => `
+        <tr><td>${index + 1}</td><td><strong>${escapeHtml(row.name)}</strong></td><td>${escapeHtml(row.email)}</td><td>${escapeHtml(row.whatsapp)}</td><td>${escapeHtml(formatDateTime(row.created_at))}</td></tr>
+      `).join('') : '<tr><td colspan="5"><div class="empty">No Expo clients found.</div></td></tr>';
+    }
+
+    function exportExpoClients() {
+      downloadCsv('expo-clients.csv', ['Name','Email','Active WhatsApp','Submitted At'], state.expoClients.map(row => [row.name,row.email,row.whatsapp,row.created_at]));
+    }
+
     async function loadReviews() {
       const { data, error } = await sb.from('webinar_reviews').select('*').order('submitted_at', { ascending: false });
       if (error) throw new Error(error.message);
@@ -1244,7 +1285,7 @@
       const button = $('refreshBtn');
       setLoading(button, true, 'Refreshing…', 'Refresh');
       try {
-        await Promise.all([loadSettings(), loadVideos(), loadReviewItems(), loadRegistrations(), loadReviews(), loadVisitorStats(), loadVisitorActivity(), loadEngagementStats(), loadEngagementEvents(), loadLearningItems(), loadDownloadItems()]);
+        await Promise.all([loadSettings(), loadVideos(), loadReviewItems(), loadRegistrations(), loadExpoClients(), loadReviews(), loadVisitorStats(), loadVisitorActivity(), loadEngagementStats(), loadEngagementEvents(), loadLearningItems(), loadDownloadItems()]);
         showToast('Dashboard data refreshed.', 'success');
       } catch (error) {
         console.error(error);
@@ -1329,8 +1370,10 @@
       $('downloadList').addEventListener('click', event => {const edit=event.target.closest('[data-edit-download]'),del=event.target.closest('[data-delete-download]');if(edit)editDownloadItem(edit.dataset.editDownload);if(del)deleteDownloadItem(del.dataset.deleteDownload)});
 
       $('registrationSearch').addEventListener('input', renderRegistrations);
+      $('expoClientSearch').addEventListener('input', renderExpoClients);
       $('reviewSearch').addEventListener('input', renderReviews);
       $('exportRegistrationsBtn').addEventListener('click', exportRegistrations);
+      $('exportExpoClientsBtn').addEventListener('click', exportExpoClients);
       $('exportReviewsBtn').addEventListener('click', exportReviews);
       $('reviewsBody').addEventListener('click', event => {
         const button = event.target.closest('[data-view-review]');
