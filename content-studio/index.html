@@ -143,6 +143,7 @@ function paintProject(item){
  const actions=mk("div","rowwrap"),open=mk("button","btn small","Open in Editor");
  open.addEventListener("click",()=>editProject(item));actions.append(open);
  if(item.status==="review"&&isApprover()) {const approve=mk("button","btn small","Approve");approve.addEventListener("click",()=>approveProject(item.id));actions.append(approve)}
+ if(item.status==="approved"&&state.admin){const done=mk("button","btn small","Mark Published");done.addEventListener("click",()=>markPublished(item.id));actions.append(done)}
  box.append(title,summary,actions);return box;
 }
 async function loadProjects(){
@@ -244,6 +245,14 @@ async function approveProject(id){
  }catch(e){say("Approval failed: "+e.message,"error")}
 }
 $("approve").addEventListener("click",()=>approveProject(state.projectId));
+async function markPublished(id){
+ if(!state.admin)return say("Only the website administrator can mark a script published.","error");
+ if(!confirm("Mark this project as published? This does NOT automatically post it to any social platform."))return;
+ const r=await sb.from("content_projects").update({status:"published"}).eq("id",id).select("id,status").single();
+ if(r.error)return say("Unable to mark published: "+r.error.message,"error");
+ if(state.projectId===id){state.projectStatus="published";$("projectState").textContent="PUBLISHED";$("saveProject").disabled=true}
+ say("Project marked published. Verify the external social post separately.","ok");await loadProjects();
+}
 async function loadPlanner(){
  const r=await sb.from("content_schedules").select("id,project_id,scheduled_at,platform,status").order("scheduled_at",{ascending:false}).limit(60);
  $("plannerList").replaceChildren();
