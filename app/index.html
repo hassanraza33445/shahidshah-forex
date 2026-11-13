@@ -1,0 +1,120 @@
+<!doctype html><html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#100e0a"><meta name="robots" content="noindex,nofollow">
+<title>Member Dashboard | S M Shahid Shah</title>
+<meta name="description" content="Your personalized S M Shahid Shah business and market intelligence dashboard.">
+<link rel="icon" href="/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/sm-member-app.css?v=20261114-1">
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="/assets/sm-member-app.js?v=20261114-1"></script></head>
+<body class="member-boot">
+<div id="bootScreen" class="boot-screen"><span class="boot-icon">▥</span><strong>Opening your workspace…</strong><small>Connecting securely to your account</small></div>
+<div id="memberApp" class="member-app" hidden>
+<aside class="app-sidebar" id="appSidebar" aria-label="Application navigation">
+ <div class="side-brand"><span class="logo-gold">▥</span><span><b>S M Shahid Shah</b><small>MARKET INTELLIGENCE PLATFORM</small></span></div>
+ <nav class="side-links" aria-label="Member sections">
+  <button type="button" data-section="home" class="active"><span class="nav-icon">⌂</span>Home</button>
+  <button type="button" data-section="markets"><span class="nav-icon">▥</span>Market Intelligence</button>
+  <button type="button" data-section="studio"><span class="nav-icon">✦</span>AI Studio</button>
+  <button type="button" data-section="tools"><span class="nav-icon">◈</span>AI Tools</button>
+  <a href="/ai-video-scripts/"><span class="nav-icon">▣</span>AI Scripts</a>
+  <a href="/economic-calendar/"><span class="nav-icon">▦</span>Economic Calendar</a>
+  <button type="button" data-section="mentorship"><span class="nav-icon">♢</span>Mentorship</button>
+  <button type="button" data-section="library"><span class="nav-icon">▤</span>My Content</button>
+  <a href="/notifications/"><span class="nav-icon">♧</span>Notifications</a>
+  <button type="button" data-section="profile"><span class="nav-icon">♙</span>My Profile</button>
+ </nav>
+ <div class="side-bottom"><article class="mentor-promo"><span>♛</span><b>Mentorship Program</b><p>Personalized trading, brokerage and business guidance.</p><button type="button" data-section="mentorship">Apply Now →</button></article>
+ <a href="/" class="public-link">← Public Website</a></div>
+</aside>
+<div class="side-shade" id="sideShade" hidden></div>
+<div class="app-main">
+<header class="member-header">
+ <div class="header-first"><button id="openMenu" class="icon-btn menu-trigger" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+  <a href="/app/" class="top-brand"><img src="/shahid-shah-profile.jpg" alt=""><span><b>S M Shahid Shah</b><small>BUSINESS &amp; MARKET INTELLIGENCE</small></span></a></div>
+ <nav class="desktop-header-links" aria-label="Top navigation"><button data-section="home" class="active">Home</button><button data-section="markets">Market Intelligence</button><button data-section="studio">AI Studio</button><button data-section="tools">AI Tools</button><a href="/ai-video-scripts/">AI Scripts</a><a href="/videos/">Videos</a><a href="/about/">About</a></nav>
+ <div class="header-actions"><a href="/market-intelligence/" class="icon-btn search-icon" aria-label="Search market news">⌕</a><a href="/notifications/" class="icon-btn notification-icon" aria-label="Open notifications">♧<i id="alertDot" hidden></i></a>
+ <button data-section="profile" type="button" class="icon-btn profile-icon" aria-label="Profile">♙</button></div>
+</header>
+<main class="app-content">
+<section class="app-view active" id="view-home" aria-labelledby="homeTitle">
+ <div class="mobile-welcome"><span>WELCOME TO YOUR WORKSPACE</span><h1 id="greeting">Welcome back.</h1><p>Market intelligence and AI-powered tools—made for you.</p></div>
+ <div class="feature-hero"><div class="feature-copy"><span class="hero-kicker">GLOBAL MARKETS · ECONOMY · FOREX · GOLD · CRYPTO</span>
+ <h1 id="homeTitle">Market Intelligence<br><em>AI Studio</em></h1><p>Source-linked financial news, professional AI content tools and personalized business development in one platform.</p>
+ <div class="hero-actions"><button type="button" class="gold-action" data-section="studio">✦ Open AI Studio →</button><button type="button" class="outline-action" data-section="tools">◈ Explore Tools</button></div></div>
+ <div class="hero-visual"><div class="halo"></div><div class="globe">✧</div><img src="/shahid-shah-profile.webp" alt="S M Shahid Shah"><div class="hero-orbit">MARKET INTELLIGENCE</div></div>
+ <div class="hero-shortcuts"><a href="/market-intelligence/">▥ <span>Latest Market News</span></a><a href="/economic-calendar/">▦ <span>Economic Calendar</span></a><a href="/market-reaction/">⌁ <span>Market Reaction</span></a></div>
+ </div>
+ <div class="market-strip"><strong><span class="pulse-dot"></span>MARKET WATCH</strong><span id="marketStripText">Verified live price quotes are not connected yet. Explore source-linked news instead.</span><a href="/market-intelligence/">Latest Headlines →</a></div>
+ <div class="dashboard-metrics"><div class="metric"><span>▣</span><div><strong id="newsCount">—</strong><small>Latest Headlines</small></div></div><div class="metric"><span>⌁</span><div><strong id="hotCount">—</strong><small>HOT News Alerts</small></div></div><div class="metric"><span>▦</span><div><strong id="calendarCount">—</strong><small>Upcoming Events</small></div></div><div class="metric"><span>◷</span><div><strong id="lastUpdated">—</strong><small>Last Checked</small></div></div></div>
+ <div class="section-title"><h2>AI Content Creation Tools</h2><a href="/ai-tools/">View all tools →</a></div>
+ <div class="quick-grid">
+  <button data-section="studio" type="button" class="tool-card selected"><span>▶</span><b>Video Script</b><small>30s · 45s · 60s</small></button>
+  <a href="/ai-daily-article/" class="tool-card"><span>▤</span><b>Article Writer</b><small>SEO Friendly</small></a>
+  <a href="/ai-banner-scripts/" class="tool-card"><span>▧</span><b>Banner Scripts</b><small>Social Media</small></a>
+  <a href="/ai-indicator-prompts/" class="tool-card"><span>✦</span><b>Prompt Builder</b><small>Market Analysis</small></a>
+  <button data-section="tools" type="button" class="tool-card"><span>♫</span><b>Voice Studio</b><small>Studio access required</small></button>
+ </div>
+ <div class="section-title"><h2>Latest Market Headlines</h2><a href="/market-intelligence/">Read all news →</a></div>
+ <div id="homeHeadlines" class="news-grid"><div class="loading-line">Loading source-linked market headlines…</div></div>
+ <section class="mobile-mentor-banner"><span>♢</span><div><b>Mentorship Program</b><small>Trading, Brokerage &amp; Business Development</small></div><button data-section="mentorship" type="button">→</button></section>
+</section>
+<section class="app-view" id="view-markets" aria-labelledby="marketsTitle">
+ <div class="view-heading"><span class="eyebrow">REAL SOURCES · FINANCIAL INTELLIGENCE</span><h1 id="marketsTitle">Market <em>Intelligence.</em></h1><p>Research market headlines and the official economic schedule. HOT is editorial priority, not a trading signal.</p></div>
+ <div class="pills" role="tablist" aria-label="Market intelligence categories"><button type="button" class="pill active" data-news-filter="All">All</button><button type="button" class="pill" data-news-filter="Forex">Forex</button><button type="button" class="pill" data-news-filter="Gold">Gold</button><button type="button" class="pill" data-news-filter="Crypto">Crypto</button><button type="button" class="pill" data-news-filter="Economic Data">Economy</button></div>
+ <div id="marketNewsList" class="news-grid news-grid-narrow"><div class="loading-line">Checking verified news sources…</div></div>
+ <div class="market-action-grid"><a href="/market-intelligence/">Explore News Hub →</a><a href="/economic-calendar/">Economic Calendar →</a><a href="/market-reaction/">Market Reaction →</a><a href="/notifications/">News Notifications →</a></div>
+</section>
+<section class="app-view" id="view-studio" aria-labelledby="studioTitle">
+ <div class="view-heading"><span class="eyebrow">CREATE · EDIT · SHARE</span><h1 id="studioTitle">AI <em>Studio.</em></h1><p>Start with market news or your own topic, then prepare a professional video script.</p></div>
+ <div class="studio-cards"><a class="studio-select active" href="#scriptBuilder"><span>▶</span>Video Script</a><a class="studio-select" href="/ai-daily-article/"><span>▤</span>Article</a><a class="studio-select" href="/ai-banner-scripts/"><span>▧</span>Banner</a><a class="studio-select" href="/ai-indicator-prompts/"><span>✦</span>Prompt</a></div>
+ <div class="studio-editor" id="scriptBuilder">
+ <div class="editor-heading"><span class="icon-giant">▣</span><div><h2>Create Video Script</h2><p>Choose your content, duration, language and style.</p></div></div>
+ <div class="form-group"><label>Content Source</label><div class="switcher"><button type="button" class="selected" data-source="news">▤ From Market News</button><button type="button" data-source="topic">✎ Custom Topic</button></div></div>
+ <form id="scriptBuilderForm">
+ <div class="form-group"><label for="scriptTopic">Topic / News</label><select id="scriptTopic" required><option value="">Loading market headlines…</option></select><input id="customTopic" type="text" maxlength="200" placeholder="e.g. Gold CPI impact explained" hidden></div>
+ <div class="form-group"><label>Video Duration</label><div class="duration-choices"><label><input type="radio" name="duration" value="30" checked><span>◷ 30 sec</span></label><label><input type="radio" name="duration" value="45"><span>◷ 45 sec</span></label><label><input type="radio" name="duration" value="60"><span>◷ 60 sec</span></label></div></div>
+ <div class="form-group"><label for="scriptLanguage">Language</label><select id="scriptLanguage"><option value="Roman Urdu / English">Roman Urdu / English</option><option value="English">English</option><option value="Urdu">Urdu</option></select></div>
+ <div class="form-group"><label for="scriptTone">Tone / Style</label><select id="scriptTone"><option>Informative</option><option>Educational</option><option>Professional</option><option>Explainer</option></select></div>
+ <button type="submit" class="gold-action full-btn">✦ Prepare Script Brief</button></form>
+ <div id="briefResult" class="brief-result" hidden><div class="section-title"><h2>Script Brief</h2><button type="button" id="copyBrief">Copy</button></div><pre id="briefText"></pre><a href="/content-studio/" class="outline-action full-btn">Open AI Content Studio to Generate →</a><p class="access-note">AI script generation in the existing secure Studio requires an assigned creator/editor account. This brief can be copied and used once access is granted.</p></div>
+ </div>
+ <div class="studio-help"><span>✦</span><div><b>Want full AI script generation, voice and recordings?</b><p>The protected Content Studio includes news-to-script, review and private projects. Access is assigned by the administrator.</p></div><a href="/content-studio/">Open Studio →</a></div>
+</section>
+<section class="app-view" id="view-tools" aria-labelledby="toolsTitle">
+ <div class="view-heading"><span class="eyebrow">CONTENT CREATION SUITE</span><h1 id="toolsTitle">AI <em>Tools.</em></h1><p>Professional prompt builders and editorial workflows to create market and business content.</p></div>
+ <div class="tool-list">
+  <button type="button" data-section="studio" class="tool-list-row"><span>▶</span><div><b>Video Script Generator</b><small>Create 30s, 45s and 60s script briefs</small></div><i>→</i></button>
+  <a href="/ai-daily-article/" class="tool-list-row"><span>▤</span><div><b>Article Writer</b><small>Professional educational and SEO-friendly writing</small></div><i>→</i></a>
+  <a href="/ai-banner-scripts/" class="tool-list-row"><span>▧</span><div><b>Banner Script</b><small>Premium banners, marketing copy and creative briefs</small></div><i>→</i></a>
+  <a href="/ai-indicator-prompts/" class="tool-list-row"><span>✦</span><div><b>Prompt Builder</b><small>Trading, analysis and content prompts</small></div><i>→</i></a>
+  <a href="/content-studio/" class="tool-list-row"><span>♫</span><div><b>Script to Voice</b><small>Listen, record and transcribe in authorized Studio</small></div><i>→</i></a>
+  <a href="/content-studio/" class="tool-list-row"><span>◈</span><div><b>My Content Library</b><small>Your private Studio projects and saved scripts</small></div><i>→</i></a>
+ </div>
+</section>
+<section class="app-view" id="view-mentorship" aria-labelledby="mentorshipTitle">
+ <div class="view-heading"><span class="eyebrow">PERSONAL GROWTH · 1-ON-1 GUIDANCE</span><h1 id="mentorshipTitle">Mentorship <em>Program.</em></h1><p>Apply for personalized guidance in trading, brokerage, market intelligence and business development.</p></div>
+ <div class="mentorship-highlight"><span>♛</span><div><strong>Build your next chapter.</strong><p>Learn strategy, market intelligence, risk awareness and business growth through dedicated mentorship.</p></div></div>
+ <div class="mentorship-grid"><div class="list-box"><h2>Program Highlights</h2><div>✓ 1-on-1 Guidance &amp; Strategy</div><div>✓ Trading &amp; Brokerage Insights</div><div>✓ Business Growth &amp; Development</div><div>✓ Market Intelligence &amp; Risk Management</div></div>
+ <div class="list-box"><h2>My Application Status</h2><div id="applicationStatus" class="status-pill">Checking status…</div><p id="applicationDetail">Your latest mentorship application will appear here.</p></div></div>
+ <section class="application-box"><h2>Apply for Mentorship</h2><p>Applications are reviewed individually. Submitting is not acceptance or a payment commitment.</p>
+ <form id="mentorshipForm"><div class="two-col"><label>Full Name<input type="text" id="mentorName" autocomplete="name" minlength="2" maxlength="100" required placeholder="Your full name"></label>
+ <label>WhatsApp / Contact Number<input type="tel" id="mentorPhone" autocomplete="tel" minlength="6" maxlength="32" required placeholder="+60 ..."></label></div>
+ <label>Primary Interest<select id="mentorInterest"><option>Forex Trading</option><option>Brokerage Business</option><option>Market Intelligence</option><option>Business Development</option><option>Other</option></select></label>
+ <label>Tell us about your goals<textarea id="mentorGoals" required minlength="12" maxlength="1500" rows="4" placeholder="What would you like to learn or accomplish?"></textarea></label>
+ <button id="mentorSubmit" class="gold-action full-btn" type="submit">Submit Mentorship Application →</button><p id="mentorMessage" class="form-status" role="status"></p></form>
+ </section>
+</section>
+<section class="app-view" id="view-library" aria-labelledby="libraryTitle"><div class="view-heading"><span class="eyebrow">PERSONAL CONTENT WORKSPACE</span><h1 id="libraryTitle">My <em>Content.</em></h1><p>Keep your scripts, article drafts and recordings organized in the private AI Content Studio.</p></div>
+ <div class="library-entry"><span>◈</span><h2>Your private content workspace</h2><p>Authorized Studio users can view saved drafts, review status, recordings, generated content and their project library. Content is not shared publicly by default.</p><a class="gold-action" href="/content-studio/">Open My Content Studio →</a><p class="access-note">Studio projects require creator/editor access. New accounts can still use the prompt builders in AI Tools.</p></div></section>
+<section class="app-view" id="view-profile" aria-labelledby="profileTitle"><div class="view-heading"><span class="eyebrow">ACCOUNT &amp; SETTINGS</span><h1 id="profileTitle">My <em>Profile.</em></h1><p>Manage your account, notifications and personal learning experience.</p></div>
+ <article class="profile-card"><div id="profileAvatar" class="avatar-fallback">S</div><div><h2 id="profileName">Member Account</h2><span id="profileEmail">—</span><small id="verifiedBadge">Secure Supabase Account</small></div></article>
+ <div class="profile-actions"><button type="button" data-section="library">▤ <span>My Content Library</span>→</button><button type="button" data-section="mentorship">♢ <span>Mentorship Application</span>→</button><a href="/notifications/">♧ <span>Notifications</span>→</a><a href="/economic-calendar/">▦ <span>Economic Calendar</span>→</a><a href="/about/">◈ <span>Help &amp; About</span>→</a></div>
+ <button class="logout-btn" id="logout" type="button">⏻ Sign Out</button>
+ </section>
+</main>
+<footer class="app-footer"><span>© <span id="year"></span> S M Shahid Shah</span><span>Educational market intelligence · No guaranteed trading outcomes</span></footer>
+</div>
+<nav class="mobile-dock" aria-label="Member mobile tabs"><button data-section="home" class="active" type="button"><span>⌂</span>Home</button><button data-section="markets" type="button"><span>▥</span>AI Studio</button><button data-section="tools" type="button"><span>◈</span>AI Tools</button><button data-section="mentorship" type="button"><span>♢</span>Mentorship</button><button data-section="profile" type="button"><span>♙</span>Profile</button></nav>
+</div>
+</body></html>
