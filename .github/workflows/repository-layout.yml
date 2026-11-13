@@ -10,3 +10,5 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check static routes and repository layout
         run: node scripts/check-repo.mjs
+      - name: Syntax check Market Intelligence and Studio pages
+        run: node scripts/check-site-scripts.mjs
