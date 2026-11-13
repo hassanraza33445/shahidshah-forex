@@ -1,0 +1,17 @@
+name: Live asset diagnostics
+on:
+  pull_request:
+    paths:
+      - 'scripts/diagnose-public-assets.mjs'
+      - '.github/workflows/live-asset-diagnostics.yml'
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check live site and banner responses
+        run: node scripts/diagnose-public-assets.mjs
