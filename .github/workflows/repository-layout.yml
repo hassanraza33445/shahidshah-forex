@@ -1,0 +1,12 @@
+name: Repository layout check
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  verify-layout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check static routes and repository layout
+        run: node scripts/check-repo.mjs

@@ -1,0 +1,13 @@
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+# Build output / tooling
+node_modules/
+.vercel/
+dist/
+coverage/
+*.log
+.DS_Store
