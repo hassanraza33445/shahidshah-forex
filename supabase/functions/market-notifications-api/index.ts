@@ -7,7 +7,7 @@ const KEY=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")||secrets.default||"";
 const ONE_APP=Deno.env.get("ONESIGNAL_APP_ID")||"";
 const ONE_KEY=Deno.env.get("ONESIGNAL_REST_API_KEY")||"";
 const CANONICAL="https://www.smshahidshah.com";
-const ready=()=>/^[0-9a-f-]{36}$/i.test(ONE_APP)&&ONE_KEY.length>12&&Deno.env.get("ONESIGNAL_DISPATCH_ENABLED")==="true";
+const ready=()=>/^[0-9a-f-]{36}$/i.test(ONE_APP)&&ONE_KEY.length>12&&Deno.env.get("ONESIGNAL_SUBSCRIPTIONS_ENABLED")==="true";
 const db=createClient(DB_URL,KEY||"unconfigured",{auth:{persistSession:false,autoRefreshToken:false}});
 const cors={"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"authorization,apikey,content-type,x-client-info",
  "Access-Control-Allow-Methods":"GET,POST,OPTIONS"};
