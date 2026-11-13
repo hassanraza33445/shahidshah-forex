@@ -54,6 +54,25 @@ try{
   assert.deepEqual(errors,[],"Studio inline script should not crash without a login");
   await page.close();console.log("PASS AI Studio login gate "+viewport.width+"px");
  }
+ for(const mode of ["light","dark"]){
+  const page=await browser.newPage({viewport:{width:1440,height:900},serviceWorkers:"block"});
+  await page.addInitScript(value=>{try{localStorage.setItem("smshahid-site-theme",value)}catch(e){}},mode);
+  await page.route("**/cdn.jsdelivr.net/**",r=>r.abort());
+  await page.route("**/www.googletagmanager.com/**",r=>r.abort());
+  await page.goto(ORIGIN+"/learning-hub.html#video",{waitUntil:"domcontentloaded",timeout:20000});
+  await page.locator("#banner").waitFor({timeout:9000});
+  for(const id of ["video","banner","30days","article","h1","indicator","downloads"]){
+   await page.locator('.tab[data-id="'+id+'"]').click();
+   await page.waitForFunction(()=>{const x=document.querySelector("#banner");return x&&x.complete&&x.naturalWidth>0},{},{timeout:9000});
+   const state=await page.locator("#banner").evaluate(img=>({ok:img.complete&&img.naturalWidth>0,src:new URL(img.currentSrc||img.src).pathname}));
+   assert.equal(state.ok,true,"banner for "+id+" in "+mode+" must load");
+   assert.equal(state.src,"/assets/banners/"+id+"-"+mode+".webp","root-relative banner path");
+   const header=await page.locator(".brand img").evaluate(img=>img.complete&&img.naturalWidth>0);
+   assert.equal(header,true,"brand photo must load after navigation");
+  }
+  console.log("PASS AI Tools all seven banners, brand image and client navigation in "+mode+" mode");
+  await page.close();
+ }
  for(const [route,pathPart] of [["/ai-banner-scripts/","/learning-hub.html#banner"],["/expo.html","/expo/"],["/webinar-admin/","/webinar-admin.html"]]){
   const page=await browser.newPage({serviceWorkers:"block"});
   await page.route("**/cdn.jsdelivr.net/**",r=>r.abort());
