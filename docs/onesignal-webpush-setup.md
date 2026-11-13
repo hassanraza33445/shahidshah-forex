@@ -11,9 +11,10 @@
 In Supabase Dashboard > Project Settings > Edge Functions > Secrets, add:
 - `ONESIGNAL_APP_ID` — public OneSignal application UUID.
 - `ONESIGNAL_REST_API_KEY` — secret OneSignal App REST key, server only.
-- `ONESIGNAL_DISPATCH_ENABLED` — keep **false** until scheduler and test device verified.
+- `ONESIGNAL_SUBSCRIPTIONS_ENABLED` — initially **false**; set **true** only to test voluntary browser subscription after keys are configured. This does **not** send any push messages.
+- `ONESIGNAL_DISPATCH_ENABLED` — always keep **false** until a verified test subscription, worker, private scheduler and delivery checks pass.
 
-The public notification API returns only `app_id` when **all three** conditions are fulfilled, and NEVER returns the REST key. The static page loads the OneSignal v16 SDK only after a signed-in user opts in.
+The public notification API returns only `app_id` once App ID, REST key and `ONESIGNAL_SUBSCRIPTIONS_ENABLED=true` are configured. Real delivery additionally requires the separate `ONESIGNAL_DISPATCH_ENABLED=true` switch and private scheduler; the API NEVER returns the REST key. The static page loads the OneSignal v16 SDK only after a signed-in user opts in.
 
 ## Delivery model
 - Supabase authenticated user explicitly saves preferences, enables browser push and grants native browser permission.
@@ -28,7 +29,7 @@ The public notification API returns only `app_id` when **all three** conditions 
 ## Go-live checklist
 1. Save the two secrets; verify `/onesignal/OneSignalSDKWorker.js` returns HTTP 200 and JavaScript content type, not HTML.
 2. Configure a private server-only scheduler (for example Supabase pg_cron + Vault, never plaintext credentials inside cron.job) to call the dispatcher at most every 5 minutes.
-3. Use one authenticated TEST account and TEST browser to verify opt-in, a verified test economic reminder, quiet-hour suppression, duplicate prevention, server-only sender access, and opt-out across devices. Never send fabricated financial news.
+3. Set `ONESIGNAL_SUBSCRIPTIONS_ENABLED=true` but keep dispatch **false**. Use one authenticated TEST account and TEST browser to verify opt-in, a verified test economic reminder, quiet-hour suppression, duplicate prevention, server-only sender access, and opt-out across devices. Never send fabricated financial news.
 4. Only then set `ONESIGNAL_DISPATCH_ENABLED=true`, redeploy affected Edge Functions if necessary, and run end-to-end tests again.
 5. Monitor `market_push_deliveries` for errors and user opt-out; disable dispatch flag to stop deliveries.
 6. iOS Safari push may require installing the website to the home screen on a supported iOS release.
