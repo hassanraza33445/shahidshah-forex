@@ -41,6 +41,28 @@ const server=createServer(async(req,res)=>{
 });
 await new Promise(resolve=>server.listen(8765,"127.0.0.1",resolve));
 const browser=await chromium.launch({headless:true});
+// The original UI smoke suite tests layout/features with a fake signed-in identity.
+// These mocks never run on production and do not bypass real Supabase Auth.
+const savedNewPage=browser.newPage.bind(browser);
+browser.newPage=async options=>{
+ const page=await savedNewPage(options);
+ const stub=()=>{
+  const user={id:"11111111-1111-4111-8111-111111111111",email:"qa@example.test"};
+  window.supabase={createClient:()=>({
+   auth:{getUser:async()=>({data:{user},error:null}),
+    getSession:async()=>({data:{session:null}}),
+    onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})},
+   from:()=>({select(){return this},eq(){return this},maybeSingle:async()=>({data:null,error:null})})
+  })};
+ };
+ await page.addInitScript(stub);
+ await page.route("**/cdn.jsdelivr.net/npm/@supabase/supabase-js@2**",route=>route.fulfill({
+  status:200,contentType:"application/javascript",
+  body:'window.supabase={createClient:()=>({auth:{getUser:async()=>({data:{user:{id:"11111111-1111-4111-8111-111111111111",email:"qa@example.test"}},error:null}),getSession:async()=>({data:{session:null}}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})},from:()=>({select(){return this},eq(){return this},maybeSingle:async()=>({data:null,error:null})})})};'
+ }));
+ return page;
+};
+
 try{
  const expectedNav=[
   ["/","Home"],["/market-intelligence/","Market Intelligence"],["/content-studio/","AI Studio"],
