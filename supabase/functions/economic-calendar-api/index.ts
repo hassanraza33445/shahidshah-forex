@@ -23,7 +23,7 @@ function icsTime(raw:string,prop:string):{value:string,precision:"exact"|"date"}
  const str=raw.trim();if(!str)return null;
  const date=/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(?:\d{2})?(Z)?)?$/.exec(str);
  if(!date)return null;
- const [_,yy,mm,dd,hh,mi,,utc]=date;
+ const [_,yy,mm,dd,hh,mi,utc]=date;
  const y=Number(yy),m=Number(mm),d=Number(dd);
  if(y<2026||y>2030||m<1||m>12||d<1||d>31)return null;
  if(!hh)return {value:new Date(Date.UTC(y,m-1,d)).toISOString(),precision:"date"};
