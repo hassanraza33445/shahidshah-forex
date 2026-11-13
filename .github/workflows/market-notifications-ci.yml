@@ -1,0 +1,51 @@
+name: Market Notifications V1 checks
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/market-notifications-api/**'
+      - 'supabase/sql/market-notification-*.sql'
+      - 'notifications/**'
+      - '.github/workflows/market-notifications-ci.yml'
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Validate notification API TypeScript
+        run: deno check supabase/functions/market-notifications-api/index.ts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify safe notification SQL, privacy and consent contracts
+        run: |
+          node --input-type=module <<'JS'
+          import {readFileSync} from 'node:fs';
+          const sql=readFileSync('supabase/sql/market-notification-center-optin-20261114.sql','utf8');
+          const code=readFileSync('supabase/functions/market-notifications-api/index.ts','utf8');
+          const html=readFileSync('notifications/index.html','utf8');
+          for(const token of [
+            'market_notification_events','market_notification_preferences','market_notification_inbox',
+            'enable row level security','push_enabled=false','refresh_market_notification_feed',
+            'ON CONFLICT(dedupe_key) DO NOTHING','ON CONFLICT(user_id,notice_id) DO NOTHING',
+            'status:','5 minutes','SECURITY DEFINER',
+            "REVOKE ALL ON FUNCTION public.refresh_market_notification_feed() FROM PUBLIC,anon,authenticated"
+          ]){
+            if(!sql.includes(token)&&token!=='status:')throw Error('SQL privacy/duplication contract missing: '+token);
+          }
+          for(const token of ['db.auth.getUser(token)','push_enabled:false','privatePost','mark_read',
+            'unknown','in_app_only','Notification service temporarily unavailable']){
+            if(!code.includes(token))throw Error('API guard missing '+token);
+          }
+          for(const token of ['Unverified source','Browser/mobile push notifications are not active yet.',
+            'Asia/Kuala_Lumpur','Asia/Karachi','Sign in','saveSettings','localStorage']){
+            if(!html.includes(token))throw Error('UI privacy or opt-in content missing '+token);
+          }
+          if(/requestPermission\s*\(/.test(html))throw Error('Browser push permission requested before provider is connected');
+          console.log('PASS notification integrity, RLS access, double opt-in and source verification labels');
+          JS
