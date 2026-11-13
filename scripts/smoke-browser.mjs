@@ -272,6 +272,49 @@ try{
   console.log("PASS Smart Notifications source labels, local preferences, privacy and no fake push");
   await page.close();
  }
+ // OneSignal browser push: explicit user consent, private API registration and isolated worker.
+ {
+  const page=await browser.newPage({viewport:{width:1280,height:850},serviceWorkers:"block"});
+  const calls=[];
+  await page.route("**/cdn.jsdelivr.net/**",r=>r.fulfill({status:200,contentType:"application/javascript",
+   body:'window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{access_token:"mock-user-jwt"}}})}})};'}));
+  await page.route("**/functions/v1/market-notifications-api?**",async r=>{
+   const req=r.request(),mode=new URL(req.url()).searchParams.get("mode");
+   let payload={success:true};
+   if(req.method()==="POST"){
+    const body=JSON.parse(req.postData()||"{}");calls.push(body);
+    if(body.action==="save_preferences")payload={success:true,account_synced:true,settings:{...body.settings,push_enabled:false}};
+    else if(body.action==="register_push_device")payload={success:true,registered:true,push_enabled:true};
+    else if(body.action==="unregister_all_push_devices")payload={success:true,registered:false,push_enabled:false};
+   }else if(mode==="push-config")payload={success:true,configured:true,app_id:"a880897d-45f9-4b8f-9e58-ff208ed41966",
+    canonical_origin:ORIGIN,worker:"/onesignal/OneSignalSDKWorker.js"};
+   else if(mode==="preferences")payload={success:true,settings:{in_app_enabled:false,breaking_enabled:false,economic_enabled:false,
+    topics:["Gold"],reminders:[15],timezone:"Asia/Kuala_Lumpur",quiet_start:null,quiet_end:null,push_enabled:false},account_synced:true,push_available:true};
+   else if(mode==="inbox")payload={success:true,items:[],unread:0,account_synced:true};
+   else if(mode==="feed")payload=alertsResponse;
+   await r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(payload)});
+  });
+  await page.route("**/cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js",r=>r.fulfill({status:200,
+   contentType:"application/javascript",
+   body:'const api={setConsentRequired(x){window.__requiresConsent=x},async init(o){window.__oneSignalOptions=o},async setConsentGiven(x){window.__consented=x},Notifications:{permission:true,isPushSupported(){return true},async requestPermission(){window.__permissionAsked=true;return true}},User:{PushSubscription:{id:"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",async optIn(){},async optOut(){window.__optedOut=true}}}};const q=window.OneSignalDeferred||[];q.push=(fn)=>Promise.resolve(fn(api));for(const fn of Array.from(q))Promise.resolve(fn(api));'
+  }));
+  await page.goto(ORIGIN+"/notifications/",{waitUntil:"domcontentloaded",timeout:20000});
+  await page.waitForFunction(()=>document.querySelector("#enablePush")?.disabled===false,{},{timeout:9000});
+  assert.equal(await page.evaluate(()=>!!document.querySelector('script[src*="OneSignalSDK.page.js"]')),false,"SDK must not load before opt-in");
+  await page.locator("#allowInApp").check();await page.locator("#allowNews").check();
+  await page.locator("#saveSettings").click();await page.locator("#enablePush").click();
+  await page.waitForFunction(()=>document.querySelector("#pushStatus")?.textContent?.includes("enabled for this account"),{},{timeout:9000});
+  assert.equal(calls.filter(x=>x.action==="register_push_device").length,1,"Register only once");
+  assert.equal(await page.evaluate(()=>window.__requiresConsent),true);
+  assert.equal(await page.evaluate(()=>window.__permissionAsked),true);
+  assert.equal(await page.evaluate(()=>window.__oneSignalOptions.serviceWorkerParam.scope),"/onesignal/");
+  await page.locator("#disablePush").click();
+  await page.waitForFunction(()=>document.querySelector("#pushStatus")?.textContent?.includes("disabled for all devices"),{},{timeout:9000});
+  assert.equal(calls.filter(x=>x.action==="unregister_all_push_devices").length,1);
+  assert.equal(await page.evaluate(()=>window.__consented),false);
+  console.log("PASS OneSignal click-only permission, registration, isolated worker and account opt-out");
+  await page.close();
+ }
  async function toggleTheme(page,before){
   await page.locator("body > header:not(.site-legacy-header) #themeToggle").first().click();
   await page.waitForFunction(previous=>document.documentElement.dataset.theme!==previous,before,{timeout:3500});
