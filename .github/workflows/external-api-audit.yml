@@ -1,0 +1,19 @@
+name: Read-only external API audit
+on:
+  pull_request:
+    paths:
+      - "scripts/external-api-audit.mjs"
+      - ".github/workflows/external-api-audit.yml"
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check public pages, APIs and unauthorized access without writes
+        run: node scripts/external-api-audit.mjs
