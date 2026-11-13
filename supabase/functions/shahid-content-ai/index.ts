@@ -33,6 +33,7 @@ function validate(s:string){
 }
 Deno.serve(async(req:Request)=>{
  if(req.method==="OPTIONS")return new Response(null,{status:204,headers:cors});
+ if(req.method==="GET"&&new URL(req.url).searchParams.get("health")==="1")return json({success:true,gemini_configured:!!Deno.env.get("GEMINI_API_KEY"),groq_configured:!!Deno.env.get("GROQ_API_KEY"),model:"gemini-2.5-flash",note:"Provider presence only; authorized generation still needs to be tested."});
  if(req.method!=="POST")return json({success:false,error:"POST required"},405);
  if(!dbUrl||!secret)return json({success:false,error:"Studio backend configuration missing"},503);
  try{

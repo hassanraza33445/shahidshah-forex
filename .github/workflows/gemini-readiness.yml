@@ -1,0 +1,25 @@
+name: Gemini provider readiness
+on:
+  pull_request:
+    paths:
+      - "supabase/functions/shahid-content-ai/index.ts"
+      - ".github/workflows/gemini-readiness.yml"
+jobs:
+  verify-provider:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify Supabase function and saved provider configuration
+        run: |
+          node --input-type=module <<'JS'
+          const url="https://qggtdwixwafcmorepkks.supabase.co/functions/v1/shahid-content-ai?health=1";
+          const response=await fetch(url,{signal:AbortSignal.timeout(18000)});
+          const data=await response.json();
+          console.log(JSON.stringify({http:response.status,geminiConfigured:data.gemini_configured===true,groqConfigured:data.groq_configured===true}));
+          if(!response.ok||data.gemini_configured!==true)process.exit(1);
+          JS
