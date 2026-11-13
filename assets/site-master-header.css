@@ -1,0 +1,81 @@
+/* Shared S M Shahid Shah website header — extracted from approved homepage design.
+   Do not redesign per page. Change this single file for all public headers.
+   The page-specific UI below the header remains untouched. */
+html[data-theme="light"] #sm-site-header {
+ --sm-bg:#FBF7EF;--sm-border:#E6DCC8;--sm-border-soft:#ECE3D3;
+ --sm-secondary:#6B5D47;--sm-primary:#2A2218;--sm-gold:#C2740A;
+ --sm-glass:rgba(42,34,24,.03);--sm-glow:rgba(217,119,6,.14);
+ --sm-youtube:#D9002B;--sm-whatsapp:#128C5B;--sm-facebook:#1769CC;--sm-instagram:#E1306C;
+}
+html[data-theme="dark"] #sm-site-header {
+ --sm-bg:#0D1320;--sm-border:#1F2937;--sm-border-soft:#1F2937;
+ --sm-secondary:#9CA3AF;--sm-primary:#F3F4F6;--sm-gold:#F59E0B;
+ --sm-glass:rgba(255,255,255,.04);--sm-glow:rgba(245,158,11,.16);
+ --sm-youtube:#FF0033;--sm-whatsapp:#25D366;--sm-facebook:#1877F2;--sm-instagram:#E1306C;
+}
+#sm-site-header {
+ position:sticky;top:0;z-index:70;width:100%;
+ box-sizing:border-box;
+ background:color-mix(in srgb,var(--sm-bg) 86%,transparent);
+ border-bottom:1px solid var(--sm-border-soft);
+ -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+ color:var(--sm-primary);
+ font-family:'Plus Jakarta Sans',sans-serif;
+ font-size:13px;line-height:1.6;
+}
+#sm-site-header *,#sm-site-header *::before,#sm-site-header *::after{box-sizing:border-box}
+#sm-site-header .wrap{width:min(1120px,calc(100% - 32px));margin:auto;max-width:none;padding:0}
+#sm-site-header .nav{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-direction:row;width:auto;height:auto}
+#sm-site-header .brand{display:flex;align-items:center;gap:12px;flex:0 0 auto;min-width:0;color:var(--sm-primary);font-size:inherit;text-decoration:none;padding:0;margin:0;border:0;border-radius:0}
+#sm-site-header .brand-avatar{display:block;width:46px;height:46px;flex:0 0 46px;border-radius:14px;overflow:hidden;border:1px solid color-mix(in srgb,var(--sm-gold) 55%,var(--sm-border));box-shadow:0 8px 28px var(--sm-glow)}
+#sm-site-header .brand-avatar img{display:block;width:100%;height:100%;max-width:none;object-fit:cover;border:0;border-radius:0}
+#sm-site-header .brand>span:last-child{display:block;font-size:inherit;white-space:nowrap}
+#sm-site-header .brand b{display:block;font-size:13px;font-weight:700;line-height:1.6;letter-spacing:normal;text-transform:none;color:var(--sm-primary)}
+#sm-site-header .brand small{display:block;font-size:9px;letter-spacing:1.4px;font-weight:800;line-height:1.6;color:var(--sm-gold)}
+#sm-site-header .learning-nav{display:flex;align-items:center;gap:6px;margin:0 0 0 auto;padding:0;width:auto;position:static;flex:0 1 auto;border:0;background:none;overflow:visible}
+#sm-site-header .learning-nav a{display:block;padding:9px 12px;border-radius:10px;color:var(--sm-secondary);font-family:inherit;font-size:11px;font-weight:800;line-height:1.6;text-decoration:none;border:1px solid transparent;white-space:nowrap;transition:color .25s,border-color .25s,background .25s;background:transparent;letter-spacing:normal;text-transform:none}
+#sm-site-header .learning-nav a:hover,#sm-site-header .learning-nav a:focus-visible{color:var(--sm-gold);border-color:color-mix(in srgb,var(--sm-gold) 38%,var(--sm-border));outline:none}
+#sm-site-header .nav-actions{display:flex;align-items:center;gap:10px;margin:0;padding:0;flex:0 0 auto}
+#sm-site-header .social-dock{display:flex;gap:8px;align-items:center;margin:0;padding:0;border:0;position:static;width:auto;height:auto;flex:0 0 auto;background:transparent}
+#sm-site-header .social-link,#sm-site-header .theme-toggle{
+ width:40px;height:40px;flex:0 0 40px;display:grid;place-items:center;
+ padding:0;margin:0;border-radius:12px;border:1px solid var(--sm-border);
+ background:var(--sm-glass);color:var(--sm-secondary);
+ cursor:pointer;transition:transform .25s,border-color .25s,color .25s,box-shadow .25s;
+ text-decoration:none;line-height:1;box-shadow:none;
+}
+#sm-site-header .social-link svg,#sm-site-header .theme-toggle svg{display:block;width:18px;height:18px;fill:none;flex:none}
+#sm-site-header .social-link svg[fill="currentColor"]{fill:currentColor}
+#sm-site-header .social-link:hover,#sm-site-header .theme-toggle:hover{transform:translateY(-3px);border-color:var(--sm-gold);color:var(--sm-gold);box-shadow:0 10px 24px var(--sm-glow)}
+#sm-site-header [data-brand="youtube"]:hover{color:var(--sm-youtube)}
+#sm-site-header [data-brand="whatsapp"]:hover{color:var(--sm-whatsapp)}
+#sm-site-header [data-brand="facebook"]:hover{color:var(--sm-facebook)}
+#sm-site-header [data-brand="instagram"]:hover{color:var(--sm-instagram)}
+#sm-site-header .theme-toggle{font:inherit;appearance:none}
+#sm-site-header .learning-nav a:focus-visible,#sm-site-header .social-link:focus-visible,#sm-site-header .theme-toggle:focus-visible{outline:2px solid var(--sm-gold);outline-offset:2px}
+/* Keep page-specific/legacy headers in DOM for existing logic but not visible. */
+.site-legacy-header{display:none!important}
+@media(max-width:1060px){
+ #sm-site-header .learning-nav a{padding:8px;font-size:9px}
+}
+@media(max-width:920px){
+ #sm-site-header .nav{flex-wrap:wrap}
+ #sm-site-header .learning-nav{order:3;width:100%;flex:1 0 100%;overflow-x:auto;overflow-y:hidden;padding:4px 0 6px;margin-left:0;scrollbar-width:none}
+ #sm-site-header .learning-nav::-webkit-scrollbar{display:none}
+ #sm-site-header .learning-nav a{flex:0 0 auto}
+}
+@media(max-width:620px){
+ #sm-site-header .wrap{width:calc(100% - 12px)}
+ #sm-site-header .nav{min-height:42px;gap:6px}
+ #sm-site-header .brand{gap:6px}
+ #sm-site-header .brand-avatar{width:27px;height:27px;flex-basis:27px;border-radius:7px;box-shadow:0 4px 12px var(--sm-glow)}
+ #sm-site-header .brand b{font-size:7px;line-height:1.1}
+ #sm-site-header .brand small{font-size:4.5px;letter-spacing:.7px;line-height:1.1}
+ #sm-site-header .nav-actions{gap:3px}
+ #sm-site-header .social-dock{display:flex;gap:3px}
+ #sm-site-header .social-link,#sm-site-header .theme-toggle{width:22px;height:22px;flex-basis:22px;border-radius:6px}
+ #sm-site-header .social-link svg,#sm-site-header .theme-toggle svg{width:10px;height:10px}
+ #sm-site-header .learning-nav{gap:3px;padding-bottom:4px}
+ #sm-site-header .learning-nav a{font-size:6.5px;padding:5px 6px;border-radius:6px}
+}
+@media(prefers-reduced-motion:reduce){#sm-site-header *{transition:none!important}}

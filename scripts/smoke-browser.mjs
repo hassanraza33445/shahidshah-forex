@@ -89,12 +89,75 @@ try{
    assert.equal(state.ok,true,"banner for "+id+" in "+mode+" must load");
    assert.equal(state.src,"/assets/banners/"+id+"-"+mode+".webp","root-relative banner path");
    assert.equal(state.version,"ai-banners-20261114","banner should bypass stale image caches");
-   const header=await page.locator(".brand img").evaluate(img=>img.complete&&img.naturalWidth>0);
+   const header=await page.locator("#sm-site-header .brand img").evaluate(img=>img.complete&&img.naturalWidth>0);
    assert.equal(header,true,"brand photo must load after navigation");
   }
   console.log("PASS AI Tools all seven banners, brand image and client navigation in "+mode+" mode");
   await page.close();
  }
+
+ // Homepage header parity: literal navigation, iconography, brand, theme and exact desktop metrics.
+ const routes=["/","/about/","/course/","/community/","/videos/","/learning-hub.html","/market-intelligence/","/content-studio/","/social/","/expo/"];
+ const labels=["Home","Market Intelligence","AI Studio","AI Scripts","Videos","About"];
+ let reference=null;
+ for(const theme of ["light","dark"]){
+  for(const route of routes){
+   const page=await browser.newPage({viewport:{width:1440,height:900},serviceWorkers:"block"});
+   await page.addInitScript(t=>{try{localStorage.setItem("smshahid-site-theme",t)}catch{}},theme);
+   await page.route("**/cdn.jsdelivr.net/**",r=>r.abort());
+   await page.route("**/www.googletagmanager.com/**",r=>r.abort());
+   await page.route("**/supabase.co/rest/v1/rpc/get_webinar_public_config",r=>r.fulfill({status:200,contentType:"application/json",body:"{}"}));
+   await page.route("**/functions/v1/market-intelligence-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(sample)}));
+   await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:20000});
+   await page.locator("#sm-site-header .learning-nav a").first().waitFor({timeout:9000});
+   const m=await page.evaluate(()=>{
+    const h=document.querySelector("#sm-site-header");
+    const brand=h.querySelector(".brand-avatar"),image=brand.querySelector("img"),link=h.querySelector(".learning-nav a");
+    const icons=[...h.querySelectorAll(".social-link")],toggle=h.querySelector("#themeToggle"),nav=h.querySelector(".learning-nav");
+    const css=x=>getComputedStyle(x);
+    return {navLabels:[...nav.querySelectorAll("a")].map(x=>x.textContent.trim()),navHrefs:[...nav.querySelectorAll("a")].map(x=>new URL(x.href).pathname),headerHeight:Math.round(h.getBoundingClientRect().height),navFont:css(link).fontFamily,navSize:css(link).fontSize,navWeight:css(link).fontWeight,navPad:css(link).padding,brandWidth:Math.round(brand.getBoundingClientRect().width),brandHeight:Math.round(brand.getBoundingClientRect().height),iconWidth:Math.round(icons[0].getBoundingClientRect().width),iconCount:icons.length,svgCount:icons.filter(x=>!!x.querySelector("svg")).length,themeIcon:!!toggle.querySelector("svg"),imageLoaded:image.complete&&image.naturalWidth>0,htmlTheme:document.documentElement.dataset.theme};
+   });
+   assert.deepEqual(m.navLabels,labels,"exact header link labels on "+route);
+   assert.deepEqual(m.navHrefs,["/","/market-intelligence/","/content-studio/","/ai-tools/","/videos/","/about/"],"exact navigation routes on "+route);
+   assert.equal(m.iconCount,4,"four identical social icons on "+route);
+   assert.equal(m.svgCount,4,"SVG social buttons, no text placeholders on "+route);
+   assert.equal(m.themeIcon,true,"theme SVG exists on "+route);
+   assert.equal(m.imageLoaded,true,"same brand image loads on "+route);
+   assert.equal(m.htmlTheme,theme,"correct shared theme initial state on "+route);
+   const visual={headerHeight:m.headerHeight,navFont:m.navFont,navSize:m.navSize,navWeight:m.navWeight,navPad:m.navPad,brandWidth:m.brandWidth,brandHeight:m.brandHeight,iconWidth:m.iconWidth};
+   if(route==="/"){reference=visual}else assert.deepEqual(visual,reference,"header visual metrics must EXACTLY match homepage at "+route+" in "+theme);
+   await toggleTheme(page,m.htmlTheme);
+   console.log("PASS pixel-metric header parity",route,theme,JSON.stringify(visual));
+   await page.close();
+  }
+ }
+ // Mobile viewport: all pages retain navigation, header theme switch and no unexpected clipping of the shared header.
+ for(const route of routes){
+  const page=await browser.newPage({viewport:{width:390,height:844},serviceWorkers:"block"});
+  await page.addInitScript(()=>{try{localStorage.setItem("smshahid-site-theme","light")}catch{}});
+  await page.route("**/cdn.jsdelivr.net/**",r=>r.abort());
+  await page.route("**/www.googletagmanager.com/**",r=>r.abort());
+  await page.route("**/supabase.co/rest/v1/rpc/get_webinar_public_config",r=>r.fulfill({status:200,contentType:"application/json",body:"{}"}));
+  await page.route("**/functions/v1/market-intelligence-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(sample)}));
+  await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:20000});
+  const el=page.locator("#sm-site-header");
+  await el.waitFor({timeout:9000});
+  const visible=await el.evaluate(h=>{let n=h.querySelector(".learning-nav");return {display:getComputedStyle(h).display,links:n.querySelectorAll("a").length,navDisplay:getComputedStyle(n).display,height:h.getBoundingClientRect().height,hrefs:[...n.querySelectorAll("a")].map(a=>a.href),logo:h.querySelector("img").naturalWidth>0}});
+  assert.equal(visible.links,6,"mobile six-link header "+route);
+  assert.equal(visible.logo,true,"mobile logo loads "+route);
+  assert.notEqual(visible.display,"none","mobile header visible "+route);
+  assert.notEqual(visible.navDisplay,"none","mobile nav visible "+route);
+  assert.ok(visible.height>30&&visible.height<180,"mobile header stable height "+route);
+  console.log("PASS mobile shared header",route,visible.height);
+  await page.close();
+ }
+ async function toggleTheme(page,before){
+  await page.locator("#sm-site-header #themeToggle").click();
+  await page.waitForFunction(previous=>document.documentElement.dataset.theme!==previous,before,{timeout:3500});
+  const after=await page.evaluate(()=>document.documentElement.dataset.theme);
+  assert.equal(after,before==="dark"?"light":"dark","theme toggle switches on "+page.url());
+ }
+
  for(const [route,pathPart] of [["/ai-banner-scripts/","/learning-hub.html#banner"],["/expo.html","/expo/"],["/webinar-admin/","/webinar-admin.html"]]){
   const page=await browser.newPage({serviceWorkers:"block"});
   await page.route("**/cdn.jsdelivr.net/**",r=>r.abort());

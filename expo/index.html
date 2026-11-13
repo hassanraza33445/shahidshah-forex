@@ -37,12 +37,14 @@
     .hp{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
     @media(max-width:599px){.page{width:min(100% - 20px,500px);padding:max(8px,env(safe-area-inset-top)) 0 max(9px,env(safe-area-inset-bottom))}.topbar{margin-bottom:8px}.home-link,.theme-btn{height:32px;border-radius:10px;font-size:10px}.home-link{padding:0 10px}.theme-btn{width:32px}.profile{padding:0 5px 10px}.avatar-wrap{width:72px;height:72px;margin-bottom:7px;padding:3px}.profile h1{font-size:19px}.profile .role{font-size:8px;margin-top:3px}.profile .intro{font-size:9px;line-height:1.35;margin-top:6px}.card{padding:14px;border-radius:16px}.card h2{font-size:17px;margin-top:8px}.card>p{font-size:9px;margin-bottom:11px}.form{gap:8px}.field label{font-size:7px;margin-bottom:4px}.field input{height:40px;border-radius:10px;font-size:10px}.submit{height:42px;border-radius:11px;font-size:10px}.privacy{font-size:7px;margin-top:7px}.footer{margin-top:8px;padding-top:7px;font-size:7px}}
   </style>
+<link rel="stylesheet" href="/assets/site-master-header.css?v=20261114-1">
+<script src="/assets/site-master-header.js?v=20261114-1" defer></script>
 </head>
 <body>
   <main class="page">
-    <div class="topbar">
+    <div class="topbar site-legacy-header">
       <a class="home-link" href="/" aria-label="Back to website"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Website</a>
-      <button class="theme-btn" id="themeBtn" type="button" aria-label="Switch theme"><svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg></button>
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="Switch theme"><svg id="legacyThemeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg></button>
     </div>
 
     <section class="profile">
@@ -78,7 +80,7 @@
     const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
     const $=id=>document.getElementById(id);
 
-    const btn=$('themeBtn'),icon=$('themeIcon'),meta=document.querySelector('meta[name="theme-color"]');
+    const btn=$('themeBtn'),icon=$('legacyThemeIcon'),meta=document.querySelector('meta[name="theme-color"]');
     function paint(){const dark=document.documentElement.dataset.theme==='dark';icon.innerHTML=dark?'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"/>':'<path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z"/>';meta.content=dark?'#07101d':'#f7f2e8'}
     btn.addEventListener('click',()=>{const theme=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=theme;try{localStorage.setItem('smshahid-site-theme',theme);localStorage.setItem('site-theme',theme)}catch(_){}paint()});paint();
 
