@@ -64,9 +64,10 @@ try{
   for(const id of ["video","banner","30days","article","h1","indicator","downloads"]){
    await page.locator('.tab[data-id="'+id+'"]').click();
    await page.waitForFunction(()=>{const x=document.querySelector("#banner");return x&&x.complete&&x.naturalWidth>0},{},{timeout:9000});
-   const state=await page.locator("#banner").evaluate(img=>({ok:img.complete&&img.naturalWidth>0,src:new URL(img.currentSrc||img.src).pathname}));
+   const state=await page.locator("#banner").evaluate(img=>({ok:img.complete&&img.naturalWidth>0,src:new URL(img.currentSrc||img.src).pathname,version:new URL(img.currentSrc||img.src).searchParams.get("v")}));
    assert.equal(state.ok,true,"banner for "+id+" in "+mode+" must load");
    assert.equal(state.src,"/assets/banners/"+id+"-"+mode+".webp","root-relative banner path");
+   assert.equal(state.version,"ai-banners-20261114","banner should bypass stale image caches");
    const header=await page.locator(".brand img").evaluate(img=>img.complete&&img.naturalWidth>0);
    assert.equal(header,true,"brand photo must load after navigation");
   }
