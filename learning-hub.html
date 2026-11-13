@@ -171,7 +171,7 @@ document.querySelector('.main-nav a.active').textContent='AI Scripts';
 const footerIcons={footerYt:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 7s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C17.4 4 13.2 4 12 4s-5.4 0-8.2.1c-.4.1-1.2.1-2 .9C1.2 5.6 1 7 1 7s-.2 1.6-.2 3.2v1.5C.8 13.4 1 15 1 15s.2 1.4.8 2c.8.8 1.8.8 2.3.9 1.7.2 7.2.2 7.9.2 1.2 0 5.4 0 8.2-.1.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C23.2 8.6 23 7 23 7ZM9.6 14.6V8.9l5.7 2.9-5.7 2.8Z"/></svg>',footerWa:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11.8 11.8 0 0 0 12.1 0C5.5 0 .2 5.3.2 11.8c0 2.1.5 4.1 1.6 5.9L.1 24l6.5-1.7a12 12 0 0 0 5.5 1.4c6.5 0 11.8-5.3 11.8-11.8 0-3.2-1.2-6.1-3.4-8.4Zm-8.4 18.2c-1.7 0-3.4-.5-4.8-1.3l-.3-.2-3.9 1 1-3.8-.2-.4a9.8 9.8 0 1 1 8.2 4.7Zm5.4-7.3c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.2-.2.3-.8.9-1 1.1-.2.2-.4.2-.7.1-2-.9-3.3-1.7-4.6-3.9-.3-.5.3-.5.9-1.7.1-.2 0-.4-.1-.6l-.9-2.2c-.2-.5-.5-.4-.7-.4h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.9s1.2 3.3 1.4 3.5c.2.2 2.4 3.7 5.9 5.2 2.2 1 3.1 1 4.2.8.7-.1 1.7-.7 1.9-1.3.2-.6.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3Z"/></svg>',footerFb:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.3c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12Z"/></svg>',footerIg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>'};Object.entries(footerIcons).forEach(([id,icon])=>{const el=$(id);if(el)el.innerHTML=icon});
 function fieldSpec(raw){if(raw.length===1&&baseFields[raw[0]])return{id:raw[0],...baseFields[raw[0]]};return{id:raw[0],label:raw[1],placeholder:raw[2],required:!!raw[3],hint:raw[3]?'Required to build a relevant prompt.':'Optional — AI will make a professional choice if blank.'}}
 function showToast(t){$('toast').textContent=t;$('toast').classList.add('show');clearTimeout(showToast.t);showToast.t=setTimeout(()=>$('toast').classList.remove('show'),1800)}
-function bannerPath(t,theme){return`/assets/banners/${t.banner}-${theme}.webp`}
+function bannerPath(t,theme){return`/assets/banners/${t.banner}-${theme}.webp?v=ai-banners-20261114`}
 function renderTabs(){ $('tabs').innerHTML=templates.map(t=>`<button class="tab ${t.id===current.id?'active':''}" role="tab" aria-selected="${t.id===current.id}" data-id="${esc(t.id)}">${t.id==='downloads'?'Downloads':'AI '+esc(t.label)}</button>`).join('') }
 
 const AI_ROUTE_BY_ID={
@@ -220,6 +220,14 @@ $('tabs').onclick=e=>{const b=e.target.closest('[data-id]');if(!b)return;current
 addEventListener('popstate',()=>{const id=aiIdFromLocation();const next=templates.find(t=>t.id===id);if(next&&next.id!==current.id){current=next;render()}});
 const themeChannel='BroadcastChannel'in globalThis?new BroadcastChannel('smshahid-site-theme'):null;
 function setHubTheme(theme,broadcast=true){theme=theme==='light'?'light':'dark';document.documentElement.dataset.theme=theme;try{localStorage.setItem('smshahid-site-theme',theme);localStorage.setItem('site-theme',theme);localStorage.setItem('hub-theme',theme);window.name='smshahid-theme:'+theme;document.cookie=`smshahid_theme=${theme};path=/;max-age=31536000;SameSite=Lax`}catch(_){}document.querySelector('meta[name=theme-color]').content=theme==='dark'?'#07101e':'#f7f2e8';$('hubThemeIcon').innerHTML=theme==='dark'?'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"/>':'<path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z"/>';if(current)$('banner').src=bannerPath(current,theme);if(broadcast)themeChannel?.postMessage(theme)}
+// Retry a failed banner once using a fresh cache key. Never change the original design.
+$('banner').addEventListener('error',()=>{
+ const img=$('banner');if(img.dataset.bannerRetried===img.src)return;
+ const failed=img.src;img.dataset.bannerRetried=failed;
+ const u=new URL(failed,location.origin);
+ if(u.searchParams.get('reload')==='1')return;
+ u.searchParams.set('reload','1');img.src=u.href;
+});
 $('themeBtn').onclick=()=>setHubTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');addEventListener('storage',e=>{if(['smshahid-site-theme','site-theme'].includes(e.key)&&e.newValue)setHubTheme(e.newValue,false)});if(themeChannel)themeChannel.onmessage=e=>setHubTheme(e.data,false);
 setHubTheme(document.documentElement.dataset.theme,false);current=defaults.find(t=>t.id===aiIdFromLocation())||defaults[0];render();loadCms();loadHeaderLinks();loadDownloads();
 </script></body></html>
