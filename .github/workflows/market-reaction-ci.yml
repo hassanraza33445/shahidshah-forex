@@ -1,0 +1,47 @@
+name: Market Reaction Engine checks
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/market-reaction-api/**'
+      - 'supabase/sql/market-reaction-v1-*.sql'
+      - 'market-reaction/**'
+      - '.github/workflows/market-reaction-ci.yml'
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Deno typecheck calculation and Supabase Edge Function
+        run: deno check supabase/functions/market-reaction-api/index.ts supabase/functions/market-reaction-api/calc.test.ts
+      - name: Run deterministic UTC M1 market reaction tests
+        run: deno test supabase/functions/market-reaction-api/calc.test.ts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify publish safeguards and no unreviewed data release
+        run: |
+          node --input-type=module <<'JS'
+          import {readFileSync} from 'node:fs';
+          const sql=readFileSync('supabase/sql/market-reaction-v1-20261114.sql','utf8');
+          const source=readFileSync('supabase/functions/market-reaction-api/index.ts','utf8');
+          const page=readFileSync('market-reaction/index.html','utf8');
+          for(const str of ['enable row level security','license_confirmed_at','reviewed_at',
+            'revoke all on public.market_reaction_candles','market_reaction_publish_requires_review']) {
+            if(!sql.includes(str))throw Error('Database safety guard missing '+str);
+          }
+          for(const str of ['admin(req)','TWELVEDATA_API_KEY','parsePrices',
+            'requestPrices','publish','license_confirmation','is_published']) {
+            if(!source.includes(str))throw Error('API safety guard missing '+str);
+          }
+          for(const str of ['Awaiting verified historical price data','market-reaction-api',
+            'Asia/Karachi','Asia/Kuala_Lumpur','observations']) {
+            if(!page.includes(str))throw Error('UI missing '+str);
+          }
+          console.log('PASS market reaction provenance, RLS and pending-data UI guards');
+          JS

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Market Reaction Engine by S M Shahid Shah: source-verified economic event price reactions across Gold, Forex and BTC, with strict 1-minute candle methodology.">
+<title>Market Reaction Engine | S M Shahid Shah</title>
+<link rel="icon" href="/icon-192.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("smshahid-site-theme")==="dark"?"dark":"light"}catch(e){}</script>
+<style>
+:root{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color-scheme:dark;--bg:#090f1b;--surface:#101b2b;--surface2:#17243a;--ink:#f8f6f1;--muted:#9eabc0;--line:#29354b;--gold:#f3ad47;--shadow:rgba(0,0,0,.24)}
+[data-theme=light]{color-scheme:light;--bg:#f7f2e9;--surface:#fffdfa;--surface2:#f7eee0;--ink:#211c16;--muted:#786f63;--line:#e5d9c7;--gold:#a9680a;--shadow:rgba(65,44,14,.07)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%}body{background:var(--bg);color:var(--ink);line-height:1.5;background-image:radial-gradient(ellipse at 72% -12%,rgba(220,153,43,.13),transparent 58%)}button,select{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inherit}.wrap-content{width:min(1120px,calc(100% - 32px));margin:auto}
+.crumbs{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:11px;font-weight:800;color:var(--muted);padding:28px 0 5px}.crumbs a:hover{color:var(--gold)}
+.hero{padding:31px 0 24px;display:grid;grid-template-columns:1fr 290px;gap:28px;align-items:end}.eyebrow{font-size:11px;color:var(--gold);font-weight:800;letter-spacing:2.2px}h1{margin:12px 0 15px;font-size:clamp(34px,5vw,60px);letter-spacing:-2.4px;line-height:1.08}h1 em{font-style:normal;color:var(--gold)}.lead{max-width:680px;margin:0;color:var(--muted);font-size:13px;line-height:1.9}.monitor{border:1px solid var(--line);background:var(--surface);border-radius:17px;padding:20px;box-shadow:0 16px 45px var(--shadow)}.monitor span{font-size:10px;color:var(--gold);font-weight:800;letter-spacing:1px}.monitor strong{display:block;font-size:16px;line-height:1.4;margin:10px 0}.monitor p{margin:0;color:var(--muted);font-size:11px;line-height:1.6}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:8px 0 30px}.stat{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:16px 18px}.stat span{color:var(--muted);font-size:10px}.stat strong{display:block;font-size:23px;margin-top:5px}
+.heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:22px 0 13px}.heading h2{font-size:20px;letter-spacing:-.6px;margin:0}.heading small{font-size:10px;color:var(--muted)}
+.controls{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:13px;display:flex;gap:9px;align-items:center;flex-wrap:wrap}.controls select,.controls button{border:1px solid var(--line);background:var(--surface2);color:var(--ink);padding:10px 14px;border-radius:10px;font-size:11px;font-weight:800;min-width:140px}.controls button{cursor:pointer;min-width:0}.controls button:hover,.controls select:focus-visible{border-color:var(--gold)}.controls .reload{margin-left:auto;color:var(--gold)}.info{margin:15px 0 18px;color:var(--muted);font-size:11px;line-height:1.8}
+.results{display:grid;gap:14px}.event{border:1px solid var(--line);border-radius:18px;padding:21px;background:var(--surface);box-shadow:0 12px 32px var(--shadow)}.event-head{display:flex;align-items:start;justify-content:space-between;gap:16px}.event-title{font-size:15px;font-weight:800;line-height:1.5;margin:4px 0 7px}.event-meta{color:var(--muted);font-size:10px;line-height:1.7}.pill{display:inline-flex;border-radius:50px;padding:5px 10px;border:1px solid var(--line);font-size:9px;letter-spacing:.5px;font-weight:800;white-space:nowrap}.pill.high{border-color:rgba(238,124,103,.46);color:#ee8674}.pill.medium{border-color:rgba(243,173,71,.45);color:var(--gold)}.source{display:inline-flex;margin:8px 0;color:var(--gold);font-size:10px;font-weight:800}.source:hover{text-decoration:underline}.nodata{margin-top:12px;padding:16px;border:1px dashed var(--line);border-radius:12px;background:var(--surface2)}.nodata strong{font-size:12px;display:block}.nodata p{font-size:11px;color:var(--muted);line-height:1.8;margin:7px 0 0}
+.observations{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:18px 0 8px}.obs{background:var(--surface2);padding:13px;border:1px solid var(--line);border-radius:11px}.obs .horizon{display:block;font-weight:800;color:var(--muted);font-size:10px}.obs strong{display:block;font-size:16px;font-weight:800;margin:5px 0}.obs small{font-size:10px;color:var(--muted)}.obs .up{color:#3bbf90}.obs .down{color:#ee8674}
+.chart{width:100%;height:150px;display:block;margin-top:12px;overflow:visible}.chart text{fill:var(--muted);font-size:10px;font-family:inherit}.chart .zero{stroke:var(--line);stroke-dasharray:5 4}.chart .trace{stroke:var(--gold);fill:none;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}.chart circle{fill:var(--gold)}
+.method{margin:28px 0 35px;border:1px solid var(--line);border-radius:14px;padding:18px 20px;background:var(--surface)}.method strong{font-size:12px;display:block;margin-bottom:7px}.method p{color:var(--muted);font-size:11px;line-height:1.85;margin:0}
+.loading,.empty{padding:24px 20px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--muted);font-size:12px;line-height:1.8}
+footer{border-top:1px solid var(--line);padding:25px 0 40px;color:var(--muted);font-size:10px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media(max-width:850px){.hero{grid-template-columns:1fr}.monitor{max-width:500px}.observations{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.wrap-content{width:calc(100% - 22px)}.hero{padding:21px 0}.stats{gap:6px}.stat{padding:12px}.stat strong{font-size:18px}.event{padding:15px}.controls{display:grid;grid-template-columns:1fr 1fr}.controls select,.controls button{min-width:0;width:100%}.controls .reload{margin-left:0}.event-head{flex-wrap:wrap}}
+</style>
+<link rel="stylesheet" href="/assets/site-master-header.css?v=20261114-2">
+<script src="/assets/site-master-header.js?v=20261114-2" defer></script>
+</head>
+<body>
+<main class="wrap-content">
+<div class="crumbs"><a href="/">Home</a><span>›</span><a href="/market-intelligence/">Market Intelligence</a><span>›</span><span>Market Reaction</span></div>
+<section class="hero">
+ <div><div class="eyebrow">OBSERVED MOVEMENT · EVENT INTELLIGENCE</div>
+  <h1>Market <em>Reaction.</em></h1>
+  <p class="lead">Track actual historical market responses to scheduled economic events using verified one-minute price candles. Gold, Forex and Bitcoin analysis will appear here only after a licensed data source and human review are complete.</p>
+ </div>
+ <aside class="monitor"><span>● DATA INTEGRITY MONITOR</span><strong id="providerStatus">Checking historical price provider…</strong><p>Source-backed analysis only. Missing candles and unverified figures are never replaced with simulated prices.</p></aside>
+</section>
+<section class="stats" aria-label="Reaction overview">
+ <div class="stat"><span>Past verified events</span><strong id="eventCount">—</strong></div>
+ <div class="stat"><span>Published observations</span><strong id="observationCount">—</strong></div>
+ <div class="stat"><span>Available markets</span><strong>Gold · FX · BTC</strong></div>
+</section>
+<div class="heading"><h2>Historical economic reactions</h2><small id="status" role="status">Loading event history…</small></div>
+<form class="controls" id="controls">
+ <select id="market" aria-label="Market symbol">
+  <option value="">All supported markets</option><option value="XAUUSD">Gold · XAUUSD</option>
+  <option value="EURUSD">EURUSD</option><option value="GBPUSD">GBPUSD</option>
+  <option value="USDJPY">USDJPY</option><option value="BTCUSD">Bitcoin · BTCUSD</option>
+ </select>
+ <select id="impact" aria-label="Economic event impact"><option value="">All impact levels</option><option value="HIGH">High impact</option><option value="MEDIUM">Medium impact</option></select>
+ <select id="zone" aria-label="Display timezone"><option value="Asia/Kuala_Lumpur">Malaysia (MYT)</option><option value="Asia/Karachi">Pakistan (PKT)</option><option value="UTC">UTC</option></select>
+ <button type="button" class="reload" id="reload">↻ Refresh</button>
+</form>
+<p class="info">5, 15, 30 and 60-minute windows compare the last fully closed M1 candle before an event against a candle closing at each horizon. An observed reaction does not establish that the event caused the movement.</p>
+<div id="results" class="results" aria-live="polite"><div class="loading">Loading verified historical events…</div></div>
+<section class="method"><strong>Methodology &amp; source protection</strong>
+<p>Every calculated figure must be backed by provider-supplied UTC M1 OHLC data at the exact event and comparison timestamps. No interpolation, no estimated pips, and no prediction is used. Forex pips use 0.0001 (EURUSD/GBPUSD) and 0.01 (USDJPY); Gold and Bitcoin display their quote-currency price change instead. Records require administrator approval and confirmed display rights before public release. Market information is educational, not a trading recommendation.</p>
+</section>
+<footer><span>© <span id="year"></span> S M Shahid Shah · Financial education only</span><span><a href="/economic-calendar/">Economic Calendar</a> · <a href="/market-intelligence/">Latest Market News</a></span></footer>
+</main>
+<script>
+"use strict";
+const API="https://qggtdwixwafcmorepkks.supabase.co/functions/v1/market-reaction-api";
+const KEY="sb_publishable_HnYmHQbt42OfjmRk09OfoQ_fq5TPYpb";
+const $=id=>document.getElementById(id);
+const state={events:[],status:"",seq:0};
+$("year").textContent=String(new Date().getFullYear());
+try{const t=localStorage.getItem("smshahid-market-timezone");if(["Asia/Kuala_Lumpur","Asia/Karachi","UTC"].includes(t))$("zone").value=t}catch(e){}
+function elem(tag,cls,text){const x=document.createElement(tag);if(cls)x.className=cls;if(text!==undefined)x.textContent=String(text);return x}
+function formatTime(value){
+ const d=new Date(value);if(!Number.isFinite(d.getTime()))return "Unknown event time";
+ return new Intl.DateTimeFormat("en",{month:"short",day:"numeric",year:"numeric",hour:"2-digit",minute:"2-digit",timeZone:$("zone").value}).format(d)
+}
+function extLink(text,url){
+ const a=elem("a","source",text);
+ try{const u=new URL(url);if(u.protocol==="https:"){a.href=u.href;a.target="_blank";a.rel="noopener noreferrer"}}catch(e){}
+ return a
+}
+function plot(list){
+ const sorted=list.slice().sort((a,b)=>a.horizon_minutes-b.horizon_minutes);
+ if(sorted.length<2)return null;
+ const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+ svg.setAttribute("viewBox","0 0 440 150");svg.setAttribute("class","chart");svg.setAttribute("role","img");
+ svg.setAttribute("aria-label","Observed percentage change across "+sorted.map(x=>x.horizon_minutes).join(", ")+" minute horizons");
+ const vals=sorted.map(x=>Number(x.move_percent));const bound=Math.max(.00001,...vals.map(x=>Math.abs(x)))*1.25;
+ const X=h=>24+(h/60)*390,Y=v=>75-(v/bound)*57;
+ const line=document.createElementNS(svg.namespaceURI,"line");line.setAttribute("x1","15");line.setAttribute("y1","75");line.setAttribute("x2","425");line.setAttribute("y2","75");line.setAttribute("class","zero");svg.append(line);
+ const path=document.createElementNS(svg.namespaceURI,"path");
+ path.setAttribute("d",sorted.map((x,i)=>(i?"L":"M")+X(x.horizon_minutes).toFixed(1)+" "+Y(Number(x.move_percent)).toFixed(1)).join(" "));
+ path.setAttribute("class","trace");svg.append(path);
+ for(const x of sorted){
+  const cx=X(x.horizon_minutes).toFixed(1),cy=Y(Number(x.move_percent)).toFixed(1);
+  const dot=document.createElementNS(svg.namespaceURI,"circle");dot.setAttribute("cx",cx);dot.setAttribute("cy",cy);dot.setAttribute("r","3.5");svg.append(dot);
+  const label=document.createElementNS(svg.namespaceURI,"text");label.setAttribute("x",cx);label.setAttribute("y","145");label.setAttribute("text-anchor","middle");label.textContent=x.horizon_minutes+"m";svg.append(label);
+ }
+ return svg;
+}
+function draw(){
+ const results=$("results");results.replaceChildren();
+ const symbol=$("market").value,impact=$("impact").value;
+ const events=state.events.filter(e=>!impact||e.impact===impact);
+ $("eventCount").textContent=String(events.length);
+ const observations=events.flatMap(e=>e.observations||[]).filter(x=>!symbol||x.symbol===symbol);
+ $("observationCount").textContent=String(observations.length);
+ if(!events.length){results.append(elem("div","empty","No past verified economic events for the selected filters."));return}
+ for(const item of events){
+  const data=(item.observations||[]).filter(x=>!symbol||x.symbol===symbol);
+  const article=elem("article","event"),head=elem("div","event-head"),left=elem("div");
+  left.append(elem("div","event-title",item.title));
+  left.append(elem("div","event-meta",formatTime(item.scheduled_at)+" · "+item.category+" · "+item.currency));
+  left.append(extLink("Official event schedule ↗",item.source_url));
+  head.append(left,elem("span","pill "+String(item.impact||"").toLowerCase(),item.impact||""));
+  article.append(head);
+  if(!data.length){
+   const note=elem("div","nodata");note.append(elem("strong","","Awaiting verified historical price data"));
+   note.append(elem("p","","No reviewed, licensed one-minute market observations are available for this event and selection. Numbers will appear only after the source data and publication rights are confirmed."));
+   article.append(note);
+  }else{
+   const groups=new Map();
+   for(const x of data){const arr=groups.get(x.symbol)||[];arr.push(x);groups.set(x.symbol,arr)}
+   for(const [market,readings] of groups){
+    article.append(elem("div","event-title",market+" · Observed movement"));
+    const grid=elem("div","observations");
+    for(const rec of readings.sort((a,b)=>a.horizon_minutes-b.horizon_minutes)){
+     const box=elem("div","obs"),p=Number(rec.move_percent),a=Number(rec.move_absolute);
+     box.append(elem("span","horizon",rec.horizon_minutes+" min"));
+     box.append(elem("strong",p>0?"up":p<0?"down":"", (p>0?"+":"")+p.toFixed(4)+"%"));
+     const change=(a>0?"+":"")+a.toFixed(market==="EURUSD"||market==="GBPUSD"?5:market==="USDJPY"?3:2);
+     const pip=rec.fx_pips===null||rec.fx_pips===undefined?"":(" · "+Number(rec.fx_pips).toFixed(1)+" pips");
+     box.append(elem("small","",change+pip));
+     grid.append(box);
+    }
+    article.append(grid);
+    const chart=plot(readings);if(chart)article.append(chart);
+    article.append(extLink("Historical candle data provider ↗",readings[0].provider_source_url));
+   }
+  }
+  results.append(article);
+ }
+}
+async function load(){
+ const seq=++state.seq;$("reload").disabled=true;$("status").textContent="Fetching verified event history…";
+ try{
+  const response=await fetch(API+"?limit=24",{headers:{apikey:KEY},cache:"no-store",signal:AbortSignal.timeout(14000)});
+  if(!response.ok)throw new Error("Provider data service unavailable");
+  const out=await response.json();
+  if(!out.success||!Array.isArray(out.items))throw new Error("Invalid reaction response");
+  if(seq!==state.seq)return;
+  state.events=out.items;
+  $("providerStatus").textContent=out.provider_integration==="configured"?"Historical provider connected — reviewed output only":"Historical price provider setup pending";
+  $("status").textContent="Source-verified event history · "+out.items.length+" events";
+  draw();
+ }catch(e){
+  if(seq!==state.seq)return;
+  $("status").textContent="Unable to refresh observations";
+  if(!state.events.length)$("results").replaceChildren(elem("div","empty","Reaction history is temporarily unavailable. Please try again."));
+ }finally{if(seq===state.seq)$("reload").disabled=false}
+}
+$("market").addEventListener("change",draw);
+$("impact").addEventListener("change",draw);
+$("zone").addEventListener("change",()=>{try{localStorage.setItem("smshahid-market-timezone",$("zone").value)}catch(e){}draw()});
+$("reload").addEventListener("click",load);
+load();
+</script>
+</body></html>

@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/market-reaction",
+      "destination": "/market-reaction/index.html"
+    },
+    {
       "source": "/economic-calendar",
       "destination": "/economic-calendar/index.html"
     },

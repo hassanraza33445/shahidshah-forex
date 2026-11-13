@@ -14,6 +14,11 @@ const calendarResponse={success:true,items:[
   {id:"11111111-aaaa-4aaa-8aaa-111111111111",title:"Consumer Price Index (CPI)",country:"US",currency:"USD",category:"Inflation",impact:"HIGH",scheduled_at:new Date(Date.now()+3*86400000).toISOString(),time_precision:"exact",source_name:"U.S. Bureau of Labor Statistics",source_url:"https://www.bls.gov/schedule/news_release/cpi.htm",actual:null,forecast:null,previous:null,status:"scheduled"},
   {id:"22222222-aaaa-4aaa-8aaa-222222222222",title:"Productivity and Costs",country:"US",currency:"USD",category:"Economic Data",impact:"MEDIUM",scheduled_at:new Date(Date.now()+7*86400000).toISOString(),time_precision:"exact",source_name:"U.S. Bureau of Labor Statistics",source_url:"https://www.bls.gov/schedule/2026/12_sched_list.htm",actual:null,forecast:null,previous:null,status:"scheduled"}
  ],last_source_sync:null,source_status:"official_schedule_seeded"};
+const reactionResponse={success:true,provider_integration:"awaiting_secure_api_key",
+ items:[{id:"77777777-aaaa-4aaa-8aaa-777777777777",title:"Producer Price Index (PPI)",category:"Inflation",currency:"USD",
+ impact:"HIGH",scheduled_at:new Date(Date.now()-86400000).toISOString(),time_precision:"exact",
+ source_name:"U.S. Bureau of Labor Statistics",source_url:"https://www.bls.gov/schedule/news_release/ppi.htm",
+ observations:[],status:"awaiting_verified_price_data"}],supported_symbols:["XAUUSD","EURUSD","GBPUSD","USDJPY","BTCUSD"],horizons_minutes:[5,15,30,60]};
 let failures=0;
 const server=createServer(async(req,res)=>{
  try{
@@ -55,6 +60,7 @@ try{
   const errors=[];page.on("pageerror",e=>errors.push(e.message));
   await page.route("**/functions/v1/market-intelligence-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(sample)}));
   await page.route("**/functions/v1/economic-calendar-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(calendarResponse)}));
+  await page.route("**/functions/v1/market-reaction-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(reactionResponse)}));
   await page.goto(ORIGIN+"/market-intelligence/",{waitUntil:"domcontentloaded",timeout:20000});
   await page.locator("#newsList .news-card").first().waitFor({timeout:10000});
   assert.equal(await page.locator("#newsList .news-card").count(),2,"two headlines rendered");
@@ -102,7 +108,7 @@ try{
  }
 
  // Homepage header parity: literal navigation, iconography, brand, theme and exact desktop metrics.
- const routes=["/","/about/","/course/","/community/","/videos/","/learning-hub.html","/market-intelligence/","/economic-calendar/","/content-studio/","/social/","/expo/"];
+ const routes=["/","/about/","/course/","/community/","/videos/","/learning-hub.html","/market-intelligence/","/economic-calendar/","/market-reaction/","/content-studio/","/social/","/expo/"];
  const labels=["Home","Market Intelligence","AI Studio","AI Scripts","Videos","About"];
  let reference=null;
  for(const theme of ["light","dark"]){
@@ -114,6 +120,7 @@ try{
    await page.route("**/supabase.co/rest/v1/rpc/get_webinar_public_config",r=>r.fulfill({status:200,contentType:"application/json",body:"{}"}));
    await page.route("**/functions/v1/market-intelligence-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(sample)}));
   await page.route("**/functions/v1/economic-calendar-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(calendarResponse)}));
+  await page.route("**/functions/v1/market-reaction-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(reactionResponse)}));
    await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:20000});
    await page.locator("body > header:not(.site-legacy-header) .learning-nav a").first().waitFor({timeout:9000});
    const m=await page.evaluate(()=>{
@@ -150,6 +157,7 @@ try{
   await page.route("**/supabase.co/rest/v1/rpc/get_webinar_public_config",r=>r.fulfill({status:200,contentType:"application/json",body:"{}"}));
   await page.route("**/functions/v1/market-intelligence-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(sample)}));
   await page.route("**/functions/v1/economic-calendar-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(calendarResponse)}));
+  await page.route("**/functions/v1/market-reaction-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(reactionResponse)}));
   await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:20000});
   const el=page.locator("body > header:not(.site-legacy-header)").first();
   await el.waitFor({timeout:9000});
@@ -167,6 +175,7 @@ try{
  {
   const page=await browser.newPage({viewport:{width:1280,height:820},serviceWorkers:"block"});
   await page.route("**/functions/v1/economic-calendar-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(calendarResponse)}));
+  await page.route("**/functions/v1/market-reaction-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(reactionResponse)}));
   await page.route("**/supabase.co/rest/v1/rpc/get_webinar_public_config",r=>r.fulfill({status:200,contentType:"application/json",body:"{}"}));
   await page.goto(ORIGIN+"/economic-calendar/",{waitUntil:"domcontentloaded",timeout:20000});
   await page.waitForFunction(()=>document.querySelectorAll("#events tr").length===2,{},{timeout:9000});
@@ -179,6 +188,45 @@ try{
   assert.equal(await page.locator("#events tr").count(),1,"High impact filter works");
   console.log("PASS official economic calendar, sources, timezone, missing-value integrity");
   await page.close();
+ }
+ // Market Reaction page must NEVER render invented historical candles when unconfigured.
+ {
+  const page=await browser.newPage({viewport:{width:1280,height:850},serviceWorkers:"block"});
+  await page.route("**/functions/v1/market-reaction-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(reactionResponse)}));
+  await page.route("**/supabase.co/rest/v1/rpc/get_webinar_public_config",r=>r.fulfill({status:200,contentType:"application/json",body:"{}"}));
+  await page.goto(ORIGIN+"/market-reaction/",{waitUntil:"domcontentloaded",timeout:20000});
+  await page.waitForFunction(()=>document.querySelector("#eventCount")?.textContent==="1",{},{timeout:9000});
+  assert.equal(await page.locator("#results article.event").count(),1,"one real calendar event");
+  assert.equal(await page.locator("#results .nodata").count(),1,"missing verified candles clearly shown");
+  assert.equal(await page.locator("#results .obs").count(),0,"no simulated percent movements");
+  assert.match(await page.locator("#providerStatus").innerText(),/setup pending/i);
+  await page.selectOption("#market","XAUUSD");
+  assert.equal(await page.locator("#results .nodata").count(),1,"Gold missing-data state persists");
+  await page.selectOption("#zone","Asia/Karachi");
+  assert.equal(await page.locator("#zone").inputValue(),"Asia/Karachi");
+  console.log("PASS Market Reaction missing-price integrity and timezone");
+  await page.close();
+ }
+ // Verified licensed observations render only when the API explicitly supplies them.
+ {
+  const page=await browser.newPage({viewport:{width:1280,height:850},serviceWorkers:"block"});
+  const first=reactionResponse.items[0],base=Date.parse(first.scheduled_at)-60000;
+  const observations=[5,15,30,60].map(h=>({
+   event_id:first.id,symbol:"EURUSD",horizon_minutes:h,baseline_close:1.1000,
+   target_close:1.1010,move_absolute:0.001,move_percent:0.09090909,fx_pips:10,
+   baseline_bar_open:new Date(base).toISOString(),target_bar_open:new Date(base+h*60000).toISOString(),
+   provider_source_url:"https://twelvedata.com/docs"
+  }));
+  const approved={...reactionResponse,provider_integration:"configured",items:[{...first,observations,status:"verified_observations"}]};
+  await page.route("**/functions/v1/market-reaction-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(approved)}));
+  await page.route("**/supabase.co/rest/v1/rpc/get_webinar_public_config",r=>r.fulfill({status:200,contentType:"application/json",body:"{}"}));
+  await page.goto(ORIGIN+"/market-reaction/",{waitUntil:"domcontentloaded",timeout:20000});
+  await page.waitForFunction(()=>document.querySelectorAll("#results .obs").length===4,{},{timeout:9000});
+  assert.equal(await page.locator("#results .obs").count(),4,"four M1 horizon summaries");
+  assert.equal(await page.locator("#results .chart").count(),1,"verified result charts render");
+  assert.equal(await page.locator("#observationCount").innerText(),"4");
+  await page.close();
+  console.log("PASS Market Reaction licensed observation chart rendering");
  }
  async function toggleTheme(page,before){
   await page.locator("body > header:not(.site-legacy-header) #themeToggle").first().click();

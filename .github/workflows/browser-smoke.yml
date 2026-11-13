@@ -4,6 +4,7 @@ on:
     paths:
       - 'market-intelligence/**'
       - 'economic-calendar/**'
+      - 'market-reaction/**'
       - 'content-studio/**'
       - 'scripts/smoke-browser.mjs'
       - 'ai-*/index.html'
