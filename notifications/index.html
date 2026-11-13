@@ -365,8 +365,14 @@ $("saveSettings").addEventListener("click",save);
 $("markRead").addEventListener("click",markViewed);
 $("enablePush").addEventListener("click",enableBrowserPush);
 $("disablePush").addEventListener("click",disableBrowserPush);
-establishSession().then(loadPushConfig);
-loadAlerts();
+// Deferred Supabase library must load before checking the signed-in session.
+function bootNotificationCenter(){
+ establishSession().then(loadPushConfig);
+ loadAlerts();
+}
+if(document.readyState==="loading")
+ document.addEventListener("DOMContentLoaded",bootNotificationCenter,{once:true});
+else bootNotificationCenter();
 setInterval(()=>{if(!document.hidden)loadAlerts()},90000);
 </script>
 </body></html>
