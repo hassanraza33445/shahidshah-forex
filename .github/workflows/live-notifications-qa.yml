@@ -1,0 +1,22 @@
+name: One-time live Smart Notifications QA
+on:
+  pull_request:
+    paths:
+      - 'scripts/live-notifications-qa.mjs'
+      - '.github/workflows/live-notifications-qa.yml'
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 14
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --package-lock=false playwright@1.56.1
+      - name: Verify actual published Notifications and header on desktop/mobile
+        run: node scripts/live-notifications-qa.mjs
