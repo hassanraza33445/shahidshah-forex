@@ -19,6 +19,14 @@ const reactionResponse={success:true,provider_integration:"awaiting_secure_api_k
  impact:"HIGH",scheduled_at:new Date(Date.now()-86400000).toISOString(),time_precision:"exact",
  source_name:"U.S. Bureau of Labor Statistics",source_url:"https://www.bls.gov/schedule/news_release/ppi.htm",
  observations:[],status:"awaiting_verified_price_data"}],supported_symbols:["XAUUSD","EURUSD","GBPUSD","USDJPY","BTCUSD"],horizons_minutes:[5,15,30,60]};
+const alertsResponse={success:true,delivery:"in_app_only",external_push:"not_configured",items:[
+ {id:"11111111-aaaa-4aaa-8aaa-111111111111",kind:"breaking_news",title:"Gold news headline from external publisher",body:"HOT editorial headline; verify the original source.",
+  topic:"Gold",impact:"HOT",trust_status:"unverified",target_url:"https://example.org/forex-gold",
+  created_at:new Date(Date.now()-120000).toISOString(),expires_at:new Date(Date.now()+86400000).toISOString()},
+ {id:"22222222-aaaa-4aaa-8aaa-222222222222",kind:"economic_reminder",title:"Consumer Price Index (CPI)",body:"Official event in 15 minutes",
+  topic:"Economic Data",impact:"HIGH",trust_status:"official_schedule",target_url:"/economic-calendar/",
+  reminder_minutes:15,created_at:new Date(Date.now()-60000).toISOString(),expires_at:new Date(Date.now()+86400000).toISOString()}
+ ]};
 let failures=0;
 const server=createServer(async(req,res)=>{
  try{
@@ -61,6 +69,7 @@ try{
   await page.route("**/functions/v1/market-intelligence-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(sample)}));
   await page.route("**/functions/v1/economic-calendar-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(calendarResponse)}));
   await page.route("**/functions/v1/market-reaction-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(reactionResponse)}));
+  await page.route("**/functions/v1/market-notifications-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(alertsResponse)}));
   await page.goto(ORIGIN+"/market-intelligence/",{waitUntil:"domcontentloaded",timeout:20000});
   await page.locator("#newsList .news-card").first().waitFor({timeout:10000});
   assert.equal(await page.locator("#newsList .news-card").count(),2,"two headlines rendered");
@@ -108,7 +117,7 @@ try{
  }
 
  // Homepage header parity: literal navigation, iconography, brand, theme and exact desktop metrics.
- const routes=["/","/about/","/course/","/community/","/videos/","/learning-hub.html","/market-intelligence/","/economic-calendar/","/market-reaction/","/content-studio/","/social/","/expo/"];
+ const routes=["/","/about/","/course/","/community/","/videos/","/learning-hub.html","/market-intelligence/","/economic-calendar/","/market-reaction/","/notifications/","/content-studio/","/social/","/expo/"];
  const labels=["Home","Market Intelligence","AI Studio","AI Scripts","Videos","About"];
  let reference=null;
  for(const theme of ["light","dark"]){
@@ -121,6 +130,7 @@ try{
    await page.route("**/functions/v1/market-intelligence-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(sample)}));
   await page.route("**/functions/v1/economic-calendar-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(calendarResponse)}));
   await page.route("**/functions/v1/market-reaction-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(reactionResponse)}));
+  await page.route("**/functions/v1/market-notifications-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(alertsResponse)}));
    await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:20000});
    await page.locator("body > header:not(.site-legacy-header) .learning-nav a").first().waitFor({timeout:9000});
    const m=await page.evaluate(()=>{
@@ -158,6 +168,7 @@ try{
   await page.route("**/functions/v1/market-intelligence-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(sample)}));
   await page.route("**/functions/v1/economic-calendar-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(calendarResponse)}));
   await page.route("**/functions/v1/market-reaction-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(reactionResponse)}));
+  await page.route("**/functions/v1/market-notifications-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(alertsResponse)}));
   await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:20000});
   const el=page.locator("body > header:not(.site-legacy-header)").first();
   await el.waitFor({timeout:9000});
@@ -176,6 +187,7 @@ try{
   const page=await browser.newPage({viewport:{width:1280,height:820},serviceWorkers:"block"});
   await page.route("**/functions/v1/economic-calendar-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(calendarResponse)}));
   await page.route("**/functions/v1/market-reaction-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(reactionResponse)}));
+  await page.route("**/functions/v1/market-notifications-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(alertsResponse)}));
   await page.route("**/supabase.co/rest/v1/rpc/get_webinar_public_config",r=>r.fulfill({status:200,contentType:"application/json",body:"{}"}));
   await page.goto(ORIGIN+"/economic-calendar/",{waitUntil:"domcontentloaded",timeout:20000});
   await page.waitForFunction(()=>document.querySelectorAll("#events tr").length===2,{},{timeout:9000});
@@ -193,6 +205,7 @@ try{
  {
   const page=await browser.newPage({viewport:{width:1280,height:850},serviceWorkers:"block"});
   await page.route("**/functions/v1/market-reaction-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(reactionResponse)}));
+  await page.route("**/functions/v1/market-notifications-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(alertsResponse)}));
   await page.route("**/supabase.co/rest/v1/rpc/get_webinar_public_config",r=>r.fulfill({status:200,contentType:"application/json",body:"{}"}));
   await page.goto(ORIGIN+"/market-reaction/",{waitUntil:"domcontentloaded",timeout:20000});
   await page.waitForFunction(()=>document.querySelector("#eventCount")?.textContent==="1",{},{timeout:9000});
@@ -227,6 +240,37 @@ try{
   assert.equal(await page.locator("#observationCount").innerText(),"4");
   await page.close();
   console.log("PASS Market Reaction licensed observation chart rendering");
+ }
+ // Public Notification Center must label unverified HOT news and never request browser push permission.
+ {
+  const page=await browser.newPage({viewport:{width:1280,height:850},serviceWorkers:"block"});
+  await page.route("**/cdn.jsdelivr.net/**",r=>r.abort());
+  await page.route("**/functions/v1/market-notifications-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(alertsResponse)}));
+  await page.route("**/supabase.co/rest/v1/rpc/get_webinar_public_config",r=>r.fulfill({status:200,contentType:"application/json",body:"{}"}));
+  await page.goto(ORIGIN+"/notifications/",{waitUntil:"domcontentloaded",timeout:20000});
+  await page.waitForFunction(()=>document.querySelector("#allCount")?.textContent==="2",{},{timeout:9000});
+  assert.equal(await page.locator("#noticeList .notice").count(),2,"Two live alert cards");
+  assert.equal(await page.locator("#noticeList .tag.unverified").count(),1,"Unverified headline clearly labeled");
+  assert.equal(await page.locator("#noticeList a[href='https://example.org/forex-gold']").count(),1,"News link is safely attributed");
+  await page.locator("#tabHot").click();
+  assert.equal(await page.locator("#noticeList .notice").count(),1,"HOT filter");
+  await page.locator("#tabEvents").click();
+  assert.equal(await page.locator("#noticeList .notice").count(),1,"Economic filter");
+  await page.locator("#tabInbox").click();
+  assert.match(await page.locator("#noticeList").innerText(),/sign in/i,"Guest account inbox protected");
+  await page.locator("#tabAll").click();
+  await page.locator("#allowInApp").check();
+  await page.locator("#allowNews").check();
+  await page.locator("#allowEvents").check();
+  await page.locator("#saveSettings").click();
+  const locally=await page.evaluate(()=>JSON.parse(localStorage.getItem("smshahid-notification-preferences")||"{}"));
+  assert.equal(locally.in_app_enabled,true,"Guest opt-in remains local");
+  assert.equal(locally.push_enabled,false,"No fake push subscription");
+  assert.equal(await page.evaluate(()=>Notification.permission!=="granted"),true,"No push permission requested");
+  await page.locator("#markRead").click();
+  assert.equal(await page.locator("#noticeList .unread-dot").count(),0,"Local mark-viewed works");
+  console.log("PASS Smart Notifications source labels, local preferences, privacy and no fake push");
+  await page.close();
  }
  async function toggleTheme(page,before){
   await page.locator("body > header:not(.site-legacy-header) #themeToggle").first().click();
