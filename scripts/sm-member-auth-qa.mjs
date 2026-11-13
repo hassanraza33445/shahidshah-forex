@@ -69,7 +69,11 @@ try{
   await p.locator("#email").fill("demo@example.test");
   await p.locator("#password").fill("StrongPass123!");
   await p.locator("#submitBtn").click();
-  await p.waitForURL(/\/app\/\?tab=studio/,{timeout:14000});
+  try{await p.waitForURL(/\/app\/\?tab=studio/,{timeout:8000})}
+  catch(e){const d=await p.evaluate(()=>({url:location.href,loginState:localStorage.getItem("SM_QA_SIGNED_IN"),
+   authStatus:document.querySelector("#authStatus")?.textContent,formMode:document.querySelector("#authTitle")?.textContent,
+   email:document.querySelector("#email")?.value,button:document.querySelector("#submitBtn")?.disabled}));
+   console.log("AUTH_TEST_DIAGNOSTIC "+JSON.stringify(d));throw e}
   await p.locator("#view-studio.active").waitFor({timeout:9000});
   assert.equal(await p.locator("#view-home.active").count(),0);
   assert.equal(await p.locator(".mobile-dock button").count(),5);
