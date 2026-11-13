@@ -109,13 +109,13 @@ try{
    await page.route("**/supabase.co/rest/v1/rpc/get_webinar_public_config",r=>r.fulfill({status:200,contentType:"application/json",body:"{}"}));
    await page.route("**/functions/v1/market-intelligence-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(sample)}));
    await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:20000});
-   await page.locator("#sm-site-header .learning-nav a").first().waitFor({timeout:9000});
+   await page.locator("body > header:not(.site-legacy-header) .learning-nav a").first().waitFor({timeout:9000});
    const m=await page.evaluate(()=>{
-    const h=document.querySelector("#sm-site-header");
+    const h=document.querySelector("body > header:not(.site-legacy-header)");
     const brand=h.querySelector(".brand-avatar"),image=brand.querySelector("img"),link=h.querySelector(".learning-nav a");
-    const icons=[...h.querySelectorAll(".social-link")],toggle=h.querySelector("#themeToggle"),nav=h.querySelector(".learning-nav");
+    const icons=[...h.querySelectorAll(".social-link")],toggle=h.querySelector("#themeToggle"),nav=h.querySelector(".learning-nav"); const row=h.querySelector(".wrap.nav"),rect=row.getBoundingClientRect();
     const css=x=>getComputedStyle(x);
-    return {navLabels:[...nav.querySelectorAll("a")].map(x=>x.textContent.trim()),navHrefs:[...nav.querySelectorAll("a")].map(x=>new URL(x.href).pathname),headerHeight:Math.round(h.getBoundingClientRect().height),navFont:css(link).fontFamily,navSize:css(link).fontSize,navWeight:css(link).fontWeight,navPad:css(link).padding,brandWidth:Math.round(brand.getBoundingClientRect().width),brandHeight:Math.round(brand.getBoundingClientRect().height),iconWidth:Math.round(icons[0].getBoundingClientRect().width),iconCount:icons.length,svgCount:icons.filter(x=>!!x.querySelector("svg")).length,themeIcon:!!toggle.querySelector("svg"),imageLoaded:image.complete&&image.naturalWidth>0,htmlTheme:document.documentElement.dataset.theme};
+    return {navLabels:[...nav.querySelectorAll("a")].map(x=>x.textContent.trim()),navHrefs:[...nav.querySelectorAll("a")].map(x=>new URL(x.href).pathname),headerHeight:Math.round(h.getBoundingClientRect().height),navFont:css(link).fontFamily,navSize:css(link).fontSize,navWeight:css(link).fontWeight,navPad:css(link).padding,brandWidth:Math.round(brand.getBoundingClientRect().width),brandHeight:Math.round(brand.getBoundingClientRect().height),containerWidth:Math.round(rect.width),containerLeft:Math.round(rect.left),iconWidth:Math.round(icons[0].getBoundingClientRect().width),iconCount:icons.length,svgCount:icons.filter(x=>!!x.querySelector("svg")).length,themeIcon:!!toggle.querySelector("svg"),imageLoaded:image.complete&&image.naturalWidth>0,htmlTheme:document.documentElement.dataset.theme};
    });
    assert.deepEqual(m.navLabels,labels,"exact header link labels on "+route);
    assert.deepEqual(m.navHrefs,["/","/market-intelligence/","/content-studio/","/ai-tools/","/videos/","/about/"],"exact navigation routes on "+route);
@@ -124,7 +124,11 @@ try{
    assert.equal(m.themeIcon,true,"theme SVG exists on "+route);
    assert.equal(m.imageLoaded,true,"same brand image loads on "+route);
    assert.equal(m.htmlTheme,theme,"correct shared theme initial state on "+route);
-   const visual={headerHeight:m.headerHeight,navFont:m.navFont,navSize:m.navSize,navWeight:m.navWeight,navPad:m.navPad,brandWidth:m.brandWidth,brandHeight:m.brandHeight,iconWidth:m.iconWidth};
+   const legacyVisible=await page.locator(".site-legacy-header").evaluateAll(rows=>rows.some(row=>getComputedStyle(row).display!=="none"));
+   assert.equal(legacyVisible,false,"old header must not be visible on "+route);
+   if(["/","/about/","/course/","/community/","/videos/"].includes(route))assert.equal(await page.locator("#sm-site-header").count(),0,"original homepage header must be untouched on "+route);
+   assert.ok(m.containerWidth>=1090&&m.containerWidth<=1121,"desktop header remains centered within 1120px on "+route+": width "+m.containerWidth); assert.ok(Math.abs(m.containerLeft-(1440-m.containerWidth)/2)<3,"header centered horizontally on "+route+": left "+m.containerLeft);
+   const visual={headerHeight:m.headerHeight,navFont:m.navFont,navSize:m.navSize,navWeight:m.navWeight,navPad:m.navPad,brandWidth:m.brandWidth,brandHeight:m.brandHeight,iconWidth:m.iconWidth,containerWidth:m.containerWidth,containerLeft:m.containerLeft};
    if(route==="/"){reference=visual}else assert.deepEqual(visual,reference,"header visual metrics must EXACTLY match homepage at "+route+" in "+theme);
    await toggleTheme(page,m.htmlTheme);
    console.log("PASS pixel-metric header parity",route,theme,JSON.stringify(visual));
@@ -140,19 +144,20 @@ try{
   await page.route("**/supabase.co/rest/v1/rpc/get_webinar_public_config",r=>r.fulfill({status:200,contentType:"application/json",body:"{}"}));
   await page.route("**/functions/v1/market-intelligence-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(sample)}));
   await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:20000});
-  const el=page.locator("#sm-site-header");
+  const el=page.locator("body > header:not(.site-legacy-header)").first();
   await el.waitFor({timeout:9000});
-  const visible=await el.evaluate(h=>{let n=h.querySelector(".learning-nav");return {display:getComputedStyle(h).display,links:n.querySelectorAll("a").length,navDisplay:getComputedStyle(n).display,height:h.getBoundingClientRect().height,hrefs:[...n.querySelectorAll("a")].map(a=>a.href),logo:h.querySelector("img").naturalWidth>0}});
+  const visible=await el.evaluate(h=>{let n=h.querySelector(".learning-nav"),row=h.querySelector(".wrap.nav"),rect=row.getBoundingClientRect();return {display:getComputedStyle(h).display,links:n.querySelectorAll("a").length,navDisplay:getComputedStyle(n).display,height:h.getBoundingClientRect().height,hrefs:[...n.querySelectorAll("a")].map(a=>a.href),logo:h.querySelector("img").naturalWidth>0,width:rect.width,left:rect.left}});
   assert.equal(visible.links,6,"mobile six-link header "+route);
   assert.equal(visible.logo,true,"mobile logo loads "+route);
   assert.notEqual(visible.display,"none","mobile header visible "+route);
   assert.notEqual(visible.navDisplay,"none","mobile nav visible "+route);
   assert.ok(visible.height>30&&visible.height<180,"mobile header stable height "+route);
+  assert.ok(visible.left>=0&&visible.left<=12&&visible.width>=375&&visible.width<=390,"mobile header centered + contained on "+route);
   console.log("PASS mobile shared header",route,visible.height);
   await page.close();
  }
  async function toggleTheme(page,before){
-  await page.locator("#sm-site-header #themeToggle").click();
+  await page.locator("body > header:not(.site-legacy-header) #themeToggle").first().click();
   await page.waitForFunction(previous=>document.documentElement.dataset.theme!==previous,before,{timeout:3500});
   const after=await page.evaluate(()=>document.documentElement.dataset.theme);
   assert.equal(after,before==="dark"?"light":"dark","theme toggle switches on "+page.url());
