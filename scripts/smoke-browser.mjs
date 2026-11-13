@@ -299,7 +299,7 @@ try{
   const page=await browser.newPage({viewport:{width:1280,height:850},serviceWorkers:"block"});
   const calls=[];
   await page.route("**/cdn.jsdelivr.net/**",r=>r.fulfill({status:200,contentType:"application/javascript",
-   body:'window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{access_token:"mock-user-jwt"}}})}})};'}));
+   body:'window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{access_token:"mock-user-jwt"}}}),getUser:async()=>({data:{user:{id:"11111111-1111-4111-8111-111111111111",email:"qa@example.test"}},error:null})}})};'}));
   await page.route("**/functions/v1/market-notifications-api?**",async r=>{
    const req=r.request(),mode=new URL(req.url()).searchParams.get("mode");
    let payload={success:true};
@@ -325,7 +325,7 @@ try{
   catch(e){
    const diag=await page.evaluate(()=>({url:location.href,button:document.querySelector("#enablePush")?.disabled,
     message:document.querySelector("#pushStatus")?.textContent,account:document.querySelector("#accountState")?.textContent,
-    stateSession:!!state.session,pushConfig:state.pushConfig}));
+    stateSession:document.querySelector("#accountState")?.textContent,pushConfig:document.querySelector("#pushHeading")?.textContent}));
    console.log("ONESIGNAL_TEST_DIAGNOSTIC "+JSON.stringify(diag));throw e;
   }
   assert.equal(await page.evaluate(()=>!!document.querySelector('script[src*="OneSignalSDK.page.js"]')),false,"SDK must not load before opt-in");
