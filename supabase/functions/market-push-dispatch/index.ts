@@ -97,7 +97,7 @@ Deno.serve(async(req:Request)=>{
  // Cron or manual verified service-only requests: no public and no logged-in user access.
  if(!SECRET||SECRET.length<30||req.headers.get("authorization")!=="Bearer "+SECRET)
   return json({error:"Service authorization required"},403);
- if(!/^[0-9a-f-]{36}$/i.test(APP)||KEY.length<12)return json({
+ if(Deno.env.get("ONESIGNAL_DISPATCH_ENABLED")!=="true"||!/^[0-9a-f-]{36}$/i.test(APP)||KEY.length<12)return json({
   success:false,error:"Configure OneSignal App ID and REST key in Supabase Secrets first",
   dispatch_enabled:false
  },503);
