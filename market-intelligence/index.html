@@ -55,10 +55,10 @@ function link(txt,href){const a=make("a","textlink",txt);a.href=href;a.target="_
 function card(item,featured=false){
  const box=make("article",featured?"lead-card":"news-card");
  const top=make("div","row"); const badge=make("span","tag "+String(item.priority||"COLD").toLowerCase(),item.priority||"COLD");
- const cat=make("span","meta",item.category||"Markets");top.append(badge,cat);box.append(top);
+ const cat=make("span","meta",item.category||"Markets");badge.title=item.priority_reason||"Editorial relevance; not a price prediction";top.append(badge,cat);box.append(top);
  const h=make("h3","",item.title||"Untitled article");box.append(h);
  if(item.summary)box.append(make("p","",item.summary.length>240?item.summary.slice(0,237)+"…":item.summary));
- const info=make("div","meta");info.append(make("span","",item.publisher||"Publisher"),make("span","",niceDate(item.published_at)));box.append(info);
+ const info=make("div","meta");info.append(make("span","",item.publisher||"Publisher"),make("span","",niceDate(item.published_at)));if(Number(item.source_count)>1)info.append(make("span","","Grouped reports: "+Number(item.source_count)));box.append(info);
  const actions=make("div","push");const original=safeURL(item.original_url);
  if(original)actions.append(link("Read original ↗",original));
  const create=make("a","textlink","Create AI script →");create.href="/content-studio/?news="+encodeURIComponent(item.id);actions.append(create);box.append(actions);return box;
