@@ -42,6 +42,11 @@
   addEventListener("storage",e=>{if(["smshahid-site-theme","site-theme"].includes(e.key)&&e.newValue){document.documentElement.dataset.theme=e.newValue==="dark"?"dark":"light";paintIcon()}});
   paintIcon();
  }
+ // Keep sticky AI Tools tabs and Studio panels aligned to the actual header height.
+ const syncHeight=()=>document.documentElement.style.setProperty("--sm-header-height",Math.ceil(header.getBoundingClientRect().height)+"px");
+ syncHeight();
+ if("ResizeObserver" in window)new ResizeObserver(syncHeight).observe(header);
+ else addEventListener("resize",syncHeight);
  const path=location.pathname.replace(/\/index\.html$/,"/").replace(/\/+$/,"/")||"/";
  const active=path==="/learning-hub.html/"||path.startsWith("/ai-")||path==="/downloads/"?"/ai-tools/":path;
  header.querySelectorAll(".learning-nav a").forEach(a=>{if(a.getAttribute("href")===active){a.setAttribute("aria-current","page")}else a.removeAttribute("aria-current")});
