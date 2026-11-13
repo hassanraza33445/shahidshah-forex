@@ -39,7 +39,7 @@ jobs:
             if(!sql.includes(token)&&token!=='status:')throw Error('SQL privacy/duplication contract missing: '+token);
           }
           for(const token of ['db.auth.getUser(token)','push_enabled:false','privatePost','mark_read',
-            'unknown','in_app_only','Notification service temporarily unavailable']){
+            'Unknown mode','in_app_only','Notification service temporarily unavailable']){
             if(!code.includes(token))throw Error('API guard missing '+token);
           }
           for(const token of ['Unverified source','Browser/mobile push notifications are not active yet.',
