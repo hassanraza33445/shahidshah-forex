@@ -1,0 +1,21 @@
+name: Live header QA report
+on:
+  pull_request:
+    paths:
+      - 'scripts/live-header-qa.mjs'
+      - '.github/workflows/live-header-qa.yml'
+jobs:
+  inspect-live:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright
+        run: npm install --no-save --package-lock=false playwright@1.56.1
+      - name: Inspect deployed homepage and sibling headers
+        run: node scripts/live-header-qa.mjs
