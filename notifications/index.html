@@ -81,7 +81,7 @@ footer{border-top:1px solid var(--line);padding:23px 0 40px;font-size:10px;color
 </span></div>
 <div class="setting-actions full-width">
 <button id="enablePush" class="btn accent" type="button" disabled>Enable Browser Push</button>
-<button id="disablePush" class="btn" type="button" disabled>Disable Push</button>
+<button id="disablePush" class="btn" type="button" disabled>Disable All Push</button>
 </div>
 <div id="pushStatus" class="hint full-width" role="status">Push requires OneSignal configuration and an explicit permission click.</div>
  </div>
@@ -338,23 +338,19 @@ async function disableBrowserPush(){
  if(!state.session){pushMessage("Sign in to disable browser push.",true);return}
  $("disablePush").disabled=true;
  try{
-  let sdk=state.pushSdk;
-  // Don't load the SDK just to disable if no subscription was created this session.
-  const id=state.pushSubId||sdk?.User?.PushSubscription?.id;
-  if(!id)throw Error("No browser subscription found in this tab. Open the subscribed browser to disable it.");
+  const sdk=state.pushSdk;
+  // Signed-in revocation works even when the OneSignal SDK is not loaded in this tab.
   await request("ignored",{method:"POST",body:JSON.stringify({
-   action:"unregister_push_device",subscription_id:id
+   action:"unregister_all_push_devices"
   })},true);
   if(sdk){
-   await sdk.User.PushSubscription.optOut();
-   await sdk.setConsentGiven(false);
+   try{await sdk.User.PushSubscription.optOut();await sdk.setConsentGiven(false)}catch(e){}
   }
   state.pushSubId=null;state.settings.push_enabled=false;
-  pushMessage("Push disabled for this browser. In-app alerts stay available.");
+  pushMessage("Push disabled for all devices on this account. In-app alerts remain available.");
  }catch(e){pushMessage(e instanceof Error?e.message:"Unable to disable push",true)}
  finally{$("disablePush").disabled=false}
 }
-
 renderChoices();
 try{const s=JSON.parse(localStorage.getItem("smshahid-notification-preferences")||"null");if(s&&typeof s==="object")applySettings(s);else applySettings(DEFAULT)}
 catch(e){applySettings(DEFAULT)}
