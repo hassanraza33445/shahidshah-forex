@@ -1,0 +1,22 @@
+name: One-time OneSignal published-site QA
+on:
+  pull_request:
+    paths:
+      - "scripts/live-onesignal-qa.mjs"
+      - ".github/workflows/live-onesignal-qa.yml"
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --package-lock=false playwright@1.56.1
+      - name: Test OneSignal staged API, worker and original header
+        run: node scripts/live-onesignal-qa.mjs
