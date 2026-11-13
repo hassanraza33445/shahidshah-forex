@@ -50,4 +50,23 @@ const anonPref=await fetch(base+"/rest/v1/market_notification_preferences?select
  headers:{apikey:pub},signal:AbortSignal.timeout(12000)});
 assert([401,403].includes(anonPref.status),"Guest cannot read private notification preferences");
 console.log("NOTIFICATION_API anon_preferences HTTP "+anonPref.status);
+const push=await request("OneSignal-staged-config","?mode=push-config");
+assert.equal(push.r.status,200);
+assert.equal(push.data.configured,false,"Never enable a OneSignal provider with no credentials");
+assert.equal(push.data.app_id,null,"Do not reveal app id before integration is activated");
+const guestRegister=await request("block-guest-push-register","",{method:"POST",
+ headers:{"Content-Type":"application/json"},
+ body:JSON.stringify({action:"register_push_device",browser_permission_granted:true,
+  subscription_id:"11111111-1111-4111-8111-111111111111"})});
+assert.equal(guestRegister.r.status,401);
+const guestDisable=await request("block-guest-device-disable","",{method:"POST",
+ headers:{"Content-Type":"application/json"},
+ body:JSON.stringify({action:"unregister_all_push_devices"})});
+assert.equal(guestDisable.r.status,401);
+const anonymousDispatch=await fetch(base+"/functions/v1/market-push-dispatch",{
+ method:"POST",headers:{apikey:pub,"Content-Type":"application/json"},
+ body:"{}",signal:AbortSignal.timeout(12000)
+});
+assert.equal(anonymousDispatch.status,403,"Untrusted callers cannot dispatch OneSignal messages");
+console.log("ONESIGNAL_API anonymous_dispatch HTTP "+anonymousDispatch.status);
 console.log("PASS notification public feed, editorial source labels, topic filters, no push and private-account API guards");
