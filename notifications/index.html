@@ -36,7 +36,7 @@ footer{border-top:1px solid var(--line);padding:23px 0 40px;font-size:10px;color
  <div><span class="eyebrow">GLOBAL MARKETS · PERSONALIZED MONITORING</span>
  <h1>Smart <span>Notifications.</span></h1>
  <p class="lead">Follow important financial headlines and verified economic release schedules in one place. Choose Gold, Forex, Bitcoin and more. No unrequested browser push, no repeated event reminders, no invented market predictions.</p></div>
- <aside class="monitor"><b>● NOTIFICATION CONTROL</b><strong>In-app alerts active</strong>
+ <aside class="monitor"><b>● NOTIFICATION CONTROL</b><strong>Public alert feed active</strong>
  <p id="syncMonitor">Monitoring news and scheduled events every five minutes. External push delivery is not enabled yet.</p></aside>
 </section>
 <section class="metrics" aria-label="Market alert overview">
@@ -177,6 +177,8 @@ async function establishSession(){
   state.session=session;$("accountState").textContent="Account synced";
   const result=await request("preferences",{},true);
   if(result.account_synced){applySettings(result.settings);status("Your settings are synced to this account.")}
+  else{applySettings(DEFAULT);$("accountState").textContent="Signed in · not subscribed";
+    status("No preferences saved to this account. Choose topics and save to opt in.");}
   await loadInbox();
  }catch(e){$("accountState").textContent="Browser only";state.session=null;status("Account sync unavailable; local settings are still available.",true)}
 }
