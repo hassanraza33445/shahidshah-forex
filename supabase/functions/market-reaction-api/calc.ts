@@ -7,7 +7,7 @@ export const SYMBOLS:Record<string,{provider:string,pip:number|null,unit:string}
 };
 export const HORIZONS=[5,15,30,60] as const;
 export const DOCS_URL="https://twelvedata.com/docs";
-const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const rounded=(v:number,places:number)=>Number(v.toFixed(places));
 const isoMinute=(ms:number)=>new Date(Math.floor(ms/60000)*60000).toISOString();
 export type PriceCandle={bar_open:string,open_price:number,high_price:number,low_price:number,close_price:number};
