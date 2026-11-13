@@ -1,5 +1,5 @@
 (()=>{"use strict";
-const URL="https://qggtdwixwafcmorepkks.supabase.co",KEY="sb_publishable_HnYmHQbt42OfjmRk09OfoQ_fq5TPYpb";
+const SUPABASE_URL="https://qggtdwixwafcmorepkks.supabase.co",KEY="sb_publishable_HnYmHQbt42OfjmRk09OfoQ_fq5TPYpb";
 const $=id=>document.getElementById(id);let client=null,mode="login",busy=false;
 function safeNext(value){if(typeof value!=="string"||!value.startsWith("/")||value.startsWith("//")||/\\|[\u0000-\u001f]/.test(value))return "/app/";try{const u=new URL(value,location.origin);if(u.origin!==location.origin||u.pathname.startsWith("/auth"))return "/app/";return u.pathname+u.search+u.hash}catch{return "/app/"}}
 const qs=new URLSearchParams(location.search);let next=safeNext(qs.get("next")||sessionStorage.getItem("smshahid-next")||"/app/");
@@ -19,7 +19,7 @@ function setMode(value){mode=value;const signup=mode==="signup",reset=mode==="re
 }
 function working(value){busy=value;$("submitBtn").disabled=value;$("googleBtn").disabled=value;$("signInTab").disabled=value;$("signUpTab").disabled=value}
 async function verifiedRedirect(){const {data,error}=await client.auth.getUser();if(error||!data?.user)return false;sessionStorage.removeItem("smshahid-next");location.replace(next);return true}
-async function init(){if(!window.supabase?.createClient){message("Login service could not load. Please check your connection.",true);return}client=window.supabase.createClient(URL,KEY);
+async function init(){if(!window.supabase?.createClient){message("Login service could not load. Please check your connection.",true);return}client=window.supabase.createClient(SUPABASE_URL,KEY);
  if(qs.has("error")||qs.has("error_description"))message(qs.get("error_description")||"Sign-in was not completed.",true);
  const {data:{session}}=await client.auth.getSession();
  if(session&&await verifiedRedirect())return;
