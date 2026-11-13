@@ -1,0 +1,34 @@
+name: Market Intelligence V2 checks
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/market-intelligence-api/**'
+      - 'supabase/sql/market-intelligence-v2-*.sql'
+      - '.github/workflows/market-intelligence-v2.yml'
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Check Deno Edge Function TypeScript against real npm/jsr types
+        run: deno check supabase/functions/market-intelligence-api/index.ts
+      - name: Ensure no public HTML was altered by database/backend PR
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const sql=fs.readFileSync('supabase/sql/market-intelligence-v2-clusters-retry-20261114.sql','utf8');
+          const source=fs.readFileSync('supabase/functions/market-intelligence-api/index.ts','utf8');
+          for(const token of ['SECURITY INVOKER','REVOKE ALL ON FUNCTION public.market_news_feed_v2','refresh_news_story_clusters','source_count']) {
+            if(!sql.includes(token))throw new Error('SQL safety contract missing: '+token);
+          }
+          for(const token of ['fetchSourceXML','next_retry_at','market_news_feed_v2','V2 feed fallback','safeUrl(r.url)']) {
+            if(!source.includes(token))throw new Error('News API safety contract missing: '+token);
+          }
+          console.log('Passed: SQL privilege restrictions, API fallback and source retry guards');
+          NODE

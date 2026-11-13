@@ -1,0 +1,36 @@
+import assert from "node:assert/strict";
+const ROOT="https://qggtdwixwafcmorepkks.supabase.co/functions/v1/market-intelligence-api";
+const APIKEY="sb_publishable_HnYmHQbt42OfjmRk09OfoQ_fq5TPYpb";
+const checked=[];
+async function request(name,path,init={}){
+ const start=Date.now();
+ const response=await fetch(ROOT+path,{headers:{"apikey":APIKEY,...(init.headers||{})},...init,signal:AbortSignal.timeout(14000)});
+ const data=await response.json();
+ console.log(JSON.stringify({name,http:response.status,elapsed_ms:Date.now()-start,items:data.items?.length,grouping:data.grouping,articles:data.articles,error:data.error||null}));
+ checked.push({name,status:response.status});
+ return {response,data};
+}
+const {response:feedRes,data:feed}=await request("all-market-headlines","?mode=feed&limit=24&page=1");
+assert.equal(feedRes.status,200);
+assert.equal(feed.success,true);
+assert.ok(Array.isArray(feed.items)&&feed.items.length>0,"News feed must return items");
+assert.equal(feed.grouping,"strict_headline","Should use the V2 SQL feed, not legacy fallback");
+assert.ok(feed.items.every(x=>x.id&&x.title&&x.original_url&&x.source_count>=1));
+assert.equal(new Set(feed.items.map(x=>x.id)).size,feed.items.length,"No duplicate IDs");
+const groups=feed.items.map(x=>x.cluster_id).filter(Boolean);
+assert.equal(new Set(groups).size,groups.length,"No repeated clustered stories on same page");
+const {response:statsRes,data:stats}=await request("stats","?mode=stats");
+assert.equal(statsRes.status,200);
+assert.ok(stats.articles>=feed.items.length);
+const {response:goldRes,data:gold}=await request("gold","?mode=feed&category=Gold&limit=12");
+assert.equal(goldRes.status,200);assert.ok(gold.items.every(x=>x.category==="Gold"));
+const {response:searchRes,data:search}=await request("bitcoin-search","?mode=feed&q=bitcoin&limit=12");
+assert.equal(searchRes.status,200);assert.ok(search.items.every(x=>/bitcoin/i.test(x.title)));
+const {response:hotRes,data:hot}=await request("hot-filter","?mode=feed&priority=HOT&limit=12");
+assert.equal(hotRes.status,200);assert.ok(hot.items.every(x=>x.priority==="HOT"));
+const {response:page2Res,data:page2}=await request("pagination","?mode=feed&page=2&limit=24");
+assert.equal(page2Res.status,200);
+assert.ok(page2.items.every(x=>!feed.items.some(y=>y.id===x.id)),"Pages 1 and 2 should not duplicate");
+const unauth=await request("protected-manual-ingest","",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"});
+assert.equal(unauth.response.status,403,"Manual ingestion must reject unauthorized callers");
+console.log("PASS live Market Intelligence V2 API regression, "+checked.length+" routes");
