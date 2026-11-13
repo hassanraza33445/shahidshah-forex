@@ -75,7 +75,15 @@ footer{border-top:1px solid var(--line);padding:23px 0 40px;font-size:10px;color
  <p style="margin-top:6px">Leave both blank to disable quiet hours. In-app history stays available during quiet hours.</p></div>
  <div class="setting-actions full-width"><button id="saveSettings" class="btn accent" type="button">Save Preferences</button></div>
  <div id="saveStatus" class="hint full-width" role="status"></div>
- <div class="locked full-width" style="margin-top:14px"><span aria-hidden="true">🔒</span><span><strong>Browser/mobile push notifications are not active yet.</strong> OneSignal provider integration requires secure credentials and explicit consent. This page will not request notification permission or send unsolicited messages.</span></div>
+ <div class="locked full-width" style="margin-top:14px"><span aria-hidden="true">🔒</span><span>
+<strong id="pushHeading">Browser/mobile push notifications are not active yet.</strong>
+<span id="pushMessage">OneSignal setup is pending. Your browser will never be asked for push permission automatically.</span>
+</span></div>
+<div class="setting-actions full-width">
+<button id="enablePush" class="btn accent" type="button" disabled>Enable Browser Push</button>
+<button id="disablePush" class="btn" type="button" disabled>Disable All Push</button>
+</div>
+<div id="pushStatus" class="hint full-width" role="status">Push requires OneSignal configuration and an explicit permission click.</div>
  </div>
 </aside>
 </div>
@@ -92,7 +100,7 @@ const DEFAULT={in_app_enabled:false,breaking_enabled:false,economic_enabled:fals
  topics:["Gold","Forex","Crypto","Central Banks","Economic Data"],reminders:[60,15,0],
  timezone:"Asia/Kuala_Lumpur",quiet_start:null,quiet_end:null,push_enabled:false};
 const $=id=>document.getElementById(id),state={alerts:[],inbox:[],view:"all",session:null,client:null,
- settings:{...DEFAULT,topics:[...DEFAULT.topics],reminders:[...DEFAULT.reminders]},saved:new Set(),fetching:false};
+ settings:{...DEFAULT,topics:[...DEFAULT.topics],reminders:[...DEFAULT.reminders]},saved:new Set(),fetching:false,pushConfig:null,pushSdk:null,pushSubId:null};
 $("year").textContent=String(new Date().getFullYear());
 try{state.saved=new Set(JSON.parse(localStorage.getItem("smshahid-read-notices")||"[]"))}catch(e){}
 function elt(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=String(text);return n}
@@ -140,7 +148,7 @@ function renderChoices(){
 }
 function applySettings(s){
  state.settings={...DEFAULT,...s,topics:Array.isArray(s.topics)?s.topics:[...DEFAULT.topics],
-  reminders:Array.isArray(s.reminders)?s.reminders:[...DEFAULT.reminders],push_enabled:false};
+  reminders:Array.isArray(s.reminders)?s.reminders:[...DEFAULT.reminders],push_enabled:s.push_enabled===true};
  $("allowInApp").checked=state.settings.in_app_enabled;
  $("allowNews").checked=state.settings.breaking_enabled;
  $("allowEvents").checked=state.settings.economic_enabled;
@@ -235,6 +243,114 @@ async function markViewed(){
  try{localStorage.setItem("smshahid-read-notices",JSON.stringify([...state.saved].slice(-500)))}catch(e){}
  render();
 }
+// OneSignal Web SDK is only downloaded after a real user click; no silent subscriptions.
+function pushMessage(text,warn=false){
+ $("pushStatus").textContent=text;
+ $("pushStatus").classList.toggle("warn",warn);
+}
+async function loadPushConfig(){
+ try{
+  const info=await request("push-config");
+  state.pushConfig=info;
+  if(!info.configured){
+   $("pushHeading").textContent="Browser/mobile push notifications are not active yet.";
+   $("pushMessage").textContent="OneSignal App ID / REST API key setup is pending in Supabase.";
+   pushMessage("No push permission requested. In-app alerts continue working.");
+   return;
+  }
+  $("pushHeading").textContent="OneSignal Browser Push · opt-in";
+  $("pushMessage").textContent="To receive device notifications, sign in, save your preferred alerts, then enable push. No browser prompt appears until you click.";
+  $("enablePush").disabled=!state.session||location.origin!==info.canonical_origin;
+  $("disablePush").disabled=!state.session||location.origin!==info.canonical_origin;
+  if(location.origin!==info.canonical_origin)pushMessage("Use www.smshahidshah.com to enable browser push.",true);
+  else if(!state.session)pushMessage("Sign in first to enable private browser push settings.");
+  else pushMessage("Browser push is available. You control the permission.");
+ }catch(e){pushMessage("Push setup unavailable; in-app alerts are unaffected.",true)}
+}
+function importOneSignalSdk(){
+ return new Promise((resolve,reject)=>{
+  if(state.pushSdk){resolve(state.pushSdk);return}
+  const sdk=document.createElement("script");
+  sdk.src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
+  sdk.async=true;
+  sdk.onerror=()=>reject(Error("Unable to load OneSignal Web SDK"));
+  let complete=false;
+  const cancel=setTimeout(()=>{if(!complete)reject(Error("OneSignal SDK timed out"))},12000);
+  window.OneSignalDeferred=window.OneSignalDeferred||[];
+  window.OneSignalDeferred.push(async OneSignal=>{
+   try{
+    OneSignal.setConsentRequired(true);
+    await OneSignal.init({
+     appId:state.pushConfig.app_id,
+     serviceWorkerPath:"/onesignal/OneSignalSDKWorker.js",
+     serviceWorkerParam:{scope:"/onesignal/"},
+     notifyButton:{enable:false},
+     promptOptions:{slidedown:{prompts:[{type:"push",autoPrompt:false}]}}
+    });
+    state.pushSdk=OneSignal;complete=true;clearTimeout(cancel);resolve(OneSignal);
+   }catch(e){complete=true;clearTimeout(cancel);reject(e)}
+  });
+  document.head.append(sdk);
+ })
+}
+async function awaitPushSubscription(sdk){
+ if(sdk.User.PushSubscription.id)return sdk.User.PushSubscription.id;
+ for(let i=0;i<16;i++){
+  await new Promise(resolve=>setTimeout(resolve,250));
+  if(sdk.User.PushSubscription.id)return sdk.User.PushSubscription.id;
+ }
+ return null;
+}
+async function enableBrowserPush(){
+ if(!state.session){pushMessage("Please sign in to enable push notifications.",true);return}
+ if(!state.pushConfig?.configured){pushMessage("OneSignal provider configuration is not ready.",true);return}
+ if(location.origin!==state.pushConfig.canonical_origin){
+  location.href=state.pushConfig.canonical_origin+"/notifications/";return;
+ }
+ if(!$("allowInApp").checked||!($("allowNews").checked||$("allowEvents").checked)){
+  pushMessage("Please enable in-app alerts and at least one alert type, then save preferences first.",true);return;
+ }
+ $("enablePush").disabled=true;
+ try{
+  pushMessage("Checking OneSignal and requesting your browser permission…");
+  // The SDK is created only after this button click.
+  const sdk=await importOneSignalSdk();
+  if(!sdk.Notifications.isPushSupported())throw Error("This browser does not support web push.");
+  await sdk.setConsentGiven(true);
+  // Actual native browser prompt is only triggered by this explicit user action.
+  await sdk.Notifications.requestPermission();
+  if(!sdk.Notifications.permission)throw Error("Browser notification permission was not granted.");
+  await sdk.User.PushSubscription.optIn();
+  const id=await awaitPushSubscription(sdk);
+  if(!id)throw Error("OneSignal has not created a browser subscription yet.");
+  const result=await request("ignored",{method:"POST",
+   body:JSON.stringify({action:"register_push_device",subscription_id:id,browser_permission_granted:true})},true);
+  if(!result.registered)throw Error("Could not verify browser registration");
+  state.pushSubId=id;
+  state.settings.push_enabled=true;
+  $("disablePush").disabled=false;
+  pushMessage("Browser push enabled for this account. Your topic and quiet-hour settings will be respected.");
+ }catch(e){
+  pushMessage(e instanceof Error?e.message:"Browser push setup failed",true);
+ }finally{$("enablePush").disabled=false}
+}
+async function disableBrowserPush(){
+ if(!state.session){pushMessage("Sign in to disable browser push.",true);return}
+ $("disablePush").disabled=true;
+ try{
+  const sdk=state.pushSdk;
+  // Signed-in revocation works even when the OneSignal SDK is not loaded in this tab.
+  await request("ignored",{method:"POST",body:JSON.stringify({
+   action:"unregister_all_push_devices"
+  })},true);
+  if(sdk){
+   try{await sdk.User.PushSubscription.optOut();await sdk.setConsentGiven(false)}catch(e){}
+  }
+  state.pushSubId=null;state.settings.push_enabled=false;
+  pushMessage("Push disabled for all devices on this account. In-app alerts remain available.");
+ }catch(e){pushMessage(e instanceof Error?e.message:"Unable to disable push",true)}
+ finally{$("disablePush").disabled=false}
+}
 renderChoices();
 try{const s=JSON.parse(localStorage.getItem("smshahid-notification-preferences")||"null");if(s&&typeof s==="object")applySettings(s);else applySettings(DEFAULT)}
 catch(e){applySettings(DEFAULT)}
@@ -247,8 +363,16 @@ $("preferredZone").addEventListener("change",()=>{state.settings.timezone=$("pre
 $("reload").addEventListener("click",loadAlerts);
 $("saveSettings").addEventListener("click",save);
 $("markRead").addEventListener("click",markViewed);
-establishSession();
-loadAlerts();
+$("enablePush").addEventListener("click",enableBrowserPush);
+$("disablePush").addEventListener("click",disableBrowserPush);
+// Deferred Supabase library must load before checking the signed-in session.
+function bootNotificationCenter(){
+ establishSession().then(loadPushConfig);
+ loadAlerts();
+}
+if(document.readyState==="loading")
+ document.addEventListener("DOMContentLoaded",bootNotificationCenter,{once:true});
+else bootNotificationCenter();
 setInterval(()=>{if(!document.hidden)loadAlerts()},90000);
 </script>
 </body></html>

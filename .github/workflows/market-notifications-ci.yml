@@ -46,6 +46,7 @@ jobs:
             'Asia/Kuala_Lumpur','Asia/Karachi','Sign in','saveSettings','localStorage']){
             if(!html.includes(token))throw Error('UI privacy or opt-in content missing '+token);
           }
-          if(/requestPermission\s*\(/.test(html))throw Error('Browser push permission requested before provider is connected');
+          const permissionCall=html.indexOf('requestPermission()');
+          if(permissionCall>=0 && !(permissionCall>html.indexOf('async function enableBrowserPush(){') && permissionCall<html.indexOf('async function disableBrowserPush(){')))throw Error('Push permission outside deliberate opt-in handler');
           console.log('PASS notification integrity, RLS access, double opt-in and source verification labels');
           JS
