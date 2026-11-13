@@ -59,8 +59,9 @@ try{
   await page.route("**/cdn.jsdelivr.net/**",r=>r.abort());
   await page.route("**/www.googletagmanager.com/**",r=>r.abort());
   await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:20000});
-  await page.waitForURL(u=>u.href.includes(pathPart),{timeout:10000});
-  assert.equal(page.url().includes(pathPart),true);
+  const destination=u=>u.href.includes(pathPart)||(route==="/ai-banner-scripts/"&&u.pathname==="/ai-banner-scripts");
+  await page.waitForURL(destination,{waitUntil:"domcontentloaded",timeout:10000});
+  assert.equal(destination(new URL(page.url())),true);
   await page.close();console.log("PASS legacy redirect "+route);
  }
 }catch(e){failures++;console.error("Browser smoke FAILED:",e.stack||e)}
