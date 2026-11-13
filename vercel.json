@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/economic-calendar",
+      "destination": "/economic-calendar/index.html"
+    },
+    {
       "source": "/market-intelligence",
       "destination": "/market-intelligence/index.html"
     },

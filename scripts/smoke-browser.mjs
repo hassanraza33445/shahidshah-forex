@@ -10,6 +10,10 @@ const sample={
  {id:"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",title:"Gold extends rally after monetary-policy update",summary:"An attributed sample headline used only for browser tests.",publisher:"Sample Publisher",original_url:"https://example.com/gold",published_at:"2026-11-13T15:30:00Z",category:"Gold",priority:"HOT",priority_reason:"Major macroeconomic development",verification_status:"unverified"},
  {id:"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",title:"Bitcoin volatility shifts ahead of policy comments",summary:"Sample content only.",publisher:"Test Market News",original_url:"https://example.org/btc",published_at:"2026-11-13T14:00:00Z",category:"Crypto",priority:"WARM",priority_reason:"Market coverage",verification_status:"unverified"}
 ]};
+const calendarResponse={success:true,items:[
+  {id:"11111111-aaaa-4aaa-8aaa-111111111111",title:"Consumer Price Index (CPI)",country:"US",currency:"USD",category:"Inflation",impact:"HIGH",scheduled_at:new Date(Date.now()+3*86400000).toISOString(),time_precision:"exact",source_name:"U.S. Bureau of Labor Statistics",source_url:"https://www.bls.gov/schedule/news_release/cpi.htm",actual:null,forecast:null,previous:null,status:"scheduled"},
+  {id:"22222222-aaaa-4aaa-8aaa-222222222222",title:"Productivity and Costs",country:"US",currency:"USD",category:"Economic Data",impact:"MEDIUM",scheduled_at:new Date(Date.now()+7*86400000).toISOString(),time_precision:"exact",source_name:"U.S. Bureau of Labor Statistics",source_url:"https://www.bls.gov/schedule/2026/12_sched_list.htm",actual:null,forecast:null,previous:null,status:"scheduled"}
+ ],last_source_sync:null,source_status:"official_schedule_seeded"};
 let failures=0;
 const server=createServer(async(req,res)=>{
  try{
@@ -50,6 +54,7 @@ try{
   const page=await browser.newPage({viewport,serviceWorkers:"block"});
   const errors=[];page.on("pageerror",e=>errors.push(e.message));
   await page.route("**/functions/v1/market-intelligence-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(sample)}));
+  await page.route("**/functions/v1/economic-calendar-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(calendarResponse)}));
   await page.goto(ORIGIN+"/market-intelligence/",{waitUntil:"domcontentloaded",timeout:20000});
   await page.locator("#newsList .news-card").first().waitFor({timeout:10000});
   assert.equal(await page.locator("#newsList .news-card").count(),2,"two headlines rendered");
@@ -97,7 +102,7 @@ try{
  }
 
  // Homepage header parity: literal navigation, iconography, brand, theme and exact desktop metrics.
- const routes=["/","/about/","/course/","/community/","/videos/","/learning-hub.html","/market-intelligence/","/content-studio/","/social/","/expo/"];
+ const routes=["/","/about/","/course/","/community/","/videos/","/learning-hub.html","/market-intelligence/","/economic-calendar/","/content-studio/","/social/","/expo/"];
  const labels=["Home","Market Intelligence","AI Studio","AI Scripts","Videos","About"];
  let reference=null;
  for(const theme of ["light","dark"]){
@@ -108,6 +113,7 @@ try{
    await page.route("**/www.googletagmanager.com/**",r=>r.abort());
    await page.route("**/supabase.co/rest/v1/rpc/get_webinar_public_config",r=>r.fulfill({status:200,contentType:"application/json",body:"{}"}));
    await page.route("**/functions/v1/market-intelligence-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(sample)}));
+  await page.route("**/functions/v1/economic-calendar-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(calendarResponse)}));
    await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:20000});
    await page.locator("body > header:not(.site-legacy-header) .learning-nav a").first().waitFor({timeout:9000});
    const m=await page.evaluate(()=>{
@@ -143,6 +149,7 @@ try{
   await page.route("**/www.googletagmanager.com/**",r=>r.abort());
   await page.route("**/supabase.co/rest/v1/rpc/get_webinar_public_config",r=>r.fulfill({status:200,contentType:"application/json",body:"{}"}));
   await page.route("**/functions/v1/market-intelligence-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(sample)}));
+  await page.route("**/functions/v1/economic-calendar-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(calendarResponse)}));
   await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:20000});
   const el=page.locator("body > header:not(.site-legacy-header)").first();
   await el.waitFor({timeout:9000});
@@ -154,6 +161,23 @@ try{
   assert.ok(visible.height>30&&visible.height<180,"mobile header stable height "+route);
   assert.ok(visible.left>=0&&visible.left<=12&&visible.width>=375&&visible.width<=390,"mobile header centered + contained on "+route);
   console.log("PASS mobile shared header",route,visible.height);
+  await page.close();
+ }
+ // Official economic calendar renders verified dates and never invents economic figures.
+ {
+  const page=await browser.newPage({viewport:{width:1280,height:820},serviceWorkers:"block"});
+  await page.route("**/functions/v1/economic-calendar-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(calendarResponse)}));
+  await page.route("**/supabase.co/rest/v1/rpc/get_webinar_public_config",r=>r.fulfill({status:200,contentType:"application/json",body:"{}"}));
+  await page.goto(ORIGIN+"/economic-calendar/",{waitUntil:"domcontentloaded",timeout:20000});
+  await page.waitForFunction(()=>document.querySelectorAll("#events tr").length===2,{},{timeout:9000});
+  assert.equal(await page.locator("#events tr").count(),2,"Two official calendar rows");
+  assert.equal(await page.locator("#events td.missing").count(),6,"Missing actual/forecast/previous remain blank");
+  assert.equal(await page.locator("#events a.event-source[href^='https://www.bls.gov/']").count(),2,"Original source links present");
+  await page.selectOption("#timezone","Asia/Karachi");
+  assert.equal(await page.inputValue("#timezone"),"Asia/Karachi","PKT timezone selectable");
+  await page.selectOption("#impact","HIGH");
+  assert.equal(await page.locator("#events tr").count(),1,"High impact filter works");
+  console.log("PASS official economic calendar, sources, timezone, missing-value integrity");
   await page.close();
  }
  async function toggleTheme(page,before){

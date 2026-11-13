@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'market-intelligence/**'
+      - 'economic-calendar/**'
       - 'content-studio/**'
       - 'scripts/smoke-browser.mjs'
       - 'ai-*/index.html'

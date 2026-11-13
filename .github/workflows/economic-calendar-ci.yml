@@ -1,0 +1,37 @@
+name: Official Economic Calendar checks
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/economic-calendar-api/**'
+      - 'supabase/sql/economic-calendar-v1-*.sql'
+      - 'economic-calendar/**'
+      - '.github/workflows/economic-calendar-ci.yml'
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Typecheck server-side economic calendar
+        run: deno check supabase/functions/economic-calendar-api/index.ts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify official sources, RLS and no fabricated figures
+        run: |
+          node --input-type=module <<'JS'
+          import {readFileSync} from 'node:fs';
+          const sql=readFileSync('supabase/sql/economic-calendar-v1-20261114.sql','utf8');
+          const api=readFileSync('supabase/functions/economic-calendar-api/index.ts','utf8');
+          const html=readFileSync('economic-calendar/index.html','utf8');
+          for(const word of ["enable row level security","last_verified_at is not null","U.S. Bureau of Labor Statistics","Federal Reserve","try_begin_economic_calendar_sync"])if(!sql.includes(word))throw Error('Calendar schema missing '+word);
+          for(const word of ["parseBlsIcs","source_url","getUser(token)","try_begin_economic_calendar_sync"])if(!api.includes(word))throw Error('API missing '+word);
+          for(const word of ['Asia/Kuala_Lumpur','Asia/Karachi','Actual','Forecast','Previous'])if(!html.includes(word))throw Error('UI missing '+word);
+          if(sql.includes("'10.4%'")||sql.includes("'250K'"))throw Error('Fake economic figures');
+          console.log('PASS calendar data provenance and authorization checks');
+          JS
