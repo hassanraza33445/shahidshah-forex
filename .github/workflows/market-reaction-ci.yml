@@ -36,7 +36,7 @@ jobs:
             if(!sql.includes(str))throw Error('Database safety guard missing '+str);
           }
           for(const str of ['admin(req)','TWELVEDATA_API_KEY','parsePrices',
-            'historical','publish','license_confirmation','is_published']) {
+            'requestPrices','publish','license_confirmation','is_published']) {
             if(!source.includes(str))throw Error('API safety guard missing '+str);
           }
           for(const str of ['Awaiting verified historical price data','market-reaction-api',
