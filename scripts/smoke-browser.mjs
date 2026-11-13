@@ -10,6 +10,10 @@ const sample={
  {id:"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",title:"Gold extends rally after monetary-policy update",summary:"An attributed sample headline used only for browser tests.",publisher:"Sample Publisher",original_url:"https://example.com/gold",published_at:"2026-11-13T15:30:00Z",category:"Gold",priority:"HOT",priority_reason:"Major macroeconomic development",verification_status:"unverified"},
  {id:"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",title:"Bitcoin volatility shifts ahead of policy comments",summary:"Sample content only.",publisher:"Test Market News",original_url:"https://example.org/btc",published_at:"2026-11-13T14:00:00Z",category:"Crypto",priority:"WARM",priority_reason:"Market coverage",verification_status:"unverified"}
 ]};
+const calendarResponse={success:true,items:[
+  {id:"11111111-aaaa-4aaa-8aaa-111111111111",title:"Consumer Price Index (CPI)",country:"US",currency:"USD",category:"Inflation",impact:"HIGH",scheduled_at:new Date(Date.now()+3*86400000).toISOString(),time_precision:"exact",source_name:"U.S. Bureau of Labor Statistics",source_url:"https://www.bls.gov/schedule/news_release/cpi.htm",actual:null,forecast:null,previous:null,status:"scheduled"},
+  {id:"22222222-aaaa-4aaa-8aaa-222222222222",title:"Productivity and Costs",country:"US",currency:"USD",category:"Economic Data",impact:"MEDIUM",scheduled_at:new Date(Date.now()+7*86400000).toISOString(),time_precision:"exact",source_name:"U.S. Bureau of Labor Statistics",source_url:"https://www.bls.gov/schedule/2026/12_sched_list.htm",actual:null,forecast:null,previous:null,status:"scheduled"}
+ ],last_source_sync:null,source_status:"official_schedule_seeded"};
 let failures=0;
 const server=createServer(async(req,res)=>{
  try{
@@ -98,10 +102,6 @@ try{
  }
 
  // Homepage header parity: literal navigation, iconography, brand, theme and exact desktop metrics.
- const calendarResponse={success:true,items:[
-  {id:"11111111-aaaa-4aaa-8aaa-111111111111",title:"Consumer Price Index (CPI)",country:"US",currency:"USD",category:"Inflation",impact:"HIGH",scheduled_at:new Date(Date.now()+3*86400000).toISOString(),time_precision:"exact",source_name:"U.S. Bureau of Labor Statistics",source_url:"https://www.bls.gov/schedule/news_release/cpi.htm",actual:null,forecast:null,previous:null,status:"scheduled"},
-  {id:"22222222-aaaa-4aaa-8aaa-222222222222",title:"Productivity and Costs",country:"US",currency:"USD",category:"Economic Data",impact:"MEDIUM",scheduled_at:new Date(Date.now()+7*86400000).toISOString(),time_precision:"exact",source_name:"U.S. Bureau of Labor Statistics",source_url:"https://www.bls.gov/schedule/2026/12_sched_list.htm",actual:null,forecast:null,previous:null,status:"scheduled"}
- ],last_source_sync:null,source_status:"official_schedule_seeded"};
  const routes=["/","/about/","/course/","/community/","/videos/","/learning-hub.html","/market-intelligence/","/economic-calendar/","/content-studio/","/social/","/expo/"];
  const labels=["Home","Market Intelligence","AI Studio","AI Scripts","Videos","About"];
  let reference=null;
