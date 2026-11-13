@@ -61,7 +61,7 @@ function parseBlsIcs(ics:string){
   const summary=fields.find(x=>x.startsWith("SUMMARY:"))?.slice(8)||"";
   const dt=fields.find(x=>x.startsWith("DTSTART"));
   const matched=dt?.match(/^DTSTART(?:;[^:]*)?:(.+)$/);
-  const parsed=matched?icsTime(matched[1],dt):null;
+  const parsed=matched?.[1]?icsTime(matched[1],dt||""):null;
   const item=classify(summary);
   if(!item||!parsed)continue;
   const ts=Date.parse(parsed.value);
