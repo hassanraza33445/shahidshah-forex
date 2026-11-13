@@ -40,7 +40,7 @@ jobs:
             if(!sql.includes(k))throw Error('SQL privacy/duplicates guard missing: '+k);
           }
           for(const k of ['register_push_device','unregister_all_push_devices',
-            'push-config','db.auth.getUser(token)','ONESIGNAL_DISPATCH_ENABLED']){
+            'push-config','db.auth.getUser(token)','ONESIGNAL_SUBSCRIPTIONS_ENABLED']){
             if(!api.includes(k))throw Error('OneSignal account-synced guard missing: '+k);
           }
           for(const k of ['include_subscription_ids','idempotency_key','quiet_hours',
