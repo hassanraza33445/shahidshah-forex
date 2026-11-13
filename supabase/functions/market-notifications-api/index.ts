@@ -118,7 +118,8 @@ async function privateGet(req:Request,mode:string){
 }
 async function changeDevice(user:any,body:any,req:Request){
  const sub=typeof body.subscription_id==="string"?body.subscription_id:"";
- if(!UUID.test(sub))return reply({success:false,error:"Invalid OneSignal device identifier"},400);
+ if(body.action!=="unregister_all_push_devices"&&!UUID.test(sub))
+  return reply({success:false,error:"Invalid OneSignal device identifier"},400);
  if(body.action==="register_push_device"){
   if(!ready())return reply({success:false,error:"OneSignal setup required"},503);
   if(req.headers.get("origin")&&req.headers.get("origin")!==CANONICAL)
@@ -147,6 +148,16 @@ async function changeDevice(user:any,body:any,req:Request){
   if(prefSave)throw Error("Unable to record push consent");
   return reply({success:true,registered:true,push_enabled:true});
  }
+ if(body.action==="unregister_all_push_devices"){
+  const now=new Date().toISOString();
+  const {error}=await db.from("market_push_subscriptions")
+   .update({active:false,browser_permission_granted:false,disabled_at:now,last_seen_at:now})
+   .eq("user_id",user.id).eq("active",true);
+  if(error)throw Error("Unable to disable push devices");
+  await db.from("market_notification_preferences")
+   .update({push_enabled:false,updated_at:now}).eq("user_id",user.id);
+  return reply({success:true,registered:false,push_enabled:false,disabled_all_devices:true});
+ }
  if(body.action==="unregister_push_device"){
   const t=new Date().toISOString();
   const {error}=await db.from("market_push_subscriptions").update({
@@ -167,7 +178,7 @@ async function privatePost(req:Request){
  if(!user)return reply({success:false,error:"Sign in required"},401);
  const body=await req.json().catch(()=>null);
  if(!body||typeof body!=="object"||Array.isArray(body))return reply({success:false,error:"Invalid JSON body"},400);
- if(body.action==="register_push_device"||body.action==="unregister_push_device")
+ if(["register_push_device","unregister_push_device","unregister_all_push_devices"].includes(body.action))
   return await changeDevice(user,body,req);
  if(body.action==="save_preferences"){
   let settings:any;
