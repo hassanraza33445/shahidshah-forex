@@ -1,0 +1,26 @@
+name: Browser smoke tests
+on:
+  pull_request:
+    paths:
+      - 'market-intelligence/**'
+      - 'content-studio/**'
+      - 'scripts/smoke-browser.mjs'
+      - 'ai-*/index.html'
+      - 'expo.html'
+      - 'webinar-admin/index.html'
+      - '.github/workflows/browser-smoke.yml'
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install temporary browser test dependency
+        run: npm install --no-save --package-lock=false playwright@1.56.1
+      - name: Run responsive and redirect smoke tests
+        run: node scripts/smoke-browser.mjs
