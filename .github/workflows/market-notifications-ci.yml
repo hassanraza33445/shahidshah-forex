@@ -31,7 +31,7 @@ jobs:
           const html=readFileSync('notifications/index.html','utf8');
           for(const token of [
             'market_notification_events','market_notification_preferences','market_notification_inbox',
-            'enable row level security','push_enabled=false','refresh_market_notification_feed',
+            'ENABLE ROW LEVEL SECURITY','push_enabled=false','refresh_market_notification_feed',
             'ON CONFLICT(dedupe_key) DO NOTHING','ON CONFLICT(user_id,notice_id) DO NOTHING',
             'status:','5 minutes','SECURITY DEFINER',
             "REVOKE ALL ON FUNCTION public.refresh_market_notification_feed() FROM PUBLIC,anon,authenticated"
