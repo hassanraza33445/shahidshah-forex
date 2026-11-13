@@ -89,7 +89,7 @@ try{
    assert.equal(state.ok,true,"banner for "+id+" in "+mode+" must load");
    assert.equal(state.src,"/assets/banners/"+id+"-"+mode+".webp","root-relative banner path");
    assert.equal(state.version,"ai-banners-20261114","banner should bypass stale image caches");
-   const header=await page.locator(".brand img").evaluate(img=>img.complete&&img.naturalWidth>0);
+   const header=await page.locator("#sm-site-header .brand img").evaluate(img=>img.complete&&img.naturalWidth>0);
    assert.equal(header,true,"brand photo must load after navigation");
   }
   console.log("PASS AI Tools all seven banners, brand image and client navigation in "+mode+" mode");
