@@ -11,7 +11,7 @@ const respond=(body:unknown,status=200,cache=false)=>new Response(JSON.stringify
  status,headers:{...cors,"Content-Type":"application/json; charset=utf-8",
  "Cache-Control":cache?"public,s-maxage=60,stale-while-revalidate=120":"no-store"}
 });
-import {SYMBOLS,HORIZONS,DOCS_URL,parsePrices,calculate} from "./calc.ts";
+import {SYMBOLS,HORIZONS,DOCS_URL,uuid,parsePrices,calculate} from "./calc.ts";
 import type {PriceCandle} from "./calc.ts";
 async function requestPrices(symbol:string,eventTime:number):Promise<PriceCandle[]>{
  const from=eventTime-3*60000,to=eventTime+61*60000;
