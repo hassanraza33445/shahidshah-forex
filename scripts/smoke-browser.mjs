@@ -299,7 +299,13 @@ try{
    body:'const api={setConsentRequired(x){window.__requiresConsent=x},async init(o){window.__oneSignalOptions=o},async setConsentGiven(x){window.__consented=x},Notifications:{permission:true,isPushSupported(){return true},async requestPermission(){window.__permissionAsked=true;return true}},User:{PushSubscription:{id:"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",async optIn(){},async optOut(){window.__optedOut=true}}}};const q=window.OneSignalDeferred||[];q.push=(fn)=>Promise.resolve(fn(api));for(const fn of Array.from(q))Promise.resolve(fn(api));'
   }));
   await page.goto(ORIGIN+"/notifications/",{waitUntil:"domcontentloaded",timeout:20000});
-  await page.waitForFunction(()=>document.querySelector("#enablePush")?.disabled===false,{},{timeout:9000});
+  try{await page.waitForFunction(()=>document.querySelector("#enablePush")?.disabled===false,{},{timeout:9000})}
+  catch(e){
+   const diag=await page.evaluate(()=>({url:location.href,button:document.querySelector("#enablePush")?.disabled,
+    message:document.querySelector("#pushStatus")?.textContent,account:document.querySelector("#accountState")?.textContent,
+    stateSession:!!state.session,pushConfig:state.pushConfig}));
+   console.log("ONESIGNAL_TEST_DIAGNOSTIC "+JSON.stringify(diag));throw e;
+  }
   assert.equal(await page.evaluate(()=>!!document.querySelector('script[src*="OneSignalSDK.page.js"]')),false,"SDK must not load before opt-in");
   await page.locator("#allowInApp").check();await page.locator("#allowNews").check();
   await page.locator("#saveSettings").click();await page.locator("#enablePush").click();
