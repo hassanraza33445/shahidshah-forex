@@ -1,0 +1,59 @@
+name: OneSignal Web Push integration safety
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/market-notifications-api/**'
+      - 'supabase/functions/market-push-dispatch/**'
+      - 'supabase/sql/market-onesignal-*.sql'
+      - 'onesignal/**'
+      - 'notifications/**'
+      - '.github/workflows/onesignal-webpush-ci.yml'
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Typecheck backend OneSignal API and dispatcher
+        run: deno check supabase/functions/market-notifications-api/index.ts supabase/functions/market-push-dispatch/index.ts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Enforce safety and provider safeguards
+        run: |
+          node --input-type=module <<'JS'
+          import {readFileSync} from 'node:fs';
+          const sql=readFileSync('supabase/sql/market-onesignal-push-consent-20261114.sql','utf8');
+          const api=readFileSync('supabase/functions/market-notifications-api/index.ts','utf8');
+          const worker=readFileSync('supabase/functions/market-push-dispatch/index.ts','utf8');
+          const page=readFileSync('notifications/index.html','utf8');
+          const sw=readFileSync('onesignal/OneSignalSDKWorker.js','utf8');
+          for(const k of ['ENABLE ROW LEVEL SECURITY','consented_at',
+            'market_push_deliveries','enqueue_verified_market_pushes',
+            'claim_market_push_deliveries','ON CONFLICT(notice_id,subscription_id) DO NOTHING',
+            "REVOKE ALL ON FUNCTION public.claim_market_push_deliveries(integer)"]){
+            if(!sql.includes(k))throw Error('SQL privacy/duplicates guard missing: '+k);
+          }
+          for(const k of ['register_push_device','unregister_all_push_devices',
+            'push-config','db.auth.getUser(token)','ONESIGNAL_DISPATCH_ENABLED']){
+            if(!api.includes(k))throw Error('OneSignal account-synced guard missing: '+k);
+          }
+          for(const k of ['include_subscription_ids','idempotency_key','quiet_hours',
+            'verified','official_schedule','ONESIGNAL_DISPATCH_ENABLED',
+            'Authorization','req.headers.get("authorization")']){
+            if(!worker.includes(k))throw Error('Delivery safety guard missing: '+k);
+          }
+          for(const k of ['Enable Browser Push','Disable All Push','setConsentRequired(true)',
+            'requestPermission()','OneSignalSDK.page.js','saveSettings','Asia/Karachi']){
+            if(!page.includes(k))throw Error('UI consent control missing: '+k);
+          }
+          if(!page.includes('scope:"/onesignal/"')||!sw.includes('OneSignalSDK.sw.js'))
+            throw Error('Service worker must not overwrite existing PWA scope');
+          if(!readFileSync('sw.js','utf8').length)throw Error('Original PWA worker missing');
+          console.log('PASS OneSignal consent, auth, strict sources, idempotency, quiet hours and PWA isolation');
+          JS
