@@ -107,7 +107,7 @@ try{
  for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
   const page=await browser.newPage({viewport,serviceWorkers:"block"});
   const errors=[];page.on("pageerror",e=>errors.push(e.message));
-  await page.route("**/cdn.jsdelivr.net/npm/@supabase/supabase-js@2",r=>r.fulfill({status:200,contentType:"application/javascript",body:"globalThis.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:null}})}})};"}));
+  await page.route("**/cdn.jsdelivr.net/npm/@supabase/supabase-js@2",r=>r.fulfill({status:200,contentType:"application/javascript",body:"globalThis.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:null}}),getUser:async()=>({data:{user:{id:\"11111111-1111-4111-8111-111111111111\",email:\"qa@example.test\"}},error:null})}})};"}));
   await page.goto(ORIGIN+"/content-studio/",{waitUntil:"domcontentloaded",timeout:20000});
   await page.locator("#loginForm").waitFor({timeout:10000});
   assert.equal(await page.locator("#workspace").isVisible(),false,"Private Studio must start behind login");
