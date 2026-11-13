@@ -25,6 +25,27 @@ const server=createServer(async(req,res)=>{
 await new Promise(resolve=>server.listen(8765,"127.0.0.1",resolve));
 const browser=await chromium.launch({headless:true});
 try{
+ const expectedNav=[
+  ["/","Home"],["/market-intelligence/","Market Intelligence"],["/content-studio/","AI Studio"],
+  ["/ai-tools/","AI Scripts"],["/videos/","Videos"],["/about/","About"]
+ ];
+ for(const route of ["/","/about/","/course/","/community/","/videos/"]){
+  for(const width of [1440,390]){
+   const page=await browser.newPage({viewport:{width,height:900},serviceWorkers:"block"});
+   await page.route("**/cdn.jsdelivr.net/**",r=>r.abort());
+   await page.route("**/www.googletagmanager.com/**",r=>r.abort());
+   await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:20000});
+   await page.waitForTimeout(220);
+   const nav=await page.locator(".learning-nav a").evaluateAll(anchors=>anchors.map(a=>{
+    const cs=getComputedStyle(a);return {href:new URL(a.href).pathname,label:a.textContent.trim(),font:cs.fontFamily,size:cs.fontSize,weight:cs.fontWeight};
+   }));
+   assert.deepEqual(nav.map(x=>[x.href,x.label]),expectedNav,"six header links must remain visible on "+route);
+   const sample=nav[0];
+   for(const item of nav)assert.deepEqual([item.font,item.size,item.weight],[sample.font,sample.size,sample.weight],"same navigation font across "+route);
+   console.log("PASS homepage-style six-link menu",route,width+"px");
+   await page.close();
+  }
+ }
  for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
   const page=await browser.newPage({viewport,serviceWorkers:"block"});
   const errors=[];page.on("pageerror",e=>errors.push(e.message));
