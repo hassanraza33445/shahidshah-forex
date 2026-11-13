@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import {createServer} from "node:http";
+import {readFile} from "node:fs/promises";
+import {resolve,extname,sep} from "node:path";
 import {chromium} from "playwright";
 const ORIGIN="http://127.0.0.1:8765";
 const sample={
@@ -8,6 +11,18 @@ const sample={
  {id:"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",title:"Bitcoin volatility shifts ahead of policy comments",summary:"Sample content only.",publisher:"Test Market News",original_url:"https://example.org/btc",published_at:"2026-11-13T14:00:00Z",category:"Crypto",priority:"WARM",priority_reason:"Market coverage",verification_status:"unverified"}
 ]};
 let failures=0;
+const server=createServer(async(req,res)=>{
+ try{
+  const pathname=decodeURIComponent(new URL(req.url,"http://127.0.0.1:8765").pathname);
+  const rel=pathname.endsWith("/")?pathname+"index.html":pathname;
+  const base=resolve(process.cwd()),file=resolve(base,"."+rel);
+  if(!file.startsWith(base+sep)){res.writeHead(403);res.end();return}
+  const data=await readFile(file),ext=extname(file);
+  res.writeHead(200,{"Content-Type":ext===".html"?"text/html; charset=utf-8":ext===".js"?"application/javascript":ext===".css"?"text/css":"application/octet-stream"});
+  res.end(data);
+ }catch(e){res.writeHead(404);res.end("Not found")}
+});
+await new Promise(resolve=>server.listen(8765,"127.0.0.1",resolve));
 const browser=await chromium.launch({headless:true});
 try{
  for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
@@ -49,6 +64,6 @@ try{
   await page.close();console.log("PASS legacy redirect "+route);
  }
 }catch(e){failures++;console.error("Browser smoke FAILED:",e.stack||e)}
-finally{await browser.close()}
+finally{await browser.close();await new Promise(resolve=>server.close(resolve))}
 if(failures)process.exit(1);
 console.log("All browser smoke cases passed.");
