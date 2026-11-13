@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/auth",
+      "destination": "/auth/index.html"
+    },
+    {
+      "source": "/app",
+      "destination": "/app/index.html"
+    },
+    {
       "source": "/notifications",
       "destination": "/notifications/index.html"
     },

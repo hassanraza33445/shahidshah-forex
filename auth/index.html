@@ -1,0 +1,32 @@
+<!doctype html><html lang="en" data-theme="light"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#171008"><meta name="robots" content="noindex,nofollow">
+<title>Login or Sign Up | S M Shahid Shah</title>
+<meta name="description" content="Sign in or create an account for the S M Shahid Shah Market Intelligence and AI Studio platform.">
+<link rel="icon" href="/icon-192.png"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/sm-auth.css?v=20261114-1">
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="/assets/sm-auth.js?v=20261114-1"></script>
+</head><body>
+<div class="auth-shell">
+ <section class="auth-brand"><a class="auth-brand-name" href="/"><span class="brand-mark">▥</span><span><b>S M Shahid Shah</b><small>BUSINESS &amp; MARKET INTELLIGENCE</small></span></a>
+ <div class="brand-story"><span class="eyebrow">EXCLUSIVE MEMBER PLATFORM</span><h1>Understand Markets.<br><em>Create with AI.</em><br>Grow with Confidence.</h1>
+ <p>One secure account for Market Intelligence, Economic Calendar, AI creation tools, your content library and mentorship applications.</p>
+ <div class="hero-tiles"><span>✦ Intelligence</span><span>◈ AI Studio</span><span>▥ Smart Tools</span></div></div>
+ <div class="brand-foot">Market education &amp; intelligent content creation · S M Shahid Shah</div></section>
+ <main class="auth-panel"><a href="/" class="back-link">← Back to website</a><div class="mobile-brand"><span class="brand-mark">▥</span><span>S M Shahid Shah</span></div>
+ <div class="panel-hero"><span class="eyebrow">WELCOME TO THE PLATFORM</span><h2 id="authTitle">Welcome back.</h2><p id="authSubtitle">Sign in to continue to your private dashboard.</p></div>
+ <div class="auth-tabs" role="tablist" aria-label="Account options"><button type="button" id="signInTab" class="selected" role="tab" aria-selected="true">Login</button><button type="button" id="signUpTab" role="tab" aria-selected="false">Sign Up</button></div>
+ <form id="authForm"><label id="nameField" hidden>Full name<input name="fullname" id="fullname" type="text" maxlength="90" autocomplete="name" placeholder="Your full name"></label>
+ <label>Email address<input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required></label>
+ <label id="passwordField">Password<input id="password" name="password" type="password" minlength="6" autocomplete="current-password" placeholder="Enter your password" required></label>
+ <div class="form-options"><span id="securityHint">Secure account access</span><button type="button" id="forgot" class="text-button">Forgot password?</button></div>
+ <button type="submit" id="submitBtn" class="primary">Login to Dashboard <span>→</span></button></form>
+ <div class="separator"><span>or continue with</span></div>
+ <button type="button" id="googleBtn" class="google"><svg aria-hidden="true" width="19" height="19" viewBox="0 0 48 48"><path fill="#4285F4" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11c-.5 2.6-1.9 4.8-4 6.3v5.2h6.5c3.8-3.5 6.1-8.6 6.1-15.2z"/><path fill="#34A853" d="M24 44c5.4 0 9.9-1.8 13.2-4.8l-6.5-5.2c-1.8 1.2-4.1 2-6.7 2-5.1 0-9.5-3.4-11-8H6.2v5C9.6 37.3 16.3 44 24 44z"/><path fill="#FBBC05" d="M13 28c-.4-1.2-.6-2.5-.6-4s.2-2.8.6-4v-5H6.2A20 20 0 004 24c0 3.2.8 6.3 2.2 9l6.8-5z"/><path fill="#EA4335" d="M24 12c2.9 0 5.5 1 7.5 2.9l5.9-5.9C33.8 5.7 29.3 4 24 4c-7.7 0-14.4 4.7-17.8 11l6.8 5c1.5-4.6 5.9-8 11-8z"/></svg>Continue with Google</button>
+ <p id="authStatus" class="auth-status" role="status" aria-live="polite"></p>
+ <p class="agreement">By continuing, you agree to use the platform responsibly. Your password is handled by Supabase Auth, not stored in this website.</p>
+ <div class="panel-footer"><a href="/about/">About</a><a href="/market-intelligence/">Market News</a><a href="/">Back to Home</a></div>
+ </main>
+</div></body></html>

@@ -41,6 +41,28 @@ const server=createServer(async(req,res)=>{
 });
 await new Promise(resolve=>server.listen(8765,"127.0.0.1",resolve));
 const browser=await chromium.launch({headless:true});
+// The original UI smoke suite tests layout/features with a fake signed-in identity.
+// These mocks never run on production and do not bypass real Supabase Auth.
+const savedNewPage=browser.newPage.bind(browser);
+browser.newPage=async options=>{
+ const page=await savedNewPage(options);
+ const stub=()=>{
+  const user={id:"11111111-1111-4111-8111-111111111111",email:"qa@example.test"};
+  window.supabase={createClient:()=>({
+   auth:{getUser:async()=>({data:{user},error:null}),
+    getSession:async()=>({data:{session:null}}),
+    onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})},
+   from:()=>({select(){return this},eq(){return this},maybeSingle:async()=>({data:null,error:null})})
+  })};
+ };
+ await page.addInitScript(stub);
+ await page.route("**/cdn.jsdelivr.net/npm/@supabase/supabase-js@2**",route=>route.fulfill({
+  status:200,contentType:"application/javascript",
+  body:'window.supabase={createClient:()=>({auth:{getUser:async()=>({data:{user:{id:"11111111-1111-4111-8111-111111111111",email:"qa@example.test"}},error:null}),getSession:async()=>({data:{session:null}}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})},from:()=>({select(){return this},eq(){return this},maybeSingle:async()=>({data:null,error:null})})})};'
+ }));
+ return page;
+};
+
 try{
  const expectedNav=[
   ["/","Home"],["/market-intelligence/","Market Intelligence"],["/content-studio/","AI Studio"],
@@ -85,7 +107,7 @@ try{
  for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
   const page=await browser.newPage({viewport,serviceWorkers:"block"});
   const errors=[];page.on("pageerror",e=>errors.push(e.message));
-  await page.route("**/cdn.jsdelivr.net/npm/@supabase/supabase-js@2",r=>r.fulfill({status:200,contentType:"application/javascript",body:"globalThis.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:null}})}})};"}));
+  await page.route("**/cdn.jsdelivr.net/npm/@supabase/supabase-js@2",r=>r.fulfill({status:200,contentType:"application/javascript",body:"globalThis.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:null}}),getUser:async()=>({data:{user:{id:\"11111111-1111-4111-8111-111111111111\",email:\"qa@example.test\"}},error:null})}})};"}));
   await page.goto(ORIGIN+"/content-studio/",{waitUntil:"domcontentloaded",timeout:20000});
   await page.locator("#loginForm").waitFor({timeout:10000});
   assert.equal(await page.locator("#workspace").isVisible(),false,"Private Studio must start behind login");
@@ -277,7 +299,7 @@ try{
   const page=await browser.newPage({viewport:{width:1280,height:850},serviceWorkers:"block"});
   const calls=[];
   await page.route("**/cdn.jsdelivr.net/**",r=>r.fulfill({status:200,contentType:"application/javascript",
-   body:'window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{access_token:"mock-user-jwt"}}})}})};'}));
+   body:'window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{access_token:"mock-user-jwt"}}}),getUser:async()=>({data:{user:{id:"11111111-1111-4111-8111-111111111111",email:"qa@example.test"}},error:null})}})};'}));
   await page.route("**/functions/v1/market-notifications-api?**",async r=>{
    const req=r.request(),mode=new URL(req.url()).searchParams.get("mode");
    let payload={success:true};
@@ -303,7 +325,7 @@ try{
   catch(e){
    const diag=await page.evaluate(()=>({url:location.href,button:document.querySelector("#enablePush")?.disabled,
     message:document.querySelector("#pushStatus")?.textContent,account:document.querySelector("#accountState")?.textContent,
-    stateSession:!!state.session,pushConfig:state.pushConfig}));
+    stateSession:document.querySelector("#accountState")?.textContent,pushConfig:document.querySelector("#pushHeading")?.textContent}));
    console.log("ONESIGNAL_TEST_DIAGNOSTIC "+JSON.stringify(diag));throw e;
   }
   assert.equal(await page.evaluate(()=>!!document.querySelector('script[src*="OneSignalSDK.page.js"]')),false,"SDK must not load before opt-in");
