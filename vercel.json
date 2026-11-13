@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/notifications",
+      "destination": "/notifications/index.html"
+    },
+    {
       "source": "/market-reaction",
       "destination": "/market-reaction/index.html"
     },

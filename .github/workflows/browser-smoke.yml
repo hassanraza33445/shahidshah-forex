@@ -5,6 +5,7 @@ on:
       - 'market-intelligence/**'
       - 'economic-calendar/**'
       - 'market-reaction/**'
+      - 'notifications/**'
       - 'content-studio/**'
       - 'scripts/smoke-browser.mjs'
       - 'ai-*/index.html'
