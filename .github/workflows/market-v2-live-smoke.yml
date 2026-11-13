@@ -1,0 +1,19 @@
+name: Live Market Intelligence V2 API smoke
+on:
+  pull_request:
+    paths:
+      - 'scripts/check-market-v2-live.mjs'
+      - '.github/workflows/market-v2-live-smoke.yml'
+jobs:
+  verify-live-feed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate real V2 feed, search, categories, pagination and auth
+        run: node scripts/check-market-v2-live.mjs
