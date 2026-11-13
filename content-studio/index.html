@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b1220">
+<title>AI Content Studio | S M Shahid Shah</title><meta name="description" content="Private content production workspace by S M Shahid Shah for source-linked video scripts, editor, review workflow and SEO.">
+<link rel="icon" href="/icon-192.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("smshahid-site-theme")==="light"?"light":"dark"}catch(e){}</script>
+<style>
+:root{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color-scheme:dark;--bg:#090f1a;--panel:#101b2b;--panel2:#162236;--panel3:#1b2b42;--ink:#f7f4ee;--muted:#9ba8bd;--border:#27364d;--gold:#efad4b;--goldweak:rgba(239,173,75,.12);--green:#43c4a2;--red:#ff7c72;--shade:rgba(0,0,0,.3)}
+[data-theme=light]{color-scheme:light;--bg:#f5f0e8;--panel:#fffdf9;--panel2:#f5eee3;--panel3:#eee2d1;--ink:#251e17;--muted:#746b62;--border:#e3d9cb;--gold:#a96c11;--goldweak:rgba(169,108,17,.12);--green:#08876d;--red:#b33d39;--shade:rgba(70,46,18,.1)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.5}a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.5}input,select,textarea{min-width:0;border:1px solid var(--border);border-radius:12px;padding:12px 14px;background:var(--panel2);color:var(--ink);outline:none;font-size:12px;width:100%}textarea{resize:vertical;min-height:100px;line-height:1.65}input:focus,textarea:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--goldweak)}label{font-size:11px;font-weight:800;color:var(--muted);display:block;margin-bottom:6px}h1,h2,h3{line-height:1.25}h1{font-size:clamp(27px,3.4vw,41px);letter-spacing:-1.5px;margin:0 0 12px}h2{font-size:19px;margin:0}h3{font-size:14px;margin:0}.muted{color:var(--muted)}.small{font-size:11px}.upper{text-transform:uppercase;font-size:10px;font-weight:800;letter-spacing:1.6px;color:var(--gold)}.hidden{display:none!important}
+.btn{padding:11px 16px;background:var(--panel2);border:1px solid var(--border);color:var(--ink);border-radius:11px;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:7px}.btn:hover,.btn:focus-visible{border-color:var(--gold)}.btn.gold{background:var(--gold);color:var(--bg);border-color:var(--gold)}.btn.danger{color:var(--red)}.btn.small{padding:8px 11px;font-size:10px}.btn.ghost{border:0;background:transparent}.actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.card{background:var(--panel);border:1px solid var(--border);border-radius:19px;padding:22px}.card h2{margin-bottom:8px}.note{font-size:11px;color:var(--muted);line-height:1.65}.badge{display:inline-block;font-size:9px;text-transform:uppercase;letter-spacing:.9px;padding:5px 9px;border:1px solid var(--border);border-radius:20px;font-weight:800;color:var(--gold)}.divider{border:0;border-top:1px solid var(--border);margin:20px 0}.stack{display:grid;gap:16px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.layout{min-height:100vh;display:grid;grid-template-columns:253px minmax(0,1fr)}.side{border-right:1px solid var(--border);background:var(--panel);min-height:100vh;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:23px 13px}.brand{display:flex;align-items:center;gap:11px;padding:4px 10px 22px;border-bottom:1px solid var(--border)}.brand img{width:42px;height:42px;border:1px solid var(--border);border-radius:12px;object-fit:cover}.brand strong{display:block;font-size:11px;letter-spacing:.6px}.brand small{color:var(--gold);letter-spacing:1.1px;font-size:9px;font-weight:800}.menu{display:grid;gap:4px;margin-top:25px}.menu button{border:0;background:transparent;color:var(--muted);text-align:left;padding:13px 14px;border-radius:10px;font-size:12px;font-weight:700}.menu button:hover,.menu button.active{background:var(--goldweak);color:var(--gold)}.menu button span{display:inline-block;width:28px}.side-bottom{margin-top:auto;padding:14px 9px;border-top:1px solid var(--border)}.side-bottom p{font-size:10px;color:var(--muted);margin:4px 0 10px}.content{min-width:0;padding:0 35px 35px}.topbar{min-height:76px;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:center;justify-content:space-between}.topbar b{font-size:11px;letter-spacing:1px}.topbar p{font-size:10px;margin:3px 0;color:var(--muted)}.user{display:flex;align-items:center;gap:10px}.user .dot{width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:var(--goldweak);color:var(--gold);font-weight:800}.page{padding-top:27px;display:none}.page.active{display:block}.intro{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:23px}.intro p{color:var(--muted);font-size:12px;margin:0}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:20px}.stat{padding:18px;border:1px solid var(--border);border-radius:16px;background:var(--panel)}.stat b{font-size:30px;display:block;letter-spacing:-1.3px;margin-top:6px}.stat span{font-size:10px;font-weight:800;letter-spacing:1px;color:var(--muted)}.item{border:1px solid var(--border);border-radius:13px;background:var(--panel2);padding:15px;display:grid;gap:9px}.item strong{font-size:12px;line-height:1.45}.item p{font-size:10px;color:var(--muted);margin:0}.item .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.scroll{max-height:520px;overflow:auto}.row{display:flex;gap:12px;align-items:center;justify-content:space-between}.rowwrap{display:flex;gap:10px;flex-wrap:wrap}.list{display:grid;gap:10px}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.field.full{grid-column:1/-1}.editor{display:grid;gap:13px}.editor label{margin:0 0 5px}.editor textarea{min-height:94px}.editor textarea.long{min-height:145px}.tag{border:1px solid var(--border);border-radius:20px;color:var(--gold);font-size:9px;padding:4px 8px;font-weight:800}.status{min-height:23px;color:var(--muted);font-size:11px;padding-top:10px}.status.error{color:var(--red)}.status.ok{color:var(--green)}
+.gate{display:grid;place-items:center;min-height:100vh;padding:22px;background-image:radial-gradient(circle at 70% -10%,rgba(239,173,75,.19),transparent 55%)}.login{width:min(440px,100%);background:var(--panel);padding:34px;border:1px solid var(--border);border-radius:23px}.login img{width:65px;height:65px;border-radius:17px;object-fit:cover;margin-bottom:17px}.login form{display:grid;gap:12px;margin-top:23px}
+.tele{position:fixed;inset:0;z-index:50;background:#070c15;color:#fff;padding:25px;overflow:auto}.tele .words{max-width:850px;margin:45px auto;font-size:clamp(25px,3.5vw,42px);line-height:1.85;white-space:pre-wrap}.tele .telebar{display:flex;gap:12px;justify-content:space-between;align-items:center}.mobile-bottom{display:none}.toggle{display:flex;gap:8px;align-items:center;font-size:11px;color:var(--muted)}.toggle input{width:auto}.theme{font-size:14px}.empty{padding:30px;text-align:center;color:var(--muted);font-size:12px;border:1px dashed var(--border);border-radius:12px}
+@media(max-width:1100px){.content{padding:0 20px 30px}.stats{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:216px minmax(0,1fr)}}
+@media(max-width:780px){.layout{display:block}.side{display:none}.content{padding:0 15px 90px}.topbar{min-height:65px}.intro{align-items:start;flex-direction:column;margin-bottom:18px}.fields,.grid2,.grid3{grid-template-columns:1fr}.stat b{font-size:24px}.card{padding:17px;border-radius:16px}.mobile-bottom{position:fixed;bottom:0;left:0;right:0;z-index:25;display:grid;grid-template-columns:repeat(5,1fr);background:var(--panel);border-top:1px solid var(--border);padding:8px 5px calc(8px + env(safe-area-inset-bottom))}.mobile-bottom button{background:none;border:0;color:var(--muted);font-size:9px;font-weight:800;padding:8px 0}.mobile-bottom button.active{color:var(--gold)}.mobile-bottom b{font-size:17px;display:block;margin-bottom:3px}.tools-mobile{max-width:100%}.topbar .btn{padding:9px;font-size:10px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="gate" id="authGate"><section class="login"><img src="/shahid-shah-profile.webp" alt=""><div class="upper">S M SHAHID SHAH</div><h1>AI Content Studio</h1><p class="note">Private editorial workspace. Sign in with your existing S M Shahid Shah account. Studio access is assigned by an administrator.</p><form id="loginForm"><div><label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div><div><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required minlength="6"></div><button class="btn gold" type="submit">Sign In Securely →</button></form><div id="loginStatus" class="status" aria-live="polite"></div><div class="actions"><a class="btn ghost" href="/">← Website</a><a class="btn ghost" href="/market-intelligence/">Market Intelligence</a></div></section></div>
+<div class="layout hidden" id="workspace">
+<aside class="side"><a class="brand" href="/"><img src="/shahid-shah-profile.webp" alt=""><div><strong>S M SHAHID SHAH</strong><small>CONTENT STUDIO</small></div></a>
+<nav class="menu" aria-label="Studio navigation">
+<button data-page="dashboard" class="active"><span>◈</span> Dashboard</button><button data-page="create"><span>✦</span> Create Video</button><button data-page="projects"><span>▣</span> Saved Projects</button><button data-page="planner"><span>▦</span> Content Planner</button><button data-page="record"><span>◉</span> Recording Studio</button><button data-page="access" class="adminOnly hidden"><span>♙</span> Access Control</button><button data-page="sources" class="adminOnly hidden"><span>◌</span> News Sources</button>
+</nav><div class="side-bottom"><div id="sideName" class="small">Signed in</div><p id="sideRole"></p><div class="actions"><button id="logout" class="btn small">Sign out</button><a class="btn small" href="/market-intelligence/">Market News ↗</a></div></div></aside>
+<div class="content"><header class="topbar"><div><b>✦ AI CONTENT STUDIO</b><p>Produce, review and publish responsibly</p></div><div class="user"><button class="btn theme" id="theme" title="Change theme">◐</button><span class="badge" id="userRole">PRIVATE</span><div class="dot" id="avatar">S</div></div></header>
+<div id="globalStatus" class="status" aria-live="polite"></div>
+<section id="page-dashboard" class="page active"><div class="intro"><div><div class="upper">YOUR WORKSPACE</div><h1>Good to have you here.</h1><p>Create educational scripts from market news or your own topics.</p></div><div class="actions"><button class="btn gold" data-page="create">+ Create Video</button><a href="/market-intelligence/" class="btn">Global Markets ↗</a></div></div>
+<div class="stats"><article class="stat"><span>MY PROJECTS</span><b id="countProjects">0</b></article><article class="stat"><span>DRAFTS</span><b id="countDrafts">0</b></article><article class="stat"><span>IN REVIEW</span><b id="countReview">0</b></article><article class="stat"><span>APPROVED</span><b id="countApproved">0</b></article></div>
+<div class="grid2"><section class="card"><div class="row"><h2>Recent projects</h2><button class="btn small" data-page="projects">View all</button></div><div id="recentProjects" class="list"></div></section><section class="card"><div class="row"><h2>Market watch</h2><a class="btn small" href="/market-intelligence/">Open News ↗</a></div><p class="note">Latest source-linked headlines for content ideas.</p><div id="dashboardNews" class="list"></div></section></div></section>
+<section id="page-create" class="page"><div class="intro"><div><div class="upper">CREATOR WORKSPACE</div><h1>Write your next story.</h1><p>Start from original news or an educational topic. Always review claims before publishing.</p></div><div class="actions"><button id="newProject" class="btn">New Script</button><button id="saveProject" class="btn gold">Save Project</button></div></div>
+<div class="grid2"><section class="card"><h2>1. Choose your subject</h2><p class="note">News stories retain source attribution. You can also write about any topic.</p><div class="stack"><div><label for="newsChoice">Market News</label><select id="newsChoice"><option value="">Custom topic (no news source)</option></select></div><div><label for="topic">Custom topic / additional direction</label><input id="topic" maxlength="350" placeholder="e.g. Why does Gold move after CPI?"></div></div><hr class="divider"><h2>2. Set the video style</h2><div class="fields"><div><label for="language">Language</label><select id="language"><option>Roman Urdu + English</option><option>Urdu</option><option>English</option></select></div><div><label for="duration">Duration</label><select id="duration"><option>60 seconds</option><option>30 seconds</option><option>3 minutes</option><option>8 minutes</option></select></div><div><label for="platform">Platform</label><select id="platform"><option>YouTube Shorts</option><option>Facebook</option><option>Instagram</option><option>YouTube Long</option><option>WhatsApp</option><option>Website</option></select></div><div><label for="tone">Tone</label><select id="tone"><option>Professional</option><option>Educational</option><option>Engaging</option><option>Breaking News</option><option>Simple</option><option>Detailed</option></select></div></div><div class="actions" style="margin-top:17px"><button id="generate" class="btn gold">✦ Generate AI Script</button><button id="rewrite" class="btn">Rewrite Draft</button><button id="seo" class="btn">SEO Pack</button></div><div id="aiStatus" class="status" aria-live="polite"></div><p class="note">Generated drafts are AI-assisted and unverified. Only source-linked statements may be presented as reported facts.</p></section>
+<section class="card"><div class="row"><div><div class="upper">EDITORIAL DESK</div><h2>3. Edit your script</h2></div><span class="badge" id="projectState">UNSAVED</span></div><div class="stack"><div><label for="projectTitle">Project Title</label><input id="projectTitle" maxlength="200" placeholder="Your video title"></div><div class="editor" id="scriptFields"></div><div><label for="factCheck">Fact-check checklist (one per line)</label><textarea id="factCheck" rows="3" placeholder="Verify exact figures, dates and sources"></textarea></div><div class="rowwrap"><button class="btn small" id="copyScript">Copy</button><button class="btn small" id="downloadScript">Export TXT</button><button class="btn small" id="listen">▶ Listen</button><button class="btn small" id="stopSpeech">■ Stop</button><button class="btn small" id="teleprompter">Teleprompter</button><button class="btn small" id="submitReview">Submit Review</button><button class="btn small hidden" id="approve">✓ Approve</button></div><div class="note" id="wordCount">0 words · 0 min estimated</div><div id="editorStatus" class="status" aria-live="polite"></div></div></section></div>
+</section>
+<section id="page-projects" class="page"><div class="intro"><div><div class="upper">LIBRARY</div><h1>Saved Projects</h1><p>Drafts, submitted scripts and approved work.</p></div><button class="btn gold" data-page="create">+ Create Script</button></div><section class="card"><div class="rowwrap" style="margin-bottom:16px"><label for="filterStatus" style="align-self:center">Filter</label><select id="filterStatus" style="max-width:200px"><option value="">All statuses</option><option value="draft">Draft</option><option value="review">In review</option><option value="approved">Approved</option><option value="published">Marked published</option></select><button class="btn small" id="reloadProjects">↻ Reload</button></div><div id="projectList" class="list"></div></section></section>
+<section id="page-planner" class="page"><div class="intro"><div><div class="upper">PLANNING</div><h1>Content Planner</h1><p>Plan a publication date. Scheduling does not automatically publish to social platforms.</p></div></div><section class="card"><h2>Planned content</h2><div id="plannerList" class="list"></div><div id="scheduleAdmin" class="hidden"><hr class="divider"><h3>Create a schedule (Admin)</h3><form class="fields" id="scheduleForm" style="margin-top:15px"><div><label for="scheduleProject">Approved project</label><select id="scheduleProject"></select></div><div><label for="scheduleDate">Date & time</label><input id="scheduleDate" type="datetime-local" required></div><div><label for="schedulePlatform">Platform</label><select id="schedulePlatform"><option>YouTube</option><option>Facebook</option><option>Instagram</option><option>Website</option></select></div><div style="display:flex;align-items:end"><button class="btn gold" type="submit">Add to Planner</button></div></form></div></section></section>
+<section id="page-record" class="page"><div class="intro"><div><div class="upper">CREATOR TOOLS</div><h1>Recording Studio</h1><p>Record your voice with device permission and save it privately against a project.</p></div></div><div class="grid2"><section class="card"><h2>Audio recorder</h2><p class="note">Recording happens only after you grant microphone permission. Nothing is uploaded automatically.</p><div class="actions" style="margin:17px 0"><button id="startRecording" class="btn gold">● Start Recording</button><button id="stopRecording" class="btn" disabled>■ Stop</button><span id="recordTimer" class="badge">00:00</span></div><audio id="recordPreview" controls style="width:100%;max-width:100%"></audio><div class="actions" style="margin-top:17px"><button id="recordDownload" class="btn small">Download Recording</button><button id="recordCloud" class="btn small">Save Privately to Cloud</button></div><p class="note">Save a project in the Script Editor first before uploading a recording.</p><div id="recordStatus" class="status" aria-live="polite"></div></section><section class="card"><h2>Voice & Teleprompter</h2><p class="note">Listen using your device's voices. Browser voice availability varies by language.</p><label for="voiceRate">Playback speed</label><select id="voiceRate"><option value="0.8">0.8×</option><option selected value="1">1×</option><option value="1.2">1.2×</option><option value="1.5">1.5×</option></select><div class="actions" style="margin-top:16px"><button class="btn" id="recordListen">▶ Read Script</button><button class="btn" id="recordTele">Teleprompter</button></div></section></div></section>
+<section id="page-access" class="page"><div class="intro"><div><div class="upper">ADMINISTRATION</div><h1>Studio Access</h1><p>Grant or revoke access for registered website accounts. Email status is reported separately.</p></div></div><section class="card"><form id="accessForm" class="fields"><div><label for="accessEmail">Registered account email</label><input id="accessEmail" type="email" required placeholder="creator@example.com"></div><div><label for="accessRole">Access role</label><select id="accessRole"><option value="creator">Creator</option><option value="viewer">Viewer</option><option value="editor">Editor</option><option value="approver">Approver</option><option value="admin">Studio Admin</option></select></div><div class="field full actions"><button class="btn gold" name="accessAction" value="grant" type="submit">Grant Access & Email</button><button class="btn danger" name="accessAction" value="revoke" type="submit">Remove Access</button><button class="btn" name="accessAction" value="resend" type="submit">Resend Email</button></div></form><div id="accessStatus" class="status" aria-live="polite"></div><hr class="divider"><h2>Assigned users</h2><div class="list" id="accessList"></div></section></section>
+<section id="page-sources" class="page"><div class="intro"><div><div class="upper">SYSTEM HEALTH</div><h1>News Sources</h1><p>RSS ingestion status, failure counts and source controls.</p></div><button class="btn" id="refreshSources">↻ Refresh Sources</button></div><section class="card"><p class="note">Sources are fetched in the background. HOT is a headline-based relevance label, not verified market impact.</p><div id="sourceList" class="list"></div><div id="sourceStatus" class="status" aria-live="polite"></div></section></section>
+</div>
+<nav class="mobile-bottom" aria-label="Mobile Studio"><button data-page="dashboard" class="active"><b>⌂</b>Home</button><button data-page="create"><b>✦</b>Create</button><button data-page="projects"><b>▣</b>Projects</button><button data-page="planner"><b>▦</b>Planner</button><button data-page="record"><b>◉</b>Record</button></nav>
+</div>
+<div id="tele" class="tele hidden" role="dialog" aria-modal="true" aria-label="Teleprompter"><div class="telebar"><b>S M SHAHID SHAH · TELEPROMPTER</b><div class="actions"><button class="btn" id="teleListen">▶ Read</button><button class="btn" id="teleClose">Close ✕</button></div></div><div id="teleWords" class="words"></div></div>
+<script>
+"use strict";
+const DB_URL="https://qggtdwixwafcmorepkks.supabase.co",PUB="sb_publishable_HnYmHQbt42OfjmRk09OfoQ_fq5TPYpb";
+const sb=globalThis.supabase&&globalThis.supabase.createClient?globalThis.supabase.createClient(DB_URL,PUB):null;
+const $=id=>document.getElementById(id);
+const FIELDS=[["hook","Opening Hook"],["introduction","Introduction"],["explanation","Main Explanation"],["impact","Market Impact / Implications"],["key_takeaway","Key Takeaway"],["closing","Closing"],["cta","Call to Action"],["seo_title","SEO Title"],["description","SEO Caption / Description"],["hashtags","Hashtags (comma separated)"]];
+const state={user:null,session:null,role:"",admin:false,projects:[],projectId:null,projectStatus:"draft",ownerId:null,selectedNews:null,script:{},recorder:null,stream:null,chunks:[],blob:null,started:0,timer:null};
+function mk(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=String(txt);return e}
+function status(id,msg,kind){const x=$(id);x.textContent=msg;x.className="status"+(kind?" "+kind:"")}
+function say(msg,kind){status("globalStatus",msg,kind);if(kind==="error")console.error("Studio:",msg)}
+function ok(res){if(res.error)throw Error(res.error.message)}
+function setDisabled(ids,val){for(const id of ids)$(id).disabled=val}
+function checkedSession(){if(!state.session||!state.user)throw Error("Please sign in again");return state.session.access_token}
+function isCreator(){return ["admin","creator","editor","approver"].includes(state.role)}
+function isApprover(){return ["admin","approver"].includes(state.role)}
+function displayPage(page){
+ if(["access","sources"].includes(page)&&!state.admin)return;
+ document.querySelectorAll(".page").forEach(n=>n.classList.toggle("active",n.id==="page-"+page));
+ document.querySelectorAll("[data-page]").forEach(n=>n.classList.toggle("active",n.dataset.page===page));
+ window.scrollTo({top:0,behavior:"instant"});
+ if(page==="projects")loadProjects();
+ if(page==="planner")loadPlanner();
+ if(page==="sources")loadSources();
+ if(page==="access")loadAccessList();
+}
+document.querySelectorAll("[data-page]").forEach(x=>x.addEventListener("click",()=>displayPage(x.dataset.page)));
+$("theme").addEventListener("click",()=>{const t=document.documentElement.dataset.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=t;try{localStorage.setItem("smshahid-site-theme",t)}catch(e){}});
+function fillFields(script={}){
+ for(const [key] of FIELDS){const input=$("field-"+key);const value=script[key];input.value=key==="hashtags"?(Array.isArray(value)?value.join(", "):String(value||"")):String(value||"")}
+ $("factCheck").value=Array.isArray(script.fact_check)?script.fact_check.join("\n"):"";
+ $("projectTitle").value=script.title||"";
+ state.script=script;calcWords();
+}
+function currentScript(){
+ const s={title:$("projectTitle").value.trim()};
+ for(const [key] of FIELDS)s[key]=key==="hashtags"?$("field-"+key).value.split(",").map(x=>x.trim()).filter(Boolean):$("field-"+key).value.trim();
+ s.fact_check=$("factCheck").value.split("\n").map(x=>x.trim()).filter(Boolean);return s;
+}
+function rawScript(){
+ const s=currentScript(),labels={hook:"Hook",introduction:"Introduction",explanation:"Explanation",impact:"Market Impact",key_takeaway:"Key Takeaway",closing:"Closing",cta:"CTA",seo_title:"SEO Title",description:"Description",hashtags:"Hashtags"};
+ let result=(s.title||"Untitled")+"\n\n";
+ for(const [key] of FIELDS){result+=labels[key]+":\n"+(Array.isArray(s[key])?s[key].join(" "):s[key])+"\n\n"}
+ if(s.fact_check.length)result+="FACT CHECK BEFORE PUBLISHING:\n"+s.fact_check.map(x=>"- "+x).join("\n");
+ return result;
+}
+function calcWords(){const n=rawScript().trim().split(/\s+/).filter(Boolean).length;$("wordCount").textContent=n+" words · approximately "+Math.ceil(n/130)+" minute(s) spoken"}
+for(const [key,label] of FIELDS){const wrap=mk("div"),lab=mk("label","",label),area=mk("textarea",key==="explanation"||key==="description"?"long":"");area.id="field-"+key;area.placeholder="Edit "+label.toLowerCase()+"…";lab.htmlFor=area.id;area.addEventListener("input",calcWords);wrap.append(lab,area);$("scriptFields").append(wrap)}
+$("projectTitle").addEventListener("input",calcWords);$("factCheck").addEventListener("input",calcWords);
+async function bootstrap(){
+ if(!sb){status("loginStatus","Supabase library unavailable. Please check your network.","error");return}
+ const {data:{session}}=await sb.auth.getSession();if(session)await openSession(session);
+}
+async function openSession(session){
+ try{
+  const {data:{user},error}=await sb.auth.getUser(session.access_token);if(error||!user)throw Error("Session expired");
+  const [pro,access]=await Promise.all([
+    sb.from("profiles").select("full_name,is_admin").eq("id",user.id).maybeSingle(),
+    sb.from("content_access").select("enabled,role").eq("user_id",user.id).maybeSingle()
+  ]);
+  ok(pro);ok(access);
+  const isAdmin=pro.data&&pro.data.is_admin===true,role=isAdmin?"admin":access.data&&access.data.enabled?access.data.role:"";
+  if(!role)throw Error("Your account does not have Studio access. Ask the administrator to grant access.");
+  state.user=user;state.session=session;state.admin=isAdmin;state.role=role;state.ownerId=user.id;
+  $("authGate").classList.add("hidden");$("workspace").classList.remove("hidden");
+  $("sideName").textContent=pro.data?.full_name||user.email||"Creator";$("sideRole").textContent="Role: "+role;
+  $("userRole").textContent=role.toUpperCase();$("avatar").textContent=(pro.data?.full_name||user.email||"S").slice(0,1).toUpperCase();
+  document.querySelectorAll(".adminOnly").forEach(e=>e.classList.toggle("hidden",!isAdmin));
+  $("scheduleAdmin").classList.toggle("hidden",!isAdmin);
+  $("generate").disabled=!isCreator();$("rewrite").disabled=!isCreator();$("seo").disabled=!isCreator();$("saveProject").disabled=!isCreator();
+  await Promise.allSettled([loadNews(),loadProjects()]);displayPage(new URLSearchParams(location.search).has("news")?"create":"dashboard");
+ }catch(e){
+  $("workspace").classList.add("hidden");$("authGate").classList.remove("hidden");
+  status("loginStatus",e.message||"Could not authorize your account","error");
+ }
+}
+$("loginForm").addEventListener("submit",async e=>{
+ e.preventDefault();if(!sb)return;
+ status("loginStatus","Signing in…");const {data,error}=await sb.auth.signInWithPassword({email:$("loginEmail").value.trim(),password:$("loginPassword").value});
+ if(error)return status("loginStatus",error.message,"error");
+ $("loginPassword").value="";await openSession(data.session);
+});
+$("logout").addEventListener("click",async()=>{stopSpeech();if(state.stream)state.stream.getTracks().forEach(t=>t.stop());await sb.auth.signOut();location.href="/content-studio/"});
+async function loadNews(){
+ const {data,error}=await sb.from("news_articles").select("id,title,publisher,published_at,category,original_url").eq("is_visible",true).order("published_at",{ascending:false}).limit(40);if(error){say("News suggestions unavailable: "+error.message,"error");return}
+ $("newsChoice").replaceChildren(new Option("Custom topic (no news source)",""));
+ $("dashboardNews").replaceChildren();
+ for(const item of data||[]){const opt=new Option(item.title.slice(0,90),item.id);$("newsChoice").add(opt)}
+ for(const item of (data||[]).slice(0,5)){
+  const box=mk("div","item"),h=mk("strong","",item.title),m=mk("p","",item.publisher||"Publisher");
+  const btn=mk("button","btn small","Create Script ↗");btn.addEventListener("click",()=>{$("newsChoice").value=item.id;displayPage("create")});box.append(h,m,btn);$("dashboardNews").append(box)
+ }
+ if(!data?.length)$("dashboardNews").replaceChildren(mk("div","empty","News ingesting — check Market Intelligence later."));
+ const id=new URLSearchParams(location.search).get("news");if(id&&Array.from($("newsChoice").options).some(x=>x.value===id))$("newsChoice").value=id;
+}
+function paintProject(item){
+ const box=mk("div","item"),title=mk("strong","",item.title||"Untitled"),summary=mk("p","",String(item.status).toUpperCase()+" · "+new Date(item.updated_at).toLocaleString());
+ const actions=mk("div","rowwrap"),open=mk("button","btn small","Open in Editor");
+ open.addEventListener("click",()=>editProject(item));actions.append(open);
+ if(item.status==="review"&&isApprover()) {const approve=mk("button","btn small","Approve");approve.addEventListener("click",()=>approveProject(item.id));actions.append(approve)}
+ box.append(title,summary,actions);return box;
+}
+async function loadProjects(){
+ if(!state.user)return;
+ const {data,error}=await sb.from("content_projects").select("id,owner_id,title,script,status,is_team_shared,language,platform,news_article_id,created_at,updated_at").order("updated_at",{ascending:false}).limit(100);
+ if(error){say("Projects unavailable: "+error.message,"error");return}
+ state.projects=data||[];
+ const owned=state.projects.filter(x=>x.owner_id===state.user.id);
+ $("countProjects").textContent=owned.length;$("countDrafts").textContent=owned.filter(x=>x.status==="draft").length;
+ $("countReview").textContent=state.projects.filter(x=>x.status==="review").length;$("countApproved").textContent=state.projects.filter(x=>x.status==="approved").length;
+ $("recentProjects").replaceChildren();for(const item of state.projects.slice(0,4))$("recentProjects").append(paintProject(item));
+ if(!state.projects.length)$("recentProjects").append(mk("div","empty","No scripts yet. Start with Create Video."));
+ drawProjectList();
+}
+function drawProjectList(){
+ const filter=$("filterStatus").value;const rows=state.projects.filter(x=>!filter||x.status===filter);
+ $("projectList").replaceChildren();for(const p of rows)$("projectList").append(paintProject(p));
+ if(!rows.length)$("projectList").append(mk("div","empty","No projects match this filter."));
+}
+$("filterStatus").addEventListener("change",drawProjectList);$("reloadProjects").addEventListener("click",loadProjects);
+function editProject(row){
+ state.projectId=row.id;state.projectStatus=row.status;state.ownerId=row.owner_id;
+ fillFields(row.script||{});$("projectTitle").value=row.title||row.script?.title||"";
+ $("language").value=row.language||"Roman Urdu + English";$("platform").value=row.platform||"YouTube Shorts";
+ $("newsChoice").value=row.news_article_id||"";
+ $("projectState").textContent=row.status.toUpperCase();
+ $("approve").classList.toggle("hidden",!(row.status==="review"&&isApprover()));
+ $("saveProject").disabled=!isCreator()||row.status==="approved"||row.status==="published"||row.owner_id!==state.user.id;
+ $("submitReview").disabled=row.owner_id!==state.user.id||!["draft","review"].includes(row.status);
+ displayPage("create");
+}
+function resetProject(){
+ state.projectId=null;state.projectStatus="draft";state.ownerId=state.user.id;
+ fillFields({});$("topic").value="";$("newsChoice").value="";$("projectState").textContent="UNSAVED";$("saveProject").disabled=!isCreator();
+ $("submitReview").disabled=!isCreator();$("approve").classList.add("hidden");status("editorStatus","");
+}
+$("newProject").addEventListener("click",resetProject);
+async function callEdge(slug,data){
+ const token=checkedSession();
+ const res=await fetch(DB_URL+"/functions/v1/"+slug,{method:"POST",headers:{"Content-Type":"application/json","apikey":PUB,"authorization":"Bearer "+token},body:JSON.stringify(data)});
+ const out=await res.json().catch(()=>({error:"Invalid server response"}));
+ if(!res.ok||out.success===false)throw Error(out.message||out.error||"Request failed");
+ return out;
+}
+async function generate(action){
+ if(!isCreator())return status("aiStatus","Creator access required","error");
+ if(!$("topic").value.trim()&&!$("newsChoice").value)return status("aiStatus","Choose a news item or enter a topic","error");
+ setDisabled(["generate","rewrite","seo"],true);status("aiStatus",action==="seo"?"Generating SEO pack…":"Creating your script…");
+ try{
+  const out=await callEdge("shahid-content-ai",{action,news_article_id:$("newsChoice").value||null,topic:$("topic").value,language:$("language").value,duration:$("duration").value,platform:$("platform").value,tone:$("tone").value,existing:action==="generate"?null:currentScript()});
+  fillFields(out.script);$("projectState").textContent=state.projectId?state.projectStatus.toUpperCase():"UNSAVED";
+  status("aiStatus","Generated with "+(out.provider||"AI")+". Verify every factual claim before approval.","ok");
+ }catch(e){status("aiStatus",e.message||"AI service unavailable","error")}
+ finally{setDisabled(["generate","rewrite","seo"],false)}
+}
+$("generate").addEventListener("click",()=>generate("generate"));$("rewrite").addEventListener("click",()=>generate("rewrite"));$("seo").addEventListener("click",()=>generate("seo"));
+async function save(){
+ if(!isCreator())throw Error("Creator access required");
+ if(state.projectId&&(state.ownerId!==state.user.id||["approved","published"].includes(state.projectStatus)))throw Error("This project is read-only");
+ const script=currentScript(),title=($("projectTitle").value.trim()||$("topic").value.trim()||"Untitled script").slice(0,200);
+ const payload={title,script,language:$("language").value,platform:$("platform").value,news_article_id:$("newsChoice").value||null,updated_at:new Date().toISOString()};
+ let saved;
+ if(state.projectId){const r=await sb.from("content_projects").update(payload).eq("id",state.projectId).select("*").single();ok(r);saved=r.data;}
+ else{const r=await sb.from("content_projects").insert({...payload,owner_id:state.user.id,status:"draft"}).select("*").single();ok(r);saved=r.data;}
+ state.projectId=saved.id;state.ownerId=saved.owner_id;state.projectStatus=saved.status;
+ $("projectState").textContent=saved.status.toUpperCase();
+ const v=await sb.from("content_project_versions").insert({project_id:saved.id,edited_by:state.user.id,script});if(v.error)console.warn("Script version save failed",v.error.message);
+ await loadProjects();return saved;
+}
+$("saveProject").addEventListener("click",async()=>{status("editorStatus","Saving securely…");try{await save();status("editorStatus","Saved to your private projects.","ok")}catch(e){status("editorStatus",e.message,"error")}});
+$("submitReview").addEventListener("click",async()=>{
+ try{
+  if(!state.projectId)await save();
+  const r=await sb.from("content_projects").update({status:"review",is_team_shared:true}).eq("id",state.projectId).select("id,status").single();ok(r);
+  state.projectStatus="review";$("projectState").textContent="REVIEW";status("editorStatus","Submitted for editorial review.","ok");await loadProjects();
+ }catch(e){status("editorStatus",e.message,"error")}
+});
+async function approveProject(id){
+ if(!isApprover())return;
+ try{const r=await sb.from("content_projects").update({status:"approved"}).eq("id",id).select("id,status").single();ok(r);
+  if(state.projectId===id){state.projectStatus="approved";$("projectState").textContent="APPROVED";$("saveProject").disabled=true;$("approve").classList.add("hidden")}
+  say("Project approved. It has NOT been automatically published.","ok");await loadProjects();
+ }catch(e){say("Approval failed: "+e.message,"error")}
+}
+$("approve").addEventListener("click",()=>approveProject(state.projectId));
+async function loadPlanner(){
+ const r=await sb.from("content_schedules").select("id,project_id,scheduled_at,platform,status").order("scheduled_at",{ascending:false}).limit(60);
+ $("plannerList").replaceChildren();
+ if(r.error){$("plannerList").append(mk("div","empty",r.error.message));return}
+ for(const x of r.data||[]){
+  const project=state.projects.find(p=>p.id===x.project_id);
+  const box=mk("div","item");box.append(mk("strong","",project?.title||"Project"),mk("p","",x.platform+" · "+new Date(x.scheduled_at).toLocaleString()+" · "+x.status));$("plannerList").append(box);
+ }
+ if(!r.data?.length)$("plannerList").append(mk("div","empty","No planned content yet."));
+ $("scheduleProject").replaceChildren();
+ for(const p of state.projects.filter(x=>x.status==="approved"))$("scheduleProject").add(new Option(p.title,p.id));
+}
+$("scheduleForm").addEventListener("submit",async e=>{
+ e.preventDefault();if(!state.admin)return;
+ const date=new Date($("scheduleDate").value);if(!Number.isFinite(date.getTime()))return say("Choose a valid date","error");
+ const r=await sb.from("content_schedules").insert({project_id:$("scheduleProject").value,scheduled_by:state.user.id,scheduled_at:date.toISOString(),platform:$("schedulePlatform").value,status:"planned"});
+ if(r.error)return say(r.error.message,"error");say("Content scheduled for planning (not automatic publishing).","ok");loadPlanner();
+});
+async function loadAccessList(){
+ if(!state.admin)return;
+ const [people,access]=await Promise.all([sb.from("profiles").select("id,email,full_name").limit(500),sb.from("content_access").select("user_id,role,enabled,granted_at").limit(500)]);
+ $("accessList").replaceChildren();if(people.error||access.error)return status("accessStatus","Could not load user directory","error");
+ const map=new Map((people.data||[]).map(x=>[x.id,x]));
+ for(const a of access.data||[]){
+  const p=map.get(a.user_id),e=mk("div","item");
+  e.append(mk("strong","",(p?.full_name||"User")+" · "+(p?.email||a.user_id)),mk("p","",a.role.toUpperCase()+" · "+(a.enabled?"ACTIVE":"REVOKED")));
+  if(p?.email){const b=mk("button","btn small","Manage");b.addEventListener("click",()=>{$("accessEmail").value=p.email;$("accessRole").value=a.role});e.append(b)}
+  $("accessList").append(e);
+ }
+ if(!access.data?.length)$("accessList").append(mk("div","empty","No assigned Studio users. Existing website admins retain admin access."));
+}
+$("accessForm").addEventListener("submit",async e=>{
+ e.preventDefault();const action=e.submitter?.value||"grant",email=$("accessEmail").value.trim(),role=$("accessRole").value;
+ if(!state.admin)return;status("accessStatus","Updating permissions…");
+ try{
+  const x=await callEdge("shahid-studio-access",{action,email,role});
+  status("accessStatus","Access "+(x.enabled?"enabled":"revoked")+". Email: "+(x.email_status||"not confirmed")+(x.email_error?" ("+x.email_error+")":""),x.email_status==="failed"?"error":"ok");
+  await loadAccessList();
+ }catch(error){status("accessStatus",error.message,"error")}
+});
+async function loadSources(){
+ if(!state.admin)return;
+ const {data,error}=await sb.from("news_sources").select("id,name,feed_url,category,enabled,last_success_at,last_error,consecutive_failures,polling_minutes").order("name").limit(100);
+ $("sourceList").replaceChildren();if(error)return status("sourceStatus",error.message,"error");
+ for(const x of data||[]){
+  const box=mk("div","item"),row=mk("div","row"),text=mk("div");
+  text.append(mk("strong","",x.name+" · "+x.category),mk("p","",(x.last_success_at?"Last success: "+new Date(x.last_success_at).toLocaleString():"Never fetched")+(x.last_error?" · Error: "+x.last_error:"")+" · Failures "+x.consecutive_failures));
+  const b=mk("button","btn small",x.enabled?"Disable":"Enable");
+  b.addEventListener("click",async()=>{b.disabled=true;const r=await sb.from("news_sources").update({enabled:!x.enabled}).eq("id",x.id);status("sourceStatus",r.error?r.error.message:"Source updated",r.error?"error":"ok");await loadSources()});
+  row.append(text,b);box.append(row);$("sourceList").append(box);
+ }
+ if(!data?.length)$("sourceList").append(mk("div","empty","No news sources configured."));
+}
+$("refreshSources").addEventListener("click",loadSources);
+async function copyText(t){try{await navigator.clipboard.writeText(t);return true}catch(e){return false}}
+$("copyScript").addEventListener("click",async()=>status("editorStatus",await copyText(rawScript())?"Script copied.":"Clipboard blocked; use TXT export.","ok"));
+function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000)}
+$("downloadScript").addEventListener("click",()=>downloadBlob(new Blob([rawScript()],{type:"text/plain;charset=utf-8"}),"shahid-script.txt"));
+function stopSpeech(){if("speechSynthesis" in window)window.speechSynthesis.cancel()}
+function speak(){
+ if(!("speechSynthesis" in window))return status("editorStatus","Speech synthesis is not supported in this browser.","error");
+ stopSpeech();const u=new SpeechSynthesisUtterance(rawScript());u.rate=Number($("voiceRate").value)||1;u.lang=$("language").value==="Urdu"?"ur-PK":$ ("language").value==="English"?"en-US":"en-US";speechSynthesis.speak(u);
+}
+$("listen").addEventListener("click",speak);$("stopSpeech").addEventListener("click",stopSpeech);$("recordListen").addEventListener("click",speak);
+function openTele(){$("teleWords").textContent=rawScript();$("tele").classList.remove("hidden");}
+$("teleprompter").addEventListener("click",openTele);$("recordTele").addEventListener("click",openTele);
+$("teleClose").addEventListener("click",()=>{$("tele").classList.add("hidden");stopSpeech()});$("teleListen").addEventListener("click",speak);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("tele").classList.add("hidden");stopSpeech()}});
+$("startRecording").addEventListener("click",async()=>{
+ try{
+  if(!navigator.mediaDevices?.getUserMedia||!("MediaRecorder" in window))throw Error("Microphone recording not supported");
+  state.stream=await navigator.mediaDevices.getUserMedia({audio:true});state.chunks=[];state.blob=null;
+  state.recorder=new MediaRecorder(state.stream);
+  state.recorder.ondataavailable=e=>{if(e.data.size)state.chunks.push(e.data)};
+  state.recorder.onstop=()=>{state.blob=new Blob(state.chunks,{type:(state.recorder.mimeType||"audio/webm").split(";")[0]});$("recordPreview").src=URL.createObjectURL(state.blob);state.stream?.getTracks().forEach(t=>t.stop());clearInterval(state.timer);$("stopRecording").disabled=true;$("startRecording").disabled=false;status("recordStatus","Recording ready. Download or save to private cloud.","ok")};
+  state.recorder.start(1000);state.started=Date.now();$("startRecording").disabled=true;$("stopRecording").disabled=false;
+  state.timer=setInterval(()=>{const n=Math.floor((Date.now()-state.started)/1000);$("recordTimer").textContent=String(Math.floor(n/60)).padStart(2,"0")+":"+String(n%60).padStart(2,"0")},1000);
+  status("recordStatus","Recording in progress — microphone enabled.");
+ }catch(e){status("recordStatus",e.message,"error")}
+});
+$("stopRecording").addEventListener("click",()=>{if(state.recorder?.state==="recording")state.recorder.stop()});
+$("recordDownload").addEventListener("click",()=>{if(state.blob)downloadBlob(state.blob,"shahid-studio-recording.webm");else status("recordStatus","Record audio first.","error")});
+$("recordCloud").addEventListener("click",async()=>{
+ if(!state.blob)return status("recordStatus","Record audio first.","error");
+ if(!state.projectId||state.ownerId!==state.user.id)return status("recordStatus","Save a project you own before uploading audio.","error");
+ if(state.blob.size>52428800)return status("recordStatus","Recording exceeds 50 MB limit.","error");
+ try{
+  status("recordStatus","Uploading to private storage…");
+  const mediaType=state.blob.type||"audio/webm",extension=mediaType.includes("mp4")?"mp4":"webm";
+  const random=globalThis.crypto?.randomUUID?crypto.randomUUID():String(Date.now());
+  const path=state.user.id+"/"+state.projectId+"/"+random+"."+extension;
+  const uploaded=await sb.storage.from("shahid-studio-private").upload(path,state.blob,{contentType:mediaType,upsert:false});ok(uploaded);
+  const row=await sb.from("content_recordings").insert({project_id:state.projectId,owner_id:state.user.id,storage_path:path,mime_type:mediaType,size_bytes:state.blob.size});ok(row);
+  status("recordStatus","Saved privately to your project.","ok");
+ }catch(e){status("recordStatus",e.message,"error")}
+});
+bootstrap();
+</script></body></html>
