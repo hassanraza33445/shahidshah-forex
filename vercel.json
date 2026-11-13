@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/market-intelligence",
+      "destination": "/market-intelligence/index.html"
+    },
+    {
+      "source": "/content-studio",
+      "destination": "/content-studio/index.html"
+    },
+    {
       "source": "/ai-tools",
       "destination": "/learning-hub.html"
     },
