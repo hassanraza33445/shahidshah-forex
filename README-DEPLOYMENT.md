@@ -6,7 +6,7 @@ This package temporarily replaces the current Forex Hub landing page while keepi
 
 - `index.html` — public premium webinar landing page
 - `webinar-admin.html` — secure Supabase admin dashboard
-- `supabase-webinar-setup.sql` — complete database tables, functions, RLS and seed data
+- `supabase/sql/supabase-webinar-setup.sql` — complete database tables, functions, RLS and seed data
 
 ## Existing Supabase project
 
@@ -35,7 +35,7 @@ The new `index.html` removes the old service worker registration and clears the 
 2. Open the existing S M Shahid Shah project.
 3. Go to **SQL Editor**.
 4. Create a new query.
-5. Paste the complete content of `supabase-webinar-setup.sql`.
+5. Paste the complete content of `supabase/sql/supabase-webinar-setup.sql`.
 6. Click **Run**.
 
 The SQL creates:
@@ -137,7 +137,7 @@ The Zoom link is not included in the public configuration response. It is return
 
 ## Existing Review Result Upgrade
 
-After uploading the latest `index.html`, run `supabase-review-result-upgrade.sql` once in **Supabase Dashboard → SQL Editor**. This enables an already-submitted participant to enter the same registered email and reopen their saved score/result instead of seeing an “already submitted” error.
+After uploading the latest `index.html`, run `supabase/sql/supabase-review-result-upgrade.sql` once in **Supabase Dashboard → SQL Editor**. This enables an already-submitted participant to enter the same registered email and reopen their saved score/result instead of seeing an “already submitted” error.
 
 The latest page also includes stronger premium motion: scroll reveals, hero shimmer, floating event card, animated counters, selected-answer feedback, social icon motion, and result chart animation. Layout dimensions are unchanged.
 
@@ -166,7 +166,7 @@ The latest page also includes stronger premium motion: scroll reveals, hero shim
 
 The public `index.html` now records anonymous page visits in Supabase. The admin Dashboard shows total visits, approximate unique visitors, today’s visits, last 7 days, device types and top traffic sources.
 
-For an existing database, run `supabase-visitor-analytics-upgrade.sql` once in Supabase SQL Editor. A new installation can use the updated `supabase-webinar-setup.sql`, which already includes the visitor analytics setup.
+For an existing database, run `supabase/sql/supabase-visitor-analytics-upgrade.sql` once in Supabase SQL Editor. A new installation can use the updated `supabase/sql/supabase-webinar-setup.sql`, which already includes the visitor analytics setup.
 
 Unique visitors are approximate and use a browser-generated ID stored in localStorage. Clearing browser storage or visiting from another device creates a new visitor ID. No email, WhatsApp number, precise location or IP address is recorded by this visitor analytics feature.
 
@@ -181,12 +181,12 @@ The admin panel now includes a separate **Visitor Analytics** tab with:
 - Live updates through Supabase Realtime
 - Automatic 30-second refresh fallback if Realtime is unavailable
 
-For an existing installation, run `supabase-visitor-realtime-upgrade.sql` once in Supabase SQL Editor, then upload the updated `webinar-admin.html`.
+For an existing installation, run `supabase/sql/supabase-visitor-realtime-upgrade.sql` once in Supabase SQL Editor, then upload the updated `webinar-admin.html`.
 
 
 ## Detailed Engagement Analytics Upgrade
 
-Run `supabase-engagement-analytics-upgrade.sql` once in Supabase SQL Editor, then upload the latest `index.html` and `webinar-admin.html`.
+Run `supabase/sql/supabase-engagement-analytics-upgrade.sql` once in Supabase SQL Editor, then upload the latest `index.html` and `webinar-admin.html`.
 
 The new **Engagement Details** admin tab records in real time:
 
@@ -202,7 +202,7 @@ Visitors remain anonymous until they reserve a seat or verify their registered e
 
 
 ## Social Media Prompt Builder (latest)
-1. Run `supabase-prompt-builder-upgrade.sql` once in **Supabase Dashboard → SQL Editor**.
+1. Run `supabase/sql/supabase-prompt-builder-upgrade.sql` once in **Supabase Dashboard → SQL Editor**.
 2. Upload the updated `learning-hub.html`, `webinar-admin.html`, and complete `assets` folder.
 3. Open the existing `webinar-admin.html` and select **Learning Hub** to manage all six prompt builders.
 4. Keep `{{DETAILS}}` inside every master prompt; this is where the visitor's answers are inserted.
@@ -213,12 +213,12 @@ This additive module does not modify Zoom, SMTP email, webinar registration, rev
 
 ## Downloads and Footer Update
 
-1. Run the latest `supabase-prompt-builder-upgrade.sql` in **Supabase Dashboard → SQL Editor**. It safely adds the `download_resources` table and does not replace the existing webinar tables.
+1. Run the latest `supabase/sql/supabase-prompt-builder-upgrade.sql` in **Supabase Dashboard → SQL Editor**. It safely adds the `download_resources` table and does not replace the existing webinar tables.
 2. Upload `learning-hub.html`, `webinar-admin.html`, `index.html`, and the complete `assets` folder.
 3. In the existing admin panel, open **Learning Hub → AI Downloads**.
 4. Add up to three cards. For each card the admin can set the title, short caption, upload a thumbnail image, upload an XLSX/XLS/CSV or PDF file, choose display order, and set published status. No external file link is required.
 
-The same SQL migration creates the public `download-assets` Storage bucket and admin-only upload policies. Run the latest migration before testing file uploads. If the original migration was already installed, run only `enable-pdf-downloads.sql` once to allow PDF uploads.
+The same SQL migration creates the public `download-assets` Storage bucket and admin-only upload policies. Run the latest migration before testing file uploads. If the original migration was already installed, run only `supabase/sql/enable-pdf-downloads.sql` once to allow PDF uploads.
 
 Visitor Analytics includes Last Hour, Today, Last 7 Days, and All Recent traffic filters.
 
@@ -229,7 +229,7 @@ All prompt-builder example text is trading/forex focused. The generated instruct
 
 ## AI Tools Free Access Gate (v5)
 
-Run `ai-tools-free-access.sql` once in Supabase SQL Editor. This creates the AI access lead table and the two secure RPC functions used by `learning-hub.html`.
+Run `supabase/sql/ai-tools-free-access.sql` once in Supabase SQL Editor. This creates the AI access lead table and the two secure RPC functions used by `learning-hub.html`.
 
 New behavior:
 - Webinar registrants receive AI tools access automatically in the same browser.
