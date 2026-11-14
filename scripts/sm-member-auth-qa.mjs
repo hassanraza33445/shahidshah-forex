@@ -138,6 +138,12 @@ try{
   const errors=[];p.on("pageerror",e=>errors.push(e.message));
   await p.goto(HOST+"/app/",{waitUntil:"domcontentloaded"});
   await p.locator("#view-home.active").waitFor({timeout:11000});
+  await p.locator("#dashboardWatchlist .watchlist-row").first().waitFor({timeout:11000});
+  assert.equal(await p.locator(".dashboard-home .feature-hero").isVisible(),true,"Luxury dashboard hero renders on mobile");
+  assert.equal(await p.locator(".dashboard-home .market-strip").isVisible(),true,"Market snapshot is accessible on mobile");
+  assert.equal(await p.locator("#homeHeadlines .news-visual").count(),1,"Featured news includes its own premium visual");
+  assert.equal(await p.locator(".dashboard-events .dashboard-event").count(),1,"Source-backed economic event appears in mobile dashboard");
+  assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+2),true,"Premium dashboard has no horizontal overflow at 390px");
   await p.locator('.mobile-dock button[data-section="studio"]').click();
   await p.waitForFunction(()=>document.querySelector("#studioAccessState")?.hidden===true,{},{timeout:11000});
   const editor=p.frameLocator("#unifiedStudioFrame");
