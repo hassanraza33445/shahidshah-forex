@@ -358,11 +358,52 @@
  <div><span>03</span><strong>Next steps</strong><small>Contacted if the application is selected</small></div>
  </div>
  <section class="application-box vip-application-box"><div class="application-heading"><div><h2>Apply for Mentorship</h2><p>Share your goals so the team can review your request.</p></div><span>Step 1 of 1</span></div><p>Applications are reviewed individually. Submitting is not acceptance or a payment commitment.</p>
- <form id="mentorshipForm"><div class="two-col"><label>Full Name<input type="text" id="mentorName" autocomplete="name" minlength="2" maxlength="100" required placeholder="Your full name"></label>
+ <form id="mentorshipForm"><div id="mentorPersonalDetails" class="sm-mentor-personal"><div class="two-col"><label>Full Name<input type="text" id="mentorName" autocomplete="name" minlength="2" maxlength="100" required placeholder="Your full name"></label>
  <label>WhatsApp / Contact Number<input type="tel" id="mentorPhone" autocomplete="tel" minlength="6" maxlength="32" required placeholder="+60 ..."></label></div>
  <label>Primary Interest<select id="mentorInterest"><option>Forex Trading</option><option>Brokerage Business</option><option>Market Intelligence</option><option>Business Development</option><option>Other</option></select></label>
  <label>Tell us about your goals<textarea id="mentorGoals" required minlength="12" maxlength="1500" rows="4" placeholder="What would you like to learn or accomplish?"></textarea></label>
- <button id="mentorSubmit" class="gold-action full-btn" type="submit">Submit Mentorship Application →</button><p id="mentorMessage" class="form-status" role="status"></p></form>
+ </div>
+ <button id="mentorNext" class="sm-mentor-next" type="button" style="display:none">Continue to USDT Payment <span aria-hidden="true">→</span></button>
+ <section id="mentorPaymentPanel" class="sm-mentor-payment-panel" hidden aria-labelledby="mentorPaymentTitle">
+  <div class="sm-mentor-payment-head">
+   <span class="sm-mentor-payment-step">STEP 2 OF 2 · SECURE PAYMENT</span>
+   <h3 id="mentorPaymentTitle">Pay with USDT <span aria-hidden="true">◈</span></h3>
+   <p>Send only the exact USDT amount on the displayed blockchain network, then submit the transaction details for manual verification.</p>
+  </div>
+  <div id="mentorPaymentUnavailable" class="sm-mentor-payment-warning" role="status">Payment details are not configured yet. Please contact the mentorship team before sending any funds.</div>
+  <div id="mentorPaymentDetails" hidden>
+   <div class="sm-mentor-payment-stats">
+    <div><small>MENTORSHIP FEE</small><strong id="mentorUSDTAmount">—</strong></div>
+    <div><small>USDT NETWORK</small><strong id="mentorUSDTNetwork">—</strong></div>
+   </div>
+   <label class="sm-mentor-wallet-label" for="mentorUSDTAddress">USDT Wallet Address</label>
+   <div class="sm-mentor-wallet-box">
+    <output id="mentorUSDTAddress" class="sm-mentor-wallet-address">—</output>
+    <button type="button" id="mentorCopyUSDT" class="sm-mentor-wallet-copy">Copy <span aria-hidden="true">⧉</span></button>
+   </div>
+   <p class="sm-mentor-network-note">Important: Sending funds over the wrong network or to a different address may cause irreversible loss. Always verify the amount, network and address before transfer.</p>
+   <label for="mentorTxid">Transaction ID / Hash <span class="sm-required">REQUIRED</span>
+    <input id="mentorTxid" type="text" placeholder="Paste your USDT transfer transaction hash" minlength="16" maxlength="180" autocomplete="off" autocapitalize="none" spellcheck="false" disabled>
+   </label>
+   <label for="mentorProofFile">Payment Screenshot / Receipt <span class="sm-optional">OPTIONAL</span>
+    <input id="mentorProofFile" type="file" accept="image/png,image/jpeg,image/webp,application/pdf" disabled>
+   </label>
+   <small class="sm-mentor-proof-note">PNG, JPG, WEBP or PDF, up to 5 MB. Receipts are stored privately.</small>
+  </div>
+  <details id="mentorPaymentAdminConfig" class="sm-mentor-admin-config" hidden>
+   <summary>Admin: Configure USDT payment</summary>
+   <div class="sm-mentor-admin-fields">
+    <label>USDT Network<select id="mentorAdminUSDTNetwork"><option>TRC20</option><option>ERC20</option><option>BEP20</option></select></label>
+    <label>Mentorship Fee (USDT)<input id="mentorAdminUSDTAmount" type="number" min="0.01" step="0.01" placeholder="Enter real mentorship fee"></label>
+    <label>Official Wallet Address<input id="mentorAdminUSDTAddress" type="text" maxlength="128" placeholder="Enter official USDT receiving address" autocomplete="off" spellcheck="false"></label>
+    <button type="button" id="mentorAdminUSDTSave" class="sm-mentor-admin-save">Save & Activate Payment Details</button>
+    <p id="mentorAdminUSDTMessage" role="status"></p>
+   </div>
+  </details>
+  <button type="button" id="mentorPaymentBack" class="sm-mentor-payment-back">← Back to details</button>
+ </section>
+ <button id="mentorSubmit" class="gold-action full-btn sm-mentor-payment-submit" type="submit">Submit Payment for Verification →</button>
+ <p id="mentorMessage" class="form-status" role="status"></p></form>
  </section>
 </section>
 <section class="app-view" id="view-profile" aria-labelledby="profileTitle"><div class="view-heading vip-page-hero vip-profile-hero">
