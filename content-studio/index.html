@@ -82,6 +82,7 @@ html.sm-embedded #page-projects>.card{min-height:0}
 <link rel="stylesheet" href="/assets/sm-studio-creator-mobile-reference.css?v=20261114-creator-reference-1" media="screen and (max-width:720px)">
 <link rel="stylesheet" href="/assets/sm-ai-brain-loader-mobile-2026.css?v=20261114-brain-1" media="screen and (max-width:720px)">
 <script defer src="/assets/sm-studio-creator-mobile-reference.js?v=20261114-creator-reference-1"></script>
+<link rel="stylesheet" href="/assets/sm-studio-unified-script-2026.css?v=20261115-unified-1">
 </head>
 <body>
 <div class="gate" id="authGate"><section class="login"><img src="/shahid-shah-profile.webp" alt=""><div class="upper">S M SHAHID SHAH</div><h1>AI Content Studio</h1><p class="note">Free AI script workspace for all registered members. Sign in with your S M Shahid Shah account.</p><form id="loginForm"><div><label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div><div><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required minlength="6"></div><button class="btn gold" type="submit">Sign In Securely →</button></form><div id="loginStatus" class="status" aria-live="polite"></div><div class="actions"><a class="btn ghost" href="/">← Website</a><a class="btn ghost" href="/market-intelligence/">Market Intelligence</a></div></section>
@@ -193,10 +194,16 @@ html.sm-embedded #page-projects>.card{min-height:0}
    <div><h2 id="studioOutputHeading">Generated Script</h2><p>Review and edit before publishing.</p></div>
    <button id="rewrite" type="button" class="btn small">↻ Regenerate</button>
   </div>
-  <div class="studio-script-preview" aria-live="polite">
-   <div class="studio-preview-block"><b>✦ Hook</b><p id="studioPreviewHook" class="is-empty">Your opening hook will appear here.</p></div>
-   <div class="studio-preview-block"><b>▥ Main Script</b><p id="studioPreviewMain" class="is-empty">Your generated main script will appear here.</p></div>
-   <div class="studio-preview-block"><b>⚑ Closing &amp; CTA</b><p id="studioPreviewClosing" class="is-empty">Your closing message will appear here.</p></div>
+  <div class="studio-script-preview studio-script-sheet" aria-label="Complete generated script" aria-live="polite">
+   <section class="studio-script-part" aria-labelledby="studioHookLabel">
+    <h3 id="studioHookLabel">✦ Hook</h3><p id="studioPreviewHook" class="is-empty">Your opening hook will appear here.</p>
+   </section>
+   <section class="studio-script-part" aria-labelledby="studioMainLabel">
+    <h3 id="studioMainLabel">▥ Main Script</h3><p id="studioPreviewMain" class="is-empty">Your generated main script will appear here.</p>
+   </section>
+   <section class="studio-script-part" aria-labelledby="studioClosingLabel">
+    <h3 id="studioClosingLabel">⚑ Closing &amp; CTA</h3><p id="studioPreviewClosing" class="is-empty">Your closing message will appear here.</p>
+   </section>
   </div>
   <div class="studio-output-actions">
    <button id="copyScript" class="btn" type="button">▣ Copy All</button>
@@ -547,7 +554,8 @@ async function generate(action){
  try{
   const out=await callEdge("shahid-content-ai",{action,news_article_id:$("newsChoice").value||null,topic:$("topic").value,language:$("language").value,duration:$("duration").value,platform:$("platform").value,tone:$("tone").value,existing:action==="generate"?null:currentScript()});
   fillFields(out.script);$("projectState").textContent=state.projectId?state.projectStatus.toUpperCase():"UNSAVED";
-  status("aiStatus","Generated with "+(out.provider||"AI")+". Verify every factual claim before approval.","ok");
+  // Keep model/provider information internal; the existing fact-check note stays visible.
+  status("aiStatus","");
  }catch(e){status("aiStatus",e.message||"AI service unavailable","error")}
  finally{
   if(brainLoader)brainLoader.hidden=true;
