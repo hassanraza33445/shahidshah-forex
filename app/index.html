@@ -15,10 +15,11 @@
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="/assets/sm-dashboard-premium.js?v=20261114-four-products-1"></script>
 <script defer src="/assets/sm-news-reader.js?v=20261114-native-news-1"></script>
-<script defer src="/assets/sm-member-app.js?v=20261114-free-access-2"></script>
+<script defer src="/assets/sm-member-app.js?v=20261114-studio-builder-1"></script>
 <script defer src="/assets/sm-member-icons.js?v=20261114-four-products-1"></script><link rel="stylesheet" href="/assets/sm-dashboard-finishing-2026.css?v=20261114-3">
 <link rel="stylesheet" href="/assets/sm-four-products-2026.css?v=20261114-products-1">
 <link rel="stylesheet" href="/assets/sm-market-uniform-cards.css?v=20261114-1">
+<link rel="stylesheet" href="/assets/sm-studio-app-shell-2026.css?v=20261114-studio-1">
 </head>
 <body class="member-boot">
 <div id="bootScreen" class="boot-screen"><img class="boot-avatar" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><strong>Opening your workspace…</strong><small>Connecting securely to your account</small></div>
@@ -176,10 +177,10 @@
 <section class="app-view" id="view-studio" aria-labelledby="studioTitle">
  <div class="view-heading studio-premium-heading">
   <div class="studio-hero-copy">
-   <span class="eyebrow" id="studioEyebrow">S M SHAHID SHAH · FREE FOR ALL MEMBERS · CREATE · EDIT · PRODUCE</span>
-   <h1 id="studioTitle">AI <em>Studio.</em></h1>
-   <h2 id="studioHeroTagline">Create smarter. Publish better.</h2>
-   <p id="studioDescription">Write, refine and organize professional scripts and content in one connected workspace.</p>
+   <span class="eyebrow" id="studioEyebrow">S M SHAHID SHAH · FREE AI CREATOR WORKSPACE</span>
+   <h1 id="studioTitle">AI Studio <em>&amp; Scripts.</em></h1>
+   <h2 id="studioHeroTagline">Create professional video scripts.</h2>
+   <p id="studioDescription">Choose a market headline or your own topic, generate a script, then edit and save it.</p>
   </div>
   <div class="studio-hero-graphic" aria-hidden="true">
    <span class="studio-hero-ring studio-ring-a"></span><span class="studio-hero-ring studio-ring-b"></span><span class="studio-hero-spark studio-spark-a">✦</span><span class="studio-hero-spark studio-spark-b">✧</span>
@@ -187,13 +188,9 @@
   </div>
  </div>
  <div id="libraryActionBar" class="library-action-bar" hidden><div><strong>My private library</strong><p>Your saved scripts, drafts and projects stay linked to your account.</p></div><button type="button" class="gold-action" data-section="studio" data-studio-page="create">+ Create New Script</button></div>
- <nav class="module-tabs" id="studioSubnav" aria-label="AI Studio tools">
-  <button data-studio-page="dashboard" type="button">Studio Overview</button>
-  <button data-studio-page="create" class="active" type="button">AI Video Scripts (30 / 45 / 60s)</button>
-  <button data-studio-page="projects" type="button">Saved Projects</button>
-  <button data-studio-page="planner" type="button">Content Planner</button>
-  <button data-studio-page="record" type="button">Voice &amp; Recording</button>
- </nav>
+ <nav class="module-tabs studio-two-tabs" id="studioSubnav" aria-label="AI Script Studio">
+  <button data-studio-page="create" class="active" type="button">✦ Create AI Script</button>
+  <button data-studio-page="projects" type="button">▤ My Scripts</button> </nav>
  <div class="restricted-panel studio-gate" id="studioAccessState" role="region" aria-label="AI Studio access information" aria-live="polite">
   <div class="studio-gate-header">
    <div class="studio-gate-lock" aria-hidden="true"><svg viewBox="0 0 24 24" width="27" height="27" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2.2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/><circle cx="12" cy="15.5" r="1"/></svg></div>
@@ -202,11 +199,9 @@
   </div>
   <div class="studio-gate-main">
    <div class="studio-gate-feature-heading"><div><span>YOUR CREATIVE TOOLKIT</span><h3>Everything you need to create.</h3></div><span class="studio-gate-preview-note">FEATURE PREVIEW</span></div>
-   <div class="studio-gate-feature-grid" aria-label="Free Creator features available to signed-in members">
-    <div class="studio-gate-feature"><span class="studio-gate-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m10 8 6 4-6 4z"/></svg></span><strong>AI Video Scripts</strong><small>Create structured video content</small></div>
-    <div class="studio-gate-feature"><span class="studio-gate-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 7h7l2 2h9v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7V5a2 2 0 0 1 2-2h5"/></svg></span><strong>Project Library</strong><small>Save, refine and organize drafts</small></div>
-    <div class="studio-gate-feature"><span class="studio-gate-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 15h3M14 15h2"/></svg></span><strong>Content Planner</strong><small>Plan and manage production</small></div>
-    <div class="studio-gate-feature"><span class="studio-gate-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8 21h8"/></svg></span><strong>Voice Studio</strong><small>Recording and voice production</small></div>
+   <div class="studio-gate-feature-grid" aria-label="Free AI Studio features">
+    <div class="studio-gate-feature"><strong>AI Script Generator</strong><small>Market News or Custom Topic · 30, 45, 60 seconds</small></div>
+    <div class="studio-gate-feature"><strong>My Scripts</strong><small>Private drafts, editing and export</small></div>
    </div>
    <div class="studio-gate-footer">
     <div class="studio-gate-footer-copy"><span class="studio-gate-footer-symbol" aria-hidden="true">✦</span><div><strong>Free Creator access for every member</strong><p id="studioGateInstruction">Studio access is free and automatic after signing in. If your access does not load, try checking again.</p></div></div>
