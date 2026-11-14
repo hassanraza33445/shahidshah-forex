@@ -263,15 +263,16 @@ function renderNews(){
 
 }
 async function loadNews(){
+ let loaded=false;
  try{
   const v=await api("market-intelligence-api?mode=feed&limit=36&page=1");
   state.news=v.items||[];$("newsCount").textContent=String(state.news.length);
-  renderNews();
+  renderNews();loaded=true;
  }catch(e){
   $("newsCount").textContent="—";renderNews();
  }
  window.dispatchEvent(new CustomEvent("sm:premium-news",{detail:{items:state.news}}));
- $("lastUpdated").textContent=new Intl.DateTimeFormat("en",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Kuala_Lumpur"}).format(new Date());
+ $("lastUpdated").textContent=loaded?new Intl.DateTimeFormat("en",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Kuala_Lumpur"}).format(new Date()):"Unavailable";
 }
 async function loadEconomic(){
  try{
