@@ -23,3 +23,63 @@
 }
 @media(max-width:420px){.top-brand b{font-size:12px}.top-brand small{font-size:6px}.top-brand img{width:33px;height:33px}.member-header{padding:0 10px}.app-content{padding-left:8px;padding-right:8px}.feature-copy{padding:20px 17px}.feature-copy h1{font-size:29px}.feature-copy p{max-width:81%}.quick-grid{gap:6px}.tool-card{min-height:93px}.tool-card b{font-size:10px}.metric{gap:5px;padding:9px 6px}.metric>span{font-size:17px}.metric strong{font-size:15px}.metric small{font-size:7px}.mobile-dock button{font-size:8px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* Boot screen must honor hidden, even though the default is flex. */
+.boot-screen[hidden]{display:none!important}
+.boot-avatar,.side-portrait{display:block;object-fit:cover;border:2px solid #d79b33;box-shadow:0 7px 22px #bd822533}
+.boot-avatar{width:66px;height:66px;border-radius:18px}
+.side-portrait{width:42px;height:42px;border-radius:12px;flex:none}
+.boot-retry{margin-top:8px;border-radius:12px;padding:11px 21px;background:linear-gradient(110deg,#ffe283,#f3a629);color:#2e200e;font-weight:800}
+.boot-login{font-size:12px;color:var(--gold);text-decoration:underline}
+.theme-icon{font-size:22px}
+/* Unified premium light theme for desktop, tablet and mobile. */
+html[data-theme="light"]{color-scheme:light;--app-bg:#f7f0e6;--sidebar:#fffaf1;--surface:#fffcf8;--surface2:#f7ebdb;--surface3:#ead8bc;--ink:#281d13;--muted:#796954;--line:#e8d5bb;--gold:#b87512;--gold2:#d28b14;--shadow:rgba(110,71,20,.14)}
+html[data-theme="light"] body{background:radial-gradient(circle at 67% 0%,#f7dfb5,transparent 42%),var(--app-bg);color:var(--ink)}
+html[data-theme="light"] .app-sidebar{background:linear-gradient(180deg,#fffaf1,#f1e5d3);border-color:#e6d4b7}
+html[data-theme="light"] .side-brand{border-color:#e8d4b5}
+html[data-theme="light"] .side-brand b{color:#281c12}
+html[data-theme="light"] .side-brand small{color:#b16f12}
+html[data-theme="light"] .side-links a,html[data-theme="light"] .side-links button{color:#594632}
+html[data-theme="light"] .side-links a:hover,html[data-theme="light"] .side-links button:hover{background:#f0debf;color:#24180c}
+html[data-theme="light"] .side-links .active{background:linear-gradient(110deg,#ffe8a5,#eeac35);color:#281a0d;border-color:#d69c36}
+html[data-theme="light"] .nav-icon{color:#b77913}
+html[data-theme="light"] .side-links .active .nav-icon{color:#39220a}
+html[data-theme="light"] .public-link{color:#91683a}
+html[data-theme="light"] .member-header{background:rgba(255,250,243,.97);border-color:#e7d2b0;box-shadow:0 5px 18px #78552216}
+html[data-theme="light"] .top-brand b{color:#2b2014}
+html[data-theme="light"] .top-brand small{color:#b7730e}
+html[data-theme="light"] .desktop-header-links a,html[data-theme="light"] .desktop-header-links button{color:#6e5c45}
+html[data-theme="light"] .desktop-header-links button.active{color:#281807}
+html[data-theme="light"] .icon-btn{background:#fff6e9;color:#96641a;border-color:#e6d3b8}
+html[data-theme="light"] .feature-hero{background:radial-gradient(circle at 72% 50%,#f0d09a,transparent 50%),linear-gradient(115deg,#fffaf3,#ebd5b1);box-shadow:0 9px 24px #ac7a3027}
+html[data-theme="light"] .hero-kicker{background:#fffaf0;color:#9d6512;border-color:#e7b86f}
+html[data-theme="light"] .feature-copy h1{color:#2d2115}
+html[data-theme="light"] .feature-copy h1 em{background:linear-gradient(90deg,#a76208,#d89118);background-clip:text;color:transparent}
+html[data-theme="light"] .feature-copy p{color:#705c45}
+html[data-theme="light"] .outline-action{background:#fff9ee;color:#946012;border-color:#d8a653}
+html[data-theme="light"] .market-strip{background:linear-gradient(90deg,#fff8eb,#f4e3c8);border-color:#e1c49c;color:#6e5232}
+html[data-theme="light"] .market-strip strong,html[data-theme="light"] .market-strip a{color:#9e670c}
+html[data-theme="light"] .metric,html[data-theme="light"] .tool-card,html[data-theme="light"] .news-card,html[data-theme="light"] .studio-editor,html[data-theme="light"] .application-box,html[data-theme="light"] .list-box,html[data-theme="light"] .library-entry,html[data-theme="light"] .profile-card,html[data-theme="light"] .tool-list-row,html[data-theme="light"] .profile-actions>a,html[data-theme="light"] .profile-actions>button{background:#fffdf8;color:#291e13;border-color:#e5d0ae;box-shadow:0 4px 19px #99712e17}
+html[data-theme="light"] .metric strong,html[data-theme="light"] .news-card h3,html[data-theme="light"] .tool-card b{color:#291e13}
+html[data-theme="light"] .metric small,html[data-theme="light"] .tool-card small,html[data-theme="light"] .news-card p,html[data-theme="light"] .news-foot{color:#816e58}
+html[data-theme="light"] .news-card .chip{color:#a96812;border-color:#dcaf65}
+html[data-theme="light"] .loading-line{color:#776550;border-color:#ddc5a1}
+html[data-theme="light"] .tool-card.selected,html[data-theme="light"] .studio-select.active{background:linear-gradient(130deg,#ffe7b4,#f4ce8e);border-color:#d5a04a}
+html[data-theme="light"] .status-pill{background:#f6e5c9;color:#96620d}
+html[data-theme="light"] .tool-list-row>span{background:#f9e9c9}
+html[data-theme="light"] .app-footer{border-color:#e6d1b1;color:#78654f}
+@media(max-width:720px){
+ html[data-theme="light"] .member-header{background:#fff8ec;border-color:#ead0a1}
+ html[data-theme="light"] .top-brand b{color:#302114}
+ html[data-theme="light"] .top-brand small{color:#ad7019}
+ html[data-theme="light"] .icon-btn{color:#96641a;background:transparent;border:0}
+ html[data-theme="dark"]{color-scheme:dark;--app-bg:#0d0c0a;--surface:#17130f;--surface2:#221a11;--ink:#fff9ef;--muted:#afa18f;--line:#594328;--gold:#ffbc25}
+ html[data-theme="dark"] body{background:var(--app-bg);color:var(--ink)}
+ html[data-theme="dark"] .metric{background:#231911;border-color:#694b28}
+ html[data-theme="dark"] .metric strong,html[data-theme="dark"] .mobile-welcome h1,html[data-theme="dark"] .news-card h3,html[data-theme="dark"] .tool-card b{color:#fff9ef}
+ html[data-theme="dark"] .mobile-welcome p,html[data-theme="dark"] .metric small{color:#c6b49b}
+ html[data-theme="dark"] .tool-card,html[data-theme="dark"] .tool-list-row,html[data-theme="dark"] .news-card,html[data-theme="dark"] .profile-card,html[data-theme="dark"] .profile-actions>a,html[data-theme="dark"] .profile-actions>button,html[data-theme="dark"] .library-entry{background:#241911;border-color:#78532d;color:#fff8ed}
+ html[data-theme="dark"] .mobile-dock{background:#1c160e;border-color:#65451b}
+ html[data-theme="dark"] .mobile-dock button,html[data-theme="dark"] .mobile-dock button span{color:#dfc9a8}
+ html[data-theme="dark"] .mobile-dock button.active{color:#2c1d0d}
+}
