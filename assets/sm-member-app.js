@@ -482,7 +482,7 @@ function setupProfile(){
 }
 
 function setupNavigation(){
- document.querySelectorAll("[data-section]").forEach(button=>button.addEventListener("click",()=>{
+ document.querySelectorAll("[data-section]").forEach(button=>button.addEventListener("click",event=>{if(button.tagName==="A")event.preventDefault();
   if(button.dataset.marketPage)state.marketPage=button.dataset.marketPage;
   if(button.dataset.studioPage)state.studioPage=button.dataset.studioPage;
   openTab(button.dataset.section);
