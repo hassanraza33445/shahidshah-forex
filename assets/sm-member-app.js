@@ -1,7 +1,7 @@
 (()=>{"use strict";
 const PROJECT="https://qggtdwixwafcmorepkks.supabase.co",KEY="sb_publishable_HnYmHQbt42OfjmRk09OfoQ_fq5TPYpb";
 const $=id=>document.getElementById(id),views=new Set(["home","markets","studio","tools","mentorship","profile"]);
-const state={client:null,user:null,profile:null,news:[],calendar:[],filter:"All",source:"news",currentTab:"home",homeFilter:"All",marketPage:"feed",marketSearch:"",marketVisible:12,studioPage:"dashboard",studioRole:null,studioStatus:"checking",studioFrame:null,studioFrameReady:false,applications:[]};
+const state={client:null,user:null,profile:null,news:[],calendar:[],filter:"All",source:"news",currentTab:"home",homeFilter:"All",marketPage:"feed",marketSearch:"",marketVisible:12,studioPage:"create",studioRole:null,studioStatus:"checking",studioFrame:null,studioFrameReady:false,applications:[]};
 const safe=(value)=>String(value??"").slice(0,900);
 const create=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=String(text);return el};
 function tabFromLocation(){const requested=new URLSearchParams(location.search).get("tab")||"home";return requested==="library"?"studio":requested==="notifications"?"markets":views.has(requested)?requested:"home"}
@@ -66,7 +66,7 @@ async function checkStudioAccess(){
   state.studioRole=admin?"admin":permitted?access.value.data.role:null;
   state.studioStatus=state.studioRole?"allowed":"denied";
   const creator=["admin","creator","editor","approver"].includes(state.studioRole);
-  document.querySelectorAll("#studioSubnav [data-studio-page]").forEach(button=>{if(["create","record"].includes(button.dataset.studioPage)){button.disabled=!creator;button.title=creator?"":"Creator access required"}});
+  document.querySelectorAll("#studioSubnav [data-studio-page]").forEach(button=>{if(button.dataset.studioPage==="create"){button.disabled=!creator;button.title=creator?"":"Creator access required"}});
   if(!creator&&state.studioPage==="create")state.studioPage="projects";
  }catch(_){state.studioRole=null;state.studioStatus="error"}
  renderStudioAccess();
@@ -190,7 +190,7 @@ async function start(){
   document.body.classList.remove("member-boot");
   const requested=new URLSearchParams(location.search);
   const studio=requested.get("studio");
-  if(["dashboard","create","projects","planner","record"].includes(studio))state.studioPage=studio;
+  if(["dashboard","planner","record"].includes(studio))state.studioPage="create";else if(["create","projects"].includes(studio))state.studioPage=studio;
   if(requested.get("tab")==="library")state.studioPage="projects";
   openTab(tabFromLocation(),false);
   if(state.currentTab==="tools"&&Object.hasOwn(toolLabels,requested.get("tool")))showTool(requested.get("tool"),false);
@@ -505,7 +505,7 @@ function setupNavigation(){
    if(target&&Number.isFinite(height)&&height>200&&height<18000)target.style.height=Math.ceil(height+12)+"px";
    return;
   }
-  if(event.data.type==="sm:studio-page"&&state.currentTab==="studio"&&["dashboard","create","projects","planner","record"].includes(event.data.page)){
+  if(event.data.type==="sm:studio-page"&&state.currentTab==="studio"&&["create","projects"].includes(event.data.page)){
    state.studioPage=event.data.page;
    document.querySelectorAll("#studioSubnav [data-studio-page]").forEach(b=>b.classList.toggle("active",b.dataset.studioPage===state.studioPage));
   }
