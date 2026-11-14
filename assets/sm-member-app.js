@@ -66,6 +66,9 @@ async function checkStudioAccess(){
   const permitted=access.status==="fulfilled"&&!access.value.error&&access.value?.data?.enabled===true;
   state.studioRole=admin?"admin":permitted?access.value.data.role:null;
   state.studioStatus=state.studioRole?"allowed":"denied";
+  const creator=["admin","creator","editor","approver"].includes(state.studioRole);
+  document.querySelectorAll("#studioSubnav [data-studio-page]").forEach(button=>{if(["create","record"].includes(button.dataset.studioPage)){button.disabled=!creator;button.title=creator?"":"Creator access required"}});
+  if(!creator&&state.studioPage==="create")state.studioPage="projects";
  }catch(_){state.studioRole=null;state.studioStatus="error"}
  renderStudioAccess();
 }
@@ -87,7 +90,7 @@ function mountStudio(){
   });
   frame.src="/content-studio/?embedded=1&view="+encodeURIComponent(requested);
  }
- place.append(state.studioFrame);
+ if(state.studioFrame.parentElement!==place)place.append(state.studioFrame);
  state.studioFrame.dataset.currentPage=requested;
  if(state.studioFrameReady)state.studioFrame.contentWindow?.postMessage({type:"sm:studio-nav",page:requested},location.origin);
  document.querySelectorAll("#studioSubnav [data-studio-page]").forEach(btn=>btn.classList.toggle("active",btn.dataset.studioPage===state.studioPage));
@@ -284,6 +287,7 @@ function setupNavigation(){
  }));
  document.querySelectorAll("#studioSubnav [data-studio-page]").forEach(button=>button.addEventListener("click",()=>{
   state.studioPage=button.dataset.studioPage;
+  if(button.disabled)return;
   if(state.studioStatus==="allowed")mountStudio();
   else renderStudioAccess();
  }));
