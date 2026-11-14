@@ -58,7 +58,7 @@ function message(text,error=false){$("authStatus").textContent=text;$("authStatu
 function setMode(value){mode=value;const signup=mode==="signup",reset=mode==="reset",recovery=mode==="recovery";
  $("signInTab").classList.toggle("selected",!signup);$("signUpTab").classList.toggle("selected",signup);
  $("signInTab").setAttribute("aria-selected",String(!signup));$("signUpTab").setAttribute("aria-selected",String(signup));
- $("nameField").hidden=!signup;$("phoneField").hidden=!signup;$("termsField").hidden=!signup;$("passwordField").hidden=reset;
+ $("nameField").hidden=!signup;$("phoneField").hidden=!signup;$("termsField").hidden=!signup;$("emailField").hidden=recovery;$("email").required=!recovery;$("passwordField").hidden=reset;
  $("fullname").required=signup;$("phone").required=signup;$("acceptTerms").required=signup;syncCountryChoice();$("password").required=!reset;$("password").autocomplete=signup?"new-password":"current-password";
  $("authTitle").textContent=signup?"Create your account.":reset?"Reset your password.":recovery?"Choose a new password.":"Welcome back.";
  $("authSubtitle").textContent=signup?"Join the Market Intelligence and AI creation platform.":reset?"We will email you a secure reset link.":recovery?"Save a new password for your account.":"Sign in to continue to your private dashboard.";
@@ -70,16 +70,44 @@ function setMode(value){mode=value;const signup=mode==="signup",reset=mode==="re
 }
 function working(value){busy=value;$("submitBtn").disabled=value;$("googleBtn").disabled=value||!googleEnabled;$("signInTab").disabled=value;$("signUpTab").disabled=value;updateGoogleAvailability()}
 async function verifiedRedirect(){const {data,error}=await client.auth.getUser();if(error||!data?.user)return false;sessionStorage.removeItem("smshahid-next");location.replace(next);return true}
-async function init(){if(!window.supabase?.createClient){message("Login service could not load. Please check your connection.",true);return}client=window.supabase.createClient(SUPABASE_URL,KEY);
+let recoveryVerified=false;
+async function init(){
+ if(!window.supabase?.createClient){message("Login service could not load. Please check your connection.",true);return}
+ client=window.supabase.createClient(SUPABASE_URL,KEY);
  const initialError=qs.has("error")||qs.has("error_description")?(qs.get("error_description")||"Sign-in was not completed."):null;
+ const hash=new URLSearchParams(location.hash.slice(1));
+ const nativeRecovery=hash.get("type")==="recovery"||qs.get("type")==="recovery";
+ client.auth.onAuthStateChange((event)=>{
+  if(event==="PASSWORD_RECOVERY"&&nativeRecovery){
+   recoveryVerified=true;
+   setMode("recovery");
+   message("Your recovery link is verified. Enter a new password.");
+  }
+ });
+ const tokenHash=qs.get("token_hash");
+ if(tokenHash&&qs.get("mode")==="recovery"){
+  // Never leave a sensitive single-use recovery token in the URL or browser history.
+  history.replaceState(null,document.title,location.pathname+"?mode=recovery");
+  try{
+   if(!/^[A-Za-z0-9_-]{20,256}$/.test(tokenHash))throw Error("Invalid recovery link.");
+   const {data,error}=await client.auth.verifyOtp({type:"recovery",token_hash:tokenHash});
+   if(error||!data?.session)throw Error("Expired or already used recovery link.");
+   recoveryVerified=true;
+   setMode("recovery");
+   message("Link verified. Enter your new password.");
+  }catch(_){
+   recoveryVerified=false;
+   setMode("reset");
+   message("This password reset link is invalid or expired. Request a new one.",true);
+  }
+  return;
+ }
  const {data:{session}}=await client.auth.getSession();
- if(session&&await verifiedRedirect())return;
- setMode(qs.get("mode")==="signup"?"signup":"login");
+ if(session&&!nativeRecovery&&await verifiedRedirect())return;
+ setMode(nativeRecovery?"recovery":qs.get("mode")==="signup"?"signup":"login");
+ if(nativeRecovery){recoveryVerified=Boolean(session);message(session?"Enter your new password.":"Recovery link expired. Request a new one.",!session);}
  if(initialError)message(initialError,true);
  void checkGoogleProvider();
- const hash=new URLSearchParams(location.hash.slice(1));
- if(hash.get("type")==="recovery"||qs.get("type")==="recovery"){setMode("recovery");message("Enter a new password to complete reset.")}
- client.auth.onAuthStateChange((event)=>{if(event==="PASSWORD_RECOVERY"){setMode("recovery");message("Enter your new password.")}});
 }
 $("signInTab").addEventListener("click",()=>setMode("login"));
 $("signUpTab").addEventListener("click",()=>setMode("signup"));
@@ -98,8 +126,25 @@ $("resendConfirmation").addEventListener("click",async()=>{
 });
 $("authForm").addEventListener("submit",async e=>{e.preventDefault();if(busy||!client)return;working(true);try{
  const email=$("email").value.trim(),password=$("password").value;
- if(mode==="reset"){const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:location.origin+"/auth/"});if(error)throw error;message("Password reset link sent if this email is registered.");return}
- if(mode==="recovery"){const {error}=await client.auth.updateUser({password});if(error)throw error;message("Password updated. Opening dashboard…");await verifiedRedirect();return}
+ if(mode==="reset"){
+  const response=await fetch(SUPABASE_URL+"/functions/v1/member-password-reset",{
+   method:"POST",
+   headers:{"apikey":KEY,"Content-Type":"application/json"},
+   body:JSON.stringify({email})
+  });
+  if(!response.ok)throw Error("Password reset email service is temporarily unavailable. Please try again.");
+  message("If this email is registered, you will receive a secure reset link. Check your inbox and spam folder.");
+  return
+ }
+ if(mode==="recovery"){
+  if(!recoveryVerified)throw Error("Verify the password reset link before changing your password.");
+  const {error}=await client.auth.updateUser({password});
+  if(error)throw error;
+  recoveryVerified=false;
+  message("Password updated successfully. Opening your dashboard…");
+  await verifiedRedirect();
+  return
+ }
  if(mode==="signup"){
   const fullname=$("fullname").value.trim();
   if(fullname.length<2)throw Error("Please enter your full name.");
