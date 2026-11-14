@@ -9,10 +9,11 @@
 <link rel="stylesheet" href="/assets/sm-news-reader.css?v=20261114-native-news-1">
 <link rel="stylesheet" href="/assets/sm-market-editorial.css?v=20261114-editorial-1">
 <link rel="stylesheet" href="/assets/sm-market-png-match.css?v=20261114-match-1">
+<link rel="stylesheet" href="/assets/sm-studio-premium.css?v=20261114-studio-1">
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="/assets/sm-dashboard-premium.js?v=20261114-finalpolish-1"></script>
 <script defer src="/assets/sm-news-reader.js?v=20261114-native-news-1"></script>
-<script defer src="/assets/sm-member-app.js?v=20261114-match-1"></script>
+<script defer src="/assets/sm-member-app.js?v=20261114-studio-1"></script>
 <script defer src="/assets/sm-member-icons.js?v=20261114-finalpolish-1"></script></head>
 <body class="member-boot">
 <div id="bootScreen" class="boot-screen"><img class="boot-avatar" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><strong>Opening your workspace…</strong><small>Connecting securely to your account</small></div>
@@ -196,7 +197,18 @@
  <div id="marketModuleArea" class="embed-panel" hidden><p id="marketModuleStatus" class="embed-status" role="status">Opening market module…</p><iframe id="marketModuleFrame" title="Market Intelligence Module" loading="lazy"></iframe></div>
 </section>
 <section class="app-view" id="view-studio" aria-labelledby="studioTitle">
- <div class="view-heading"><span class="eyebrow" id="studioEyebrow">CREATE · EDIT · PRODUCE</span><h1 id="studioTitle">AI <em>Studio.</em></h1><p id="studioDescription">Write, refine and organize professional scripts and content in one connected workspace.</p></div>
+ <div class="view-heading studio-premium-heading">
+  <div class="studio-hero-copy">
+   <span class="eyebrow" id="studioEyebrow">S M SHAHID SHAH · CREATE · EDIT · PRODUCE</span>
+   <h1 id="studioTitle">AI <em>Studio.</em></h1>
+   <h2 id="studioHeroTagline">Create smarter. Publish better.</h2>
+   <p id="studioDescription">Write, refine and organize professional scripts and content in one connected workspace.</p>
+  </div>
+  <div class="studio-hero-graphic" aria-hidden="true">
+   <span class="studio-hero-ring studio-ring-a"></span><span class="studio-hero-ring studio-ring-b"></span><span class="studio-hero-spark studio-spark-a">✦</span><span class="studio-hero-spark studio-spark-b">✧</span>
+   <span class="studio-hero-monogram">S M</span><span class="studio-hero-graphic-label">CREATOR WORKSPACE</span>
+  </div>
+ </div>
  <div id="libraryActionBar" class="library-action-bar" hidden><div><strong>My private library</strong><p>Your saved scripts, drafts and projects stay linked to your account.</p></div><button type="button" class="gold-action" data-section="studio" data-studio-page="create">+ Create New Script</button></div>
  <nav class="module-tabs" id="studioSubnav" aria-label="AI Studio tools">
   <button data-studio-page="dashboard" type="button">Studio Overview</button>
@@ -205,7 +217,27 @@
   <button data-studio-page="planner" type="button">Content Planner</button>
   <button data-studio-page="record" type="button">Voice &amp; Recording</button>
  </nav>
- <div class="restricted-panel" id="studioAccessState" role="status">Checking your Studio access…</div>
+ <div class="restricted-panel studio-gate" id="studioAccessState" role="region" aria-label="AI Studio access information" aria-live="polite">
+  <div class="studio-gate-header">
+   <div class="studio-gate-lock" aria-hidden="true"><svg viewBox="0 0 24 24" width="27" height="27" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2.2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/><circle cx="12" cy="15.5" r="1"/></svg></div>
+   <div class="studio-gate-heading"><span class="studio-gate-kicker">PRIVATE CREATOR WORKSPACE</span><h2 id="studioGateTitle">Verifying your Studio access…</h2><p id="studioGateHint">Checking your account permissions securely.</p></div>
+   <span class="studio-gate-status" id="studioGateBadge">CHECKING</span>
+  </div>
+  <div class="studio-gate-main">
+   <div class="studio-gate-feature-heading"><div><span>YOUR CREATIVE TOOLKIT</span><h3>Everything you need to create.</h3></div><span class="studio-gate-preview-note">FEATURE PREVIEW</span></div>
+   <div class="studio-gate-feature-grid" aria-label="Features available after administrator approval">
+    <div class="studio-gate-feature"><span class="studio-gate-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m10 8 6 4-6 4z"/></svg></span><strong>AI Video Scripts</strong><small>Create structured video content</small></div>
+    <div class="studio-gate-feature"><span class="studio-gate-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 7h7l2 2h9v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7V5a2 2 0 0 1 2-2h5"/></svg></span><strong>Project Library</strong><small>Save, refine and organize drafts</small></div>
+    <div class="studio-gate-feature"><span class="studio-gate-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 15h3M14 15h2"/></svg></span><strong>Content Planner</strong><small>Plan and manage production</small></div>
+    <div class="studio-gate-feature"><span class="studio-gate-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8 21h8"/></svg></span><strong>Voice Studio</strong><small>Recording and voice production</small></div>
+   </div>
+   <div class="studio-gate-footer">
+    <div class="studio-gate-footer-copy"><span class="studio-gate-footer-symbol" aria-hidden="true">✦</span><div><strong>Administrator approval required</strong><p id="studioGateInstruction">Ask the platform administrator to grant Studio access to your registered account. You'll be able to create content after access is approved.</p></div></div>
+    <button type="button" id="studioRecheckAccess" class="studio-gate-recheck">Check Access Again <span aria-hidden="true">↻</span></button>
+   </div>
+   <p class="studio-gate-footnote">This is a preview of the creator features. Project data and restricted Studio tools remain private until permission is granted.</p>
+  </div>
+ </div>
  <div id="studioFrameSlot" class="studio-frame-slot" hidden></div>
 </section>
 <section class="app-view" id="view-tools" aria-labelledby="toolsTitle">
