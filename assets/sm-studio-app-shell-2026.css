@@ -1,0 +1,51 @@
+/* Two-tab premium Studio shell; keeps the existing cream & champagne-gold brand. */
+.member-app #view-studio .studio-premium-heading{
+ min-height:148px!important;margin:16px 0 13px!important;
+ padding:24px 30px!important;border-radius:18px!important
+}
+.member-app #view-studio .studio-premium-heading h1{
+ font-size:clamp(31px,3.1vw,43px)!important;line-height:1.08;letter-spacing:-1.25px;margin:5px 0 8px
+}
+.member-app #view-studio .studio-premium-heading h2{font-size:15px;margin:0 0 3px}
+.member-app #view-studio .studio-premium-heading p{font-size:12px;line-height:1.55}
+.member-app #view-studio .studio-hero-graphic{transform:scale(.63);transform-origin:center right;opacity:.72}
+.member-app #view-studio #studioSubnav.studio-two-tabs{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
+ padding:0!important;margin:0 0 14px!important;background:transparent!important;
+ border:0!important;box-shadow:none!important;border-radius:0!important
+}
+.member-app #view-studio #studioSubnav.studio-two-tabs button{
+ display:flex;justify-content:center;align-items:center;min-height:48px;
+ background:var(--surface);border:1px solid var(--line);border-radius:13px;
+ padding:11px 14px;color:var(--ink);font-size:13px;font-weight:800;
+ transition:background .18s,border-color .18s,transform .18s,box-shadow .18s
+}
+.member-app #view-studio #studioSubnav.studio-two-tabs button:hover{
+ border-color:#d9ad65;transform:translateY(-1px)
+}
+.member-app #view-studio #studioSubnav.studio-two-tabs button.active{
+ background:linear-gradient(115deg,#ffdfa0,#dfaa4d)!important;
+ color:#382510!important;border:1px solid #dcad60!important;
+ box-shadow:0 5px 13px rgba(169,103,20,.13)!important
+}
+.member-app #view-studio .studio-frame-slot{border:0;padding:0;background:transparent;border-radius:0;overflow:visible}
+.member-app #view-studio .unified-studio-frame{
+ width:100%;min-height:600px;display:block;border:0;background:transparent;
+}
+.member-app #view-studio .studio-gate-feature-grid{
+ grid-template-columns:repeat(2,minmax(0,1fr));gap:10px
+}
+.member-app #view-studio .studio-gate-feature-grid .studio-gate-feature{
+ min-height:95px
+}
+@media(max-width:780px){
+ .member-app #view-studio .studio-premium-heading{padding:20px 16px!important;min-height:0!important}
+ .member-app #view-studio .studio-premium-heading h1{font-size:29px!important}
+ .member-app #view-studio .studio-hero-graphic{display:none}
+ .member-app #view-studio #studioSubnav.studio-two-tabs{gap:8px}
+ .member-app #view-studio #studioSubnav.studio-two-tabs button{min-height:44px;font-size:11.5px;padding:9px 6px}
+ .member-app #view-studio .studio-gate-feature-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+ .member-app #view-studio #studioSubnav.studio-two-tabs button{transition:none!important;transform:none!important}
+}
