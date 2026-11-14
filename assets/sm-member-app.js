@@ -9,6 +9,15 @@ function tabFromLocation(){const requested=new URLSearchParams(location.search).
 const marketModules={feed:true};
 const toolLabels={video:"Video Prompt Builder",article:"Article Prompt Builder",banner:"Banner Prompt Builder",indicator:"Indicator Prompt Builder"};
 const sectionNames={home:"Dashboard",markets:"Market Intelligence",studio:"AI Studio & AI Scripts",tools:"Prompt Tools",mentorship:"Mentorship",profile:"My Profile"};
+// Same-origin Studio uses the dashboard's already verified Supabase client.
+// No duplicate login screen, temporary URL token, or postMessage credential handoff.
+// Restrict to the exact managed Studio iframe window. All database RLS still applies.
+window.__smStudioClientForFrame=(sourceWindow)=>{
+ const frame=document.getElementById("unifiedStudioFrame");
+ if(!state.client||!state.user||!frame||frame.contentWindow!==sourceWindow)return null;
+ return state.client;
+};
+
 function setEmbeddedFrame(id,src,statusId){
  const frame=$(id),status=$(statusId);
  if(!frame||!status)return;
@@ -112,7 +121,7 @@ function mountStudio(){
    frame.contentWindow?.postMessage({type:"sm:studio-nav",page:state.studioPage},location.origin);
   });
   const newsId=new URLSearchParams(location.search).get("news");
-  frame.src="/content-studio/?embedded=1&ui=20261114-news-v2&view="+encodeURIComponent(requested)+(newsId?"&news="+encodeURIComponent(newsId):"");
+  frame.src="/content-studio/?embedded=1&ui=20261114-auth-pkt-v3&view="+encodeURIComponent(requested)+(newsId?"&news="+encodeURIComponent(newsId):"");
  }
  if(state.studioFrame.parentElement!==place)place.append(state.studioFrame);
  state.studioFrame.dataset.currentPage=requested;
@@ -175,7 +184,7 @@ function closeMenu(){
 }
 function setBusy(id,on){const el=$(id);if(el)el.disabled=on}
 function formatTime(value){const d=new Date(value);return Number.isFinite(d.getTime())?
- new Intl.DateTimeFormat("en",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",timeZone:"Asia/Kuala_Lumpur"}).format(d):"Time unavailable"}
+ new Intl.DateTimeFormat("en",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",timeZone:"Asia/Karachi"}).format(d):"Time unavailable"}
 function domainSource(value){try{const u=new URL(value);return u.protocol==="https:"?u.hostname.replace(/^www\./,""):"External source"}catch{return"Source"}}
 function hrefSafe(input){try{const u=new URL(input,location.origin);return u.protocol==="https:"||u.origin===location.origin&&u.protocol==="http:"?u.href:"#"}catch{return"#"}}
 async function api(path){
@@ -197,7 +206,7 @@ function withTimeout(request,ms,label){
 function paintUser(user,profile){
  const name=nameFor(user,profile),first=name.split(/\s+/)[0]||"Member";
  $("greeting").textContent="Welcome Back, "+first+" 👋";
- const hour=Number(new Intl.DateTimeFormat("en-GB",{hour:"2-digit",hourCycle:"h23",timeZone:"Asia/Kuala_Lumpur"}).format(new Date()));
+ const hour=Number(new Intl.DateTimeFormat("en-GB",{hour:"2-digit",hourCycle:"h23",timeZone:"Asia/Karachi"}).format(new Date()));
  const greeting=hour<12?"Good Morning":hour<17?"Good Afternoon":"Good Evening";
  const isHandle=/^[a-z0-9_]{14,}$/.test(first)&&!name.includes(" ");
  if($("dashboardGreeting"))$("dashboardGreeting").textContent=greeting+(isHandle?"":", "+first);
@@ -271,6 +280,14 @@ async function start(){
  }
 }
 function goToLogin(){location.replace("/auth/?next="+encodeURIComponent("/app/"+location.search))}
+function marketColorKey(category){
+ const text=String(category||"").toLowerCase();
+ if(/\bgold\b|\bxau\b|\bbullion\b/.test(text))return "gold";
+ if(/\bforex\b|\bcurrenc|\bfx\b/.test(text))return "forex";
+ if(/\bcrypto\b|\bbitcoin\b|\bbtc\b/.test(text))return "crypto";
+ if(/\beconom|\bcentral\b|\bdata\b|\bfed\b|\bfomc\b/.test(text))return "economy";
+ return "markets";
+}
 /* Dashboard stories are purpose-built editorial cards, not price/trend charts.
    Metadata and headlines come only from the live source-linked feed. */
 function dashboardStoryCard(item){
@@ -284,6 +301,8 @@ function dashboardStoryCard(item){
   /^(economic data|economy|central banks)$/i.test(source)?"Economy":source;
  const icons={Gold:"▥",Crypto:"₿",Forex:"⇄",Economy:"▤"};
  const top=create("div","dashboard-story-top");
+ article.classList.add("market-cat-"+marketColorKey(label));
+ if(item.priority==="HOT")article.classList.add("market-is-hot");
  top.append(create("span","dashboard-story-icon",icons[label]||"▦"));
  top.append(create("span","dashboard-story-chip",item.priority==="HOT"?"HOT · "+label:label));
  article.append(top);
@@ -334,6 +353,8 @@ function marketNewsCard(item){
  const story=String(item.title||"")+" "+String(item.summary||"");
  const category=/\b(gold|bullion|xau)\b/i.test(story)&&/^(economy|economic data|central banks)$/i.test(categoryText)
   ?"Gold · Economy":/economic|central bank|economy/i.test(categoryText)?"Economy":categoryText;
+ article.classList.add("market-cat-"+marketColorKey(category));
+ if(item.priority==="HOT")article.classList.add("market-is-hot");
  top.append(create("span","mi-card-category",item.priority==="HOT"?"HOT · "+category:category));
  article.append(top);
  const title=create("h3","mi-card-title");
@@ -448,8 +469,8 @@ async function loadNews(){
   $("miFeedStatus").textContent="News source temporarily unavailable";
  }
  window.dispatchEvent(new CustomEvent("sm:premium-news",{detail:{items:state.news}}));
- $("lastUpdated").textContent=loaded?new Intl.DateTimeFormat("en",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Kuala_Lumpur"}).format(new Date()):"Unavailable";
- $("miFeedUpdated").textContent=loaded?"Last checked "+$("lastUpdated").textContent+" MYT · Source-linked headlines":"Retry after checking your connection";
+ $("lastUpdated").textContent=loaded?new Intl.DateTimeFormat("en",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Karachi"}).format(new Date()):"Unavailable";
+ $("miFeedUpdated").textContent=loaded?"Last checked "+$("lastUpdated").textContent+" PKT · Source-linked headlines":"Retry after checking your connection";
 }
 async function refreshApplication(){
  if(!state.client||!state.user)return;
