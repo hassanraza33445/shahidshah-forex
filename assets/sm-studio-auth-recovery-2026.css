@@ -39,3 +39,31 @@ html.sm-embedded #studioEmbedRetry{
 html.sm-embedded #workspace:not(.hidden)~#studioEmbedConnecting{display:none!important}
 @keyframes smStudioSoftPulse{50%{opacity:.72;transform:translateY(-2px)}}
 @media(prefers-reduced-motion:reduce){html.sm-embedded #studioEmbedConnecting .studio-connecting-symbol{animation:none}}
+
+/* Studio news picker uses the same market colors as the dashboard. */
+.studio-workspace-page .studio-news-item.market-cat-gold{--studio-cat:#A86D13;--studio-bg:#FFF0CC;--studio-border:#E3C185}
+.studio-workspace-page .studio-news-item.market-cat-forex{--studio-cat:#235BB0;--studio-bg:#E9F1FF;--studio-border:#BED3F4}
+.studio-workspace-page .studio-news-item.market-cat-crypto{--studio-cat:#7B43A0;--studio-bg:#F3EAFB;--studio-border:#D7BDED}
+.studio-workspace-page .studio-news-item.market-cat-economy{--studio-cat:#117C70;--studio-bg:#E4F6F0;--studio-border:#B6DED3}
+.studio-workspace-page .studio-news-item.market-cat-markets{--studio-cat:#655B63;--studio-bg:#F3F0F3;--studio-border:#D7CED8}
+.studio-workspace-page .studio-news-item[class*="market-cat-"] .studio-news-label{
+ color:var(--studio-cat)!important;background:var(--studio-bg)!important
+}
+.studio-workspace-page .studio-news-item.active[class*="market-cat-"]{
+ border-color:var(--studio-border)!important
+}
+.studio-workspace-page [data-studio-category="Forex"]{--filter-text:#235BB0;--filter-bg:#E9F1FF;--filter-border:#BCD0F3}
+.studio-workspace-page [data-studio-category="Gold"]{--filter-text:#A86D13;--filter-bg:#FFF0CC;--filter-border:#E6C78A}
+.studio-workspace-page [data-studio-category="Crypto"]{--filter-text:#7B43A0;--filter-bg:#F3EAFB;--filter-border:#DBBFEF}
+.studio-workspace-page [data-studio-category="Economy"]{--filter-text:#117C70;--filter-bg:#E4F6F0;--filter-border:#B6DED3}
+.studio-workspace-page [data-studio-category]:not([data-studio-category="All"]){
+ color:var(--filter-text)!important
+}
+.studio-workspace-page [data-studio-category].active:not([data-studio-category="All"]){
+ background:var(--filter-bg)!important;border-color:var(--filter-border)!important;
+ color:var(--filter-text)!important
+}
+html[data-theme="dark"] .studio-workspace-page .studio-news-item.market-cat-gold{--studio-cat:#F8D08B;--studio-bg:#4B361C}
+html[data-theme="dark"] .studio-workspace-page .studio-news-item.market-cat-forex{--studio-cat:#A6CAFF;--studio-bg:#263951}
+html[data-theme="dark"] .studio-workspace-page .studio-news-item.market-cat-crypto{--studio-cat:#D9B2FD;--studio-bg:#3B2B4C}
+html[data-theme="dark"] .studio-workspace-page .studio-news-item.market-cat-economy{--studio-cat:#9AD8CA;--studio-bg:#1F423C}
