@@ -24,23 +24,28 @@ function showNews(items){
   const count=data.filter(x=>asset.match.test(String(x.title||"")+" "+String(x.summary||""))).length;
   const row=make("div","watchlist-row");
   const left=make("span","watchlist-left");left.append(make("strong","",asset.symbol),make("small","",asset.label));
-  const right=make("span","watchlist-right");right.append(make("strong","",count+" news"),make("small","","recent headlines"));
+  const right=make("span","watchlist-right");right.append(make("strong","",count+" articles"),make("small","","in current feed"));
   row.append(left,right);watch.append(row);
  }
 }
 function showEvents(items){
  const root=$("dashboardEventsList");if(!root)return;root.replaceChildren();
- const events=Array.isArray(items)?items.filter(e=>e&&e.scheduled_at).slice(0,4):[];
- if(!events.length){root.append(make("div","mini-empty","No upcoming economic events from the calendar source."));return}
- const time=new Intl.DateTimeFormat("en-US",{hour:"2-digit",minute:"2-digit",hour12:true,timeZone:"Asia/Kuala_Lumpur"});
+ const now=Date.now();
+ const events=(Array.isArray(items)?items:[]).filter(e=>e&&e.scheduled_at&&Number.isFinite(new Date(e.scheduled_at).getTime())&&new Date(e.scheduled_at).getTime()>=now).sort((a,b)=>new Date(a.scheduled_at)-new Date(b.scheduled_at)).slice(0,4);
+ if(!events.length){root.append(make("div","mini-empty","No upcoming events with verified scheduled times."));return}
+ const dateFormat=new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Asia/Kuala_Lumpur"});
+ const timeFormat=new Intl.DateTimeFormat("en-US",{hour:"2-digit",minute:"2-digit",hour12:true,timeZone:"Asia/Kuala_Lumpur"});
  for(const event of events){
-  const date=new Date(event.scheduled_at),row=make("div","dashboard-event");
-  row.append(make("time","event-time",Number.isFinite(date.getTime())?time.format(date):"TBA"));
-  const middle=make("span","event-copy");
-  middle.append(make("strong","",String(event.title||event.event_name||event.name||event.event||"Economic event").slice(0,105)));
+  const scheduled=new Date(event.scheduled_at),row=make("div","dashboard-event");
+  const when=make("time","event-time");
+  when.dateTime=scheduled.toISOString();
+  when.append(make("strong","event-day",dateFormat.format(scheduled)),make("small","event-hour",timeFormat.format(scheduled)+" MYT"));
+  row.append(when);
+  const body=make("span","event-copy");
+  body.append(make("strong","",String(event.title||event.event_name||event.name||event.event||"Economic event").slice(0,105)));
   const region=[event.currency,event.country].filter(Boolean).join(" · ");
-  if(region)middle.append(make("small","",region.slice(0,50)));
-  row.append(middle);
+  if(region)body.append(make("small","",region.slice(0,60)));
+  row.append(body);
   const impact=String(event.impact||event.importance||"").toLowerCase();
   const level=impact.includes("high")?"high":impact.includes("medium")?"medium":impact.includes("low")?"low":"";
   if(level)row.append(make("span","event-impact event-impact-"+level,level.toUpperCase()));
