@@ -158,3 +158,14 @@ html[data-theme="dark"] .mi-png .mi-side-card{border-color:#635036;background:#2
 body:has(.mi-png.active) .member-header{background:#fffaf4!important;backdrop-filter:none!important;opacity:1;isolation:isolate;z-index:100}
 html[data-theme="dark"] body:has(.mi-png.active) .member-header{background:#201912!important}
 html[data-theme="dark"] .mi-png .mi-topic-wrap{color:#f6eddf}
+
+
+/* Mobile viewport containment: decorative ribbon never expands the document scroll width. */
+@media(max-width:780px){
+ .mi-png{min-width:0;max-width:100%;overflow-x:clip}
+ .mi-png .mi-page-intro{overflow:hidden;max-width:100%;min-width:0}
+ .mi-png .mi-hero-ribbon{right:0;width:100%;overflow:hidden}
+ .mi-png .mi-png-grid,.mi-png .mi-png-main,.mi-png .mi-news-column,.mi-png .mi-feature-grid,.mi-png .mi-feature-secondary,.mi-png .mi-news-grid{max-width:100%;min-width:0}
+ .mi-png .mi-news-grid .news-card,.mi-png .mi-feature-secondary .news-card{min-width:0}
+ .mi-png .mi-news-grid .news-card h3,.mi-png .mi-feature-secondary .news-card h3{min-width:0;overflow-wrap:anywhere}
+}
