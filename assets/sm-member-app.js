@@ -7,7 +7,7 @@ const create=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.cla
 function tabFromLocation(){const requested=new URLSearchParams(location.search).get("tab")||"home";return requested==="library"?"studio":requested==="notifications"?"markets":views.has(requested)?requested:"home"}
 
 const marketModules={feed:true};
-const toolLabels={video:"Video Prompt Builder",article:"Article Prompt Builder",banner:"Banner Prompt Builder",indicator:"Indicator Prompt Builder","30days":"30 Days Content Planner",h1:"Daily H1 Analysis",downloads:"Downloads"};
+const toolLabels={video:"Video Prompt Builder",article:"Article Prompt Builder",banner:"Banner Prompt Builder",indicator:"Indicator Prompt Builder"};
 const sectionNames={home:"Dashboard",markets:"Market Intelligence",studio:"AI Studio & AI Scripts",tools:"Prompt Tools",mentorship:"Mentorship",profile:"My Profile"};
 function setEmbeddedFrame(id,src,statusId){
  const frame=$(id),status=$(statusId);
@@ -94,12 +94,23 @@ function mountStudio(){
  document.querySelectorAll("#studioSubnav [data-studio-page]").forEach(btn=>btn.classList.toggle("active",btn.dataset.studioPage===state.studioPage));
 }
 function showTool(tool,updateUrl=true){
- if(!(tool in toolLabels))return;
+ if(!Object.hasOwn(toolLabels,tool))return;
  const area=$("toolModuleArea");
- area.hidden=false;$("activeToolName").textContent=toolLabels[tool];
- setEmbeddedFrame("toolModuleFrame","/learning-hub.html?embedded=1#"+tool,"toolModuleStatus");
- if(updateUrl&&state.currentTab==="tools")history.replaceState({},"","/app/?tab=tools&tool="+encodeURIComponent(tool));
- area.scrollIntoView({behavior:"smooth",block:"start"});
+ if(!area)return;
+ area.hidden=false;
+ $("activeToolName").textContent=toolLabels[tool];
+ document.querySelectorAll("#view-tools .sm-prompt-tool-tab[data-tool]").forEach(button=>{
+  const active=button.dataset.tool===tool;
+  button.classList.toggle("active",active);
+  button.setAttribute("aria-selected",String(active));
+  button.tabIndex=active?0:-1;
+ });
+ setEmbeddedFrame("toolModuleFrame","/learning-hub.html?embedded=1&premium_prompts=1#"+encodeURIComponent(tool),"toolModuleStatus");
+ if(updateUrl&&state.currentTab==="tools"){
+  const params=new URLSearchParams(location.search);
+  params.set("tab","tools");params.set("tool",tool);
+  history.replaceState({},"","/app/?"+params.toString());
+ }
 }
 function openTab(name,push=true){
  if(name==="library"){name="studio";state.studioPage="projects"}
@@ -123,6 +134,7 @@ function openTab(name,push=true){
  if(name==="mentorship")void refreshApplication();
  if(name==="markets")renderMarketModule();
  if(name==="studio")renderStudioAccess();
+ if(name==="tools"&&!$("toolModuleFrame").dataset.loadedSource){const requested=new URLSearchParams(location.search).get("tool");showTool(Object.hasOwn(toolLabels,requested)?requested:"video",false)}
 }
 function closeMenu(){
  $("appSidebar").classList.remove("open");$("sideShade").hidden=true;$("openMenu").setAttribute("aria-expanded","false");
