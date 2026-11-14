@@ -177,7 +177,7 @@ function openTab(name,push=true){
  if(name==="mentorship")void refreshApplication();
  if(name==="markets")renderMarketModule();
  if(name==="studio")renderStudioAccess();
- if(name==="tools"&&!$("toolModuleFrame").dataset.loadedSource){const requested=new URLSearchParams(location.search).get("tool");showTool(Object.hasOwn(toolLabels,requested)?requested:"video",false)}
+ if(name==="tools"&&!$("toolModuleFrame").dataset.loadedSource){const requested=new URLSearchParams(location.search).get("tool");showTool(Object.hasOwn(toolLabels,requested)?requested:(window.matchMedia("(max-width:720px)").matches?"banner":"video"),false)}
 }
 function closeMenu(){
  $("appSidebar").classList.remove("open");$("sideShade").hidden=true;$("openMenu").setAttribute("aria-expanded","false");
@@ -274,6 +274,9 @@ async function start(){
   if(requested.get("tab")==="library")state.studioPage="projects";
   openTab(tabFromLocation(),false);
   if(state.currentTab==="tools"&&Object.hasOwn(toolLabels,requested.get("tool")))showTool(requested.get("tool"),false);
+  // Mobile-only Supabase catalog; desktop remains the original layout.
+  if(window.matchMedia("(max-width:720px)").matches && typeof window.SMSetupMobileToolCatalog==="function")
+   void window.SMSetupMobileToolCatalog(c).catch(()=>{});
   void checkStudioAccess();
   void loadNews();
  }catch(e){
