@@ -12,7 +12,7 @@ const marketModules={
  reaction:"/market-reaction/?embedded=1",
  alerts:"/notifications/?embedded=1"
 };
-const toolLabels={video:"Video Prompt Builder",article:"Article Prompt Builder",banner:"Banner Prompt Builder",indicator:"Indicator Prompt Builder"};
+const toolLabels={video:"Video Prompt Builder",article:"Article Prompt Builder",banner:"Banner Prompt Builder",indicator:"Indicator Prompt Builder","30days":"30 Days Content Planner",h1:"Daily H1 Analysis",downloads:"Downloads"};
 const sectionNames={home:"Dashboard",markets:"Market Intelligence",studio:"AI Studio",tools:"Prompt Tools",mentorship:"Mentorship",library:"My Content",notifications:"Notifications",profile:"My Profile"};
 function setEmbeddedFrame(id,src,statusId){
  const frame=$(id),status=$(statusId);
@@ -95,11 +95,12 @@ function mountStudio(){
  if(state.studioFrameReady)state.studioFrame.contentWindow?.postMessage({type:"sm:studio-nav",page:requested},location.origin);
  document.querySelectorAll("#studioSubnav [data-studio-page]").forEach(btn=>btn.classList.toggle("active",btn.dataset.studioPage===state.studioPage));
 }
-function showTool(tool){
+function showTool(tool,updateUrl=true){
  if(!(tool in toolLabels))return;
  const area=$("toolModuleArea");
  area.hidden=false;$("activeToolName").textContent=toolLabels[tool];
  setEmbeddedFrame("toolModuleFrame","/learning-hub.html?embedded=1#"+tool,"toolModuleStatus");
+ if(updateUrl&&state.currentTab==="tools")history.replaceState({},"","/app/?tab=tools&tool="+encodeURIComponent(tool));
  area.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function openTab(name,push=true){
@@ -109,9 +110,19 @@ function openTab(name,push=true){
  if(name==="library")$("view-library")?.classList.remove("active");
  $("studioTitle").innerHTML=name==="library"?"My <em>Content.</em>":"AI <em>Studio.</em>";
  $("studioSubnav").hidden=name==="library";
- document.querySelectorAll("[data-section]").forEach(node=>node.classList.toggle("active",node.dataset.section===name&&node.closest(".side-links,.mobile-dock")!==null));
+ document.querySelectorAll("[data-section]").forEach(node=>{
+  const inMenu=node.closest(".side-links,.mobile-dock")!==null;
+  const studioSubtab=node.closest(".side-links")&&name==="studio"&&node.dataset.studioPage;
+  const active=inMenu&&node.dataset.section===name&&(!studioSubtab||node.dataset.studioPage===state.studioPage);
+  node.classList.toggle("active",Boolean(active));
+ });
  $("currentSectionName").textContent=sectionNames[name]||"Dashboard";
- if(push)history.replaceState({},"",name==="home"?"/app/":"/app/?tab="+encodeURIComponent(name));
+ if(push){
+  const params=new URLSearchParams();
+  if(name!=="home")params.set("tab",name);
+  if(name==="studio")params.set("studio",state.studioPage);
+  history.replaceState({},"","/app/"+(params.size?"?"+params.toString():""));
+ }
  closeMenu();
  if(typeof window.scrollTo==="function")window.scrollTo({top:0,behavior:"instant"});
  if(name==="mentorship")void refreshApplication();
@@ -176,7 +187,11 @@ async function start(){
   $("year").textContent=String(new Date().getFullYear());
   $("memberApp").hidden=false;$("bootScreen").hidden=true;
   document.body.classList.remove("member-boot");
+  const requested=new URLSearchParams(location.search);
+  const studio=requested.get("studio");
+  if(["dashboard","create","projects","planner","record"].includes(studio))state.studioPage=studio;
   openTab(tabFromLocation(),false);
+  if(state.currentTab==="tools"&&Object.hasOwn(toolLabels,requested.get("tool")))showTool(requested.get("tool"),false);
   void checkStudioAccess();
   void Promise.allSettled([loadNews(),loadEconomic(),loadAlerts()]);
  }catch(e){
@@ -288,6 +303,7 @@ function setupNavigation(){
  document.querySelectorAll("#studioSubnav [data-studio-page]").forEach(button=>button.addEventListener("click",()=>{
   state.studioPage=button.dataset.studioPage;
   if(button.disabled)return;
+  if(state.currentTab==="studio")history.replaceState({},"","/app/?tab=studio&studio="+encodeURIComponent(state.studioPage));
   if(state.studioStatus==="allowed")mountStudio();
   else renderStudioAccess();
  }));
