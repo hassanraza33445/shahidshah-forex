@@ -186,3 +186,6 @@ html[data-theme="dark"] #view-tools .sm-prompt-tool-tab.active small{color:#f7da
  #view-tools .sm-prompt-tool-tab{transition:none}
  #view-tools .sm-prompt-tool-tab:hover{transform:none}
 }
+
+/* Preserve the existing four-card desktop layout; two restored legacy modules are mobile-only. */
+#view-tools .sm-prompt-tool-tab.sm-mobile-extra-tool{display:none!important}
