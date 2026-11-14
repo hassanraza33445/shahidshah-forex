@@ -221,10 +221,10 @@ function headlineCard(item,featured=false){
  if(featured){
   const category=String(item.category||"").toLowerCase();
   const text=String(item.title||"")+" "+String(item.summary||"");
-  const graphic=/\\b(gold|xau|bullion)\\b/i.test(text)?"gold":
-   /\\b(btc|bitcoin|crypto|ethereum)\\b/i.test(text)?"crypto":
-   /\\b(usd\\/?jpy|jpy|yen|bank of japan|boj)\\b/i.test(text)?"forex-yen":
-   /\\b(eur\\/?usd|euro|ecb|gbp\\/?usd|sterling|dxy)\\b/i.test(text)?"forex-euro":
+  const graphic=/\b(gold|xau|bullion)\b/i.test(text)?"gold":
+   /\b(btc|bitcoin|crypto|ethereum)\b/i.test(text)?"crypto":
+   /\b(usd\/?jpy|jpy|yen|bank of japan|boj)\b/i.test(text)?"forex-yen":
+   /\b(eur\/?usd|euro|ecb|gbp\/?usd|sterling|dxy)\b/i.test(text)?"forex-euro":
    category.includes("forex")?"forex":category.includes("economic")?"economy":"markets";
   const visual=create("div","news-visual news-visual-"+graphic);
   visual.setAttribute("aria-hidden","true");
@@ -232,7 +232,7 @@ function headlineCard(item,featured=false){
   article.append(visual);
  }
  const story=String(item.title||"")+" "+String(item.summary||"");
- const tags=(String(item.category||"").toLowerCase().includes("economic")&&/\\b(gold|xau|bullion)\\b/i.test(story))?"Gold · Economy":item.category||"Markets";
+ const tags=(String(item.category||"").toLowerCase().includes("economic")&&/\b(gold|xau|bullion)\b/i.test(story))?"Gold · Economy":item.category||"Markets";
  const chip=create("span","chip",item.priority==="HOT"?"HOT · VERIFY SOURCE":tags);article.append(chip);
  const title=create("h3","",safe(item.title));article.append(title);
  const description=(item.summary||"").replace(/<[^>]*>/g," ").trim();
@@ -240,7 +240,7 @@ function headlineCard(item,featured=false){
  const name=norm(item.title),details=norm(description);
  if(description&&details!==name&&!(name.length>24&&details.startsWith(name.slice(0,Math.min(60,name.length))))&&!name.startsWith(details))article.append(create("p","",description.slice(0,180)));
  const foot=create("div","news-foot");
- const host=domainSource(item.original_url),isAggregator=/^(news\\.google\\.com|google\\.com)$/.test(host);
+ const host=domainSource(item.original_url),isAggregator=/^(news\.google\.com|google\.com)$/.test(host);
  foot.textContent=(item.publisher&&String(item.publisher).trim()?safe(item.publisher)+" · ":"")+(isAggregator?"via Google News":host)+" · "+formatTime(item.published_at||item.first_seen_at);
  article.append(foot);
  const link=create("a","outline-action",isAggregator?"Open via Google News ↗":"Read Article ↗");
