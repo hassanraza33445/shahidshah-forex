@@ -76,22 +76,129 @@ html.sm-embedded #page-projects>.card{min-height:0}
 </style>
 <script defer src="/assets/sm-embed-resize.js?v=20261114-premium-1"></script><link rel="stylesheet" href="/assets/sm-premium-unified-2026.css?v=20261114-1">
 <link rel="stylesheet" href="/assets/sm-four-products-2026.css?v=20261114-products-1">
+<link rel="stylesheet" href="/assets/sm-studio-market-news-2026.css?v=20261114-news-ui-1">
 </head>
 <body>
-<div class="gate" id="authGate"><section class="login"><img src="/shahid-shah-profile.webp" alt=""><div class="upper">S M SHAHID SHAH</div><h1>AI Content Studio</h1><p class="note">Private editorial workspace. Sign in with your existing S M Shahid Shah account. Studio access is assigned by an administrator.</p><form id="loginForm"><div><label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div><div><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required minlength="6"></div><button class="btn gold" type="submit">Sign In Securely →</button></form><div id="loginStatus" class="status" aria-live="polite"></div><div class="actions"><a class="btn ghost" href="/">← Website</a><a class="btn ghost" href="/market-intelligence/">Market Intelligence</a></div></section></div>
+<div class="gate" id="authGate"><section class="login"><img src="/shahid-shah-profile.webp" alt=""><div class="upper">S M SHAHID SHAH</div><h1>AI Content Studio</h1><p class="note">Free AI script workspace for all registered members. Sign in with your S M Shahid Shah account.</p><form id="loginForm"><div><label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div><div><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required minlength="6"></div><button class="btn gold" type="submit">Sign In Securely →</button></form><div id="loginStatus" class="status" aria-live="polite"></div><div class="actions"><a class="btn ghost" href="/">← Website</a><a class="btn ghost" href="/market-intelligence/">Market Intelligence</a></div></section></div>
 <div class="layout hidden" id="workspace">
 <aside class="side"><a class="brand" href="/"><img src="/shahid-shah-profile.webp" alt=""><div><strong>S M SHAHID SHAH</strong><small>CONTENT STUDIO</small></div></a>
 <nav class="menu" aria-label="Studio navigation">
-<button data-page="dashboard" class="active"><span>◈</span> Dashboard</button><button data-page="create"><span>✦</span> Create Video</button><button data-page="projects"><span>▣</span> Saved Projects</button><button data-page="planner"><span>▦</span> Content Planner</button><button data-page="record"><span>◉</span> Recording Studio</button><button data-page="access" class="adminOnly hidden"><span>♙</span> Access Control</button><button data-page="sources" class="adminOnly hidden"><span>◌</span> News Sources</button>
+<button data-page="create" class="active"><span>✦</span> Create AI Script</button><button data-page="projects"><span>▣</span> My Scripts</button><button data-page="access" class="adminOnly hidden"><span>♙</span> Access Control</button><button data-page="sources" class="adminOnly hidden"><span>◌</span> News Sources</button>
 </nav><div class="side-bottom"><div id="sideName" class="small">Signed in</div><p id="sideRole"></p><div class="actions"><button id="logout" class="btn small">Sign out</button><a class="btn small" href="/market-intelligence/">Market News ↗</a></div></div></aside>
 <div class="content"><header class="topbar"><div><b>✦ AI CONTENT STUDIO</b><p>Produce, review and publish responsibly</p></div><div class="user"><button class="btn theme" id="theme" title="Change theme" style="display:none" tabindex="-1" aria-hidden="true">◐</button><button class="btn adminOnly hidden" data-page="access">Admin</button><button class="btn small" id="logoutTop">Sign Out</button><span class="badge" id="userRole">PRIVATE</span><div class="dot" id="avatar">S</div></div></header>
 <div id="globalStatus" class="status" aria-live="polite"></div>
 <section id="page-dashboard" class="page active"><div class="intro"><div><div class="upper">YOUR WORKSPACE</div><h1>Your creative workspace.</h1><p>Create educational scripts from market news or your own topics.</p></div><div class="actions"><button class="btn gold" data-page="create">+ Create Video</button><a href="/market-intelligence/" class="btn">Global Markets ↗</a></div></div>
 <div class="stats"><article class="stat"><span>MY PROJECTS</span><b id="countProjects">0</b></article><article class="stat"><span>DRAFTS</span><b id="countDrafts">0</b></article><article class="stat"><span>IN REVIEW</span><b id="countReview">0</b></article><article class="stat"><span>APPROVED</span><b id="countApproved">0</b></article></div>
 <div class="grid2"><section class="card"><div class="row"><h2>Recent projects</h2><button class="btn small" data-page="projects">View all</button></div><div id="recentProjects" class="list"></div></section><section class="card"><div class="row"><h2>Market watch</h2><a class="btn small" href="/market-intelligence/">Open News ↗</a></div><p class="note">Latest source-linked headlines for content ideas.</p><div id="dashboardNews" class="list"></div></section></div></section>
-<section id="page-create" class="page"><div class="intro"><div><div class="upper">CREATOR WORKSPACE</div><h1>Write your next story.</h1><p>Start from original news or an educational topic. Always review claims before publishing.</p></div><div class="actions"><button id="newProject" class="btn">New Script</button><button id="saveProject" class="btn gold">Save Project</button></div></div>
-<div class="grid2"><section class="card"><h2>1. Choose your subject</h2><p class="note">News stories retain source attribution. You can also write about any topic.</p><div class="stack"><div><label for="newsChoice">Market News</label><select id="newsChoice"><option value="">Custom topic (no news source)</option></select></div><div><label for="topic">Custom topic / additional direction</label><input id="topic" maxlength="350" placeholder="e.g. Why does Gold move after CPI?"></div></div><hr class="divider"><h2>2. Set the video style</h2><div class="fields"><div><label for="language">Language</label><select id="language"><option>Roman Urdu + English</option><option>Urdu</option><option>English</option></select></div><div><label for="duration">Duration</label><select id="duration"><option>30 seconds</option><option>45 seconds</option><option selected>60 seconds</option><option>3 minutes</option><option>8 minutes</option></select></div><div><label for="platform">Platform</label><select id="platform"><option>YouTube Shorts</option><option>Facebook</option><option>Instagram</option><option>YouTube Long</option><option>WhatsApp</option><option>Website</option></select></div><div><label for="tone">Tone</label><select id="tone"><option>Professional</option><option>Educational</option><option>Engaging</option><option>Breaking News</option><option>Simple</option><option>Detailed</option></select></div></div><div class="actions" style="margin-top:17px"><button id="generate" class="btn gold">✦ Generate AI Script</button><button id="rewrite" class="btn">Rewrite Draft</button><button id="seo" class="btn">SEO Pack</button></div><div id="aiStatus" class="status" aria-live="polite"></div><p class="note">Generated drafts are AI-assisted and unverified. Only source-linked statements may be presented as reported facts.</p></section>
-<section class="card"><div class="row"><div><div class="upper">EDITORIAL DESK</div><h2>3. Edit your script</h2></div><span class="badge" id="projectState">UNSAVED</span></div><div class="stack"><div><label for="projectTitle">Project Title</label><input id="projectTitle" maxlength="200" placeholder="Your video title"></div><div class="editor" id="scriptFields"></div><div><label for="factCheck">Fact-check checklist (one per line)</label><textarea id="factCheck" rows="3" placeholder="Verify exact figures, dates and sources"></textarea></div><div class="rowwrap"><button class="btn small" id="copyScript">Copy</button><button class="btn small" id="downloadScript">Export TXT</button><button class="btn small" id="listen">▶ Listen</button><button class="btn small" id="stopSpeech">■ Stop</button><button class="btn small" id="teleprompter">Teleprompter</button><button class="btn small" id="submitReview">Submit Review</button><button class="btn small hidden" id="approve">✓ Approve</button></div><div class="note" id="wordCount">0 words · 0 min estimated</div><div id="editorStatus" class="status" aria-live="polite"></div><div><label for="versionChoice">Script version history</label><div class="actions"><select id="versionChoice" style="max-width:300px"><option value="">No saved versions</option></select><button class="btn small" id="restoreVersion" type="button">Restore Selected Version</button></div></div></div></section></div>
+<section id="page-create" class="page studio-workspace-page">
+<div class="studio-creation-intro">
+ <div><div class="upper">S M SHAHID SHAH · AI WORKSPACE</div><h1>Create AI Script</h1><p>Choose a real market headline or enter your own topic. Generate, edit and save in one place.</p></div>
+ <button id="newProject" class="btn small" type="button">＋ New Script</button>
+</div>
+<div class="studio-builder-grid">
+ <section class="card studio-news-card" aria-labelledby="studioNewsHeading">
+  <div class="studio-panel-head"><div><h2 id="studioNewsHeading">Select Market News</h2><p>Pick an actual headline from your Market Intelligence feed.</p></div></div>
+  <div class="studio-news-toggle" role="group" aria-label="Script content source">
+   <button type="button" id="studioModeNews" class="studio-toggle-button active" aria-pressed="true">▤ Market News</button>
+   <button type="button" id="studioModeCustom" class="studio-toggle-button" aria-pressed="false">✎ Custom Topic</button>
+  </div>
+  <div id="studioNewsPicker">
+   <div class="studio-news-filters" role="group" aria-label="Filter headlines">
+    <button type="button" class="studio-news-filter active" data-studio-category="All" aria-pressed="true">All</button>
+    <button type="button" class="studio-news-filter" data-studio-category="Forex" aria-pressed="false">Forex</button>
+    <button type="button" class="studio-news-filter" data-studio-category="Gold" aria-pressed="false">Gold</button>
+    <button type="button" class="studio-news-filter" data-studio-category="Crypto" aria-pressed="false">Crypto</button>
+    <button type="button" class="studio-news-filter" data-studio-category="Economy" aria-pressed="false">Economy</button>
+   </div>
+   <label for="studioNewsSearch" class="studio-select-native">Search latest headlines</label>
+   <input id="studioNewsSearch" type="search" maxlength="100" placeholder="⌕ Search market news…" autocomplete="off" aria-label="Search market news" />
+   <div id="studioNewsList" class="studio-news-list" role="list" aria-label="Latest available market news"><div class="studio-news-empty">Loading market headlines…</div></div>
+   <div id="studioNewsResultCount" class="studio-news-caption" role="status">From your live Market Intelligence news database.</div>
+  </div>
+  <div id="studioCustomHint" class="studio-news-empty" hidden>Enter your own topic in the next panel. No market headline will be attached.</div>
+  <select id="newsChoice" class="studio-select-native" aria-label="Selected news source">
+   <option value="">Custom topic (no news source)</option>
+  </select>
+ </section>
+ <section class="card studio-config-card" aria-labelledby="studioConfigureHeading">
+  <div class="studio-panel-head"><div><h2 id="studioConfigureHeading">Create AI Script</h2><p>Configure your video script and generate.</p></div></div>
+  <div class="studio-settings-stack">
+   <div class="studio-selected-news" id="studioSelectedNewsBox">
+    <span class="studio-selected-label" id="studioSelectedLabel">SELECTED NEWS</span>
+    <strong id="studioSelectedNewsTitle">Select a market headline from the list.</strong>
+    <small id="studioSelectedNewsSource">Choose Market News or switch to Custom Topic.</small>
+   </div>
+   <div>
+    <label for="topic" id="studioTopicLabel">Additional direction (optional)</label>
+    <input id="topic" maxlength="350" placeholder="e.g. Explain the impact on Gold in simple words" />
+   </div>
+   <div>
+    <label>Video Duration</label>
+    <select id="duration" class="studio-select-native" aria-label="Video duration">
+      <option>30 seconds</option><option>45 seconds</option><option selected>60 seconds</option>
+    </select>
+    <div class="studio-duration-options" role="group" aria-label="Video duration">
+      <button type="button" class="studio-duration" data-duration="30 seconds" aria-pressed="false">◷ 30 Sec</button>
+      <button type="button" class="studio-duration" data-duration="45 seconds" aria-pressed="false">◷ 45 Sec</button>
+      <button type="button" class="studio-duration active" data-duration="60 seconds" aria-pressed="true">◷ 60 Sec</button>
+    </div>
+   </div>
+   <div class="studio-settings-pair">
+    <div><label for="language">Language</label><select id="language"><option>Roman Urdu + English</option><option>Urdu</option><option>English</option></select></div>
+    <div><label for="platform">Platform</label><select id="platform"><option>YouTube Shorts</option><option>Facebook</option><option>Instagram</option><option>YouTube Long</option><option>WhatsApp</option><option>Website</option></select></div>
+   </div>
+   <details class="studio-editor-details studio-extra-settings">
+    <summary>Advanced settings</summary>
+    <div class="studio-editor-inner"><label for="tone">Tone</label><select id="tone"><option>Professional</option><option>Educational</option><option>Engaging</option><option>Breaking News</option><option>Simple</option><option>Detailed</option></select></div>
+   </details>
+   <div>
+    <button id="generate" type="button" class="studio-generate">✦ Generate AI Script</button>
+    <div id="aiStatus" class="status studio-creation-status" aria-live="polite"></div>
+    <p class="note">AI-generated scripts require source and fact verification before publishing.</p>
+   </div>
+  </div>
+ </section>
+ <section class="card studio-output-card" aria-labelledby="studioOutputHeading">
+  <div class="studio-panel-head studio-output-head">
+   <div><h2 id="studioOutputHeading">Generated Script</h2><p>Review and edit before publishing.</p></div>
+   <button id="rewrite" type="button" class="btn small">↻ Regenerate</button>
+  </div>
+  <div class="studio-script-preview" aria-live="polite">
+   <div class="studio-preview-block"><b>✦ Hook</b><p id="studioPreviewHook" class="is-empty">Your opening hook will appear here.</p></div>
+   <div class="studio-preview-block"><b>▥ Main Script</b><p id="studioPreviewMain" class="is-empty">Your generated main script will appear here.</p></div>
+   <div class="studio-preview-block"><b>⚑ Closing &amp; CTA</b><p id="studioPreviewClosing" class="is-empty">Your closing message will appear here.</p></div>
+  </div>
+  <div class="studio-output-actions">
+   <button id="copyScript" class="btn" type="button">▣ Copy All</button>
+   <button id="saveProject" class="btn gold" type="button">▤ Save Script</button>
+   <button id="downloadScript" class="btn" type="button">↓ Export TXT</button>
+   <button id="studioPdfExport" class="btn" type="button">↓ Print / PDF</button>
+  </div>
+  <details class="studio-editor-details" id="studioFullEditor">
+   <summary>Edit full script &amp; SEO fields <span id="projectState" class="badge">UNSAVED</span></summary>
+   <div class="studio-editor-inner">
+    <label for="projectTitle">Project Title</label>
+    <input id="projectTitle" maxlength="200" placeholder="Video title" />
+    <div class="editor" id="scriptFields" style="margin-top:12px"></div>
+    <div class="studio-fact-check"><label for="factCheck">Fact-check checklist</label><textarea id="factCheck" rows="3" placeholder="Check exact facts, figures and source links"></textarea></div>
+    <div class="studio-controls">
+     <button class="btn small" id="seo" type="button">Generate SEO Pack</button>
+     <button class="btn small" id="listen" type="button">▶ Listen</button>
+     <button class="btn small" id="stopSpeech" type="button">■ Stop</button>
+     <button class="btn small" id="teleprompter" type="button">Teleprompter</button>
+     <button class="btn small" id="submitReview" type="button">Submit Review</button>
+     <button class="btn small hidden" id="approve" type="button">✓ Approve</button>
+    </div>
+    <div class="note" id="wordCount">0 words</div>
+    <div id="editorStatus" class="status" aria-live="polite"></div>
+    <div style="margin-top:13px"><label for="versionChoice">Script version history</label>
+     <div class="actions"><select id="versionChoice" style="max-width:270px"><option value="">No saved versions</option></select>
+     <button class="btn small" id="restoreVersion" type="button">Restore Selected Version</button></div>
+    </div>
+   </div>
+  </details>
+ </section>
+</div>
 </section>
 <section id="page-projects" class="page"><div class="intro"><div><div class="upper">LIBRARY</div><h1>Saved Projects</h1><p>Drafts, submitted scripts and approved work.</p></div><button class="btn gold" data-page="create">+ Create Script</button></div><section class="card"><div class="rowwrap" style="margin-bottom:16px"><label for="filterStatus" style="align-self:center">Filter</label><select id="filterStatus" style="max-width:200px"><option value="">All statuses</option><option value="draft">Draft</option><option value="review">In review</option><option value="approved">Approved</option><option value="published">Marked published</option></select><button class="btn small" id="reloadProjects">↻ Reload</button></div><div id="projectList" class="list"></div></section></section>
 <section id="page-planner" class="page"><div class="intro"><div><div class="upper">PLANNING</div><h1>Content Planner</h1><p>Plan a publication date. Scheduling does not automatically publish to social platforms.</p></div></div><section class="card"><h2>Planned content</h2><div id="plannerList" class="list"></div><div id="scheduleAdmin" class="hidden"><hr class="divider"><h3>Create a schedule (Admin)</h3><form class="fields" id="scheduleForm" style="margin-top:15px"><div><label for="scheduleProject">Approved project</label><select id="scheduleProject"></select></div><div><label for="scheduleDate">Date & time</label><input id="scheduleDate" type="datetime-local" required></div><div><label for="schedulePlatform">Platform</label><select id="schedulePlatform"><option>YouTube</option><option>Facebook</option><option>Instagram</option><option>Website</option></select></div><div style="display:flex;align-items:end"><button class="btn gold" type="submit">Add to Planner</button></div></form></div></section></section>
@@ -99,7 +206,7 @@ html.sm-embedded #page-projects>.card{min-height:0}
 <section id="page-access" class="page"><div class="intro"><div><div class="upper">ADMINISTRATION</div><h1>Studio Access</h1><p>Grant or revoke access for registered website accounts. Email status is reported separately.</p></div><button class="btn" data-page="sources">News Source Health →</button></div><section class="card"><form id="accessForm" class="fields"><div><label for="accessEmail">Registered account email</label><input id="accessEmail" type="email" required placeholder="creator@example.com"></div><div><label for="accessRole">Access role</label><select id="accessRole"><option value="creator">Creator</option><option value="viewer">Viewer</option><option value="editor">Editor</option><option value="approver">Approver</option><option value="admin">Studio Admin</option></select></div><div class="field full actions"><button class="btn gold" name="accessAction" value="grant" type="submit">Grant Access & Email</button><button class="btn danger" name="accessAction" value="revoke" type="submit">Remove Access</button><button class="btn" name="accessAction" value="resend" type="submit">Resend Email</button></div></form><div id="accessStatus" class="status" aria-live="polite"></div><hr class="divider"><h2>Assigned users</h2><div class="list" id="accessList"></div></section></section>
 <section id="page-sources" class="page"><div class="intro"><div><div class="upper">SYSTEM HEALTH</div><h1>News Sources</h1><p>RSS ingestion status, failure counts and source controls.</p></div><button class="btn" id="refreshSources">↻ Refresh Sources</button></div><section class="card"><p class="note">Sources are fetched in the background. HOT is a headline-based relevance label, not verified market impact.</p><div id="sourceList" class="list"></div><div id="sourceStatus" class="status" aria-live="polite"></div></section></section>
 </div>
-<nav class="mobile-bottom" aria-label="Mobile Studio"><button data-page="dashboard" class="active"><b>⌂</b>Home</button><button data-page="create"><b>✦</b>Create</button><button data-page="projects"><b>▣</b>Projects</button><button data-page="planner"><b>▦</b>Planner</button><button data-page="record"><b>◉</b>Record</button></nav>
+<nav class="mobile-bottom" aria-label="Mobile Studio"><button data-page="create" class="active"><b>✦</b>Create</button><button data-page="projects"><b>▣</b>My Scripts</button></nav>
 </div>
 <div id="tele" class="tele hidden" role="dialog" aria-modal="true" aria-label="Teleprompter"><div class="telebar"><b>S M SHAHID SHAH · TELEPROMPTER</b><div class="actions"><button class="btn" id="teleListen">▶ Read</button><button class="btn" id="teleClose">Close ✕</button></div></div><div id="teleWords" class="words"></div></div>
 <script>
