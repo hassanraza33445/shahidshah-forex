@@ -36,7 +36,7 @@ function iconButton(el,name){
  const old=el.querySelector(":scope > .ui-icon");if(old)old.remove();
  el.prepend(svg(name));
 }
-const names={home:"house",markets:"chart",studio:"sparkles",tools:"wand",mentorship:"graduation",library:"folder",notifications:"bell",profile:"user"};
+const names={home:"house",markets:"chart",studio:"sparkles",tools:"wand",mentorship:"graduation",profile:"user"};
 function paintTheme(){
  iconButton(document.getElementById("memberThemeToggle"),document.documentElement.dataset.theme==="dark"?"sun":"moon");
  document.querySelectorAll("[data-preference-theme]").forEach(b=>{const active=b.dataset.preferenceTheme===document.documentElement.dataset.theme;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active))});
@@ -48,11 +48,11 @@ function start(){
  iconButton(document.querySelector(".search-icon"),"search");
  iconButton(document.querySelector(".profile-icon"),"user");
  iconButton(document.querySelector(".notification-icon"),"bell");
- document.querySelectorAll(".dashboard-metrics .metric>span").forEach((el,i)=>fill(el,["newspaper","bell","calendar","clock"][i]));
- document.querySelectorAll(".quick-grid .tool-card>span").forEach((el,i)=>fill(el,["sparkles","play","wand","folder","graduation"][i]));
+ document.querySelectorAll(".dashboard-metrics .metric>span").forEach((el,i)=>fill(el,["newspaper","chart","clock"][i]));
+ document.querySelectorAll(".quick-grid .tool-card>span").forEach((el,i)=>fill(el,["chart","sparkles","wand","graduation"][i]));
  fill(document.querySelector(".mentor-promo>span"),"crown");
  fill(document.querySelector(".mentorship-highlight>span"),"crown");
- document.querySelectorAll(".profile-actions>a,.profile-actions>button").forEach((el,i)=>{if(!el.querySelector(".ui-icon"))el.prepend(svg(["folder","graduation","bell","calendar","settings"][i]))});
+ document.querySelectorAll(".profile-actions>a,.profile-actions>button").forEach((el,i)=>{if(!el.querySelector(".ui-icon"))el.prepend(svg(["folder","graduation","chart","settings"][i]))});
  paintTheme();
  document.getElementById("memberThemeToggle")?.addEventListener("click",paintTheme);
  document.addEventListener("click",event=>{if(event.target.closest("[data-preference-theme]"))queueMicrotask(paintTheme)});
