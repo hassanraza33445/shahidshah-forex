@@ -432,8 +432,8 @@ function renderMarketEditorial(){
   span.textContent="("+n+")";
  });
  $("miTotalStories").textContent=state.news.length?String(state.news.length):"—";
- $("miPriorityStories").textContent=state.news.length?
-  String(["Gold","Forex","Crypto","Economic Data"].filter(cat=>counts[cat]>0).length):"—";
+ $("miGoldStories").textContent=state.news.length?String(counts.Gold||0):"—";
+ $("miForexStories").textContent=state.news.length?String(counts.Forex||0):"—";
  const filtered=state.news.filter(miNewsMatch);
  const sorted=filtered.map((item,index)=>({item,index}))
   .sort((a,b)=>miScore(b.item)-miScore(a.item)||a.index-b.index)
