@@ -257,6 +257,13 @@ async function start(){
   const {data,error}=await withTimeout(c.auth.getUser(),11000,"Secure login check took too long");
   if(error||!data?.user){goToLogin();return}
   const user=data.user;state.user=user;
+  // Automatic SMTP welcome notification for newly registered members only.
+  // Secure Edge Function verifies the session, signup consent and one-time delivery.
+  // Do not block the dashboard if the email provider is unavailable.
+  const registeredAt=Date.parse(user.created_at||"");
+  if(Number.isFinite(registeredAt)&&registeredAt>Date.now()-30*86400000){
+   void c.functions.invoke("member-signup-welcome",{body:{}}).catch(()=>{});
+  }
   paintUser(user,null);
   $("year").textContent=String(new Date().getFullYear());
   $("memberApp").hidden=false;$("bootScreen").hidden=true;
