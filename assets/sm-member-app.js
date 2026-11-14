@@ -234,19 +234,22 @@ function headlineCard(item,featured=false){
  const story=String(item.title||"")+" "+String(item.summary||"");
  const tags=(String(item.category||"").toLowerCase().includes("economic")&&/\b(gold|xau|bullion)\b/i.test(story))?"Gold · Economy":item.category||"Markets";
  const chip=create("span","chip",item.priority==="HOT"?"HOT · VERIFY SOURCE":tags);article.append(chip);
- const title=create("h3","",safe(item.title));article.append(title);
+ const title=create("h3");
+ const headlineButton=create("button","sm-news-title-button",safe(item.title));
+ headlineButton.type="button";headlineButton.setAttribute("aria-label","Read news details: "+safe(item.title));
+ headlineButton.addEventListener("click",()=>window.SMNewsReader?.open(item,{trigger:headlineButton}));
+ title.append(headlineButton);article.append(title);
  const description=(item.summary||"").replace(/<[^>]*>/g," ").trim();
  const norm=t=>String(t||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
  const name=norm(item.title),details=norm(description);
  if(description&&details!==name&&!(name.length>24&&details.startsWith(name.slice(0,Math.min(60,name.length))))&&!name.startsWith(details))article.append(create("p","",description.slice(0,180)));
  const foot=create("div","news-foot");
- const host=domainSource(item.original_url),isAggregator=/^(news\.google\.com|google\.com)$/.test(host);
- foot.textContent=(item.publisher&&String(item.publisher).trim()?safe(item.publisher)+" · ":"")+(isAggregator?"via Google News":host)+" · "+formatTime(item.published_at||item.first_seen_at);
+ foot.textContent=(item.publisher&&String(item.publisher).trim()?"Publisher: "+safe(item.publisher):"Source-linked headline")+" · "+formatTime(item.published_at||item.first_seen_at);
  article.append(foot);
- const link=create("a","outline-action",isAggregator?"Open via Google News ↗":"Read Article ↗");
- link.href=hrefSafe(item.original_url);link.target="_blank";link.rel="noopener noreferrer";
- if(link.href.endsWith("#")){link.textContent="Source unavailable";link.removeAttribute("href");link.setAttribute("aria-disabled","true")}
- link.style.cssText="margin-top:10px;align-self:flex-start;padding:8px 12px;font-size:10px";article.append(link);
+ const details=create("button","sm-news-read-button","Read News Details →");
+ details.type="button";
+ details.addEventListener("click",()=>window.SMNewsReader?.open(item,{trigger:details}));
+ article.append(details);
  return article;
 }
 function renderNews(){
