@@ -215,7 +215,7 @@ const DB_URL="https://qggtdwixwafcmorepkks.supabase.co",PUB="sb_publishable_HnYm
 const sb=globalThis.supabase&&globalThis.supabase.createClient?globalThis.supabase.createClient(DB_URL,PUB):null;
 const $=id=>document.getElementById(id);
 const FIELDS=[["hook","Opening Hook"],["introduction","Introduction"],["explanation","Main Explanation"],["impact","Market Impact / Implications"],["key_takeaway","Key Takeaway"],["closing","Closing"],["cta","Call to Action"],["seo_title","SEO Title"],["description","SEO Caption / Description"],["hashtags","Hashtags (comma separated)"]];
-const state={user:null,session:null,role:"",admin:false,projects:[],projectId:null,projectStatus:"draft",ownerId:null,selectedNews:null,script:{},versions:[],recordingId:null,transcriptSegments:[],recorder:null,stream:null,chunks:[],blob:null,started:0,timer:null};
+const state={user:null,session:null,role:"",admin:false,projects:[],projectId:null,projectStatus:"draft",ownerId:null,selectedNews:null,studioNewsItems:[],studioCategory:"All",studioMode:"news",studioLastNewsId:"",script:{},versions:[],recordingId:null,transcriptSegments:[],recorder:null,stream:null,chunks:[],blob:null,started:0,timer:null};
 function mk(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=String(txt);return e}
 function status(id,msg,kind){const x=$(id);x.textContent=msg;x.className="status"+(kind?" "+kind:"")}
 function say(msg,kind){status("globalStatus",msg,kind);if(kind==="error")console.error("Studio:",msg)}
@@ -225,6 +225,7 @@ function checkedSession(){if(!state.session||!state.user)throw Error("Please sig
 function isCreator(){return ["admin","creator","editor","approver"].includes(state.role)}
 function isApprover(){return ["admin","approver"].includes(state.role)}
 function displayPage(page){
+ if(["dashboard","planner","record"].includes(page))page="create";
  if(["access","sources"].includes(page)&&!state.admin)return;
  document.querySelectorAll(".page").forEach(n=>n.classList.toggle("active",n.id==="page-"+page));
  document.querySelectorAll("[data-page]").forEach(n=>n.classList.toggle("active",n.dataset.page===page));
@@ -255,7 +256,7 @@ function rawScript(){
  if(s.fact_check.length)result+="FACT CHECK BEFORE PUBLISHING:\n"+s.fact_check.map(x=>"- "+x).join("\n");
  return result;
 }
-function calcWords(){const n=rawScript().trim().split(/\s+/).filter(Boolean).length;$("wordCount").textContent=n+" words · approximately "+Math.ceil(n/130)+" minute(s) spoken"}
+function calcWords(){const n=rawScript().trim().split(/\s+/).filter(Boolean).length;$("wordCount").textContent=n+" words · approximately "+Math.ceil(n/130)+" minute(s) spoken";renderScriptPreview()}
 for(const [key,label] of FIELDS){const wrap=mk("div"),lab=mk("label","",label),area=mk("textarea",key==="explanation"||key==="description"?"long":"");area.id="field-"+key;area.placeholder="Edit "+label.toLowerCase()+"…";lab.htmlFor=area.id;area.addEventListener("input",calcWords);wrap.append(lab,area);$("scriptFields").append(wrap)}
 $("projectTitle").addEventListener("input",calcWords);$("factCheck").addEventListener("input",calcWords);
 async function bootstrap(){
@@ -280,7 +281,7 @@ async function openSession(session){
   $("scheduleAdmin").classList.toggle("hidden",!isAdmin);
   $("generate").disabled=!isCreator();$("rewrite").disabled=!isCreator();$("seo").disabled=!isCreator();$("saveProject").disabled=!isCreator();
   const requested=new URLSearchParams(location.search).get("view");
-  const initial=new URLSearchParams(location.search).has("news")?"create":["dashboard","create","projects","planner","record","access","sources"].includes(requested)?requested:"dashboard";
+  const initial=new URLSearchParams(location.search).has("news")?"create":["create","projects","access","sources"].includes(requested)?requested:"create";
   displayPage(initial);
   void Promise.allSettled([loadNews(),loadProjects()]);
  }catch(e){
@@ -295,6 +296,67 @@ $("loginForm").addEventListener("submit",async e=>{
  $("loginPassword").value="";await openSession(data.session);
 });
 $("logout").addEventListener("click",async()=>{stopSpeech();if(state.stream)state.stream.getTracks().forEach(t=>t.stop());await sb.auth.signOut();location.href="/app/?tab=studio"});
+function renderScriptPreview(){
+ const blocks=[["studioPreviewHook",["hook"],"Your opening hook will appear here."],["studioPreviewMain",["introduction","explanation","impact","key_takeaway"],"Your generated main script will appear here."],["studioPreviewClosing",["closing","cta"],"Your closing message will appear here."]];
+ for(const [id,keys,placeholder] of blocks){const value=keys.map(key=>$("field-"+key)?.value?.trim()||"").filter(Boolean).join("\n\n");const el=$(id);if(el){el.textContent=value||placeholder;el.classList.toggle("is-empty",!value)}}
+}
+function newsGroup(item){
+ const cat=String(item.category||"").toLowerCase(),t=String(item.title||"").toLowerCase();
+ if(cat==="gold"||/\b(gold|bullion|xau)\b/.test(t))return "Gold";
+ if(cat==="forex"||/\b(forex|usd\/|eur\/|gbp\/|jpy|currency|dollar|yen)\b/.test(t))return "Forex";
+ if(cat==="crypto"||/\b(bitcoin|crypto|btc|ethereum|eth)\b/.test(t))return "Crypto";
+ if(/econ|central|bank/.test(cat)||/\b(cpi|inflation|fed|fomc|payroll|gdp|rate hike)\b/.test(t))return "Economy";
+ return String(item.category||"Markets");
+}
+function newsTime(value){
+ const n=Date.parse(value||"");return Number.isFinite(n)?new Intl.DateTimeFormat("en",{timeZone:"Asia/Kuala_Lumpur",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(n))+" MYT":"Time unavailable";
+}
+function studioSelected(){
+ const row=state.studioNewsItems.find(x=>String(x.id)===$("newsChoice").value),custom=state.studioMode==="custom";
+ $("studioSelectedLabel").textContent=custom?"CUSTOM TOPIC":"SELECTED NEWS";
+ $("studioSelectedNewsTitle").textContent=custom?"Your own video topic":row?.title||"Choose a market headline.";
+ $("studioSelectedNewsSource").textContent=custom?"Write your topic below.":row?(String(row.publisher||"Source-linked news")+" · "+newsTime(row.published_at)):"No news selected";
+ $("studioTopicLabel").textContent=custom?"Your topic (required)":"Additional direction (optional)";
+ $("topic").placeholder=custom?"e.g. Why does Gold move after CPI?":"e.g. Explain the impact in Roman Urdu";
+}
+function studioMode(mode){
+ const custom=mode==="custom";state.studioMode=custom?"custom":"news";
+ if(custom){if($("newsChoice").value)state.studioLastNewsId=$("newsChoice").value;$("newsChoice").value=""}
+ else if(!$("newsChoice").value){const id=state.studioLastNewsId;const match=state.studioNewsItems.find(x=>String(x.id)===id)||state.studioNewsItems[0];$("newsChoice").value=match?String(match.id):""}
+ $("studioNewsPicker").hidden=custom;$("studioCustomHint").hidden=!custom;
+ for(const [key,value] of [["studioModeNews",!custom],["studioModeCustom",custom]]){const el=$(key);el.classList.toggle("active",value);el.setAttribute("aria-pressed",String(value))}
+ studioSelected();studioRenderNews();
+}
+function studioSelectNews(id){
+ const row=state.studioNewsItems.find(x=>String(x.id)===String(id));if(!row)return;
+ state.studioLastNewsId=String(row.id);state.studioMode="news";$("newsChoice").value=String(row.id);studioMode("news");
+}
+function studioRenderNews(){
+ const list=$("studioNewsList");list.replaceChildren();const q=$("studioNewsSearch").value.trim().toLowerCase();
+ document.querySelectorAll("[data-studio-category]").forEach(b=>{const active=b.dataset.studioCategory===state.studioCategory;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active))});
+ const found=state.studioNewsItems.filter(x=>(state.studioCategory==="All"||newsGroup(x)===state.studioCategory)&&(!q||(x.title||"").toLowerCase().includes(q)||(x.publisher||"").toLowerCase().includes(q)));
+ $("studioNewsResultCount").textContent=state.studioNewsItems.length?found.length+" news headlines · S M Shahid Shah Market Intelligence":"No market headlines available";
+ if(!found.length){list.append(mk("div","studio-news-empty",state.studioNewsItems.length?"No matching headlines. Try another category or search.":"News unavailable. Choose Custom Topic to continue."));return}
+ for(const x of found){
+  const button=mk("button","studio-news-item");button.type="button";button.setAttribute("role","listitem");button.setAttribute("aria-label","Select news: "+x.title);
+  const selected=$("newsChoice").value===String(x.id)&&state.studioMode==="news";button.classList.toggle("active",selected);button.setAttribute("aria-pressed",String(selected));
+  const body=mk("span","studio-news-body");body.append(mk("span","studio-news-label",newsGroup(x)),mk("strong","",x.title||"Market headline"),mk("small","",String(x.publisher||"Publisher")+" · "+newsTime(x.published_at)));
+  button.append(body,mk("span","studio-news-dot"));button.addEventListener("click",()=>studioSelectNews(x.id));list.append(button);
+ }
+}
+$("studioModeNews").addEventListener("click",()=>studioMode("news"));
+$("studioModeCustom").addEventListener("click",()=>studioMode("custom"));
+$("studioNewsSearch").addEventListener("input",studioRenderNews);
+document.querySelectorAll("[data-studio-category]").forEach(b=>b.addEventListener("click",()=>{state.studioCategory=b.dataset.studioCategory;studioRenderNews()}));
+$("newsChoice").addEventListener("change",()=>studioMode($("newsChoice").value?"news":"custom"));
+document.querySelectorAll("[data-duration]").forEach(b=>b.addEventListener("click",()=>{$("duration").value=b.dataset.duration;document.querySelectorAll("[data-duration]").forEach(c=>{const active=c===b;c.classList.toggle("active",active);c.setAttribute("aria-pressed",String(active))})}));
+$("studioPdfExport").addEventListener("click",()=>{
+ if(!FIELDS.some(([key])=>$("field-"+key)?.value?.trim()))return status("aiStatus","Generate or write a script first.","error");
+ const win=window.open("","_blank","width=820,height=900");if(!win)return status("aiStatus","Allow a popup to open PDF print preview.","error");
+ const safe=rawScript().replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+ win.opener=null;win.document.open();win.document.write("<!doctype html><html><head><meta charset='utf-8'><title>AI Script — S M Shahid Shah</title><style>body{font:14px/1.7 Arial,sans-serif;color:#2d2117;max-width:800px;margin:25px auto;padding:25px}h1{font-size:21px;border-bottom:1px solid #dcbb80;padding-bottom:12px}pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere}@media print{body{margin:0;padding:0}}</style></head><body><h1>S M Shahid Shah · AI Script</h1><pre>"+safe+"</pre></body></html>");win.document.close();win.focus();win.print();
+ status("aiStatus","Print preview opened. Choose Save as PDF.","ok");
+});
 async function loadNews(){
  const {data,error}=await sb.from("news_articles").select("id,title,publisher,published_at,category,original_url").eq("is_visible",true).order("published_at",{ascending:false}).limit(40);if(error){say("News suggestions unavailable: "+error.message,"error");return}
  $("newsChoice").replaceChildren(new Option("Custom topic (no news source)",""));
@@ -551,7 +613,7 @@ $("logoutTop").addEventListener("click",()=> $("logout").click());
 window.addEventListener("message",event=>{
  if(event.origin!==location.origin||!event.data||typeof event.data!=="object")return;
  if(event.data.type==="sm:theme"&&["light","dark"].includes(event.data.theme))document.documentElement.dataset.theme=event.data.theme;
- if(event.data.type==="sm:studio-nav"&&state.user&&["dashboard","create","projects","planner","record","access","sources"].includes(event.data.page))displayPage(event.data.page);
+ if(event.data.type==="sm:studio-nav"&&state.user&&["dashboard","create","projects","access","sources"].includes(event.data.page))displayPage(event.data.page);
 });
 bootstrap().catch(e=>status("loginStatus",e?.message||"Unable to verify Studio access","error"));
 </script></body></html>
