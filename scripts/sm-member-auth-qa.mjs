@@ -93,6 +93,14 @@ try{
   const errors=[];p.on("pageerror",e=>errors.push(e.message));
   await p.goto(HOST+"/app/",{waitUntil:"domcontentloaded"});
   await p.locator("#view-home.active").waitFor({timeout:11000});
+  assert.equal(await p.locator("#bootScreen").isVisible(),false,"Successful login must hide the boot screen");
+  assert.equal(await p.locator(".side-brand .side-portrait").count(),1,"Sidebar displays the homepage portrait");
+  assert.equal(await p.locator("#memberThemeToggle").count(),1,"Dashboard theme switch exists");
+  assert.equal(await p.locator("html").getAttribute("data-theme"),"light","Member theme defaults to light");
+  await p.locator("#memberThemeToggle").click();
+  assert.equal(await p.locator("html").getAttribute("data-theme"),"dark","Theme switch enables dark");
+  await p.locator("#memberThemeToggle").click();
+  assert.equal(await p.locator("html").getAttribute("data-theme"),"light","Theme switch returns to light");
   assert.equal(await p.locator(".app-sidebar").count(),1);
   assert.equal(await p.locator(".desktop-header-links").count(),1);
   assert.match(await p.locator("#greeting").innerText(),/Demo/);
