@@ -2,6 +2,7 @@
 const S="http://www.w3.org/2000/svg";
 const P={
 house:["M3 10 12 3l9 7","M5 9v12h14V9","M9 21v-8h6v8"],
+newspaper:["M4 3h15a2 2 0 0 1 2 2v14a3 3 0 0 1-3 3H6a4 4 0 0 1-4-4V6","M7 7h9v5H7z","M7 15h9","M7 18h7","M2 18V6"],
 chart:["M3 3v18h18","m6 16 5-5 4 3 5-8"],
 sparkles:["m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3Z"],
 file:["M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z","M14 2v6h6","M8 13h8","M8 17h8"],
@@ -47,7 +48,7 @@ function start(){
  iconButton(document.querySelector(".search-icon"),"search");
  iconButton(document.querySelector(".profile-icon"),"user");
  iconButton(document.querySelector(".notification-icon"),"bell");
- document.querySelectorAll(".dashboard-metrics .metric>span").forEach((el,i)=>fill(el,["file","flame","calendar","clock"][i]));
+ document.querySelectorAll(".dashboard-metrics .metric>span").forEach((el,i)=>fill(el,["newspaper","bell","calendar","clock"][i]));
  document.querySelectorAll(".quick-grid .tool-card>span").forEach((el,i)=>fill(el,["sparkles","play","wand","folder","graduation"][i]));
  fill(document.querySelector(".mentor-promo>span"),"crown");
  fill(document.querySelector(".mentorship-highlight>span"),"crown");
