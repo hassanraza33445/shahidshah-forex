@@ -1,0 +1,41 @@
+/* S M Shahid Shah · Embedded AI Studio now inherits dashboard login.
+   Standalone /content-studio keeps its own secure login form.
+   Never show a second email/password form inside the signed-in dashboard. */
+#studioEmbedConnecting{display:none}
+html.sm-embedded #authGate{
+ min-height:320px!important;
+ padding:28px 16px!important;
+ display:flex!important;align-items:center;justify-content:center;
+ background:radial-gradient(ellipse at 75% 6%,rgba(233,171,79,.13),transparent 62%),transparent!important
+}
+html.sm-embedded #authGate.hidden{display:none!important}
+html.sm-embedded #authGate>.login{display:none!important}
+html.sm-embedded #studioEmbedConnecting{
+ width:min(100%,470px);min-height:230px;
+ display:flex!important;align-items:center;justify-content:center;
+ flex-direction:column;gap:12px;text-align:center;
+ padding:28px 22px;
+ border:1px solid var(--border,#e6d6bb);border-radius:18px;
+ background:var(--panel,#fffdfa);box-shadow:0 12px 30px rgba(121,84,31,.08)
+}
+html.sm-embedded #studioEmbedConnecting .studio-connecting-symbol{
+ width:56px;height:56px;display:grid;place-items:center;
+ color:#af761d;font-size:28px;border-radius:15px;
+ background:linear-gradient(135deg,#fff0cd,#f3d49b);
+ animation:smStudioSoftPulse 2.8s ease-in-out infinite
+}
+html.sm-embedded #studioEmbedConnecting strong{
+ color:var(--ink,#332518);font-size:18px;font-weight:850;line-height:1.35
+}
+html.sm-embedded #studioEmbedConnecting p{
+ color:var(--muted,#806d59);font-size:12px;line-height:1.6;margin:0
+}
+html.sm-embedded #studioEmbedConnecting .studio-connect-error{color:#ad5728}
+html.sm-embedded #studioEmbedRetry{
+ min-height:38px;padding:9px 18px;border-radius:10px;
+ background:linear-gradient(110deg,#ffe4a7,#e8b655);
+ border:1px solid #d4a65a;color:#3c270e;font-size:12px;font-weight:850
+}
+html.sm-embedded #workspace:not(.hidden)~#studioEmbedConnecting{display:none!important}
+@keyframes smStudioSoftPulse{50%{opacity:.72;transform:translateY(-2px)}}
+@media(prefers-reduced-motion:reduce){html.sm-embedded #studioEmbedConnecting .studio-connecting-symbol{animation:none}}
