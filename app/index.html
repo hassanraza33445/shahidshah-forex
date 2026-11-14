@@ -13,10 +13,11 @@
 <link rel="stylesheet" href="/assets/sm-premium-unified-2026.css?v=20261114-1">
 <link rel="stylesheet" href="/assets/sm-member-vip-suite.css?v=20261114-vip-1">
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script defer src="/assets/sm-dashboard-premium.js?v=20261114-topiccounts-2"></script>
+<script defer src="/assets/sm-dashboard-premium.js?v=20261114-four-products-1"></script>
 <script defer src="/assets/sm-news-reader.js?v=20261114-native-news-1"></script>
-<script defer src="/assets/sm-member-app.js?v=20261114-scriptlinks-2"></script>
-<script defer src="/assets/sm-member-icons.js?v=20261114-finalpolish-1"></script><link rel="stylesheet" href="/assets/sm-dashboard-finishing-2026.css?v=20261114-3">
+<script defer src="/assets/sm-member-app.js?v=20261114-four-products-1"></script>
+<script defer src="/assets/sm-member-icons.js?v=20261114-four-products-1"></script><link rel="stylesheet" href="/assets/sm-dashboard-finishing-2026.css?v=20261114-3">
+<link rel="stylesheet" href="/assets/sm-four-products-2026.css?v=20261114-products-1">
 </head>
 <body class="member-boot">
 <div id="bootScreen" class="boot-screen"><img class="boot-avatar" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><strong>Opening your workspace…</strong><small>Connecting securely to your account</small></div>
@@ -26,16 +27,14 @@
  <nav class="side-links" aria-label="Member sections">
   <button type="button" data-section="home" class="active"><span class="nav-icon">⌂</span>Dashboard</button>
   <button type="button" data-section="markets"><span class="nav-icon">▥</span>Market Intelligence</button>
-  <button type="button" data-section="studio" data-studio-page="dashboard"><span class="nav-icon">✦</span>AI Studio</button>
-  <button type="button" data-section="studio" data-studio-page="create" aria-label="Open AI Scripts generator"><span class="nav-icon">▣</span>AI Scripts</button>
+  <button type="button" data-section="studio" data-studio-page="dashboard"><span class="nav-icon">✦</span>AI Studio &amp; Scripts</button>
   <button type="button" data-section="tools"><span class="nav-icon">◈</span>Prompt Tools</button>
   <button type="button" data-section="mentorship"><span class="nav-icon">♢</span>Mentorship</button>
-  <button type="button" data-section="library"><span class="nav-icon">▤</span>My Content</button>
-  <button type="button" data-section="notifications"><span class="nav-icon">♧</span>Notifications</button>
-  <button type="button" data-section="profile"><span class="nav-icon">♙</span>My Profile</button>
  </nav>
- <div class="side-bottom"><article class="mentor-promo"><span>♛</span><b>Mentorship Program</b><p>Personalized trading, brokerage and business guidance.</p><a class="vip-promo-nav" href="/app/?tab=mentorship" data-section="mentorship">Apply Now →</a></article>
- <a href="/" class="public-link">← Public Website</a></div>
+ <div class="side-bottom">
+  <button type="button" class="side-account-link" data-section="profile"><span aria-hidden="true">♙</span> Account settings</button>
+  <a href="/" class="public-link">← Public Website</a>
+ </div>
 </aside>
 <div class="side-shade" id="sideShade" hidden></div>
 <div class="app-main">
@@ -44,18 +43,18 @@
   <a href="/app/" class="top-brand"><img src="/shahid-shah-profile.jpg" alt=""><span><b>S M Shahid Shah</b><small>BUSINESS &amp; MARKET INTELLIGENCE</small></span></a></div>
  <div class="workspace-header-label"><strong id="currentSectionName">Dashboard</strong><span>Business &amp; Market Intelligence Workspace</span></div>
  <div class="header-greeting" aria-live="polite"><span class="greeting-symbol" aria-hidden="true">☀</span><div><strong id="dashboardGreeting">Welcome back</strong><small>Your intelligence and creator workspace</small></div></div>
- <div class="header-actions"><button type="button" data-section="markets" data-market-page="feed" class="icon-btn search-icon" aria-label="Search market news">⌕</button><button type="button" data-section="notifications" class="icon-btn notification-icon" aria-label="Open notifications">♧<i id="alertDot" hidden></i></button>
+ <div class="header-actions"><button type="button" data-section="markets" data-market-page="feed" class="icon-btn search-icon" aria-label="Search market news">⌕</button>
  <button id="memberThemeToggle" type="button" class="icon-btn theme-icon" aria-label="Switch theme" title="Switch theme">☀</button><button data-section="profile" type="button" class="icon-btn profile-icon" aria-label="Profile">♙</button></div>
 </header>
 <main class="app-content">
 <section class="app-view active dashboard-home" id="view-home" aria-labelledby="homeTitle">
- <div class="mobile-welcome"><span>YOUR CONNECTED WORKSPACE</span><h1 id="greeting">Welcome back.</h1><p>Markets, intelligence and creator tools in one place.</p></div>
+ <div class="mobile-welcome"><span>YOUR CONNECTED WORKSPACE</span><h1 id="greeting">Welcome back.</h1><p>Market Intelligence, AI Studio, Prompt Tools and Mentorship in one workspace.</p></div>
  <div class="feature-hero">
   <div class="hero-atmosphere" aria-hidden="true"><span class="hero-particle particle-a"></span><span class="hero-particle particle-b"></span><span class="hero-particle particle-c"></span></div>
   <div class="feature-copy">
-   <span class="hero-kicker">GLOBAL MARKETS · BUSINESS · AI CONTENT</span>
-   <h1 id="homeTitle">Market Intelligence<br><em>AI Studio</em></h1>
-   <p>Track global financial developments. Create professional content. Grow with expert business insights.</p>
+   <span class="hero-kicker">FOUR CONNECTED PRODUCTS · ONE WORKSPACE</span>
+   <h1 id="homeTitle">Smarter Markets.<br><em>Stronger Content.</em></h1>
+   <p>Explore market news, create AI video scripts, build powerful prompts and apply for mentorship.</p>
    <div class="hero-actions">
     <button type="button" class="gold-action" data-section="studio" data-studio-page="dashboard"><span class="action-glyph" aria-hidden="true">✧</span> Open AI Studio <span aria-hidden="true">→</span></button>
     <button type="button" class="outline-action" data-section="markets"><span class="action-glyph" aria-hidden="true">▥</span> Explore Markets <span aria-hidden="true">→</span></button>
@@ -77,17 +76,16 @@
   <div class="dashboard-primary">
    <div class="dashboard-metrics" aria-label="Market intelligence statistics">
     <div class="metric"><span>▣</span><div><strong id="newsCount">—</strong><small>Latest Headlines</small></div></div>
-    <div class="metric"><span>⌁</span><div><strong id="hotCount">—</strong><small>News Alerts</small></div></div>
-    <div class="metric"><span>▦</span><div><strong id="calendarCount">—</strong><small>Upcoming Events</small></div></div>
+    <div class="metric"><span>⌁</span><div><strong id="hotCount">—</strong><small>Market Topics</small></div></div>
+    
     <div class="metric"><span>◷</span><div><strong id="lastUpdated">—</strong><small>News checked · MYT</small></div></div>
    </div>
    <div class="section-title"><div class="section-heading"><h2>Quick Access</h2><span>Your main tools and workspace</span></div><button type="button" data-section="tools">View All Tools →</button></div>
    <div class="quick-grid">
-    <button data-section="studio" data-studio-page="dashboard" type="button" class="tool-card selected"><span>✦</span><b>AI Studio</b><small>Create · Edit · Produce</small><i class="quick-arrow" aria-hidden="true">→</i></button>
-    <button data-section="studio" data-studio-page="create" type="button" class="tool-card"><span>▶</span><b>AI Scripts</b><small>Video &amp; Short Scripts</small></button>
-    <button data-section="tools" type="button" class="tool-card"><span>◈</span><b>Prompt Tools</b><small>Pro AI Prompts</small></button>
-    <button data-section="library" type="button" class="tool-card"><span>▤</span><b>My Content</b><small>Projects · Drafts · Library</small></button>
-    <button data-section="mentorship" type="button" class="tool-card"><span>♢</span><b>Mentorship</b><small>1-on-1 Guidance</small></button>
+    <button data-section="markets" type="button" class="tool-card"><span>▥</span><b>Market Intelligence</b><small>Forex · Gold · Crypto · News</small></button>
+    <button data-section="studio" data-studio-page="dashboard" type="button" class="tool-card selected"><span>✦</span><b>AI Studio &amp; Scripts</b><small>30s · 45s · 60s video scripts</small><i class="quick-arrow" aria-hidden="true">→</i></button>
+    <button data-section="tools" type="button" class="tool-card"><span>◈</span><b>Prompt Tools</b><small>Video · Article · Banner · Indicator</small></button>
+    <button data-section="mentorship" type="button" class="tool-card"><span>♢</span><b>Mentorship</b><small>Personal guidance · Apply</small></button>
    </div>
    <div class="section-title news-section-title"><div class="section-heading"><h2>Market Highlights</h2><div class="dashboard-news-filters" role="group" aria-label="Dashboard news filter">
     <button class="active" type="button" data-home-filter="All">All</button>
@@ -103,10 +101,6 @@
     <div class="dashboard-side-heading"><h2><span aria-hidden="true">▥</span> Market News Coverage</h2><button type="button" data-section="markets">View News →</button></div>
     <p class="watchlist-helper">Source-linked article counts · not live quotes or prices</p>
     <div id="dashboardWatchlist" class="watchlist-rows" aria-live="polite"><div class="mini-empty">Loading market news coverage…</div></div>
-   </section>
-   <section class="dashboard-side-card dashboard-events">
-    <div class="dashboard-side-heading"><h2><span aria-hidden="true">▦</span> Upcoming Key Events</h2><button type="button" data-section="markets" data-market-page="calendar">Full Calendar →</button></div>
-    <div id="dashboardEventsList" class="events-rows" aria-live="polite"><div class="mini-empty">Checking the economic calendar…</div></div>
    </section>
   </aside>
  </div>
@@ -134,13 +128,6 @@
    <svg class="mi-hero-globe" viewBox="0 0 160 160" aria-hidden="true" focusable="false"><defs><radialGradient id="miGlobeG" cx=".34" cy=".2" r=".9"><stop stop-color="#ffe7a0"/><stop offset=".6" stop-color="#ba822e"/><stop offset="1" stop-color="#624316"/></radialGradient></defs><circle cx="80" cy="80" r="67" fill="url(#miGlobeG)" stroke="#efc97f" stroke-width="2"/><ellipse cx="80" cy="80" rx="29" ry="67" stroke="#f7deaa" stroke-opacity=".75" stroke-width="1.5" fill="none"/><ellipse cx="80" cy="80" rx="54" ry="67" stroke="#f7deaa" stroke-opacity=".42" stroke-width="1.5" fill="none"/><path d="M14 80H146M25 44H135M25 116H135" stroke="#fff0c3" stroke-opacity=".66" fill="none" stroke-width="1.7"/><path d="M30 50 65 30 92 37 111 52 103 69 81 62 72 83 56 88 40 73ZM97 90 119 86 134 97 119 116 101 123 88 106Z" fill="#7b541c" opacity=".46"/></svg>
   </div>
  </div>
- <nav class="module-tabs mi-module-tabs" aria-label="Market intelligence tools">
-  <button type="button" data-market-page="feed" class="active">Latest Headlines</button>
-  <button type="button" data-market-page="hub">World News Hub</button>
-  <button type="button" data-market-page="calendar">Economic Calendar</button>
-  <button type="button" data-market-page="reaction">Market Reaction</button>
-  <button type="button" data-market-page="alerts">Smart Alerts</button>
- </nav>
  <div id="marketFeedArea" class="mi-feed-area">
   <div class="mi-png-grid">
    <div class="mi-png-main">
@@ -182,12 +169,6 @@
      <p>Articles currently available by topic. Counts are not price indicators.</p>
      <div id="miCoverageList" class="mi-coverage-list"><div class="mi-skeleton">Loading categories…</div></div>
     </section>
-    <section class="mi-side-card mi-events-card">
-     <div class="mi-side-title"><span>UPCOMING KEY EVENTS</span><svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg></div>
-     <p>Major scheduled releases and central bank events · Malaysia time.</p>
-     <div id="miEventsList" class="mi-events-list"><div class="mi-skeleton">Checking upcoming events…</div></div>
-     <button type="button" class="mi-side-link" data-market-page="calendar">Open Economic Calendar →</button>
-    </section>
     <section class="mi-side-card mi-guide-card">
      <span class="mi-side-title">YOUR CONTENT WORKSPACE</span>
      <h3>Turn news into insight.</h3>
@@ -197,7 +178,7 @@
    </aside>
   </div>
  </div>
- <div id="marketModuleArea" class="embed-panel" hidden><p id="marketModuleStatus" class="embed-status" role="status">Opening market module…</p><iframe id="marketModuleFrame" title="Market Intelligence Module" loading="lazy"></iframe></div>
+
 </section>
 <section class="app-view" id="view-studio" aria-labelledby="studioTitle">
  <div class="view-heading studio-premium-heading">
@@ -215,7 +196,7 @@
  <div id="libraryActionBar" class="library-action-bar" hidden><div><strong>My private library</strong><p>Your saved scripts, drafts and projects stay linked to your account.</p></div><button type="button" class="gold-action" data-section="studio" data-studio-page="create">+ Create New Script</button></div>
  <nav class="module-tabs" id="studioSubnav" aria-label="AI Studio tools">
   <button data-studio-page="dashboard" type="button">Studio Overview</button>
-  <button data-studio-page="create" class="active" type="button">Create Video Script</button>
+  <button data-studio-page="create" class="active" type="button">AI Video Scripts (30 / 45 / 60s)</button>
   <button data-studio-page="projects" type="button">Saved Projects</button>
   <button data-studio-page="planner" type="button">Content Planner</button>
   <button data-studio-page="record" type="button">Voice &amp; Recording</button>
@@ -248,14 +229,12 @@
  <div class="vip-hero-copy"><span class="eyebrow">S M SHAHID SHAH · CREATOR TOOLKIT</span><h1><span id="toolsTitle">AI <em>Prompt Tools.</em></span></h1><p>Professional content prompts, ideas and creative workflows—all inside your connected workspace.</p></div>
  <div class="vip-hero-art" aria-hidden="true"><span class="vip-art-circle vip-circle-one"></span><span class="vip-art-circle vip-circle-two"></span><span class="vip-art-mark">✦</span><span class="vip-art-caption">CREATIVE INTELLIGENCE</span></div>
  </div>
- <div class="vip-suite-heading"><div><span class="vip-suite-eyebrow">YOUR CREATIVE TOOLKIT</span><h2>Choose what you want to create.</h2></div><span class="vip-suite-count">6 creator tools · Available by role</span></div>
+ <div class="vip-suite-heading"><div><span class="vip-suite-eyebrow">YOUR CREATIVE TOOLKIT</span><h2>Choose what you want to create.</h2></div><span class="vip-suite-count">4 professional prompt builders</span></div>
  <div class="tool-list vip-tools-grid">
-  <button type="button" data-section="studio" data-studio-page="create" class="tool-list-row"><span>▶</span><div><b>AI Video Script Generator</b><small>Real AI generation · 30, 45, 60 seconds and long-form</small></div><i>→</i></button>
   <button type="button" data-tool="video" class="tool-list-row"><span>▣</span><div><b>Video Prompt Builder</b><small>Create a reusable brief for your own AI tools</small></div><i>→</i></button>
   <button type="button" data-tool="article" class="tool-list-row"><span>▤</span><div><b>Article Prompt Builder</b><small>SEO-friendly educational writing</small></div><i>→</i></button>
   <button type="button" data-tool="banner" class="tool-list-row"><span>▧</span><div><b>Banner Prompt Builder</b><small>Professional social media briefs</small></div><i>→</i></button>
   <button type="button" data-tool="indicator" class="tool-list-row"><span>✦</span><div><b>Indicator Prompt Builder</b><small>Trading analysis and indicators</small></div><i>→</i></button>
-  <button type="button" data-section="studio" data-studio-page="record" class="tool-list-row"><span>♫</span><div><b>Voice &amp; Recording Studio</b><small>Listen, record, transcribe and export</small></div><i>→</i></button>
  </div>
  <div id="toolModuleArea" class="embed-panel" hidden><div class="embed-panel-heading"><b id="activeToolName">Prompt Builder</b><button id="closeToolModule" type="button">Close Tool ×</button></div><p id="toolModuleStatus" class="embed-status" role="status">Opening prompt builder…</p><iframe id="toolModuleFrame" title="Professional Prompt Builder" loading="lazy"></iframe></div>
 </section>
@@ -264,7 +243,6 @@
  <div class="vip-hero-copy"><span class="eyebrow">PERSONAL GROWTH · 1-ON-1 GUIDANCE</span><h1><span id="mentorshipTitle">Mentorship <em>Program.</em></span></h1><p>Expert-led personal guidance for trading awareness, brokerage strategy and long-term business development.</p></div>
  <div class="vip-hero-art" aria-hidden="true"><span class="vip-art-circle vip-circle-one"></span><span class="vip-art-circle vip-circle-two"></span><span class="vip-art-mark">♛</span><span class="vip-art-caption">EXCLUSIVE MENTORSHIP</span></div>
  </div>
- <div class="mentorship-highlight vip-mentor-intro"><span>♛</span><div><strong>Build your next chapter.</strong><p>Receive individually reviewed guidance focused on market intelligence, responsible trading practices, brokerage and business growth.</p></div><span class="mentor-tag">Personal mentorship · By approval</span></div>
  <div class="mentorship-grid vip-mentorship-grid"><div class="list-box vip-highlights-card"><h2>Program Highlights</h2><div>✓ 1-on-1 Guidance &amp; Strategy</div><div>✓ Trading &amp; Brokerage Insights</div><div>✓ Business Growth &amp; Development</div><div>✓ Market Intelligence &amp; Risk Management</div></div>
  <div class="list-box vip-application-status-card"><h2>My Application Status</h2><div id="applicationStatus" class="status-pill">Checking status…</div><p id="applicationDetail">Your latest mentorship application will appear here.</p></div></div>
  <div class="vip-process-strip" aria-label="Mentorship application process">
@@ -280,27 +258,8 @@
  <button id="mentorSubmit" class="gold-action full-btn" type="submit">Submit Mentorship Application →</button><p id="mentorMessage" class="form-status" role="status"></p></form>
  </section>
 </section>
-<section class="app-view" id="view-library" aria-labelledby="libraryTitle">
- <div class="view-heading vip-page-hero vip-library-hero">
- <div class="vip-hero-copy"><span class="eyebrow">CREATOR WORKSPACE · PRIVATE LIBRARY</span><h1><span id="libraryTitle">My <em>Content.</em></span></h1><p>All your approved creative work in one private library: scripts, drafts and project history.</p></div>
- <div class="vip-hero-art" aria-hidden="true"><span class="vip-art-circle vip-circle-one"></span><span class="vip-art-circle vip-circle-two"></span><span class="vip-art-mark">▣</span><span class="vip-art-caption">YOUR PRIVATE LIBRARY</span></div>
- </div>
- <div class="embed-panel-heading"><b>Saved Projects &amp; Drafts</b><button type="button" data-section="studio" data-studio-page="create">+ Create Script</button></div>
- <div class="restricted-panel" id="libraryAccessState" role="status">Checking your private library access…</div>
- <div id="libraryFrameSlot" class="studio-frame-slot" hidden></div>
-</section>
-<section class="app-view" id="view-notifications" aria-labelledby="notificationsTitle">
- <div class="view-heading vip-page-hero vip-notifications-hero">
- <div class="vip-hero-copy"><span class="eyebrow">MARKET INTELLIGENCE · PERSONALIZED ALERTS</span><h1><span id="notificationsTitle">Smart <em>Notifications.</em></span></h1><p>Stay organized with news alerts, scheduled economic events and your notification preferences.</p></div>
- <div class="vip-hero-art" aria-hidden="true"><span class="vip-art-circle vip-circle-one"></span><span class="vip-art-circle vip-circle-two"></span><span class="vip-art-mark">✧</span><span class="vip-art-caption">PERSONAL INTELLIGENCE</span></div>
- </div>
- <div class="vip-suite-heading vip-notification-subheading"><div><span class="vip-suite-eyebrow">YOUR ALERTS CENTER</span><h2>Stay ahead of important updates.</h2></div><span class="vip-suite-count">Source-linked alerts · Preferences · Delivery status</span></div>
- <div class="vip-notification-benefits"><div><span aria-hidden="true">✦</span><strong>Market News</strong><small>Financial developments</small></div><div><span aria-hidden="true">▦</span><strong>Economic Events</strong><small>Calendar reminders</small></div><div><span aria-hidden="true">◷</span><strong>Alert Preferences</strong><small>Your notification settings</small></div></div>
- <div id="noticeFrameSlot" class="embed-panel vip-notice-frame"><p id="noticeFrameStatus" class="embed-status" role="status">Opening your notification center…</p><iframe id="noticeFrame" title="Smart Notification Center" loading="lazy"></iframe></div>
-</section>
 <section class="app-view" id="view-profile" aria-labelledby="profileTitle"><div class="view-heading vip-page-hero vip-profile-hero">
  <div class="vip-hero-copy"><span class="eyebrow">ACCOUNT & SETTINGS · YOUR WORKSPACE</span><h1><span id="profileTitle">My <em>Profile.</em></span></h1><p>Your account identity, display preferences, and private workspace settings in one place.</p></div>
- <div class="vip-hero-art" aria-hidden="true"><span class="vip-art-circle vip-circle-one"></span><span class="vip-art-circle vip-circle-two"></span><span class="vip-art-mark">◎</span><span class="vip-art-caption">ACCOUNT & PRIVACY</span></div>
  </div>
  <div class="profile-layout">
   <div class="profile-main">
@@ -316,7 +275,12 @@
     <div class="theme-choice" role="group" aria-label="Dashboard appearance"><button id="profileLightTheme" type="button" data-preference-theme="light">☀ Light</button><button id="profileDarkTheme" type="button" data-preference-theme="dark">☾ Dark</button></div>
    </section>
    <section class="profile-settings-card"><div class="settings-card-heading"><div><h2>Quick Settings</h2><p>Account tools and shortcuts.</p></div></div>
-    <div class="profile-actions"><button type="button" data-section="library"><span>My Content Library</span>→</button><button type="button" data-section="mentorship"><span>Mentorship Application</span>→</button><button type="button" data-section="notifications"><span>Notification Preferences</span>→</button><button type="button" data-section="markets" data-market-page="calendar"><span>Economic Calendar</span>→</button><a href="/about/"><span>Help &amp; About</span>→</a></div>
+    <div class="profile-actions">
+      <button type="button" data-section="studio" data-studio-page="projects"><span>Saved Studio Projects</span>→</button>
+      <button type="button" data-section="mentorship"><span>Mentorship Application</span>→</button>
+      <button type="button" data-section="markets"><span>Market Intelligence</span>→</button>
+      <a href="/about/"><span>Help &amp; About</span>→</a>
+    </div>
    </section>
   </div>
  </div>
@@ -325,6 +289,11 @@
 </main>
 <footer class="app-footer"><span>© <span id="year"></span> S M Shahid Shah</span><span>Educational market intelligence · No guaranteed trading outcomes</span></footer>
 </div>
-<nav class="mobile-dock" aria-label="Member mobile tabs"><button data-section="home" class="active" type="button"><span>⌂</span>Home</button><button data-section="studio" type="button"><span>▥</span>AI Studio</button><button data-section="tools" type="button"><span>◈</span>AI Tools</button><button data-section="mentorship" type="button"><span>♢</span>Mentorship</button><button data-section="profile" type="button"><span>♙</span>Profile</button></nav>
+<nav class="mobile-dock" aria-label="Member mobile tabs">
+ <button data-section="home" class="active" type="button"><span>⌂</span>Home</button>
+ <button data-section="markets" type="button"><span>▥</span>Markets</button>
+ <button data-section="studio" type="button"><span>✦</span>AI Studio</button>
+ <button data-section="tools" type="button"><span>◈</span>Prompts</button>
+ <button data-section="mentorship" type="button"><span>♢</span>Mentorship</button></nav>
 </div>
 </body></html>
