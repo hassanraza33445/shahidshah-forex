@@ -31,31 +31,57 @@ function nameFor(user,profile){
  const full=(profile?.full_name||user?.user_metadata?.full_name||user?.user_metadata?.name||"").trim();
  if(full&&full.length<=90)return full;return user?.email?.split("@")[0]||"Member";
 }
+
+function withTimeout(request,ms,label){
+ return new Promise((resolve,reject)=>{
+  const timer=setTimeout(()=>reject(new Error(label)),ms);
+  Promise.resolve(request).then(value=>{clearTimeout(timer);resolve(value)},error=>{clearTimeout(timer);reject(error)});
+ });
+}
+function paintUser(user,profile){
+ const name=nameFor(user,profile),first=name.split(/\s+/)[0]||"Member";
+ $("greeting").textContent="Welcome Back, "+first+" 👋";
+ $("profileName").textContent=name;
+ $("profileEmail").textContent=user.email||"";
+ $("profileAvatar").textContent=first.charAt(0).toUpperCase();
+ $("verifiedBadge").textContent=user.email_confirmed_at?"✓ Verified Account":"Email verification pending";
+ $("mentorName").value=name;
+}
+function setMemberTheme(theme){
+ const next=theme==="dark"?"dark":"light";
+ document.documentElement.dataset.theme=next;
+ const toggle=$("memberThemeToggle");
+ if(toggle){toggle.textContent=next==="dark"?"☀":"☾";toggle.setAttribute("aria-label",next==="dark"?"Switch to light theme":"Switch to dark theme");toggle.title=toggle.getAttribute("aria-label")}
+ const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=next==="dark"?"#100e0a":"#FBF7EF";
+ try{localStorage.setItem("smshahid-site-theme",next);localStorage.setItem("site-theme",next)}catch(_){}
+}
+function setupTheme(){
+ setMemberTheme(document.documentElement.dataset.theme);
+ $("memberThemeToggle").addEventListener("click",()=>setMemberTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
+}
 async function start(){
  try{
-  if(!window.supabase?.createClient)throw Error("Supabase authentication library unavailable");
+  if(!window.supabase?.createClient)throw Error("Login library could not load");
   const c=window.supabase.createClient(PROJECT,KEY);state.client=c;
-  // Verify signed-in identity with Supabase Auth rather than trusting localStorage alone.
-  const {data:{user},error}=await c.auth.getUser();
-  if(error||!user){return goToLogin()}
-  state.user=user;
-  const {data:profile}=await c.from("profiles").select("full_name,email,is_admin,avatar_url").eq("id",user.id).maybeSingle();
-  state.profile=profile||null;
-  const name=nameFor(user,profile),first=name.split(/\s+/)[0]||"Member";
-  $("greeting").textContent="Welcome Back, "+first+" 👋";
-  $("profileName").textContent=name;
-  $("profileEmail").textContent=user.email||"";
-  $("profileAvatar").textContent=first.charAt(0).toUpperCase();
-  $("verifiedBadge").textContent=user.email_confirmed_at?"✓ Verified Account":"Email verification pending";
-  $("mentorName").value=name;
+  const {data,error}=await withTimeout(c.auth.getUser(),11000,"Secure login check took too long");
+  if(error||!data?.user){goToLogin();return}
+  const user=data.user;state.user=user;
+  paintUser(user,null);
   $("year").textContent=String(new Date().getFullYear());
-  $("bootScreen").hidden=true;$("memberApp").hidden=false;
+  $("memberApp").hidden=false;$("bootScreen").hidden=true;
   document.body.classList.remove("member-boot");
   openTab(tabFromLocation(),false);
-  await Promise.allSettled([loadNews(),loadEconomic(),loadAlerts()]);
+  withTimeout(c.from("profiles").select("full_name,email,is_admin,avatar_url").eq("id",user.id).maybeSingle(),6000,"Profile request timed out")
+   .then(({data:profile,error:profileError})=>{if(!profileError&&profile){state.profile=profile;paintUser(user,profile)}}).catch(()=>{});
+  void Promise.allSettled([loadNews(),loadEconomic(),loadAlerts()]);
  }catch(e){
-  $("bootScreen").replaceChildren(create("strong","","Unable to verify your account. Please reload or sign in again."));
-  const a=create("a","","Sign In →");a.href="/auth/?next=%2Fapp%2F";$("bootScreen").append(a);
+  const screen=$("bootScreen");
+  screen.replaceChildren(create("img","boot-avatar"));
+  screen.firstChild.src="/shahid-shah-profile.jpg";screen.firstChild.alt="S M Shahid Shah";
+  screen.append(create("strong","","Unable to open your workspace"));
+  screen.append(create("small","",safe(e?.message||"Please check your connection.")));
+  const retry=create("a","boot-retry","Try Again");retry.href="/app/";screen.append(retry);
+  const login=create("a","boot-login","Back to Login");login.href="/auth/?next=%2Fapp%2F";screen.append(login);
  }
 }
 function goToLogin(){location.replace("/auth/?next="+encodeURIComponent("/app/"+location.search))}
@@ -193,5 +219,5 @@ function setupNavigation(){
   setBusy("logout",true);try{await state.client.auth.signOut()}finally{location.replace("/")}
  });
 }
-setupNavigation();setupScriptForm();setupMentorship();start();
+setupNavigation();setupScriptForm();setupMentorship();setupTheme();start();
 })();
