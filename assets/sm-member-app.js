@@ -33,13 +33,13 @@ function renderStudioAccess(){
   studioGate.classList.toggle("is-checking",checking);
   studioGate.classList.toggle("is-error",error);
   studioGate.classList.toggle("is-denied",!checking&&!error);
-  $("studioGateTitle").textContent=checking?"Verifying your private access…":error?"Your access could not be checked":"Studio access is restricted";
-  $("studioGateHint").textContent=checking?"Checking your account permissions securely.":error?"The permission service could not be reached. Your access status has not been confirmed.":"Creator tools are available only to members approved by the platform administrator.";
-  $("studioGateBadge").textContent=checking?"CHECKING":error?"CONNECTION ISSUE":"APPROVAL REQUIRED";
-  $("studioGateInstruction").textContent=checking?"Your account permissions are being checked. Creator features remain protected during verification.":error?"Check your connection and retry. If the issue continues, contact the platform administrator.":"Ask your administrator to grant Studio access to your registered account.";
+  $("studioGateTitle").textContent=checking?"Verifying your private access…":error?"Your access could not be checked":"Free Creator access could not be verified";
+  $("studioGateHint").textContent=checking?"Checking your account permissions securely.":error?"The permission service could not be reached. Your access status has not been confirmed.":"Every signed-in member receives free Creator access. Please retry your session check.";
+  $("studioGateBadge").textContent=checking?"CHECKING":error?"CONNECTION ISSUE":"ACCESS CHECK";
+  $("studioGateInstruction").textContent=checking?"Your account permissions are being checked. Creator features remain protected during verification.":error?"Check your connection and retry. If the issue continues, contact the platform administrator.":"Free Studio access is automatic. Retry the check, or sign out and sign in again if this persists.";
   const retry=$("studioRecheckAccess");
   retry.disabled=checking;
-  retry.textContent=checking?"Checking permission…":error?"Retry Access Check ↻":"Check Access Again ↻";
+  retry.textContent=checking?"Checking permission…":error?"Retry Access Check ↻":"Retry Free Access Check ↻";
   retry.onclick=()=>{
    if(state.studioStatus==="checking"||!state.client||!state.user)return;
    state.studioStatus="checking";renderStudioAccess();
