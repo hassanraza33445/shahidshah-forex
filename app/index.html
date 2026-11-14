@@ -5,11 +5,11 @@
 <link rel="icon" href="/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script>try{document.documentElement.dataset.theme=(localStorage.getItem("smshahid-site-theme")||localStorage.getItem("site-theme"))==="dark"?"dark":"light"}catch(_){document.documentElement.dataset.theme="light"}</script>
-<link rel="stylesheet" href="/assets/sm-member-app.css?v=20261114-refhero-1">
+<link rel="stylesheet" href="/assets/sm-member-app.css?v=20261114-finalpolish-1">
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script defer src="/assets/sm-dashboard-premium.js?v=20261114-refhero-1"></script>
-<script defer src="/assets/sm-member-app.js?v=20261114-refhero-1"></script>
-<script defer src="/assets/sm-member-icons.js?v=20261114-refhero-1"></script></head>
+<script defer src="/assets/sm-dashboard-premium.js?v=20261114-finalpolish-1"></script>
+<script defer src="/assets/sm-member-app.js?v=20261114-finalpolish-1"></script>
+<script defer src="/assets/sm-member-icons.js?v=20261114-finalpolish-1"></script></head>
 <body class="member-boot">
 <div id="bootScreen" class="boot-screen"><img class="boot-avatar" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><strong>Opening your workspace…</strong><small>Connecting securely to your account</small></div>
 <div id="memberApp" class="member-app" hidden>
@@ -61,17 +61,17 @@
   </div>
  </div>
  <div class="market-strip" aria-label="Market news monitor">
-  <strong><span class="pulse-dot"></span>MARKET SNAPSHOT</strong>
+  <strong><span class="pulse-dot"></span>NEWS SNAPSHOT</strong>
   <div class="market-strip-items" id="marketSnapshotItems" aria-live="polite"><span class="snapshot-item">Source-linked market news and economic updates</span></div>
   <button type="button" data-section="markets">Full Market View <span aria-hidden="true">→</span></button>
  </div>
  <div class="dashboard-layout">
   <div class="dashboard-primary">
    <div class="dashboard-metrics" aria-label="Market intelligence statistics">
-    <div class="metric"><span>▣</span><div><strong id="newsCount">—</strong><small>Latest Headlines</small></div><span class="metric-decoration" aria-hidden="true">↗</span></div>
-    <div class="metric"><span>⌁</span><div><strong id="hotCount">—</strong><small>News Alerts</small></div><span class="metric-decoration" aria-hidden="true">↗</span></div>
+    <div class="metric"><span>▣</span><div><strong id="newsCount">—</strong><small>Latest Headlines</small></div></div>
+    <div class="metric"><span>⌁</span><div><strong id="hotCount">—</strong><small>News Alerts</small></div></div>
     <div class="metric"><span>▦</span><div><strong id="calendarCount">—</strong><small>Upcoming Events</small></div></div>
-    <div class="metric"><span>◷</span><div><strong id="lastUpdated">—</strong><small>Last Checked · MYT</small></div></div>
+    <div class="metric"><span>◷</span><div><strong id="lastUpdated">—</strong><small>News checked · MYT</small></div></div>
    </div>
    <div class="section-title"><div class="section-heading"><h2>Quick Access</h2><span>Your main tools and workspace</span></div><button type="button" data-section="tools">View All Tools →</button></div>
    <div class="quick-grid">
@@ -92,9 +92,9 @@
   </div>
   <aside class="dashboard-right" aria-label="Market overview sidebar">
    <section class="dashboard-side-card dashboard-watchlist">
-    <div class="dashboard-side-heading"><h2><span aria-hidden="true">▥</span> My Market Watchlist</h2><button type="button" data-section="markets">Manage →</button></div>
-    <p class="watchlist-helper">Source-linked news monitoring · not live quotes</p>
-    <div id="dashboardWatchlist" class="watchlist-rows" aria-live="polite"><div class="mini-empty">Loading followed markets…</div></div>
+    <div class="dashboard-side-heading"><h2><span aria-hidden="true">▥</span> Market News Coverage</h2><button type="button" data-section="markets">View News →</button></div>
+    <p class="watchlist-helper">Article counts by market · not live prices</p>
+    <div id="dashboardWatchlist" class="watchlist-rows" aria-live="polite"><div class="mini-empty">Loading market news coverage…</div></div>
    </section>
    <section class="dashboard-side-card dashboard-events">
     <div class="dashboard-side-heading"><h2><span aria-hidden="true">▦</span> Upcoming Key Events</h2><button type="button" data-section="markets" data-market-page="calendar">Full Calendar →</button></div>
