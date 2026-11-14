@@ -57,6 +57,6 @@
  if("ResizeObserver" in window)new ResizeObserver(syncHeight).observe(header);
  else addEventListener("resize",syncHeight);
  const path=location.pathname.replace(/\/index\.html$/,"/").replace(/\/+$/,"/")||"/";
- const active=path==="/learning-hub.html/"||path.startsWith("/ai-")||path==="/downloads/"?"/app/?tab=studio&amp;studio=create":path;
+ const active=path==="/learning-hub.html/"||path.startsWith("/ai-")||path==="/downloads/"?"/app/?tab=studio&studio=create":path;
  header.querySelectorAll(".learning-nav a").forEach(a=>{if(a.getAttribute("href")===active){a.setAttribute("aria-current","page")}else a.removeAttribute("aria-current")});
 })();
