@@ -49,6 +49,12 @@ function timed(promise,ms){return new Promise((resolve,reject)=>{
 })}
 function trustedParentSession(){
  if(!embedded||window.parent===window)return Promise.resolve(null);
+ // A Studio iframe may already hold the parent's verified auth client, without
+ // waiting for a second auth handshake.
+ try{
+  if(location.pathname.startsWith("/content-studio")&&
+     window.parent.__smStudioClientForFrame?.(window))return Promise.resolve(true);
+ }catch(_){};
  return new Promise(resolve=>{
   let done=false;
   const finish=value=>{
@@ -61,7 +67,7 @@ function trustedParentSession(){
       event.data?.type!=="sm:embed-auth-response")return;
    finish(event.data.allowed===true);
   }
-  const timer=setTimeout(()=>finish(null),2300);
+  const timer=setTimeout(()=>finish(null),4500);
   window.addEventListener("message",onMessage);
   try{window.parent.postMessage({type:"sm:embed-auth-request"},location.origin)}
   catch(_){finish(null)}
@@ -88,11 +94,12 @@ async function validate(){
   if(parentApproved===false){
    fail("Your dashboard session is no longer active. Please sign in again.");return;
   }
-  // Standalone tools and unrecognized embedded callers still verify directly.
+  // Standalone tools verify directly. Embedded modules never redirect to a login form.
+  if(embedded&&parentApproved===null){fail("Unable to confirm the dashboard session. Please retry or reopen your dashboard.");return;}
   if(!window.supabase?.createClient)throw Error("Secure login service could not load.");
   const client=window.supabase.createClient(base,key);
   const {data,error}=await timed(client.auth.getUser(),8500);
-  if(error||!data?.user){signin();return}
+  if(error||!data?.user){if(embedded)fail("Your session could not be verified. Please reopen the dashboard.");else signin();return}
   grantView();
  }catch(e){fail(e?.message||"Please try again.")}
 }
