@@ -547,3 +547,42 @@ html[data-theme="dark"] .dashboard-home .watchlist-row{border-color:#514130}
 .dashboard-home .news-visual-gold:before,.dashboard-home .news-visual-forex:before,.dashboard-home .news-visual-crypto:before{opacity:.06}
 .dashboard-home .news-visual-gold:after,.dashboard-home .news-visual-forex:after,.dashboard-home .news-visual-crypto:after{display:none}
 .dashboard-home .news-visual-gold .news-visual-emblem,.dashboard-home .news-visual-forex .news-visual-emblem,.dashboard-home .news-visual-crypto .news-visual-emblem{opacity:.12}
+
+
+/* November 14: audited visual/data clarity patches — retain approved layout. */
+.dashboard-home .tool-card.selected{background:linear-gradient(125deg,#ffefc6,#f4c576);color:#38260f!important}
+.dashboard-home .tool-card.selected b,.dashboard-home .tool-card.selected small,.dashboard-home .tool-card.selected .ui-icon,.dashboard-home .tool-card.selected>span,.dashboard-home .tool-card.selected .quick-arrow{color:#37250f!important;stroke:#916010}
+html[data-theme="dark"] .dashboard-home .tool-card.selected{background:linear-gradient(120deg,#ffe7ab,#edb855);border-color:#d29a34;box-shadow:0 8px 22px #9a631a25}
+html[data-theme="dark"] .dashboard-home .tool-card.selected b,html[data-theme="dark"] .dashboard-home .tool-card.selected small,html[data-theme="dark"] .dashboard-home .tool-card.selected .ui-icon,html[data-theme="dark"] .dashboard-home .tool-card.selected>span,html[data-theme="dark"] .dashboard-home .tool-card.selected .quick-arrow{color:#34230e!important;stroke:#85550e!important}
+html[data-theme="dark"] .dashboard-home .tool-card.selected .quick-arrow{background:#fffaec}
+.dashboard-home .hero-market-art{z-index:1!important;opacity:.27;mix-blend-mode:normal;pointer-events:none}
+.dashboard-home .hero-visual img{z-index:3;object-position:50% 45%}
+.dashboard-home .hero-visual:before{z-index:4;background:linear-gradient(90deg,#f7e7c8 0%,#f6dda247 14%,transparent 42%)}
+.dashboard-home .hero-globe{z-index:2}
+.dashboard-home .market-strip .pulse-dot{background:#c28a38!important;box-shadow:0 0 0 4px #c28a3818!important;animation:none!important}
+.dashboard-home .snapshot-dot{background:#c89239!important;box-shadow:0 0 0 3px #c8923914!important}
+.dashboard-home .watchlist-right strong{color:#9f681c!important}
+html[data-theme="dark"] .dashboard-home .watchlist-right strong{color:#f3c47a!important}
+.dashboard-home .dashboard-side-heading button{font-size:11px;text-align:right}
+.dashboard-home .event-time{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:82px;max-width:98px;padding:8px 6px;line-height:1.35}
+.dashboard-home .event-day{font-size:10px;white-space:nowrap;font-weight:800}
+.dashboard-home .event-hour{font-size:10px;white-space:nowrap;color:inherit;opacity:.84}
+.dashboard-home .dashboard-event{gap:8px;min-width:0}
+.dashboard-home .event-copy strong{overflow-wrap:anywhere;line-height:1.43}
+.dashboard-home .event-impact{flex:none;align-self:center;font-size:9px}
+.dashboard-home .news-visual-forex-yen{background:#15263e url("/assets/market-cover-yen.svg") center/cover no-repeat}
+.dashboard-home .news-visual-forex-euro{background:#153c50 url("/assets/market-cover-euro.svg") center/cover no-repeat}
+.dashboard-home .news-visual-forex-yen:before,.dashboard-home .news-visual-forex-euro:before{opacity:.05}
+.dashboard-home .news-visual-forex-yen:after,.dashboard-home .news-visual-forex-euro:after{display:none}
+.dashboard-home .news-visual-forex-yen .news-visual-emblem,.dashboard-home .news-visual-forex-euro .news-visual-emblem{opacity:.13}
+html[data-theme="dark"] .dashboard-home .event-day,html[data-theme="dark"] .dashboard-home .event-hour{color:#ffe2a9}
+html[data-theme="dark"] .dashboard-home .event-time{background:#3c2c18;border-color:#86612c}
+html[data-theme="dark"] .dashboard-home .event-impact-high{background:#4c231f;color:#ffbdaf;border-color:#bd665b}
+html[data-theme="dark"] .dashboard-home .event-impact-medium{background:#44331e;color:#f6d095;border-color:#a47a43}
+@media(max-width:720px){
+ .dashboard-home .hero-visual img{object-position:54% 43%}
+ .dashboard-home .dashboard-event{gap:9px}
+ .dashboard-home .event-time{min-width:92px}
+ .dashboard-home .event-day,.dashboard-home .event-hour{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){.dashboard-home .hero-market-art,.dashboard-home .hero-particle{animation:none!important}}
