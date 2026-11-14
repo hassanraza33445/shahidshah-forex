@@ -5,9 +5,9 @@
 <meta name="description" content="Sign in or create an account for the S M Shahid Shah Market Intelligence and AI Studio platform.">
 <link rel="icon" href="/icon-192.png"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/sm-auth.css?v=20261114-clean-login-5">
+<link rel="stylesheet" href="/assets/sm-auth.css?v=20261114-signup-v6">
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script defer src="/assets/sm-auth.js?v=20261114-clean-login-5"></script>
+<script defer src="/assets/sm-auth.js?v=20261114-signup-v6"></script>
 </head><body>
 <div class="auth-shell">
  <section class="auth-brand"><a class="auth-brand-name" href="/"><img class="brand-portrait" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><span><b>S M Shahid Shah</b><small>BUSINESS &amp; MARKET INTELLIGENCE</small></span></a>
@@ -19,15 +19,48 @@
  <div class="panel-hero"><span class="eyebrow">WELCOME TO THE PLATFORM</span><h2 id="authTitle">Welcome back.</h2><p id="authSubtitle">Sign in to continue to your private dashboard.</p></div>
  <div class="auth-tabs" role="tablist" aria-label="Account options"><button type="button" id="signInTab" class="selected" role="tab" aria-selected="true">Login</button><button type="button" id="signUpTab" role="tab" aria-selected="false">Sign Up</button></div>
  <form id="authForm"><label id="nameField" hidden>Full name<input name="fullname" id="fullname" type="text" maxlength="90" autocomplete="name" placeholder="Your full name"></label>
- <label id="phoneField" hidden>Phone number <span class="field-required">Pakistan (+92)</span><span class="pk-phone-wrap"><span class="pk-phone-prefix" aria-hidden="true">🇵🇰 +92</span><input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" aria-label="Pakistan mobile number" placeholder="300 1234567" maxlength="24"></span></label>
+ <div id="phoneField" class="country-phone-field" hidden>
+ <label for="phone">Phone number <span class="field-required">Required on Sign Up</span></label>
+ <div class="pk-phone-wrap">
+  <select id="dialCountry" class="phone-country" name="phone_country" aria-label="Choose your country code"><option value="PK" data-dial="+92" selected>🇵🇰 Pakistan +92</option>
+<option value="MY" data-dial="+60">🇲🇾 Malaysia +60</option>
+<option value="AE" data-dial="+971">🇦🇪 UAE +971</option>
+<option value="SA" data-dial="+966">🇸🇦 Saudi Arabia +966</option>
+<option value="GB" data-dial="+44">🇬🇧 United Kingdom +44</option>
+<option value="US" data-dial="+1">🇺🇸 USA / Canada +1</option>
+<option value="IN" data-dial="+91">🇮🇳 India +91</option>
+<option value="QA" data-dial="+974">🇶🇦 Qatar +974</option>
+<option value="OM" data-dial="+968">🇴🇲 Oman +968</option>
+<option value="KW" data-dial="+965">🇰🇼 Kuwait +965</option>
+<option value="BH" data-dial="+973">🇧🇭 Bahrain +973</option>
+<option value="TR" data-dial="+90">🇹🇷 Türkiye +90</option>
+<option value="SG" data-dial="+65">🇸🇬 Singapore +65</option>
+<option value="ID" data-dial="+62">🇮🇩 Indonesia +62</option>
+<option value="BD" data-dial="+880">🇧🇩 Bangladesh +880</option>
+<option value="AU" data-dial="+61">🇦🇺 Australia +61</option>
+<option value="DE" data-dial="+49">🇩🇪 Germany +49</option>
+<option value="FR" data-dial="+33">🇫🇷 France +33</option>
+<option value="ZA" data-dial="+27">🇿🇦 South Africa +27</option>
+<option value="NG" data-dial="+234">🇳🇬 Nigeria +234</option>
+  <option value="other" data-dial="">🌐 Other country code…</option></select>
+  <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" aria-label="Mobile number" placeholder="300 1234567" maxlength="24">
+ </div>
+ <div id="customDialWrap" class="custom-dial-wrap" hidden><label for="customDialCode">Country calling code (with +)</label><input id="customDialCode" type="tel" inputmode="tel" placeholder="+123" maxlength="5" autocomplete="off"></div>
+ </div>
  <label>Email address<input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required></label>
  <label id="passwordField">Password<input id="password" name="password" type="password" minlength="6" autocomplete="current-password" placeholder="Enter your password" required></label>
+<div id="termsField" class="auth-terms" hidden>
+ <label for="acceptTerms"><input id="acceptTerms" name="accept_terms" type="checkbox" value="yes">
+  <span>I have read and agree to the <a href="/terms/" target="_blank" rel="noopener noreferrer">Terms &amp; Conditions</a> and acknowledge the <a href="/privacy/" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</span>
+ </label>
+ </div>
  <div class="form-options"><span id="securityHint">Secure account access</span><button type="button" id="forgot" class="text-button">Forgot password?</button></div>
  <button type="submit" id="submitBtn" class="primary">Login to Dashboard <span>→</span></button></form>
  <div id="googleSeparator" class="separator" hidden><span>or continue with</span></div>
  <button type="button" id="googleBtn" class="google" hidden><svg aria-hidden="true" width="19" height="19" viewBox="0 0 48 48"><path fill="#4285F4" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11c-.5 2.6-1.9 4.8-4 6.3v5.2h6.5c3.8-3.5 6.1-8.6 6.1-15.2z"/><path fill="#34A853" d="M24 44c5.4 0 9.9-1.8 13.2-4.8l-6.5-5.2c-1.8 1.2-4.1 2-6.7 2-5.1 0-9.5-3.4-11-8H6.2v5C9.6 37.3 16.3 44 24 44z"/><path fill="#FBBC05" d="M13 28c-.4-1.2-.6-2.5-.6-4s.2-2.8.6-4v-5H6.2A20 20 0 004 24c0 3.2.8 6.3 2.2 9l6.8-5z"/><path fill="#EA4335" d="M24 12c2.9 0 5.5 1 7.5 2.9l5.9-5.9C33.8 5.7 29.3 4 24 4c-7.7 0-14.4 4.7-17.8 11l6.8 5c1.5-4.6 5.9-8 11-8z"/></svg>Continue with Google</button>
  
  <p id="authStatus" class="auth-status" role="status" aria-live="polite"></p>
+ <button type="button" id="resendConfirmation" class="resend-confirmation" hidden>Resend confirmation email</button>
  
  
  </main>
