@@ -249,6 +249,8 @@ try{
   await p.waitForFunction(()=>document.querySelector("#marketModuleFrame")?.getAttribute("src")?.includes("economic-calendar"),{},{timeout:9000});
   assert.equal(await p.locator("#marketModuleFrame").count(),1);
   await p.locator("#openMenu").click();await p.locator('#appSidebar button[data-section="tools"]').click();
+  assert.equal(await p.locator("#view-tools .vip-tools-grid .tool-list-row").count(),6,"All VIP tools render on mobile");
+  assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+2),true,"No mobile overflow in VIP tools");
   await p.locator('#view-tools button[data-tool="article"]').click();
   assert.match(await p.locator("#toolModuleFrame").getAttribute("src"),/learning-hub.*embedded=1#article/);
   await p.locator("#closeToolModule").click();
