@@ -10,12 +10,13 @@
 <link rel="stylesheet" href="/assets/sm-market-editorial.css?v=20261114-editorial-1">
 <link rel="stylesheet" href="/assets/sm-market-png-match.css?v=20261114-match-1">
 <link rel="stylesheet" href="/assets/sm-studio-premium.css?v=20261114-studio-1">
+<link rel="stylesheet" href="/assets/sm-premium-unified-2026.css?v=20261114-1">
+<link rel="stylesheet" href="/assets/sm-member-vip-suite.css?v=20261114-vip-1">
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="/assets/sm-dashboard-premium.js?v=20261114-finalpolish-1"></script>
 <script defer src="/assets/sm-news-reader.js?v=20261114-native-news-1"></script>
-<script defer src="/assets/sm-member-app.js?v=20261114-studio-1"></script>
-<script defer src="/assets/sm-member-icons.js?v=20261114-finalpolish-1"></script><link rel="stylesheet" href="/assets/sm-premium-unified-2026.css?v=20261114-1">
-</head>
+<script defer src="/assets/sm-member-app.js?v=20261114-vip-1"></script>
+<script defer src="/assets/sm-member-icons.js?v=20261114-finalpolish-1"></script></head>
 <body class="member-boot">
 <div id="bootScreen" class="boot-screen"><img class="boot-avatar" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><strong>Opening your workspace…</strong><small>Connecting securely to your account</small></div>
 <div id="memberApp" class="member-app" hidden>
@@ -32,7 +33,7 @@
   <button type="button" data-section="notifications"><span class="nav-icon">♧</span>Notifications</button>
   <button type="button" data-section="profile"><span class="nav-icon">♙</span>My Profile</button>
  </nav>
- <div class="side-bottom"><article class="mentor-promo"><span>♛</span><b>Mentorship Program</b><p>Personalized trading, brokerage and business guidance.</p><button type="button" data-section="mentorship">Apply Now →</button></article>
+ <div class="side-bottom"><article class="mentor-promo"><span>♛</span><b>Mentorship Program</b><p>Personalized trading, brokerage and business guidance.</p><a class="vip-promo-nav" href="/app/?tab=mentorship" data-section="mentorship">Apply Now →</a></article>
  <a href="/" class="public-link">← Public Website</a></div>
 </aside>
 <div class="side-shade" id="sideShade" hidden></div>
@@ -242,8 +243,12 @@
  <div id="studioFrameSlot" class="studio-frame-slot" hidden></div>
 </section>
 <section class="app-view" id="view-tools" aria-labelledby="toolsTitle">
- <div class="view-heading"><span class="eyebrow">PROFESSIONAL PROMPT BUILDERS</span><h1 id="toolsTitle">AI <em>Prompt Tools.</em></h1><p>Build professional writing prompts directly in your account. Full AI video script generation is inside AI Studio.</p></div>
- <div class="tool-list">
+ <div class="view-heading vip-page-hero vip-tools-hero">
+ <div class="vip-hero-copy"><span class="eyebrow">S M SHAHID SHAH · CREATOR TOOLKIT</span><h1><span id="toolsTitle">AI <em>Prompt Tools.</em></span></h1><p>Professional content prompts, ideas and creative workflows—all inside your connected workspace.</p></div>
+ <div class="vip-hero-art" aria-hidden="true"><span class="vip-art-circle vip-circle-one"></span><span class="vip-art-circle vip-circle-two"></span><span class="vip-art-mark">✦</span><span class="vip-art-caption">CREATIVE INTELLIGENCE</span></div>
+ </div>
+ <div class="vip-suite-heading"><div><span class="vip-suite-eyebrow">YOUR CREATIVE TOOLKIT</span><h2>Choose what you want to create.</h2></div><span class="vip-suite-count">6 creator tools · Available by role</span></div>
+ <div class="tool-list vip-tools-grid">
   <button type="button" data-section="studio" data-studio-page="create" class="tool-list-row"><span>▶</span><div><b>AI Video Script Generator</b><small>Real AI generation · 30, 45, 60 seconds and long-form</small></div><i>→</i></button>
   <button type="button" data-tool="video" class="tool-list-row"><span>▣</span><div><b>Video Prompt Builder</b><small>Create a reusable brief for your own AI tools</small></div><i>→</i></button>
   <button type="button" data-tool="article" class="tool-list-row"><span>▤</span><div><b>Article Prompt Builder</b><small>SEO-friendly educational writing</small></div><i>→</i></button>
@@ -254,11 +259,19 @@
  <div id="toolModuleArea" class="embed-panel" hidden><div class="embed-panel-heading"><b id="activeToolName">Prompt Builder</b><button id="closeToolModule" type="button">Close Tool ×</button></div><p id="toolModuleStatus" class="embed-status" role="status">Opening prompt builder…</p><iframe id="toolModuleFrame" title="Professional Prompt Builder" loading="lazy"></iframe></div>
 </section>
 <section class="app-view" id="view-mentorship" aria-labelledby="mentorshipTitle">
- <div class="view-heading"><span class="eyebrow">PERSONAL GROWTH · 1-ON-1 GUIDANCE</span><h1 id="mentorshipTitle">Mentorship <em>Program.</em></h1><p>Apply for personalized guidance in trading, brokerage, market intelligence and business development.</p></div>
- <div class="mentorship-highlight"><span>♛</span><div><strong>Build your next chapter.</strong><p>Personalized guidance in market intelligence, trading risk awareness, brokerage and business growth.</p></div><span class="mentor-tag">Personal mentorship</span></div>
- <div class="mentorship-grid"><div class="list-box"><h2>Program Highlights</h2><div>✓ 1-on-1 Guidance &amp; Strategy</div><div>✓ Trading &amp; Brokerage Insights</div><div>✓ Business Growth &amp; Development</div><div>✓ Market Intelligence &amp; Risk Management</div></div>
- <div class="list-box"><h2>My Application Status</h2><div id="applicationStatus" class="status-pill">Checking status…</div><p id="applicationDetail">Your latest mentorship application will appear here.</p></div></div>
- <section class="application-box"><div class="application-heading"><div><h2>Apply for Mentorship</h2><p>Share your goals so the team can review your request.</p></div><span>Step 1 of 1</span></div><p>Applications are reviewed individually. Submitting is not acceptance or a payment commitment.</p>
+ <div class="view-heading vip-page-hero vip-mentor-hero">
+ <div class="vip-hero-copy"><span class="eyebrow">PERSONAL GROWTH · 1-ON-1 GUIDANCE</span><h1><span id="mentorshipTitle">Mentorship <em>Program.</em></span></h1><p>Expert-led personal guidance for trading awareness, brokerage strategy and long-term business development.</p></div>
+ <div class="vip-hero-art" aria-hidden="true"><span class="vip-art-circle vip-circle-one"></span><span class="vip-art-circle vip-circle-two"></span><span class="vip-art-mark">♛</span><span class="vip-art-caption">EXCLUSIVE MENTORSHIP</span></div>
+ </div>
+ <div class="mentorship-highlight vip-mentor-intro"><span>♛</span><div><strong>Build your next chapter.</strong><p>Receive individually reviewed guidance focused on market intelligence, responsible trading practices, brokerage and business growth.</p></div><span class="mentor-tag">Personal mentorship · By approval</span></div>
+ <div class="mentorship-grid vip-mentorship-grid"><div class="list-box vip-highlights-card"><h2>Program Highlights</h2><div>✓ 1-on-1 Guidance &amp; Strategy</div><div>✓ Trading &amp; Brokerage Insights</div><div>✓ Business Growth &amp; Development</div><div>✓ Market Intelligence &amp; Risk Management</div></div>
+ <div class="list-box vip-application-status-card"><h2>My Application Status</h2><div id="applicationStatus" class="status-pill">Checking status…</div><p id="applicationDetail">Your latest mentorship application will appear here.</p></div></div>
+ <div class="vip-process-strip" aria-label="Mentorship application process">
+ <div><span>01</span><strong>Share your goals</strong><small>Tell us what you want to achieve</small></div>
+ <div><span>02</span><strong>Individual review</strong><small>Our team reviews your application</small></div>
+ <div><span>03</span><strong>Next steps</strong><small>Contacted if the application is selected</small></div>
+ </div>
+ <section class="application-box vip-application-box"><div class="application-heading"><div><h2>Apply for Mentorship</h2><p>Share your goals so the team can review your request.</p></div><span>Step 1 of 1</span></div><p>Applications are reviewed individually. Submitting is not acceptance or a payment commitment.</p>
  <form id="mentorshipForm"><div class="two-col"><label>Full Name<input type="text" id="mentorName" autocomplete="name" minlength="2" maxlength="100" required placeholder="Your full name"></label>
  <label>WhatsApp / Contact Number<input type="tel" id="mentorPhone" autocomplete="tel" minlength="6" maxlength="32" required placeholder="+60 ..."></label></div>
  <label>Primary Interest<select id="mentorInterest"><option>Forex Trading</option><option>Brokerage Business</option><option>Market Intelligence</option><option>Business Development</option><option>Other</option></select></label>
@@ -267,16 +280,27 @@
  </section>
 </section>
 <section class="app-view" id="view-library" aria-labelledby="libraryTitle">
- <div class="view-heading"><span class="eyebrow">YOUR PRIVATE WORKSPACE</span><h1 id="libraryTitle">My <em>Content.</em></h1><p>Saved scripts, editable drafts, version history and content planning in your member dashboard.</p></div>
+ <div class="view-heading vip-page-hero vip-library-hero">
+ <div class="vip-hero-copy"><span class="eyebrow">CREATOR WORKSPACE · PRIVATE LIBRARY</span><h1><span id="libraryTitle">My <em>Content.</em></span></h1><p>All your approved creative work in one private library: scripts, drafts and project history.</p></div>
+ <div class="vip-hero-art" aria-hidden="true"><span class="vip-art-circle vip-circle-one"></span><span class="vip-art-circle vip-circle-two"></span><span class="vip-art-mark">▣</span><span class="vip-art-caption">YOUR PRIVATE LIBRARY</span></div>
+ </div>
  <div class="embed-panel-heading"><b>Saved Projects &amp; Drafts</b><button type="button" data-section="studio" data-studio-page="create">+ Create Script</button></div>
  <div class="restricted-panel" id="libraryAccessState" role="status">Checking your private library access…</div>
  <div id="libraryFrameSlot" class="studio-frame-slot" hidden></div>
 </section>
 <section class="app-view" id="view-notifications" aria-labelledby="notificationsTitle">
- <div class="view-heading"><span class="eyebrow">PERSONALIZED MARKET ALERTS</span><h1 id="notificationsTitle">Smart <em>Notifications.</em></h1><p>Manage source-linked alerts, notification preferences and browser push consent.</p></div>
- <div id="noticeFrameSlot" class="embed-panel"><p id="noticeFrameStatus" class="embed-status" role="status">Opening your notification center…</p><iframe id="noticeFrame" title="Smart Notification Center" loading="lazy"></iframe></div>
+ <div class="view-heading vip-page-hero vip-notifications-hero">
+ <div class="vip-hero-copy"><span class="eyebrow">MARKET INTELLIGENCE · PERSONALIZED ALERTS</span><h1><span id="notificationsTitle">Smart <em>Notifications.</em></span></h1><p>Stay organized with news alerts, scheduled economic events and your notification preferences.</p></div>
+ <div class="vip-hero-art" aria-hidden="true"><span class="vip-art-circle vip-circle-one"></span><span class="vip-art-circle vip-circle-two"></span><span class="vip-art-mark">✧</span><span class="vip-art-caption">PERSONAL INTELLIGENCE</span></div>
+ </div>
+ <div class="vip-suite-heading vip-notification-subheading"><div><span class="vip-suite-eyebrow">YOUR ALERTS CENTER</span><h2>Stay ahead of important updates.</h2></div><span class="vip-suite-count">Source-linked alerts · Preferences · Delivery status</span></div>
+ <div class="vip-notification-benefits"><div><span aria-hidden="true">✦</span><strong>Market News</strong><small>Financial developments</small></div><div><span aria-hidden="true">▦</span><strong>Economic Events</strong><small>Calendar reminders</small></div><div><span aria-hidden="true">◷</span><strong>Alert Preferences</strong><small>Your notification settings</small></div></div>
+ <div id="noticeFrameSlot" class="embed-panel vip-notice-frame"><p id="noticeFrameStatus" class="embed-status" role="status">Opening your notification center…</p><iframe id="noticeFrame" title="Smart Notification Center" loading="lazy"></iframe></div>
 </section>
-<section class="app-view" id="view-profile" aria-labelledby="profileTitle"><div class="view-heading"><span class="eyebrow">ACCOUNT &amp; SETTINGS</span><h1 id="profileTitle">My <em>Profile.</em></h1><p>Manage your account details, appearance and preferences in one place.</p></div>
+<section class="app-view" id="view-profile" aria-labelledby="profileTitle"><div class="view-heading vip-page-hero vip-profile-hero">
+ <div class="vip-hero-copy"><span class="eyebrow">ACCOUNT & SETTINGS · YOUR WORKSPACE</span><h1><span id="profileTitle">My <em>Profile.</em></span></h1><p>Your account identity, display preferences, and private workspace settings in one place.</p></div>
+ <div class="vip-hero-art" aria-hidden="true"><span class="vip-art-circle vip-circle-one"></span><span class="vip-art-circle vip-circle-two"></span><span class="vip-art-mark">◎</span><span class="vip-art-caption">ACCOUNT & PRIVACY</span></div>
+ </div>
  <div class="profile-layout">
   <div class="profile-main">
    <article class="profile-card"><div id="profileAvatar" class="avatar-fallback">S</div><div class="profile-identity"><span class="profile-card-kicker">YOUR ACCOUNT</span><h2 id="profileName">Member Account</h2><span id="profileEmail">—</span><small id="verifiedBadge">Secure Supabase Account</small></div></article>
