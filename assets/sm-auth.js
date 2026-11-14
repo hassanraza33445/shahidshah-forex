@@ -5,13 +5,7 @@ function updateGoogleAvailability(){
  const allowed=mode==="login"||mode==="signup";
  $("googleBtn").hidden=!allowed||!googleEnabled;
  $("googleSeparator").hidden=!allowed||!googleEnabled;
- $("googleUnavailable").hidden=!allowed||googleEnabled||googleState==="checking";
  $("googleBtn").disabled=busy||!googleEnabled;
- if(!googleEnabled&&googleState!=="checking"){
-   $("googleUnavailable").textContent=googleState==="disabled"
-     ?"Google sign-in is not enabled yet. Please use Email and Password."
-     :"Google sign-in is temporarily unavailable. Please use Email and Password.";
- }
 }
 async function checkGoogleProvider(){
  try{
