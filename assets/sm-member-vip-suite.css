@@ -386,3 +386,21 @@ html[data-theme="dark"] #view-profile .theme-choice button.active{color:#382511;
  :is(#view-tools,#view-mentorship,#view-notifications,#view-profile,#view-library).active .vip-hero-art{animation:none!important}
  #view-tools .tool-list-row,#view-profile .profile-actions>:is(a,button){transition:none!important}
 }
+
+/* Balance the six cards: opening and finishing tools span the grid, with four in the middle. */
+@media(min-width:721px){
+ #view-tools .vip-tools-grid .tool-list-row:last-child{
+  grid-column:1/-1;min-height:127px;
+  background:linear-gradient(105deg,var(--vip-panel),var(--vip-soft));
+  border-color:color-mix(in srgb,var(--vip-gold) 35%,var(--vip-border))
+ }
+ #view-tools .vip-tools-grid .tool-list-row:last-child>span{
+  background:linear-gradient(120deg,#f8e8c4,#e7c183)
+ }
+ html[data-theme="dark"] #view-tools .vip-tools-grid .tool-list-row:last-child{
+  background:linear-gradient(110deg,#30241a,#241b15)
+ }
+ html[data-theme="dark"] #view-tools .vip-tools-grid .tool-list-row:last-child>span{
+  background:linear-gradient(110deg,#614321,#49301b);color:#f7ca7e
+ }
+}
