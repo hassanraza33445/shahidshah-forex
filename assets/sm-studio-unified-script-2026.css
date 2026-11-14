@@ -1,0 +1,79 @@
+/* S M Shahid Shah · AI Studio: unified generated-script reading sheet.
+   Hook, Main Script, Closing & CTA remain separately labeled but share ONE
+   contiguous surface; no separate stacked cards, no truncated copy. */
+.studio-workspace-page .studio-script-preview.studio-script-sheet{
+ display:flex!important;flex-direction:column!important;
+ align-items:stretch!important;justify-content:flex-start!important;
+ grid-template-columns:none!important;
+ gap:0!important;width:100%!important;min-width:0!important;
+ flex:1 0 auto!important;
+ margin:0!important;padding:0 17px!important;
+ border:1px solid var(--border)!important;
+ border-radius:15px!important;
+ background:var(--panel2)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.14)!important;
+ overflow:hidden!important;
+}
+.studio-workspace-page .studio-script-sheet .studio-script-part{
+ display:block!important;width:100%!important;min-width:0!important;
+ min-height:0!important;margin:0!important;
+ padding:17px 0 18px!important;border:0!important;
+ border-radius:0!important;background:transparent!important;
+ box-shadow:none!important;
+}
+.studio-workspace-page .studio-script-sheet .studio-script-part + .studio-script-part{
+ border-top:1px solid var(--border)!important;
+}
+.studio-workspace-page .studio-script-sheet .studio-script-part h3{
+ display:block!important;margin:0 0 9px!important;padding:0!important;
+ color:var(--gold)!important;font-size:12px!important;
+ font-weight:800!important;line-height:1.45!important;
+ letter-spacing:.05px!important;
+}
+.studio-workspace-page .studio-script-sheet .studio-script-part p{
+ display:block!important;width:100%!important;min-width:0!important;
+ max-width:none!important;max-height:none!important;
+ margin:0!important;padding:0!important;
+ font-size:12px!important;line-height:1.78!important;
+ color:var(--ink)!important;white-space:pre-wrap!important;
+ overflow:visible!important;overflow-wrap:anywhere!important;
+ -webkit-line-clamp:unset!important;-webkit-box-orient:initial!important;
+ text-overflow:clip!important;
+}
+.studio-workspace-page .studio-script-sheet .studio-script-part p.is-empty{
+ color:var(--muted)!important;font-style:italic!important;
+}
+html[data-theme="dark"] .studio-workspace-page .studio-script-preview.studio-script-sheet{
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+@media screen and (max-width:720px){
+ html.sm-embedded #page-create .studio-script-preview.studio-script-sheet{
+  display:flex!important;flex-direction:column!important;
+  gap:0!important;padding:0 13px!important;
+  border-radius:13px!important;
+ }
+ html.sm-embedded #page-create .studio-script-sheet .studio-script-part{
+  display:block!important;grid-template-columns:none!important;
+  min-height:0!important;padding:13px 0 14px!important;
+  border:0!important;border-radius:0!important;
+  background:none!important;
+ }
+ html.sm-embedded #page-create .studio-script-sheet .studio-script-part + .studio-script-part{
+  border-top:1px solid var(--border)!important;
+ }
+ html.sm-embedded #page-create .studio-script-sheet .studio-script-part h3{
+  font-size:11px!important;line-height:1.4!important;
+  margin:0 0 6px!important;
+ }
+ html.sm-embedded #page-create .studio-script-sheet .studio-script-part p,
+ html.sm-embedded #page-create .studio-script-sheet .studio-script-part p:not(.is-empty){
+  display:block!important;width:100%!important;
+  min-width:0!important;max-height:none!important;
+  -webkit-line-clamp:unset!important;overflow:visible!important;
+  white-space:pre-wrap!important;
+  font-size:11px!important;line-height:1.68!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .studio-workspace-page .studio-script-sheet *{transition:none!important;}
+}
