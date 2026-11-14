@@ -246,10 +246,10 @@ function headlineCard(item,featured=false){
  const foot=create("div","news-foot");
  foot.textContent=(item.publisher&&String(item.publisher).trim()?"Publisher: "+safe(item.publisher):"Source-linked headline")+" · "+formatTime(item.published_at||item.first_seen_at);
  article.append(foot);
- const details=create("button","sm-news-read-button","Read News Details →");
- details.type="button";
- details.addEventListener("click",()=>window.SMNewsReader?.open(item,{trigger:details}));
- article.append(details);
+ const readButton=create("button","sm-news-read-button","Read News Details →");
+ readButton.type="button";
+ readButton.addEventListener("click",()=>window.SMNewsReader?.open(item,{trigger:readButton}));
+ article.append(readButton);
  return article;
 }
 function renderNews(){
