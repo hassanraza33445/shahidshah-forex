@@ -420,3 +420,8 @@ html[data-theme="dark"] #view-profile .theme-choice button.active{color:#382511;
 .member-app #view-profile .profile-card .profile-identity h2{color:#fff8e9}
 .member-app #view-profile .profile-card #profileEmail{color:#ead0b0}
 .member-app #view-profile .profile-card .profile-card-kicker{color:#f8ca7d!important}
+
+/* Keep high-contrast light copy on the deep-charcoal mentorship ribbon. */
+.member-app #view-mentorship .mentorship-highlight.vip-mentor-intro{background:linear-gradient(115deg,#3a2819,#2b2018 70%,#201712);border-color:#ab7c43}
+.member-app #view-mentorship .mentorship-highlight.vip-mentor-intro :is(strong,p){color:#fff9ef}
+html[data-theme="dark"] .member-app #view-mentorship .mentorship-highlight.vip-mentor-intro{background:linear-gradient(120deg,#342618,#201814)}
