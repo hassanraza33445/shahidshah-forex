@@ -53,6 +53,48 @@
     article.append(media,details);
     container.append(article);
   }
+  // Unified Downloads panel: source-backed list on laptop AND mobile.
+  // Prevents stale iframe builder screens when "Downloads" is selected.
+  let resourceCache=null,resourceRequest=null;
+  async function fetchPublishedResources(client){
+    const {data,error}=await client.from("member_tool_catalog")
+      .select("id,item_kind,title,description,display_order,thumbnail_url,download_url")
+      .eq("item_kind","resource").order("display_order",{ascending:true});
+    if(!error&&Array.isArray(data))return data;
+    // Backwards-compatible fallback for sites with older exposed view settings.
+    const fallback=await client.from("download_resources")
+      .select("id,title,caption,thumbnail_url,download_url,display_order")
+      .eq("is_published",true).order("display_order",{ascending:true});
+    if(fallback.error)throw fallback.error;
+    return (fallback.data||[]).map(row=>({
+      ...row,item_kind:"resource",description:row.caption
+    }));
+  }
+  window.SMRenderToolsDownloads=async function(client){
+    const grid=document.getElementById("toolDownloadGrid");
+    const counter=document.getElementById("toolDownloadCount");
+    if(!grid)return;
+    if(!client){
+      grid.replaceChildren(make("p","sm-direct-downloads-message","Sign in to view your downloads."));
+      return;
+    }
+    if(!resourceCache){
+      grid.replaceChildren(make("p","sm-direct-downloads-message","Loading available downloads…"));
+      if(!resourceRequest)resourceRequest=fetchPublishedResources(client).finally(()=>{resourceRequest=null;});
+      try{resourceCache=await resourceRequest}
+      catch(_){
+        grid.replaceChildren(make("p","sm-direct-downloads-message","Unable to load downloads. Please try again."));
+        return;
+      }
+    }
+    // Check if still on the Downloads tab before modifying its contents.
+    const resources=resourceCache.filter(item=>secureAsset(item.download_url,"resources"));
+    if(counter)counter.textContent=resources.length+" "+(resources.length===1?"Resource":"Resources");
+    const fragment=document.createDocumentFragment();
+    for(const item of resources)addResource(fragment,item);
+    grid.replaceChildren(fragment);
+    if(!resources.length)grid.append(make("p","sm-direct-downloads-message","No published resources are available right now."));
+  };
   window.SMSetupMobileToolCatalog=async function(client) {
     if(!client)return;
     const nav=document.querySelector("#view-tools .sm-prompt-tool-tabs");
@@ -79,28 +121,8 @@
       if(detail&&item.description)detail.textContent=item.description;
     });
 
-    // Desktop uses the same Supabase order/visibility as mobile, but displays
-    // download cards inside its existing Downloads iframe instead of duplicating them.
-    if(!mobile.matches)return;
-
-    let region=document.getElementById("smToolResourceList");
-    if(!region){
-      region=make("section","sm-tools-resource-region");
-      region.id="smToolResourceList";
-      region.setAttribute("aria-label","Downloadable tools and resources");
-      nav.insertAdjacentElement("afterend",region);
-    }
-    region.replaceChildren();
-    const downloadable=data.filter(item=>item?.item_kind==="resource" &&
-      secureAsset(item.download_url,"resources"));
-    if(!downloadable.length){region.hidden=true;return}
-    const heading=make("div","sm-tools-resource-heading");
-    heading.append(make("strong","","Ready-to-Use Downloads"));
-    heading.append(make("span","",String(downloadable.length)+" Resources"));
-    const list=make("div","sm-tools-resource-grid");
-    downloadable.forEach(item=>addResource(list,item));
-    if(!list.children.length){region.hidden=true;return}
-    region.hidden=false;
-    region.append(heading,list);
+    // Downloads are rendered only when selected, in the dedicated native panel.
+    if(document.getElementById("toolDownloadArea")?.hidden===false)
+      void window.SMRenderToolsDownloads(client);
   };
 })();
