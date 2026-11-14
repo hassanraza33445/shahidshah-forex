@@ -206,6 +206,9 @@ function aiIdFromLocation(){
   return AI_ID_BY_ROUTE[path]||location.hash.slice(1)||'video';
 }
 function setAiCleanUrl(id,replace=false){
+  if(new URLSearchParams(location.search).get('embedded')==='1'){
+   history[replace?'replaceState':'pushState']({aiTool:id},'', '/learning-hub.html?embedded=1#'+encodeURIComponent(id));return;
+  }
   const path=AI_ROUTE_BY_ID[id]||'/ai-video-scripts';
   if(replace&&id==='video'&&location.pathname.replace(/\/+$/,'')==='/ai-tools'&&!location.hash)return;
   if(location.pathname.replace(/\/+$/,'')===path && !location.hash)return;
