@@ -317,7 +317,10 @@ function renderMarketEditorial(){
   const labels={Gold:"Gold / XAU",Forex:"Currencies / Forex",Crypto:"Crypto Markets","Economic Data":"Economy & Central Banks"};
   for(const category of ["Gold","Forex","Crypto","Economic Data"]){
    const row=create("button","mi-coverage-row");row.type="button";
-   row.append(create("span","",labels[category]),create("span","",counts[category]+" articles"));
+   const topic=create("span","mi-topic-wrap");
+   const pictograms={Gold:"▰",Forex:"⇄",Crypto:"₿","Economic Data":"▤"};
+   topic.append(create("span","mi-topic-symbol",pictograms[category]),create("span","mi-topic-name",labels[category]));
+   row.append(topic,create("span","mi-topic-count",counts[category]+" articles"));
    row.addEventListener("click",()=>{
     state.filter=category;state.marketSearch="";state.marketVisible=12;
     $("miSearch").value="";
