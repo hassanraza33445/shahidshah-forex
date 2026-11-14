@@ -9,3 +9,9 @@ form label{display:block;font-weight:800;font-size:11px;margin-bottom:16px}form 
 @media(max-width:470px){.auth-panel{padding:18px 23px 30px}.mobile-brand{margin:28px 0 32px}.panel-hero h2{font-size:35px}.panel-footer{margin-top:25px}}
 /* Use the same genuine portrait shown beside the public homepage name. */
 .brand-portrait{display:block;width:47px;height:47px;object-fit:cover;border:2px solid #e6a839;border-radius:13px;box-shadow:0 7px 24px #cc8a2c36;flex:none}
+
+/* Auth mode fields: author CSS must never override the hidden attribute. */
+.auth-panel [hidden]{display:none!important}
+.auth-panel .field-required{float:right;font-size:9px;font-weight:750;color:#a4763b}
+.auth-panel .google-notice{margin:10px 0 0;color:#866b4f;font-size:11px;line-height:1.55;text-align:center}
+.auth-panel #googleBtn:disabled{cursor:not-allowed;opacity:.65}
