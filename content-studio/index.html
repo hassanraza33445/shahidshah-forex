@@ -381,7 +381,7 @@ function studioRenderNews(){
  $("studioNewsResultCount").textContent=state.studioNewsItems.length?found.length+" news headlines · S M Shahid Shah Market Intelligence":"No market headlines available";
  if(!found.length){list.append(mk("div","studio-news-empty",state.studioNewsItems.length?"No matching headlines. Try another category or search.":"News unavailable. Choose Custom Topic to continue."));return}
  for(const x of found){
-  const button=mk("button","studio-news-item");button.type="button";button.setAttribute("role","listitem");button.setAttribute("aria-label","Select news: "+x.title);
+  const button=mk("button","studio-news-item");button.classList.add("market-cat-"+String(newsGroup(x)).toLowerCase().replace(/[^a-z]+/g,"-"));button.type="button";button.setAttribute("role","listitem");button.setAttribute("aria-label","Select news: "+x.title);
   const selected=$("newsChoice").value===String(x.id)&&state.studioMode==="news";button.classList.toggle("active",selected);button.setAttribute("aria-pressed",String(selected));
   const body=mk("span","studio-news-body");body.append(mk("span","studio-news-label",newsGroup(x)),mk("strong","",x.title||"Market headline"),mk("small","",String(x.publisher||"Publisher")+" · "+newsTime(x.published_at)));
   button.append(body,mk("span","studio-news-dot"));button.addEventListener("click",()=>studioSelectNews(x.id));list.append(button);
