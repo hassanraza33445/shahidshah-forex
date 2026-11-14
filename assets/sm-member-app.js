@@ -203,6 +203,45 @@ function closeMenu(){
 function setBusy(id,on){const el=$(id);if(el)el.disabled=on}
 function formatTime(value){const d=new Date(value);return Number.isFinite(d.getTime())?
  new Intl.DateTimeFormat("en",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",timeZone:"Asia/Karachi"}).format(d)+" PKT":"Time unavailable"}
+function relativeNewsTime(value,now=Date.now()){
+ const ts=Date.parse(String(value||""));
+ if(!Number.isFinite(ts))return "Time unavailable";
+ const seconds=Math.max(0,Math.floor((now-ts)/1000));
+ if(seconds<60)return "Just now";
+ const mins=Math.floor(seconds/60);
+ if(mins<60)return mins+" "+(mins===1?"min":"mins")+" ago";
+ const hours=Math.floor(mins/60);
+ if(hours<24)return hours+" "+(hours===1?"hour":"hours")+" ago";
+ const days=Math.floor(hours/24);
+ if(days<7)return days+" "+(days===1?"day":"days")+" ago";
+ return formatTime(value);
+}
+function sourcePublishedTime(element,value){
+ const date=String(value||"");
+ element.textContent=relativeNewsTime(date);
+ if(Number.isFinite(Date.parse(date))){
+  element.dataset.publishedAt=date;
+  element.title="Published "+formatTime(date);
+  if(element.tagName==="TIME")element.dateTime=new Date(date).toISOString();
+ }
+ return element;
+}
+let newsClockStarted=false;
+function startMarketNewsClock(){
+ if(newsClockStarted)return;
+ newsClockStarted=true;
+ const update=()=>{
+  document.querySelectorAll(".mi-card-published[data-published-at],.dashboard-story-time[data-published-at]").forEach(el=>{
+   el.textContent=relativeNewsTime(el.dataset.publishedAt);
+  });
+ };
+ window.setInterval(()=>{if(document.visibilityState==="visible")update()},60000);
+ document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")update()});
+ window.setInterval(()=>{
+  if(document.visibilityState==="visible"&&["markets","home"].includes(state.currentTab||""))
+   void loadNews();
+ },300000);
+}
 function domainSource(value){try{const u=new URL(value);return u.protocol==="https:"?u.hostname.replace(/^www\./,""):"External source"}catch{return"Source"}}
 function hrefSafe(input){try{const u=new URL(input,location.origin);return u.protocol==="https:"||u.origin===location.origin&&u.protocol==="http:"?u.href:"#"}catch{return"#"}}
 async function api(path){
@@ -296,6 +335,7 @@ async function start(){
   if(typeof window.SMSetupMobileToolCatalog==="function")
    void window.SMSetupMobileToolCatalog(c).catch(()=>{});
   void checkStudioAccess();
+  startMarketNewsClock();
   void loadNews();
  }catch(e){
   const screen=$("bootScreen");
@@ -342,7 +382,7 @@ function dashboardStoryCard(item){
  h.append(title);article.append(h);
  const footer=create("div","dashboard-story-footer");
  footer.append(create("span","dashboard-story-calendar","▦"));
- footer.append(create("time","dashboard-story-time",formatTime(item.published_at||item.first_seen_at)));
+ footer.append(sourcePublishedTime(create("time","dashboard-story-time"),item.published_at||item.first_seen_at));
  footer.append(create("span","dashboard-story-separator","·"));
  footer.append(create("span","dashboard-story-publisher",String(item.publisher||"Source-linked news").slice(0,70)));
  const read=create("button","dashboard-story-arrow","↗");
@@ -401,7 +441,7 @@ function marketNewsCard(item){
  const source=create("div","mi-card-source");
  const publisher=String(item.publisher||"").trim();
  source.append(create("span","mi-card-publisher",publisher?publisher.slice(0,55):"Source-linked news"));
- source.append(create("span","mi-card-published",formatTime(item.published_at||item.first_seen_at)));
+ source.append(sourcePublishedTime(create("span","mi-card-published"),item.published_at||item.first_seen_at));
  article.append(source);
  const actions=create("div","mi-card-actions");
  const read=create("button","mi-card-read","Read Details →");
@@ -435,9 +475,10 @@ function renderMarketEditorial(){
  $("miGoldStories").textContent=state.news.length?String(counts.Gold||0):"—";
  $("miForexStories").textContent=state.news.length?String(counts.Forex||0):"—";
  const filtered=state.news.filter(miNewsMatch);
- const sorted=filtered.map((item,index)=>({item,index}))
-  .sort((a,b)=>miScore(b.item)-miScore(a.item)||a.index-b.index)
-  .map(pair=>pair.item);
+ // Preserve the API's deliberate Gold/Forex/General balance in the All feed.
+ // Category-specific filters remain most-recent-first.
+ const sorted=state.filter==="All"?filtered:
+  [...filtered].sort((a,b)=>Date.parse(b.published_at||0)-Date.parse(a.published_at||0));
  $("miResultCount").textContent=filtered.length+" matching headlines";
  if(!sorted.length){
   grid.append(miBlank(state.news.length?"No matching headlines":"News feed unavailable",
@@ -487,7 +528,7 @@ function renderNews(){
 async function loadNews(){
  let loaded=false;
  try{
-  const v=await api("market-intelligence-api?mode=feed&limit=36&page=1");
+  const v=await api("market-intelligence-api?mode=feed&focus=gold-forex&limit=72&page=1");
   state.news=v.items||[];$("newsCount").textContent=String(state.news.length);
   $("hotCount").textContent=String(["Gold","Forex","Crypto","Economic Data"].filter(topic=>state.news.some(item=>miTopicMatch(item,topic))).length);
   renderNews();loaded=true;
