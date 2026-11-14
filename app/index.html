@@ -1,17 +1,18 @@
-<!doctype html><html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#100e0a"><meta name="robots" content="noindex,nofollow">
+<!doctype html><html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FBF7EF"><meta name="robots" content="noindex,nofollow">
 <title>Member Dashboard | S M Shahid Shah</title>
 <meta name="description" content="Your personalized S M Shahid Shah business and market intelligence dashboard.">
 <link rel="icon" href="/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/sm-member-app.css?v=20261114-1">
+<script>try{document.documentElement.dataset.theme=(localStorage.getItem("smshahid-site-theme")||localStorage.getItem("site-theme"))==="dark"?"dark":"light"}catch(_){document.documentElement.dataset.theme="light"}</script>
+<link rel="stylesheet" href="/assets/sm-member-app.css?v=20261114-2">
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script defer src="/assets/sm-member-app.js?v=20261114-1"></script></head>
+<script defer src="/assets/sm-member-app.js?v=20261114-2"></script></head>
 <body class="member-boot">
-<div id="bootScreen" class="boot-screen"><span class="boot-icon">▥</span><strong>Opening your workspace…</strong><small>Connecting securely to your account</small></div>
+<div id="bootScreen" class="boot-screen"><img class="boot-avatar" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><strong>Opening your workspace…</strong><small>Connecting securely to your account</small></div>
 <div id="memberApp" class="member-app" hidden>
 <aside class="app-sidebar" id="appSidebar" aria-label="Application navigation">
- <div class="side-brand"><span class="logo-gold">▥</span><span><b>S M Shahid Shah</b><small>MARKET INTELLIGENCE PLATFORM</small></span></div>
+ <div class="side-brand"><img class="side-portrait" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><span><b>S M Shahid Shah</b><small>MARKET INTELLIGENCE PLATFORM</small></span></div>
  <nav class="side-links" aria-label="Member sections">
   <button type="button" data-section="home" class="active"><span class="nav-icon">⌂</span>Home</button>
   <button type="button" data-section="markets"><span class="nav-icon">▥</span>Market Intelligence</button>
@@ -34,7 +35,7 @@
   <a href="/app/" class="top-brand"><img src="/shahid-shah-profile.jpg" alt=""><span><b>S M Shahid Shah</b><small>BUSINESS &amp; MARKET INTELLIGENCE</small></span></a></div>
  <nav class="desktop-header-links" aria-label="Top navigation"><button data-section="home" class="active">Home</button><button data-section="markets">Market Intelligence</button><button data-section="studio">AI Studio</button><button data-section="tools">AI Tools</button><a href="/ai-video-scripts/">AI Scripts</a><a href="/videos/">Videos</a><a href="/about/">About</a></nav>
  <div class="header-actions"><a href="/market-intelligence/" class="icon-btn search-icon" aria-label="Search market news">⌕</a><a href="/notifications/" class="icon-btn notification-icon" aria-label="Open notifications">♧<i id="alertDot" hidden></i></a>
- <button data-section="profile" type="button" class="icon-btn profile-icon" aria-label="Profile">♙</button></div>
+ <button id="memberThemeToggle" type="button" class="icon-btn theme-icon" aria-label="Switch theme" title="Switch theme">☀</button><button data-section="profile" type="button" class="icon-btn profile-icon" aria-label="Profile">♙</button></div>
 </header>
 <main class="app-content">
 <section class="app-view active" id="view-home" aria-labelledby="homeTitle">

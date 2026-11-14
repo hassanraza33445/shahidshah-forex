@@ -6,6 +6,15 @@
  if(!existing)document.body.insertAdjacentHTML("afterbegin",HEADER_TEMPLATE);
  const header=document.getElementById("sm-site-header");
  if(!header)return;
+ // Keep Login and Sign Up visible on every public route, without replacing the approved header.
+ const actions=header.querySelector(".nav-actions");
+ if(actions&&!actions.querySelector(".account-links")){
+  const wrapper=document.createElement("div");wrapper.className="account-links";
+  for(const [label,url,kind] of [["Login","/auth/?next=%2Fapp%2F","account-login"],["Sign Up","/auth/?mode=signup&next=%2Fapp%2F","account-signup"]]){
+   const link=document.createElement("a");link.href=url;link.className=kind;link.textContent=label;wrapper.append(link);
+  }
+  actions.insertBefore(wrapper,header.querySelector("#themeToggle"));
+ }
  const themeButton=header.querySelector("#themeToggle"),icon=header.querySelector("#themeIcon");
  const links={ytTop:"https://www.youtube.com/@SMShahidShah",waTop:"https://wa.me/601158646564",fbTop:"https://www.facebook.com/SMShahidShah87",igTop:"https://www.instagram.com/s_m_shahid_shah/"};
  function validLink(value){try{let u=new URL(value);return ["https:","http:"].includes(u.protocol)?u.href:null}catch{return null}}

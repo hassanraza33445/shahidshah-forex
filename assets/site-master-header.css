@@ -82,3 +82,19 @@ html[data-theme="dark"] #sm-site-header {
  #sm-site-header .learning-nav a{font-size:6.5px;padding:5px 6px;border-radius:6px}
 }
 @media(prefers-reduced-motion:reduce){#sm-site-header *{transition:none!important}}
+
+/* Account entry is a primary header action and stays visible at every width. */
+#sm-site-header .account-links{display:flex;align-items:center;gap:6px;flex:none}
+#sm-site-header .account-links a{display:inline-flex;align-items:center;justify-content:center;min-height:37px;padding:8px 11px;border:1px solid var(--sm-border);border-radius:10px;font-size:10px;font-weight:800;text-decoration:none;white-space:nowrap;transition:.2s}
+#sm-site-header .account-login{background:var(--sm-bg);color:var(--sm-gold)}
+#sm-site-header .account-signup{background:linear-gradient(115deg,#edac3b,#b97712);color:#fff;border-color:#cb8a27!important}
+#sm-site-header .account-links a:hover{transform:translateY(-2px);box-shadow:0 6px 15px var(--sm-glow)}
+@media(max-width:1260px){#sm-site-header .social-dock [data-brand="instagram"],#sm-site-header .social-dock [data-brand="facebook"]{display:none}}
+@media(max-width:920px){#sm-site-header .social-dock{display:none}}
+@media(max-width:620px){
+ #sm-site-header .account-links{gap:4px}
+ #sm-site-header .account-links a{min-height:27px;padding:4px 7px;border-radius:7px;font-size:9px}
+ #sm-site-header .nav-actions{gap:5px}
+ #sm-site-header .brand b{font-size:9px}
+ #sm-site-header .brand small{font-size:6px}
+}
