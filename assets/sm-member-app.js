@@ -110,6 +110,9 @@ function openTab(name,push=true){
  for(const section of views)$("view-"+section)?.classList.toggle("active",section===name||(section==="studio"&&name==="library"));
  if(name==="library")$("view-library")?.classList.remove("active");
  $("studioTitle").innerHTML=name==="library"?"My <em>Content.</em>":"AI <em>Studio.</em>";
+ $("studioEyebrow").textContent=name==="library"?"YOUR PRIVATE WORKSPACE":"CREATE · EDIT · PRODUCE";
+ $("studioDescription").textContent=name==="library"?"Browse your saved scripts, edit drafts and manage content projects in one place.":"Write, refine and organize professional scripts and content in one connected workspace.";
+ $("libraryActionBar").hidden=name!=="library";
  $("studioSubnav").hidden=name==="library";
  document.querySelectorAll("[data-section]").forEach(node=>{
   const inMenu=node.closest(".side-links,.mobile-dock")!==null;
@@ -163,6 +166,9 @@ function paintUser(user,profile){
  $("profileAvatar").textContent=first.charAt(0).toUpperCase();
  $("verifiedBadge").textContent=user.email_confirmed_at?"✓ Verified Account":"Email verification pending";
  $("mentorName").value=name;
+ if(document.activeElement!==$("profileDisplayName"))$("profileDisplayName").value=name;
+ $("profileEmailDetail").textContent=user.email||"—";
+ $("profileAccountStatus").textContent=user.email_confirmed_at?"Email verified":"Email verification pending";
 }
 function setMemberTheme(theme){
  const next=theme==="dark"?"dark":"light";
@@ -211,9 +217,11 @@ function headlineCard(item){
  const chip=create("span","chip",item.priority==="HOT"?"HOT · VERIFY SOURCE":item.category||"Markets");article.append(chip);
  const title=create("h3","",safe(item.title));article.append(title);
  const description=(item.summary||"").replace(/<[^>]*>/g," ").trim();
- if(description)article.append(create("p","",description.slice(0,150)));
+ const norm=t=>String(t||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+ const name=norm(item.title),details=norm(description);
+ if(description&&details!==name&&!(name.length>24&&details.startsWith(name.slice(0,Math.min(60,name.length))))&&!name.startsWith(details))article.append(create("p","",description.slice(0,180)));
  const foot=create("div","news-foot");
- foot.textContent=domainSource(item.original_url)+" · "+formatTime(item.published_at||item.first_seen_at);
+ foot.textContent=(item.publisher&&String(item.publisher).trim()?safe(item.publisher)+" · ":"")+domainSource(item.original_url)+" · "+formatTime(item.published_at||item.first_seen_at);
  article.append(foot);
  const link=create("a","outline-action","Original Source ↗");link.href=hrefSafe(item.original_url);link.target="_blank";link.rel="noopener noreferrer";
  link.style.cssText="margin-top:10px;align-self:flex-start;padding:8px 12px;font-size:10px";article.append(link);
@@ -222,7 +230,8 @@ function headlineCard(item){
 function renderNews(){
  const small=$("homeHeadlines"),big=$("marketNewsList");
  small.replaceChildren();big.replaceChildren();
- const latest=state.news.slice(0,3);
+ const score=x=>(x.priority==="HOT"?6:0)+(["Gold","Forex","Economic Data"].includes(x.category)?3:0);
+ const latest=state.news.map((item,index)=>({item,index})).sort((a,b)=>score(b.item)-score(a.item)||a.index-b.index).slice(0,3).map(x=>x.item);
  if(!latest.length){
   small.append(create("div","loading-line","News temporarily unavailable. Visit the Market Intelligence hub."));
   big.append(create("div","loading-line","No recent headlines available for this filter."));return;
@@ -291,6 +300,34 @@ function setupMentorship(){
   finally{if(!$("mentorMessage").textContent.includes("awaiting review"))setBusy("mentorSubmit",false)}
  });
 }
+
+function setupProfile(){
+ document.querySelectorAll("[data-preference-theme]").forEach(button=>button.addEventListener("click",()=>setMemberTheme(button.dataset.preferenceTheme)));
+ $("profileNameForm").addEventListener("submit",async event=>{
+  event.preventDefault();if(!state.client||!state.user)return;
+  const value=$("profileDisplayName").value.trim(),status=$("profileNameStatus");
+  status.className="settings-help";status.textContent="Saving your display name…";
+  if(value.length<2||value.length>90){status.textContent="Please enter a name between 2 and 90 characters.";status.classList.add("error");return}
+  setBusy("profileSaveName",true);
+  try{
+   if(!state.client.auth.updateUser)throw Error("Profile editing is temporarily unavailable. Please try again later.");
+   const result=await withTimeout(state.client.auth.updateUser({data:{full_name:value}}),12000,"Profile update timed out");
+   if(result.error)throw result.error;
+   state.user.user_metadata={...(state.user.user_metadata||{}),full_name:value};
+   let synced=true;
+   try{
+    const updated=await withTimeout(state.client.from("profiles").update({full_name:value}).eq("id",state.user.id),10000,"Profile sync timed out");
+    if(updated.error)synced=false;
+   }catch(_){synced=false}
+   state.profile={...(state.profile||{}),full_name:value};
+   paintUser(state.user,state.profile);
+   status.className="settings-help "+(synced?"success":"error");
+   status.textContent=synced?"Display name updated successfully.":"Login name updated; profile database sync could not be verified. If the old name reappears, contact support.";
+  }catch(e){status.className="settings-help error";status.textContent=e.message||"Unable to update name. Please retry."}
+  finally{setBusy("profileSaveName",false)}
+ });
+}
+
 function setupNavigation(){
  document.querySelectorAll("[data-section]").forEach(button=>button.addEventListener("click",()=>{
   if(button.dataset.marketPage)state.marketPage=button.dataset.marketPage;
@@ -326,6 +363,13 @@ function setupNavigation(){
  window.addEventListener("popstate",()=>openTab(tabFromLocation(),false));
  window.addEventListener("message",event=>{
   if(event.origin!==location.origin||!event.data||typeof event.data!=="object")return;
+  if(event.data.type==="sm:embed-height"){
+   const frames=["unifiedStudioFrame","marketModuleFrame","toolModuleFrame","noticeFrame"];
+   const target=frames.map(id=>$(id)).find(frame=>frame&&frame.contentWindow===event.source);
+   const height=Number(event.data.height);
+   if(target&&Number.isFinite(height)&&height>200&&height<18000)target.style.height=Math.ceil(height+12)+"px";
+   return;
+  }
   if(event.data.type==="sm:studio-page"&&state.currentTab==="studio"&&["dashboard","create","projects","planner","record"].includes(event.data.page)){
    state.studioPage=event.data.page;
    document.querySelectorAll("#studioSubnav [data-studio-page]").forEach(b=>b.classList.toggle("active",b.dataset.studioPage===state.studioPage));
@@ -340,5 +384,5 @@ function setupNavigation(){
   setBusy("logout",true);try{await state.client.auth.signOut()}finally{location.replace("/")}
  });
 }
-setupNavigation();setupMentorship();setupTheme();start();
+setupNavigation();setupMentorship();setupTheme();setupProfile();start();
 })();

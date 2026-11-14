@@ -39,7 +39,42 @@ html.sm-embedded .grid2{gap:12px}
 <link rel="stylesheet" href="/assets/sm-member-gate.css?v=20261114-unified-1">
 <script>document.documentElement.classList.add("sm-member-checking");</script>
 <script defer src="/assets/sm-member-gate.js?v=20261114-unified-1"></script>
-</head>
+<style>
+/* Premium Studio in the single member workspace. Inner scrolling is handled by parent. */
+html.sm-embedded,html.sm-embedded body{height:auto!important;min-height:0!important;overflow-x:hidden!important;overflow-y:hidden!important}
+html.sm-embedded .layout:not(.hidden){min-height:0!important}
+html.sm-embedded .content{width:100%;min-width:0;max-width:1450px;margin:auto;padding:8px clamp(10px,2vw,26px) 24px!important}
+html.sm-embedded .page{padding-top:12px}
+html.sm-embedded .scroll{max-height:none!important;overflow:visible!important}
+html.sm-embedded .intro h1{font-size:clamp(24px,2.9vw,32px)!important;letter-spacing:-.9px}
+html.sm-embedded .intro p{font-size:13px;line-height:1.6}
+html.sm-embedded .card{border-radius:15px;padding:22px}
+html.sm-embedded .card h2{font-size:18px}
+html.sm-embedded .stat{padding:16px}
+html.sm-embedded .item strong{font-size:13px}
+html.sm-embedded .item p{font-size:12px}
+html.sm-embedded .btn{font-size:12px;min-height:40px}
+html.sm-embedded .btn.small{font-size:11px;min-height:35px}
+html.sm-embedded label{font-size:13px}
+html.sm-embedded .small,html.sm-embedded .note{font-size:12px}
+html.sm-embedded .badge,html.sm-embedded .tag{font-size:10px}
+html.sm-embedded input,html.sm-embedded textarea,html.sm-embedded select{font-size:14px;min-height:44px}
+html.sm-embedded .empty{font-size:13px}
+html.sm-embedded .premium-empty{min-height:230px;border:1px dashed var(--border);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;text-align:center;padding:28px 19px;background:var(--panel2)}
+html.sm-embedded .premium-empty h3{font-size:19px}
+html.sm-embedded .premium-empty p{font-size:13px;max-width:410px;line-height:1.65}
+html.sm-embedded #page-projects>.card{min-height:0}
+@media(max-width:780px){
+ html.sm-embedded .content{padding:4px 9px 18px!important}
+ html.sm-embedded .card{padding:16px}
+ html.sm-embedded .intro h1{font-size:25px!important}
+ html.sm-embedded .stat b{font-size:24px}
+ html.sm-embedded .stats{gap:9px}
+ html.sm-embedded .item{padding:12px}
+ html.sm-embedded .premium-empty{min-height:210px}
+}
+</style>
+<script defer src="/assets/sm-embed-resize.js?v=20261114-premium-1"></script></head>
 <body>
 <div class="gate" id="authGate"><section class="login"><img src="/shahid-shah-profile.webp" alt=""><div class="upper">S M SHAHID SHAH</div><h1>AI Content Studio</h1><p class="note">Private editorial workspace. Sign in with your existing S M Shahid Shah account. Studio access is assigned by an administrator.</p><form id="loginForm"><div><label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div><div><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required minlength="6"></div><button class="btn gold" type="submit">Sign In Securely →</button></form><div id="loginStatus" class="status" aria-live="polite"></div><div class="actions"><a class="btn ghost" href="/">← Website</a><a class="btn ghost" href="/market-intelligence/">Market Intelligence</a></div></section></div>
 <div class="layout hidden" id="workspace">
@@ -49,7 +84,7 @@ html.sm-embedded .grid2{gap:12px}
 </nav><div class="side-bottom"><div id="sideName" class="small">Signed in</div><p id="sideRole"></p><div class="actions"><button id="logout" class="btn small">Sign out</button><a class="btn small" href="/market-intelligence/">Market News ↗</a></div></div></aside>
 <div class="content"><header class="topbar"><div><b>✦ AI CONTENT STUDIO</b><p>Produce, review and publish responsibly</p></div><div class="user"><button class="btn theme" id="theme" title="Change theme" style="display:none" tabindex="-1" aria-hidden="true">◐</button><button class="btn adminOnly hidden" data-page="access">Admin</button><button class="btn small" id="logoutTop">Sign Out</button><span class="badge" id="userRole">PRIVATE</span><div class="dot" id="avatar">S</div></div></header>
 <div id="globalStatus" class="status" aria-live="polite"></div>
-<section id="page-dashboard" class="page active"><div class="intro"><div><div class="upper">YOUR WORKSPACE</div><h1>Good to have you here.</h1><p>Create educational scripts from market news or your own topics.</p></div><div class="actions"><button class="btn gold" data-page="create">+ Create Video</button><a href="/market-intelligence/" class="btn">Global Markets ↗</a></div></div>
+<section id="page-dashboard" class="page active"><div class="intro"><div><div class="upper">YOUR WORKSPACE</div><h1>Your creative workspace.</h1><p>Create educational scripts from market news or your own topics.</p></div><div class="actions"><button class="btn gold" data-page="create">+ Create Video</button><a href="/market-intelligence/" class="btn">Global Markets ↗</a></div></div>
 <div class="stats"><article class="stat"><span>MY PROJECTS</span><b id="countProjects">0</b></article><article class="stat"><span>DRAFTS</span><b id="countDrafts">0</b></article><article class="stat"><span>IN REVIEW</span><b id="countReview">0</b></article><article class="stat"><span>APPROVED</span><b id="countApproved">0</b></article></div>
 <div class="grid2"><section class="card"><div class="row"><h2>Recent projects</h2><button class="btn small" data-page="projects">View all</button></div><div id="recentProjects" class="list"></div></section><section class="card"><div class="row"><h2>Market watch</h2><a class="btn small" href="/market-intelligence/">Open News ↗</a></div><p class="note">Latest source-linked headlines for content ideas.</p><div id="dashboardNews" class="list"></div></section></div></section>
 <section id="page-create" class="page"><div class="intro"><div><div class="upper">CREATOR WORKSPACE</div><h1>Write your next story.</h1><p>Start from original news or an educational topic. Always review claims before publishing.</p></div><div class="actions"><button id="newProject" class="btn">New Script</button><button id="saveProject" class="btn gold">Save Project</button></div></div>
@@ -180,13 +215,24 @@ async function loadProjects(){
  $("countProjects").textContent=owned.length;$("countDrafts").textContent=owned.filter(x=>x.status==="draft").length;
  $("countReview").textContent=state.projects.filter(x=>x.status==="review").length;$("countApproved").textContent=state.projects.filter(x=>x.status==="approved").length;
  $("recentProjects").replaceChildren();for(const item of state.projects.slice(0,4))$("recentProjects").append(paintProject(item));
- if(!state.projects.length)$("recentProjects").append(mk("div","empty","No scripts yet. Start with Create Video."));
+ if(!state.projects.length){
+  const empty=mk("div","empty premium-empty"),title=mk("h3","","Your first script starts here"),desc=mk("p","","Turn market news or your own idea into a polished script, then save it to your library.");
+  empty.append(title,desc);
+  if(isCreator()){const btn=mk("button","btn gold","Create Your First Script");btn.type="button";btn.addEventListener("click",()=>displayPage("create"));empty.append(btn)}
+  $("recentProjects").append(empty);
+ }
  drawProjectList();
 }
 function drawProjectList(){
  const filter=$("filterStatus").value;const rows=state.projects.filter(x=>!filter||x.status===filter);
  $("projectList").replaceChildren();for(const p of rows)$("projectList").append(paintProject(p));
- if(!rows.length)$("projectList").append(mk("div","empty","No projects match this filter."));
+ if(!rows.length){
+  const empty=mk("div","empty premium-empty");
+  const first=!state.projects.length,title=mk("h3","",first?"No projects yet":"No matching projects");
+  empty.append(title,mk("p","",first?"Create your first script to start a private library of drafts, reviews and approved content.":"Try a different status filter or refresh your saved projects."));
+  if(first&&isCreator()){const btn=mk("button","btn gold","Create Your First Script");btn.type="button";btn.addEventListener("click",()=>displayPage("create"));empty.append(btn)}
+  $("projectList").append(empty);
+ }
 }
 $("filterStatus").addEventListener("change",drawProjectList);$("reloadProjects").addEventListener("click",loadProjects);
 async function loadVersions(){

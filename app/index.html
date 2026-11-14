@@ -5,9 +5,10 @@
 <link rel="icon" href="/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script>try{document.documentElement.dataset.theme=(localStorage.getItem("smshahid-site-theme")||localStorage.getItem("site-theme"))==="dark"?"dark":"light"}catch(_){document.documentElement.dataset.theme="light"}</script>
-<link rel="stylesheet" href="/assets/sm-member-app.css?v=20261114-unified-1">
+<link rel="stylesheet" href="/assets/sm-member-app.css?v=20261114-premium-1">
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script defer src="/assets/sm-member-app.js?v=20261114-navfix-1"></script></head>
+<script defer src="/assets/sm-member-app.js?v=20261114-premium-1"></script>
+<script defer src="/assets/sm-member-icons.js?v=20261114-premium-1"></script></head>
 <body class="member-boot">
 <div id="bootScreen" class="boot-screen"><img class="boot-avatar" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><strong>Opening your workspace…</strong><small>Connecting securely to your account</small></div>
 <div id="memberApp" class="member-app" hidden>
@@ -32,7 +33,7 @@
 <header class="member-header">
  <div class="header-first"><button id="openMenu" class="icon-btn menu-trigger" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
   <a href="/app/" class="top-brand"><img src="/shahid-shah-profile.jpg" alt=""><span><b>S M Shahid Shah</b><small>BUSINESS &amp; MARKET INTELLIGENCE</small></span></a></div>
- <div class="workspace-header-label"><strong id="currentSectionName">Dashboard</strong><span>One connected member workspace</span></div>
+ <div class="workspace-header-label"><strong id="currentSectionName">Dashboard</strong><span>Business &amp; Market Intelligence Workspace</span></div>
  <div class="header-actions"><button type="button" data-section="markets" data-market-page="feed" class="icon-btn search-icon" aria-label="Search market news">⌕</button><button type="button" data-section="notifications" class="icon-btn notification-icon" aria-label="Open notifications">♧<i id="alertDot" hidden></i></button>
  <button id="memberThemeToggle" type="button" class="icon-btn theme-icon" aria-label="Switch theme" title="Switch theme">☀</button><button data-section="profile" type="button" class="icon-btn profile-icon" aria-label="Profile">♙</button></div>
 </header>
@@ -55,7 +56,7 @@
   <button type="button" class="tool-card" data-section="tools" data-tool="indicator"><span>✦</span><b>Prompt Builder</b><small>Market Analysis</small></button>
   <button data-section="studio" data-studio-page="record" type="button" class="tool-card"><span>♫</span><b>Voice Studio</b><small>Creator access required</small></button>
  </div>
- <div class="section-title"><h2>Latest Market Headlines</h2><button type="button" data-section="markets">Read all news →</button></div>
+ <div class="section-title"><h2>Market Highlights</h2><button type="button" data-section="markets">Read all news →</button></div>
  <div id="homeHeadlines" class="news-grid"><div class="loading-line">Loading source-linked market headlines…</div></div>
  <section class="mobile-mentor-banner"><span>♢</span><div><b>Mentorship Program</b><small>Trading, Brokerage &amp; Business Development</small></div><button data-section="mentorship" type="button">→</button></section>
 </section>
@@ -75,7 +76,8 @@
  <div id="marketModuleArea" class="embed-panel" hidden><p id="marketModuleStatus" class="embed-status" role="status">Opening market module…</p><iframe id="marketModuleFrame" title="Market Intelligence Module" loading="lazy"></iframe></div>
 </section>
 <section class="app-view" id="view-studio" aria-labelledby="studioTitle">
- <div class="view-heading"><span class="eyebrow">CREATE · EDIT · PRODUCE</span><h1 id="studioTitle">AI <em>Studio.</em></h1><p>Generate complete video scripts, edit drafts, plan projects and record your voice without leaving the member dashboard.</p></div>
+ <div class="view-heading"><span class="eyebrow" id="studioEyebrow">CREATE · EDIT · PRODUCE</span><h1 id="studioTitle">AI <em>Studio.</em></h1><p id="studioDescription">Write, refine and organize professional scripts and content in one connected workspace.</p></div>
+ <div id="libraryActionBar" class="library-action-bar" hidden><div><strong>My private library</strong><p>Your saved scripts, drafts and projects stay linked to your account.</p></div><button type="button" class="gold-action" data-section="studio" data-studio-page="create">+ Create New Script</button></div>
  <nav class="module-tabs" id="studioSubnav" aria-label="AI Studio tools">
   <button data-studio-page="dashboard" type="button">Studio Overview</button>
   <button data-studio-page="create" class="active" type="button">Create Video Script</button>
@@ -100,10 +102,10 @@
 </section>
 <section class="app-view" id="view-mentorship" aria-labelledby="mentorshipTitle">
  <div class="view-heading"><span class="eyebrow">PERSONAL GROWTH · 1-ON-1 GUIDANCE</span><h1 id="mentorshipTitle">Mentorship <em>Program.</em></h1><p>Apply for personalized guidance in trading, brokerage, market intelligence and business development.</p></div>
- <div class="mentorship-highlight"><span>♛</span><div><strong>Build your next chapter.</strong><p>Learn strategy, market intelligence, risk awareness and business growth through dedicated mentorship.</p></div></div>
+ <div class="mentorship-highlight"><span>♛</span><div><strong>Build your next chapter.</strong><p>Personalized guidance in market intelligence, trading risk awareness, brokerage and business growth.</p></div><span class="mentor-tag">Personal mentorship</span></div>
  <div class="mentorship-grid"><div class="list-box"><h2>Program Highlights</h2><div>✓ 1-on-1 Guidance &amp; Strategy</div><div>✓ Trading &amp; Brokerage Insights</div><div>✓ Business Growth &amp; Development</div><div>✓ Market Intelligence &amp; Risk Management</div></div>
  <div class="list-box"><h2>My Application Status</h2><div id="applicationStatus" class="status-pill">Checking status…</div><p id="applicationDetail">Your latest mentorship application will appear here.</p></div></div>
- <section class="application-box"><h2>Apply for Mentorship</h2><p>Applications are reviewed individually. Submitting is not acceptance or a payment commitment.</p>
+ <section class="application-box"><div class="application-heading"><div><h2>Apply for Mentorship</h2><p>Share your goals so the team can review your request.</p></div><span>Step 1 of 1</span></div><p>Applications are reviewed individually. Submitting is not acceptance or a payment commitment.</p>
  <form id="mentorshipForm"><div class="two-col"><label>Full Name<input type="text" id="mentorName" autocomplete="name" minlength="2" maxlength="100" required placeholder="Your full name"></label>
  <label>WhatsApp / Contact Number<input type="tel" id="mentorPhone" autocomplete="tel" minlength="6" maxlength="32" required placeholder="+60 ..."></label></div>
  <label>Primary Interest<select id="mentorInterest"><option>Forex Trading</option><option>Brokerage Business</option><option>Market Intelligence</option><option>Business Development</option><option>Other</option></select></label>
@@ -121,10 +123,26 @@
  <div class="view-heading"><span class="eyebrow">PERSONALIZED MARKET ALERTS</span><h1 id="notificationsTitle">Smart <em>Notifications.</em></h1><p>Manage source-linked alerts, notification preferences and browser push consent.</p></div>
  <div id="noticeFrameSlot" class="embed-panel"><p id="noticeFrameStatus" class="embed-status" role="status">Opening your notification center…</p><iframe id="noticeFrame" title="Smart Notification Center" loading="lazy"></iframe></div>
 </section>
-<section class="app-view" id="view-profile" aria-labelledby="profileTitle"><div class="view-heading"><span class="eyebrow">ACCOUNT &amp; SETTINGS</span><h1 id="profileTitle">My <em>Profile.</em></h1><p>Manage your account, notifications and personal learning experience.</p></div>
- <article class="profile-card"><div id="profileAvatar" class="avatar-fallback">S</div><div><h2 id="profileName">Member Account</h2><span id="profileEmail">—</span><small id="verifiedBadge">Secure Supabase Account</small></div></article>
- <div class="profile-actions"><button type="button" data-section="library">▤ <span>My Content Library</span>→</button><button type="button" data-section="mentorship">♢ <span>Mentorship Application</span>→</button><button type="button" data-section="notifications">♧ <span>Notifications</span>→</button><button type="button" data-section="markets" data-market-page="calendar">▦ <span>Economic Calendar</span>→</button><a href="/about/">◈ <span>Help &amp; About</span>→</a></div>
- <button class="logout-btn" id="logout" type="button">⏻ Sign Out</button>
+<section class="app-view" id="view-profile" aria-labelledby="profileTitle"><div class="view-heading"><span class="eyebrow">ACCOUNT &amp; SETTINGS</span><h1 id="profileTitle">My <em>Profile.</em></h1><p>Manage your account details, appearance and preferences in one place.</p></div>
+ <div class="profile-layout">
+  <div class="profile-main">
+   <article class="profile-card"><div id="profileAvatar" class="avatar-fallback">S</div><div class="profile-identity"><span class="profile-card-kicker">YOUR ACCOUNT</span><h2 id="profileName">Member Account</h2><span id="profileEmail">—</span><small id="verifiedBadge">Secure Supabase Account</small></div></article>
+   <section class="profile-settings-card"><div class="settings-card-heading"><div><h2>Personal Information</h2><p>Update the name displayed across your member workspace.</p></div></div>
+    <form id="profileNameForm"><label for="profileDisplayName">Display Name</label><div class="settings-inline-form"><input id="profileDisplayName" type="text" autocomplete="name" minlength="2" maxlength="90" placeholder="Your display name" required><button id="profileSaveName" type="submit" class="gold-action">Save Name</button></div><p id="profileNameStatus" class="settings-help" role="status">Your email address is managed by your secure login account.</p></form>
+    <div class="account-detail-line"><span>Email</span><strong id="profileEmailDetail">—</strong></div>
+    <div class="account-detail-line"><span>Account status</span><strong id="profileAccountStatus">Checking…</strong></div>
+   </section>
+  </div>
+  <div class="profile-side">
+   <section class="profile-settings-card"><div class="settings-card-heading"><div><h2>Appearance</h2><p>Choose a look that's comfortable for you.</p></div></div>
+    <div class="theme-choice" role="group" aria-label="Dashboard appearance"><button id="profileLightTheme" type="button" data-preference-theme="light">☀ Light</button><button id="profileDarkTheme" type="button" data-preference-theme="dark">☾ Dark</button></div>
+   </section>
+   <section class="profile-settings-card"><div class="settings-card-heading"><div><h2>Quick Settings</h2><p>Account tools and shortcuts.</p></div></div>
+    <div class="profile-actions"><button type="button" data-section="library"><span>My Content Library</span>→</button><button type="button" data-section="mentorship"><span>Mentorship Application</span>→</button><button type="button" data-section="notifications"><span>Notification Preferences</span>→</button><button type="button" data-section="markets" data-market-page="calendar"><span>Economic Calendar</span>→</button><a href="/about/"><span>Help &amp; About</span>→</a></div>
+   </section>
+  </div>
+ </div>
+ <button class="logout-btn" id="logout" type="button">Sign Out of Account</button>
  </section>
 </main>
 <footer class="app-footer"><span>© <span id="year"></span> S M Shahid Shah</span><span>Educational market intelligence · No guaranteed trading outcomes</span></footer>

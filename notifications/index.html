@@ -32,7 +32,21 @@ footer{border-top:1px solid var(--line);padding:23px 0 40px;font-size:10px;color
 <link rel="stylesheet" href="/assets/sm-member-gate.css?v=20261114-unified-1">
 <script>document.documentElement.classList.add("sm-member-checking");</script>
 <script defer src="/assets/sm-member-gate.js?v=20261114-unified-1"></script>
-</head>
+<style>
+/* Member-integrated market module: the parent owns page scrolling. */
+html.sm-embedded,html.sm-embedded body{height:auto!important;min-height:0!important;overflow-x:hidden!important;overflow-y:hidden!important}
+html.sm-embedded .sm-private-dock,html.sm-embedded .sm-back-to-app{display:none!important}
+html.sm-embedded main{padding-top:12px!important;padding-bottom:25px!important}
+html.sm-embedded .wrap{max-width:1400px}
+html.sm-embedded p,html.sm-embedded .muted,html.sm-embedded .small{line-height:1.6}
+html.sm-embedded button,html.sm-embedded select,html.sm-embedded input{min-height:39px}
+@media(max-width:720px){
+ html.sm-embedded main{padding-top:8px!important}
+ html.sm-embedded .wrap{width:calc(100% - 18px)!important}
+ html.sm-embedded body{font-size:13px}
+}
+</style>
+<script defer src="/assets/sm-embed-resize.js?v=20261114-premium-1"></script></head>
 <body>
 <main class="page">
 <div class="crumbs"><a href="/">Home</a><span>›</span><a href="/market-intelligence/">Market Intelligence</a><span>›</span><span>Smart Notifications</span></div>

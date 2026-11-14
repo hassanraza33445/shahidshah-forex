@@ -26,7 +26,21 @@
 <script>document.documentElement.classList.add("sm-member-checking");</script>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="/assets/sm-member-gate.js?v=20261114-unified-1"></script>
-</head>
+<style>
+/* Member-integrated market module: the parent owns page scrolling. */
+html.sm-embedded,html.sm-embedded body{height:auto!important;min-height:0!important;overflow-x:hidden!important;overflow-y:hidden!important}
+html.sm-embedded .sm-private-dock,html.sm-embedded .sm-back-to-app{display:none!important}
+html.sm-embedded main{padding-top:12px!important;padding-bottom:25px!important}
+html.sm-embedded .wrap{max-width:1400px}
+html.sm-embedded p,html.sm-embedded .muted,html.sm-embedded .small{line-height:1.6}
+html.sm-embedded button,html.sm-embedded select,html.sm-embedded input{min-height:39px}
+@media(max-width:720px){
+ html.sm-embedded main{padding-top:8px!important}
+ html.sm-embedded .wrap{width:calc(100% - 18px)!important}
+ html.sm-embedded body{font-size:13px}
+}
+</style>
+<script defer src="/assets/sm-embed-resize.js?v=20261114-premium-1"></script></head>
 <body>
 <header class="top site-legacy-header"><div class="frame topbar">
 <a class="brand" href="/" aria-label="S M Shahid Shah home"><img src="/shahid-shah-profile.webp" alt=""><div><strong>S M SHAHID SHAH</strong><span>MARKET INTELLIGENCE</span></div></a>
