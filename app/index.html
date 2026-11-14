@@ -3,6 +3,11 @@
 <title>Member Dashboard | S M Shahid Shah</title>
 <meta name="description" content="Your personalized S M Shahid Shah business and market intelligence dashboard.">
 <link rel="icon" href="/icon-192.png">
+<link rel="manifest" href="/app/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="SM Shahid Shah">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script>try{document.documentElement.dataset.theme=(localStorage.getItem("smshahid-site-theme")||localStorage.getItem("site-theme"))==="dark"?"dark":"light"}catch(_){document.documentElement.dataset.theme="light"}</script>
 <link rel="stylesheet" href="/assets/sm-member-app.css?v=20261114-finalpolish-1">
@@ -68,6 +73,8 @@
 <link rel="stylesheet" href="/assets/sm-dashboard-reference-2026.css?v=20261114-hero-1">
 <link rel="stylesheet" href="/assets/sm-market-category-colors-2026.css?v=20261114-pkt-1">
 <link rel="stylesheet" href="/assets/sm-mobile-app-20261114.css?v=20261114-mobileapp-3" media="screen and (max-width:720px)">
+<link rel="stylesheet" href="/assets/sm-pwa-install.css?v=20261114-pwa-1" media="screen and (max-width:720px)">
+<script defer src="/assets/sm-pwa-install.js?v=20261114-pwa-1"></script>
 </head>
 <body class="member-boot">
 <div id="bootScreen" class="boot-screen"><img class="boot-avatar" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><strong>Opening your workspace…</strong><small>Connecting securely to your account</small></div>
@@ -82,6 +89,7 @@
   <button type="button" data-section="mentorship"><span class="nav-icon">♢</span>Mentorship</button>
  </nav>
  <div class="side-bottom">
+  <button type="button" id="smInstallApp" class="sm-install-trigger" style="display:none" aria-haspopup="dialog" aria-controls="smInstallSheet"><span class="sm-install-icon" aria-hidden="true">↓</span><span><b>Download App</b><small>Add to Home Screen · Free</small></span><span class="sm-install-arrow" aria-hidden="true">›</span></button>
   <button type="button" class="side-account-link" data-section="profile"><span aria-hidden="true">♙</span> Account settings</button>
   <a href="/" class="public-link">← Public Website</a>
  </div>
@@ -386,5 +394,17 @@
  <button data-section="studio" type="button"><span>✦</span>AI Studio</button>
  <button data-section="tools" type="button"><span>◈</span>Prompts</button>
  <button data-section="mentorship" type="button"><span>♢</span>Mentorship</button></nav>
+</div>
+<div id="smInstallSheet" class="sm-install-backdrop" hidden>
+ <section class="sm-install-panel" role="dialog" aria-modal="true" aria-labelledby="smInstallTitle" aria-describedby="smInstallDescription">
+  <button type="button" id="smInstallClose" class="sm-install-close" aria-label="Close app installation instructions">×</button>
+  <div class="sm-install-emblem" aria-hidden="true">SM</div>
+  <span class="sm-install-eyebrow">SM SHAHID SHAH · MOBILE APP</span>
+  <h2 id="smInstallTitle">Install SM Shahid Shah</h2>
+  <p id="smInstallDescription">Add your workspace to your home screen.</p>
+  <div id="smInstallSteps" class="sm-install-steps"></div>
+  <button type="button" id="smInstallConfirm" class="sm-install-primary">Install App</button>
+  <p id="smInstallNote" class="sm-install-note" role="status" aria-live="polite"></p>
+ </section>
 </div>
 </body></html>
