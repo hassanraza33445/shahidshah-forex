@@ -415,3 +415,8 @@ html[data-theme="dark"] #view-profile .theme-choice button.active{color:#382511;
 }
 .app-sidebar .mentor-promo .vip-promo-nav:hover{filter:brightness(1.05)}
 .app-sidebar .mentor-promo .vip-promo-nav:focus-visible{outline:2px solid #ffe1a2;outline-offset:3px}
+
+/* Merge-aware contrast: retain readable account name on executive charcoal identity card. */
+.member-app #view-profile .profile-card .profile-identity h2{color:#fff8e9}
+.member-app #view-profile .profile-card #profileEmail{color:#ead0b0}
+.member-app #view-profile .profile-card .profile-card-kicker{color:#f8ca7d!important}
