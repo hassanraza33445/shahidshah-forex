@@ -132,7 +132,13 @@ function showTool(tool,updateUrl=true){
  if(!Object.hasOwn(toolLabels,tool))return;
  const area=$("toolModuleArea");
  if(!area)return;
- area.hidden=false;
+ const isDownloads=tool==="downloads";
+ const nativeDownloads=$("toolDownloadArea");
+ const benefits=document.querySelector("#view-tools .sm-prompt-benefits");
+ area.hidden=isDownloads;
+ if(nativeDownloads)nativeDownloads.hidden=!isDownloads;
+ if(benefits)benefits.hidden=isDownloads;
+ $("view-tools")?.classList.toggle("sm-tool-downloads-active",isDownloads);
  $("activeToolName").textContent=toolLabels[tool];
  document.querySelectorAll("#view-tools .sm-prompt-tool-tab[data-tool]").forEach(button=>{
   const active=button.dataset.tool===tool;
@@ -141,7 +147,19 @@ function showTool(tool,updateUrl=true){
   button.tabIndex=active?0:-1;
  });
  const frame=$("toolModuleFrame");
- if(frame.dataset.verified==="true"&&frame.contentWindow){
+ if(isDownloads){
+  // Downloads use an independent, source-backed native panel. The builder
+  // iframe may still show a previously selected prompt and must stay hidden.
+  if(typeof window.SMRenderToolsDownloads==="function"){
+   void window.SMRenderToolsDownloads(state.client).catch(()=>{
+    const grid=$("toolDownloadGrid");
+    if(grid)grid.textContent="Downloads could not load. Please refresh and try again.";
+   });
+  }else{
+   const grid=$("toolDownloadGrid");
+   if(grid)grid.textContent="Downloads are temporarily unavailable. Please refresh the page.";
+  }
+ }else if(frame.dataset.verified==="true"&&frame.contentWindow){
   frame.contentWindow.postMessage({type:"sm:prompt-select",tool},location.origin);
  }else if(frame.dataset.loadedSource){
   // Keep the first iframe alive. Select the next builder when verified.
