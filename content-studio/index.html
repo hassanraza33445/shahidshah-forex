@@ -297,7 +297,10 @@ function removeSpeakerName(value){
  text=text.replace(/^\s*(?:my name is|i am|i'm|this is)\s+[^,\n.!?]{2,80}\s*[,;.!–—-]?\s*/iu,"");
  text=text.replace(/\bs\.?\s*m\.?\s*shahid\s*shah\b/giu,"");
  text=text.replace(/^[\s,;:–—-]+/u,"").trim();
- return text;
+ // Keep the opening grammatical after removing an intro: "Aaj...", "Today...".
+ if(/^(?:aur|and)\s+(?=(?:aaj|ab|today|we|hum|let['’]s)\b)/iu.test(text))
+  text=text.replace(/^(?:aur|and)\s+/iu,"");
+ return text.replace(/^\p{L}/u,c=>c.toLocaleUpperCase());
 }
 function fillFields(script={}){
  for(const [key] of FIELDS){
