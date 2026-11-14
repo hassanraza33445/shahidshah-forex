@@ -184,7 +184,7 @@ function closeMenu(){
 }
 function setBusy(id,on){const el=$(id);if(el)el.disabled=on}
 function formatTime(value){const d=new Date(value);return Number.isFinite(d.getTime())?
- new Intl.DateTimeFormat("en",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",timeZone:"Asia/Karachi"}).format(d):"Time unavailable"}
+ new Intl.DateTimeFormat("en",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",timeZone:"Asia/Karachi"}).format(d)+" PKT":"Time unavailable"}
 function domainSource(value){try{const u=new URL(value);return u.protocol==="https:"?u.hostname.replace(/^www\./,""):"External source"}catch{return"Source"}}
 function hrefSafe(input){try{const u=new URL(input,location.origin);return u.protocol==="https:"||u.origin===location.origin&&u.protocol==="http:"?u.href:"#"}catch{return"#"}}
 async function api(path){
