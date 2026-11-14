@@ -1,6 +1,39 @@
 (()=>{"use strict";
 const SUPABASE_URL="https://qggtdwixwafcmorepkks.supabase.co",KEY="sb_publishable_HnYmHQbt42OfjmRk09OfoQ_fq5TPYpb";
 const $=id=>document.getElementById(id);let client=null,mode="login",busy=false,googleEnabled=false,googleState="checking";
+const CONSENT_VERSION="2026-11-14";
+let pendingConfirmEmail="";
+function selectedDial(){
+ const select=$("dialCountry");
+ const code=select.value==="other"?$("customDialCode").value.trim():select.selectedOptions[0]?.dataset?.dial||"";
+ if(!/^\+[1-9]\d{0,3}$/.test(code))throw Error("Please select a valid country calling code.");
+ return code;
+}
+function syncCountryChoice(){
+ const select=$("dialCountry"),other=select.value==="other";
+ $("customDialWrap").hidden=!other;
+ $("customDialCode").required=mode==="signup"&&other;
+ $("phone").placeholder=select.value==="PK"?"300 1234567":select.value==="MY"?"12 345 6789":"Mobile number";
+}
+function normalizedPhone(){
+ const code=selectedDial(),countryDigits=code.slice(1);
+ const raw=$("phone").value.trim();
+ let digits=raw.replace(/\D/g,"");
+ if(!digits)throw Error("Please enter your phone number.");
+ if(/^\s*(\+|00)/.test(raw)){
+  if(digits.startsWith("00"))digits=digits.slice(2);
+  if(!digits.startsWith(countryDigits))throw Error("Phone number does not match the selected country code.");
+  digits=digits.slice(countryDigits.length);
+ }else if(code==="+92"&&digits.startsWith("92")&&digits.length===12)digits=digits.slice(2);
+ else if(code==="+1"&&digits.startsWith("1")&&digits.length===11)digits=digits.slice(1);
+ digits=digits.replace(/^0+/,"");
+ const normalized=code+digits;
+ if(code==="+92"&&!/^3\d{9}$/.test(digits))throw Error("Enter a valid Pakistani mobile number, e.g. 300 1234567.");
+ if(digits.length<6||!/^[1-9]\d+$/.test(digits)||normalized.length-1<8||normalized.length-1>15)
+  throw Error("Enter a valid mobile number for the selected country.");
+ return normalized;
+}
+
 function updateGoogleAvailability(){
  const allowed=mode==="login"||mode==="signup";
  $("googleBtn").hidden=!allowed||!googleEnabled;
@@ -25,13 +58,14 @@ function message(text,error=false){$("authStatus").textContent=text;$("authStatu
 function setMode(value){mode=value;const signup=mode==="signup",reset=mode==="reset",recovery=mode==="recovery";
  $("signInTab").classList.toggle("selected",!signup);$("signUpTab").classList.toggle("selected",signup);
  $("signInTab").setAttribute("aria-selected",String(!signup));$("signUpTab").setAttribute("aria-selected",String(signup));
- $("nameField").hidden=!signup;$("phoneField").hidden=!signup;$("passwordField").hidden=reset;
- $("fullname").required=signup;$("phone").required=signup;$("password").required=!reset;$("password").autocomplete=signup?"new-password":"current-password";
+ $("nameField").hidden=!signup;$("phoneField").hidden=!signup;$("termsField").hidden=!signup;$("passwordField").hidden=reset;
+ $("fullname").required=signup;$("phone").required=signup;$("acceptTerms").required=signup;syncCountryChoice();$("password").required=!reset;$("password").autocomplete=signup?"new-password":"current-password";
  $("authTitle").textContent=signup?"Create your account.":reset?"Reset your password.":recovery?"Choose a new password.":"Welcome back.";
  $("authSubtitle").textContent=signup?"Join the Market Intelligence and AI creation platform.":reset?"We will email you a secure reset link.":recovery?"Save a new password for your account.":"Sign in to continue to your private dashboard.";
  $("submitBtn").firstChild.textContent=signup?"Create Account ":reset?"Send Reset Link ":recovery?"Update Password ":"Login to Dashboard ";
  $("forgot").textContent=reset?"Back to Login":"Forgot password?";$("securityHint").textContent=signup?"Email confirmation may be required":"Secure account access";
  updateGoogleAvailability();$("signInTab").disabled=recovery;$("signUpTab").disabled=recovery;
+ $("resendConfirmation").hidden=true;
  message("");
 }
 function working(value){busy=value;$("submitBtn").disabled=value;$("googleBtn").disabled=value||!googleEnabled;$("signInTab").disabled=value;$("signUpTab").disabled=value;updateGoogleAvailability()}
@@ -50,26 +84,36 @@ async function init(){if(!window.supabase?.createClient){message("Login service 
 $("signInTab").addEventListener("click",()=>setMode("login"));
 $("signUpTab").addEventListener("click",()=>setMode("signup"));
 $("forgot").addEventListener("click",()=>setMode(mode==="reset"?"login":"reset"));
+$("dialCountry").addEventListener("change",syncCountryChoice);
+$("resendConfirmation").addEventListener("click",async()=>{
+ if(!client||!pendingConfirmEmail||busy)return;
+ $("resendConfirmation").disabled=true;
+ try{
+  const {error}=await client.auth.resend({type:"signup",email:pendingConfirmEmail,
+    options:{emailRedirectTo:location.origin+"/auth/"}});
+  if(error)throw error;
+  message("Confirmation email requested. Check your inbox and spam folder.");
+ }catch(err){message(err.message||"Unable to resend confirmation email.",true)}
+ finally{$("resendConfirmation").disabled=false}
+});
 $("authForm").addEventListener("submit",async e=>{e.preventDefault();if(busy||!client)return;working(true);try{
  const email=$("email").value.trim(),password=$("password").value;
  if(mode==="reset"){const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:location.origin+"/auth/"});if(error)throw error;message("Password reset link sent if this email is registered.");return}
  if(mode==="recovery"){const {error}=await client.auth.updateUser({password});if(error)throw error;message("Password updated. Opening dashboard…");await verifiedRedirect();return}
  if(mode==="signup"){
   const fullname=$("fullname").value.trim();
-  // The signup input has a fixed Pakistan +92 prefix; accept pasted 03..., +92..., 0092... as well.
-  let phoneDigits=$("phone").value.trim().replace(/\D/g,"");
-  if(phoneDigits.startsWith("0092"))phoneDigits=phoneDigits.slice(4);
-  else if(phoneDigits.startsWith("92"))phoneDigits=phoneDigits.slice(2);
-  else if(phoneDigits.startsWith("0"))phoneDigits=phoneDigits.slice(1);
   if(fullname.length<2)throw Error("Please enter your full name.");
-  if(!/^3\d{9}$/.test(phoneDigits))throw Error("Enter a valid Pakistani mobile number, e.g. 300 1234567.");
-  const phone="+92"+phoneDigits;
+  if(!$("acceptTerms").checked){
+    message("Please accept the Terms & Conditions before creating your account.",true);
+    $("acceptTerms").focus();return;
+  }
+  const phone=normalizedPhone();
   const {data,error}=await client.auth.signUp({
    email,password,
-   options:{data:{full_name:fullname,phone},emailRedirectTo:location.origin+"/auth/"}
+   options:{data:{full_name:fullname,phone,country:$("dialCountry").value,terms_accepted:true,terms_version:CONSENT_VERSION,privacy_version:CONSENT_VERSION},emailRedirectTo:location.origin+"/auth/"}
   });
   if(error)throw error;
- if(data.session){await verifiedRedirect()}else message("Account created. Please check your email to verify your address, then log in.");return}
+ if(data.session){message("Account created. Opening your dashboard…");await verifiedRedirect()}else {pendingConfirmEmail=email;$("resendConfirmation").hidden=false;message("Account created. Please check your email (including spam) for the confirmation link.");}return}
  const {data,error}=await client.auth.signInWithPassword({email,password});if(error)throw error;
  if(!data.session||!await verifiedRedirect())throw Error("Unable to verify your session");
  }catch(err){message(err.message||"Unable to complete authentication.",true)}finally{working(false)}});
