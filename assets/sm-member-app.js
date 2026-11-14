@@ -1,18 +1,117 @@
 (()=>{"use strict";
 const PROJECT="https://qggtdwixwafcmorepkks.supabase.co",KEY="sb_publishable_HnYmHQbt42OfjmRk09OfoQ_fq5TPYpb";
-const $=id=>document.getElementById(id),views=new Set(["home","markets","studio","tools","mentorship","library","profile"]);
-const state={client:null,user:null,profile:null,news:[],calendar:[],filter:"All",source:"news",currentTab:"home",brief:"",applications:[]};
+const $=id=>document.getElementById(id),views=new Set(["home","markets","studio","tools","mentorship","library","notifications","profile"]);
+const state={client:null,user:null,profile:null,news:[],calendar:[],filter:"All",source:"news",currentTab:"home",marketPage:"feed",studioPage:"create",studioRole:null,studioStatus:"checking",studioFrame:null,studioFrameReady:false,applications:[]};
 const safe=(value)=>String(value??"").slice(0,900);
 const create=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=String(text);return el};
 function tabFromLocation(){const requested=new URLSearchParams(location.search).get("tab")||"home";return views.has(requested)?requested:"home"}
+
+const marketModules={
+ hub:"/market-intelligence/?embedded=1",
+ calendar:"/economic-calendar/?embedded=1",
+ reaction:"/market-reaction/?embedded=1",
+ alerts:"/notifications/?embedded=1"
+};
+const toolLabels={video:"Video Prompt Builder",article:"Article Prompt Builder",banner:"Banner Prompt Builder",indicator:"Indicator Prompt Builder"};
+const sectionNames={home:"Dashboard",markets:"Market Intelligence",studio:"AI Studio",tools:"Prompt Tools",mentorship:"Mentorship",library:"My Content",notifications:"Notifications",profile:"My Profile"};
+function setEmbeddedFrame(id,src,statusId){
+ const frame=$(id),status=$(statusId);
+ if(!frame)return;
+ if(frame.dataset.loadedSource===src)return;
+ status.hidden=false;status.textContent="Opening secure workspace module…";
+ frame.dataset.loadedSource=src;
+ frame.onload=()=>{if(frame.dataset.loadedSource===src){status.hidden=true;frame.dataset.loaded="true";frame.contentWindow?.postMessage({type:"sm:theme",theme:document.documentElement.dataset.theme},location.origin)}};
+ frame.onerror=()=>{status.hidden=false;status.textContent="This module could not load. Reopen it or check your connection."};
+ frame.src=src;
+}
+function renderMarketModule(){
+ const selected=state.marketPage in marketModules?state.marketPage:"feed";
+ document.querySelectorAll("#view-markets [data-market-page]").forEach(btn=>btn.classList.toggle("active",btn.dataset.marketPage===selected));
+ $("marketFeedArea").hidden=selected!=="feed";
+ $("marketModuleArea").hidden=selected==="feed";
+ if(selected!=="feed")setEmbeddedFrame("marketModuleFrame",marketModules[selected],"marketModuleStatus");
+}
+function renderStudioAccess(){
+ const allowed=state.studioStatus==="allowed";
+ for(const [view,gateId,slotId] of [["studio","studioAccessState","studioFrameSlot"],["library","libraryAccessState","libraryFrameSlot"]]){
+  const gate=$(gateId),slot=$(slotId);
+  gate.hidden=allowed;
+  slot.hidden=!allowed;
+  if(!allowed){
+   gate.replaceChildren();
+   const title=create("strong","",state.studioStatus==="checking"?"Verifying your Studio access…":state.studioStatus==="error"?"Studio access could not be checked":"Studio access is restricted");
+   const hint=create("p","",state.studioStatus==="checking"?"Your account is being verified securely.":state.studioStatus==="error"?"Your connection or permission service is unavailable. Please retry.":"Only accounts granted Studio access by the administrator can use the creator workspace.");
+   gate.append(title,hint);
+   if(state.studioStatus==="error"){
+    const retry=create("button","outline-action","Retry Access Check");retry.type="button";retry.addEventListener("click",()=>{state.studioStatus="checking";renderStudioAccess();void checkStudioAccess()});gate.append(retry);
+   }
+  }
+ }
+ if(allowed&&(state.currentTab==="studio"||state.currentTab==="library"))mountStudio();
+}
+async function checkStudioAccess(){
+ if(!state.client||!state.user)return;
+ try{
+  const user=state.user,client=state.client;
+  const [pro,access]=await Promise.allSettled([
+   withTimeout(client.from("profiles").select("full_name,email,is_admin,avatar_url").eq("id",user.id).maybeSingle(),6500,"Profile check timed out"),
+   withTimeout(client.from("content_access").select("enabled,role").eq("user_id",user.id).maybeSingle(),6500,"Studio permissions check timed out")
+  ]);
+  if(pro.status==="fulfilled"&&!pro.value.error&&pro.value.data){state.profile=pro.value.data;paintUser(user,pro.value.data)}
+  if(pro.status==="rejected"&&access.status==="rejected")throw Error("Permission service unavailable");
+  if(access.status==="rejected"||access.value?.error){
+   if(pro.status!=="fulfilled"||pro.value?.data?.is_admin!==true)throw Error("Studio permissions unavailable");
+  }
+  const admin=pro.status==="fulfilled"&&pro.value?.data?.is_admin===true;
+  const permitted=access.status==="fulfilled"&&!access.value.error&&access.value?.data?.enabled===true;
+  state.studioRole=admin?"admin":permitted?access.value.data.role:null;
+  state.studioStatus=state.studioRole?"allowed":"denied";
+ }catch(_){state.studioRole=null;state.studioStatus="error"}
+ renderStudioAccess();
+}
+function mountStudio(){
+ if(state.studioStatus!=="allowed")return;
+ const isLibrary=state.currentTab==="library";
+ const place=$(isLibrary?"libraryFrameSlot":"studioFrameSlot");
+ const requested=isLibrary?"projects":state.studioPage;
+ if(!state.studioFrame){
+  const frame=document.createElement("iframe");
+  frame.id="unifiedStudioFrame";frame.className="unified-studio-frame";frame.title="S M Shahid Shah AI Content Studio";
+  frame.setAttribute("loading","eager");
+  state.studioFrame=frame;
+  state.studioFrameReady=false;
+  frame.addEventListener("load",()=>{
+   state.studioFrameReady=true;
+   frame.contentWindow?.postMessage({type:"sm:theme",theme:document.documentElement.dataset.theme},location.origin);
+   frame.contentWindow?.postMessage({type:"sm:studio-nav",page:state.currentTab==="library"?"projects":state.studioPage},location.origin);
+  });
+  frame.src="/content-studio/?embedded=1&view="+encodeURIComponent(requested);
+ }
+ place.append(state.studioFrame);
+ state.studioFrame.dataset.currentPage=requested;
+ if(state.studioFrameReady)state.studioFrame.contentWindow?.postMessage({type:"sm:studio-nav",page:requested},location.origin);
+ document.querySelectorAll("#studioSubnav [data-studio-page]").forEach(btn=>btn.classList.toggle("active",btn.dataset.studioPage===state.studioPage));
+}
+function showTool(tool){
+ if(!(tool in toolLabels))return;
+ const area=$("toolModuleArea");
+ area.hidden=false;$("activeToolName").textContent=toolLabels[tool];
+ setEmbeddedFrame("toolModuleFrame","/learning-hub.html?embedded=1#"+tool,"toolModuleStatus");
+ area.scrollIntoView({behavior:"smooth",block:"start"});
+}
 function openTab(name,push=true){
  if(!views.has(name))name="home";
  state.currentTab=name;
- for(const section of views){$("view-"+section)?.classList.toggle("active",section===name)}
- document.querySelectorAll("[data-section]").forEach(node=>node.classList.toggle("active",node.dataset.section===name));
- if(push)history.replaceState({}, "",name==="home"?"/app/":"/app/?tab="+encodeURIComponent(name));
- closeMenu();scrollTo({top:0,behavior:"instant"});
- if(name==="mentorship")refreshApplication();
+ for(const section of views)$("view-"+section)?.classList.toggle("active",section===name);
+ document.querySelectorAll("[data-section]").forEach(node=>node.classList.toggle("active",node.dataset.section===name&&node.closest(".side-links,.mobile-dock")!==null));
+ $("currentSectionName").textContent=sectionNames[name]||"Dashboard";
+ if(push)history.replaceState({},"",name==="home"?"/app/":"/app/?tab="+encodeURIComponent(name));
+ closeMenu();
+ if(typeof window.scrollTo==="function")window.scrollTo({top:0,behavior:"instant"});
+ if(name==="mentorship")void refreshApplication();
+ if(name==="markets")renderMarketModule();
+ if(name==="studio"||name==="library")renderStudioAccess();
+ if(name==="notifications")setEmbeddedFrame("noticeFrame","/notifications/?embedded=1","noticeFrameStatus");
 }
 function closeMenu(){
  $("appSidebar").classList.remove("open");$("sideShade").hidden=true;$("openMenu").setAttribute("aria-expanded","false");
@@ -54,6 +153,7 @@ function setMemberTheme(theme){
  if(toggle){toggle.textContent=next==="dark"?"☀":"☾";toggle.setAttribute("aria-label",next==="dark"?"Switch to light theme":"Switch to dark theme");toggle.title=toggle.getAttribute("aria-label")}
  const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=next==="dark"?"#100e0a":"#FBF7EF";
  try{localStorage.setItem("smshahid-site-theme",next);localStorage.setItem("site-theme",next)}catch(_){}
+ for(const id of ["unifiedStudioFrame","marketModuleFrame","toolModuleFrame","noticeFrame"]){const frame=$(id);if(frame?.contentWindow)frame.contentWindow.postMessage({type:"sm:theme",theme:next},location.origin)}
 }
 function setupTheme(){
  setMemberTheme(document.documentElement.dataset.theme);
@@ -71,8 +171,7 @@ async function start(){
   $("memberApp").hidden=false;$("bootScreen").hidden=true;
   document.body.classList.remove("member-boot");
   openTab(tabFromLocation(),false);
-  withTimeout(c.from("profiles").select("full_name,email,is_admin,avatar_url").eq("id",user.id).maybeSingle(),6000,"Profile request timed out")
-   .then(({data:profile,error:profileError})=>{if(!profileError&&profile){state.profile=profile;paintUser(user,profile)}}).catch(()=>{});
+  void checkStudioAccess();
   void Promise.allSettled([loadNews(),loadEconomic(),loadAlerts()]);
  }catch(e){
   const screen=$("bootScreen");
@@ -110,12 +209,7 @@ function renderNews(){
  const filtered=state.filter==="All"?state.news:state.news.filter(x=>x.category===state.filter);
  if(!filtered.length)big.append(create("div","loading-line","No headlines for this category right now."));
  for(const item of filtered.slice(0,18))big.append(headlineCard(item));
- const sel=$("scriptTopic");const old=sel.value;sel.replaceChildren();
- const first=create("option","","Select a sourced news headline");first.value="";sel.append(first);
- for(const item of state.news.slice(0,30)){
-  const option=create("option","",safe(item.title).slice(0,95));option.value=item.id;sel.append(option);
- }
- if(old&&state.news.some(x=>x.id===old))sel.value=old;
+
 }
 async function loadNews(){
  try{
@@ -141,30 +235,6 @@ async function loadAlerts(){
   $("hotCount").textContent=String(hot.length);
   $("alertDot").hidden=hot.length===0;
  }catch(e){$("hotCount").textContent="—";$("alertDot").hidden=true}
-}
-function setupScriptForm(){
- document.querySelectorAll("[data-source]").forEach(btn=>btn.addEventListener("click",()=>{
-  state.source=btn.dataset.source;
-  document.querySelectorAll("[data-source]").forEach(x=>x.classList.toggle("selected",x===btn));
-  $("scriptTopic").hidden=state.source!=="news";$("scriptTopic").required=state.source==="news";
-  $("customTopic").hidden=state.source!=="topic";$("customTopic").required=state.source==="topic";
- }));
- $("scriptBuilderForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  const item=state.news.find(x=>x.id===$("scriptTopic").value),custom=$("customTopic").value.trim();
-  if(state.source==="news"&&!item){$("briefResult").hidden=false;$("briefText").textContent="Please select an available market headline first.";return}
-  if(state.source==="topic"&&custom.length<3){$("briefResult").hidden=false;$("briefText").textContent="Enter your custom topic first.";return}
-  const topic=state.source==="news"?item.title:custom,duration=document.querySelector('input[name="duration"]:checked')?.value||"30";
-  const source=state.source==="news"?"Publisher: "+domainSource(item.original_url)+"\nOriginal source: "+hrefSafe(item.original_url):"User-supplied topic — no verified source attached";
-  state.brief="VIDEO SCRIPT BRIEF\n\nTopic: "+topic+"\nDuration: "+duration+" seconds\nLanguage: "+$("scriptLanguage").value+"\nStyle: "+$("scriptTone").value+
-   "\n\n"+source+"\n\nRequested structure:\n1. Attention-grabbing hook\n2. Clear context and sourced facts\n3. Educational market explanation\n4. Responsible closing / CTA"+
-   "\n\nImportant: Verify all facts. Do not invent news, market figures or guaranteed outcomes.\n\nThis is a brief, not an AI-generated video script.";
-  $("briefText").textContent=state.brief;$("briefResult").hidden=false;$("briefResult").scrollIntoView({behavior:"smooth",block:"nearest"});
- });
- $("copyBrief").addEventListener("click",async()=>{
-  try{await navigator.clipboard.writeText(state.brief);$("copyBrief").textContent="Copied ✓"}
-  catch{$("copyBrief").textContent="Select and copy the text above"}
- });
 }
 async function refreshApplication(){
  if(!state.client||!state.user)return;
@@ -201,8 +271,23 @@ function setupMentorship(){
 }
 function setupNavigation(){
  document.querySelectorAll("[data-section]").forEach(button=>button.addEventListener("click",()=>{
-  const tab=button.dataset.section;openTab(tab);
+  if(button.dataset.marketPage)state.marketPage=button.dataset.marketPage;
+  if(button.dataset.studioPage)state.studioPage=button.dataset.studioPage;
+  openTab(button.dataset.section);
+  if(button.dataset.tool)showTool(button.dataset.tool);
  }));
+ document.querySelectorAll("#view-markets [data-market-page]").forEach(button=>button.addEventListener("click",()=>{
+  state.marketPage=button.dataset.marketPage;renderMarketModule();
+ }));
+ document.querySelectorAll("#studioSubnav [data-studio-page]").forEach(button=>button.addEventListener("click",()=>{
+  state.studioPage=button.dataset.studioPage;
+  if(state.studioStatus==="allowed")mountStudio();
+  else renderStudioAccess();
+ }));
+ document.querySelectorAll("[data-tool]:not([data-section])").forEach(button=>button.addEventListener("click",()=>{
+  openTab("tools");showTool(button.dataset.tool);
+ }));
+ $("closeToolModule").addEventListener("click",()=>{$("toolModuleArea").hidden=true});
  document.querySelectorAll("[data-news-filter]").forEach(button=>button.addEventListener("click",()=>{
   state.filter=button.dataset.newsFilter;
   document.querySelectorAll("[data-news-filter]").forEach(x=>x.classList.toggle("active",x===button));
@@ -214,10 +299,18 @@ function setupNavigation(){
  });
  $("sideShade").addEventListener("click",closeMenu);
  document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu()});
- addEventListener("popstate",()=>openTab(tabFromLocation(),false));
+ window.addEventListener("popstate",()=>openTab(tabFromLocation(),false));
+ window.addEventListener("message",event=>{
+  if(event.origin!==location.origin||!event.data||typeof event.data!=="object")return;
+  if(event.data.type==="sm:open-module"){
+   const view=event.data.view;
+   if(view==="markets"){state.marketPage=Object.hasOwn(marketModules,event.data.page)?event.data.page:"feed";openTab("markets")}
+   else if(views.has(view))openTab(view);
+  }
+ });
  $("logout").addEventListener("click",async()=>{
   setBusy("logout",true);try{await state.client.auth.signOut()}finally{location.replace("/")}
  });
 }
-setupNavigation();setupScriptForm();setupMentorship();setupTheme();start();
+setupNavigation();setupMentorship();setupTheme();start();
 })();
