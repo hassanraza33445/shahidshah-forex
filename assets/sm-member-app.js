@@ -300,6 +300,34 @@ function setupMentorship(){
   finally{if(!$("mentorMessage").textContent.includes("awaiting review"))setBusy("mentorSubmit",false)}
  });
 }
+
+function setupProfile(){
+ document.querySelectorAll("[data-preference-theme]").forEach(button=>button.addEventListener("click",()=>setMemberTheme(button.dataset.preferenceTheme)));
+ $("profileNameForm").addEventListener("submit",async event=>{
+  event.preventDefault();if(!state.client||!state.user)return;
+  const value=$("profileDisplayName").value.trim(),status=$("profileNameStatus");
+  status.className="settings-help";status.textContent="Saving your display name…";
+  if(value.length<2||value.length>90){status.textContent="Please enter a name between 2 and 90 characters.";status.classList.add("error");return}
+  setBusy("profileSaveName",true);
+  try{
+   if(!state.client.auth.updateUser)throw Error("Profile editing is temporarily unavailable. Please try again later.");
+   const result=await withTimeout(state.client.auth.updateUser({data:{full_name:value}}),12000,"Profile update timed out");
+   if(result.error)throw result.error;
+   state.user.user_metadata={...(state.user.user_metadata||{}),full_name:value};
+   let synced=true;
+   try{
+    const updated=await withTimeout(state.client.from("profiles").update({full_name:value}).eq("id",state.user.id),10000,"Profile sync timed out");
+    if(updated.error)synced=false;
+   }catch(_){synced=false}
+   state.profile={...(state.profile||{}),full_name:value};
+   paintUser(state.user,state.profile);
+   status.className="settings-help "+(synced?"success":"error");
+   status.textContent=synced?"Display name updated successfully.":"Login name updated; profile database sync could not be verified. If the old name reappears, contact support.";
+  }catch(e){status.className="settings-help error";status.textContent=e.message||"Unable to update name. Please retry."}
+  finally{setBusy("profileSaveName",false)}
+ });
+}
+
 function setupNavigation(){
  document.querySelectorAll("[data-section]").forEach(button=>button.addEventListener("click",()=>{
   if(button.dataset.marketPage)state.marketPage=button.dataset.marketPage;
@@ -335,6 +363,13 @@ function setupNavigation(){
  window.addEventListener("popstate",()=>openTab(tabFromLocation(),false));
  window.addEventListener("message",event=>{
   if(event.origin!==location.origin||!event.data||typeof event.data!=="object")return;
+  if(event.data.type==="sm:embed-height"){
+   const frames=["unifiedStudioFrame","marketModuleFrame","toolModuleFrame","noticeFrame"];
+   const target=frames.map(id=>$(id)).find(frame=>frame&&frame.contentWindow===event.source);
+   const height=Number(event.data.height);
+   if(target&&Number.isFinite(height)&&height>200&&height<18000)target.style.height=Math.ceil(height+12)+"px";
+   return;
+  }
   if(event.data.type==="sm:studio-page"&&state.currentTab==="studio"&&["dashboard","create","projects","planner","record"].includes(event.data.page)){
    state.studioPage=event.data.page;
    document.querySelectorAll("#studioSubnav [data-studio-page]").forEach(b=>b.classList.toggle("active",b.dataset.studioPage===state.studioPage));
@@ -349,5 +384,5 @@ function setupNavigation(){
   setBusy("logout",true);try{await state.client.auth.signOut()}finally{location.replace("/")}
  });
 }
-setupNavigation();setupMentorship();setupTheme();start();
+setupNavigation();setupMentorship();setupTheme();setupProfile();start();
 })();
