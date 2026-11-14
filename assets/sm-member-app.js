@@ -105,7 +105,7 @@ function showTool(tool,updateUrl=true){
   button.setAttribute("aria-selected",String(active));
   button.tabIndex=active?0:-1;
  });
- setEmbeddedFrame("toolModuleFrame","/learning-hub.html?embedded=1&premium_prompts=1#"+encodeURIComponent(tool),"toolModuleStatus");
+ setEmbeddedFrame("toolModuleFrame","/learning-hub.html?embedded=1&premium_prompts=1&ui=20261114-2#"+encodeURIComponent(tool),"toolModuleStatus");
  if(updateUrl&&state.currentTab==="tools"){
   const params=new URLSearchParams(location.search);
   params.set("tab","tools");params.set("tool",tool);
