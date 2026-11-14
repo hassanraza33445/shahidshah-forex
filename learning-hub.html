@@ -143,7 +143,55 @@ html.sm-embedded .ai-gate{z-index:100}
 <link rel="stylesheet" href="/assets/sm-member-gate.css?v=20261114-unified-1">
 <script>document.documentElement.classList.add("sm-member-checking");</script>
 <script defer src="/assets/sm-member-gate.js?v=20261114-unified-1"></script>
-</head>
+<style>
+/* Member-embedded prompt tools: readable on every screen; one parent page scroll. */
+html.sm-embedded,html.sm-embedded body{width:100%;min-width:0!important;height:auto!important;min-height:0!important;overflow-x:hidden!important;overflow-y:hidden!important}
+html.sm-embedded body{font-size:14px!important;line-height:1.55!important}
+html.sm-embedded body .tabs-wrap{top:0!important;position:relative!important;border-radius:13px;margin:0 0 12px;background:var(--card);box-shadow:none}
+html.sm-embedded .tabs{gap:9px;padding:12px;scrollbar-width:thin}
+html.sm-embedded .tab{min-height:40px;padding:10px 13px;font-size:12px;border-radius:10px}
+html.sm-embedded .intro{padding:15px 0 19px;display:flex;gap:18px}
+html.sm-embedded .intro h1{font-size:clamp(25px,3vw,36px)!important;line-height:1.16}
+html.sm-embedded .intro p{font-size:13px!important;line-height:1.6}
+html.sm-embedded .eyebrow{font-size:10px!important}
+html.sm-embedded .workspace{gap:16px}
+html.sm-embedded .panel{border-radius:17px;box-shadow:0 6px 24px #61442112}
+html.sm-embedded .panel-head h2,html.sm-embedded .result-top h2{font-size:18px!important}
+html.sm-embedded .panel-head p,html.sm-embedded .ready{font-size:12px!important}
+html.sm-embedded .field label{font-size:13px!important;font-weight:800;margin-bottom:6px}
+html.sm-embedded .optional{font-size:10px!important}
+html.sm-embedded .field input,html.sm-embedded .field select,html.sm-embedded .field textarea{min-height:44px!important;height:auto;font-size:14px!important;padding:11px 12px;border-radius:10px}
+html.sm-embedded .field input::placeholder,html.sm-embedded .field textarea::placeholder{font-size:12px!important}
+html.sm-embedded .hint{font-size:11px!important;line-height:1.55}
+html.sm-embedded .generate{min-height:46px;height:auto;font-size:13px!important}
+html.sm-embedded .prompt{font-size:13px!important;line-height:1.65;max-height:none!important;min-height:180px!important}
+html.sm-embedded .result-panel{min-height:390px!important}
+html.sm-embedded .empty{font-size:13px!important;max-width:440px}
+html.sm-embedded .btn{min-height:41px!important;font-size:12px!important}
+html.sm-embedded .mini h3{font-size:14px}
+html.sm-embedded .mini p{font-size:12px}
+html.sm-embedded .download-grid .download-copy h3{font-size:15px!important}
+html.sm-embedded .download-grid .download-copy p{font-size:12px!important}
+html.sm-embedded .download-action{font-size:12px!important;min-height:40px}
+@media(max-width:700px){
+ html.sm-embedded main>.wrap{width:calc(100% - 18px)!important;max-width:none}
+ html.sm-embedded .tabs-wrap{border-radius:10px;margin-top:3px}
+ html.sm-embedded .tabs{padding:8px}
+ html.sm-embedded .tab{font-size:11px!important;min-height:42px}
+ html.sm-embedded .intro{display:block!important;padding:12px 2px 15px!important}
+ html.sm-embedded .intro h1{font-size:26px!important}
+ html.sm-embedded .intro p{font-size:13px!important}
+ html.sm-embedded .workspace{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+ html.sm-embedded .panel{width:100%;min-width:0}
+ html.sm-embedded .result-panel{min-height:280px!important}
+ html.sm-embedded .prompt{min-height:140px!important}
+ html.sm-embedded .field input,html.sm-embedded .field select,html.sm-embedded .field textarea{font-size:14px!important;min-height:44px!important}
+ html.sm-embedded .fields,html.sm-embedded .grid2{grid-template-columns:1fr!important}
+ html.sm-embedded .generate{font-size:13px!important}
+}
+@media handheld{html.sm-embedded,html.sm-embedded body{min-width:0!important}}
+</style>
+<script defer src="/assets/sm-embed-resize.js?v=20261114-premium-1"></script></head>
 <body>
 <header class="site-legacy-header"><div class="wrap nav"><a class="brand" href="/"><img src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><span><b>S M Shahid Shah</b><small>SALE &amp; BUSINESS CONSULTANT</small></span></a><nav class="main-nav" aria-label="Main navigation"><a href="/">Home</a><a href="/market-intelligence/">Market Intelligence</a><a href="/app/?tab=studio">AI Studio</a><a class="active" href="/app/?tab=studio&amp;studio=create">AI Scripts</a><a href="/videos/">Videos</a><a href="/about/">About</a></nav><nav class="social-mini" aria-label="Social media"><a id="hubYt" target="_blank">YT</a><a id="hubWa" target="_blank">WA</a><a id="hubFb" target="_blank">FB</a><a id="hubIg" target="_blank">IG</a></nav><button class="theme" id="themeBtn" aria-label="Switch colour theme"><svg id="hubThemeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"></svg></button></div></header>
 <div class="tabs-wrap"><div class="wrap tabs" id="tabs" role="tablist"></div></div>
