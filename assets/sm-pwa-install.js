@@ -22,6 +22,7 @@
 
     function render() {
       const installed = isStandalone();
+      trigger.dataset.installed = installed ? "true" : "false";
       if (label) label.textContent = installed ? "App Installed" : "Download App";
       if (subtitle) subtitle.textContent = installed ? "Opened as a standalone app" : "Add to Home Screen · Free";
       title.textContent = installed ? "App is already installed" : "Install SM Shahid Shah";
