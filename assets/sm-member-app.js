@@ -88,7 +88,8 @@ function mountStudio(){
    frame.contentWindow?.postMessage({type:"sm:theme",theme:document.documentElement.dataset.theme},location.origin);
    frame.contentWindow?.postMessage({type:"sm:studio-nav",page:state.currentTab==="library"?"projects":state.studioPage},location.origin);
   });
-  frame.src="/content-studio/?embedded=1&view="+encodeURIComponent(requested);
+  const newsId=new URLSearchParams(location.search).get("news");
+  frame.src="/content-studio/?embedded=1&view="+encodeURIComponent(requested)+(newsId?"&news="+encodeURIComponent(newsId):"");
  }
  if(state.studioFrame.parentElement!==place)place.append(state.studioFrame);
  state.studioFrame.dataset.currentPage=requested;
