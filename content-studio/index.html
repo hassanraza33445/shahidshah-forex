@@ -36,9 +36,9 @@ html.sm-embedded .grid2{gap:12px}
 </style>
 <link rel="stylesheet" href="/assets/site-master-header.css?v=20261114-3">
 <script src="/assets/site-master-header.js?v=20261114-ai-routefix-2" defer></script>
-<link rel="stylesheet" href="/assets/sm-member-gate.css?v=20261114-unified-1">
+<link rel="stylesheet" href="/assets/sm-member-gate.css?v=20261114-embed-auth-fix-2">
 <script>document.documentElement.classList.add("sm-member-checking");</script>
-<script defer src="/assets/sm-member-gate.js?v=20261114-unified-1"></script>
+<script defer src="/assets/sm-member-gate.js?v=20261114-embed-auth-fix-2"></script>
 <style>
 /* Premium Studio in the single member workspace. Inner scrolling is handled by parent. */
 html.sm-embedded,html.sm-embedded body{height:auto!important;min-height:0!important;overflow-x:hidden!important;overflow-y:hidden!important}
@@ -77,9 +77,16 @@ html.sm-embedded #page-projects>.card{min-height:0}
 <script defer src="/assets/sm-embed-resize.js?v=20261114-premium-1"></script><link rel="stylesheet" href="/assets/sm-premium-unified-2026.css?v=20261114-1">
 <link rel="stylesheet" href="/assets/sm-four-products-2026.css?v=20261114-products-1">
 <link rel="stylesheet" href="/assets/sm-studio-market-news-2026.css?v=20261114-news-ui-1">
+<link rel="stylesheet" href="/assets/sm-studio-auth-recovery-2026.css?v=20261114-pkt-auth-1">
 </head>
 <body>
-<div class="gate" id="authGate"><section class="login"><img src="/shahid-shah-profile.webp" alt=""><div class="upper">S M SHAHID SHAH</div><h1>AI Content Studio</h1><p class="note">Free AI script workspace for all registered members. Sign in with your S M Shahid Shah account.</p><form id="loginForm"><div><label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div><div><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required minlength="6"></div><button class="btn gold" type="submit">Sign In Securely →</button></form><div id="loginStatus" class="status" aria-live="polite"></div><div class="actions"><a class="btn ghost" href="/">← Website</a><a class="btn ghost" href="/market-intelligence/">Market Intelligence</a></div></section></div>
+<div class="gate" id="authGate"><section class="login"><img src="/shahid-shah-profile.webp" alt=""><div class="upper">S M SHAHID SHAH</div><h1>AI Content Studio</h1><p class="note">Free AI script workspace for all registered members. Sign in with your S M Shahid Shah account.</p><form id="loginForm"><div><label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div><div><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required minlength="6"></div><button class="btn gold" type="submit">Sign In Securely →</button></form><div id="loginStatus" class="status" aria-live="polite"></div><div class="actions"><a class="btn ghost" href="/">← Website</a><a class="btn ghost" href="/market-intelligence/">Market Intelligence</a></div></section>
+<section class="studio-embedded-connecting" id="studioEmbedConnecting" role="status" aria-live="polite">
+ <span class="studio-connecting-symbol" aria-hidden="true">✦</span>
+ <strong>Connecting your AI Studio</strong>
+ <p id="studioEmbedStatus">Opening your scripts with your existing account…</p>
+ <button type="button" id="studioEmbedRetry" class="btn small">Retry Studio ↻</button>
+</section></div>
 <div class="layout hidden" id="workspace">
 <aside class="side"><a class="brand" href="/"><img src="/shahid-shah-profile.webp" alt=""><div><strong>S M SHAHID SHAH</strong><small>CONTENT STUDIO</small></div></a>
 <nav class="menu" aria-label="Studio navigation">
@@ -212,7 +219,18 @@ html.sm-embedded #page-projects>.card{min-height:0}
 <script>
 "use strict";
 const DB_URL="https://qggtdwixwafcmorepkks.supabase.co",PUB="sb_publishable_HnYmHQbt42OfjmRk09OfoQ_fq5TPYpb";
-const sb=globalThis.supabase&&globalThis.supabase.createClient?globalThis.supabase.createClient(DB_URL,PUB):null;
+const studioEmbedded=new URLSearchParams(location.search).get("embedded")==="1"&&window.parent!==window;
+const sb=(()=>{
+ // The authenticated /app dashboard owns the verified session. Using its same-origin
+ // client prevents local session-races between two separate Supabase auth instances.
+ if(studioEmbedded){
+  try{
+   const parentClient=window.parent.__smStudioClientForFrame?.(window);
+   if(parentClient?.auth?.getSession&&parentClient?.from)return parentClient;
+  }catch(_){}
+ }
+ return globalThis.supabase?.createClient?globalThis.supabase.createClient(DB_URL,PUB):null;
+})();
 const $=id=>document.getElementById(id);
 const FIELDS=[["hook","Opening Hook"],["introduction","Introduction"],["explanation","Main Explanation"],["impact","Market Impact / Implications"],["key_takeaway","Key Takeaway"],["closing","Closing"],["cta","Call to Action"],["seo_title","SEO Title"],["description","SEO Caption / Description"],["hashtags","Hashtags (comma separated)"]];
 const state={user:null,session:null,role:"",admin:false,projects:[],projectId:null,projectStatus:"draft",ownerId:null,selectedNews:null,studioNewsItems:[],studioCategory:"All",studioMode:"news",studioLastNewsId:"",script:{},versions:[],recordingId:null,transcriptSegments:[],recorder:null,stream:null,chunks:[],blob:null,started:0,timer:null};
@@ -259,9 +277,33 @@ function rawScript(){
 function calcWords(){const n=rawScript().trim().split(/\s+/).filter(Boolean).length;$("wordCount").textContent=n+" words · approximately "+Math.ceil(n/130)+" minute(s) spoken";renderScriptPreview()}
 for(const [key,label] of FIELDS){const wrap=mk("div"),lab=mk("label","",label),area=mk("textarea",key==="explanation"||key==="description"?"long":"");area.id="field-"+key;area.placeholder="Edit "+label.toLowerCase()+"…";lab.htmlFor=area.id;area.addEventListener("input",calcWords);wrap.append(lab,area);$("scriptFields").append(wrap)}
 $("projectTitle").addEventListener("input",calcWords);$("factCheck").addEventListener("input",calcWords);
+function showStudioConnectionError(message){
+ if(!studioEmbedded)return;
+ const node=$("studioEmbedStatus");
+ if(node){node.textContent=message||"Your Studio could not be opened. Please retry.";node.classList.add("studio-connect-error")}
+}
+$("studioEmbedRetry").addEventListener("click",()=>location.reload());
 async function bootstrap(){
- if(!sb){status("loginStatus","Supabase library unavailable. Please check your network.","error");return}
- const {data:{session}}=await Promise.race([sb.auth.getSession(),new Promise((_,reject)=>setTimeout(()=>reject(Error("Secure session check timed out")),10000))]);if(session)await openSession(session);
+ if(!sb){
+  showStudioConnectionError("Unable to load the secure login service. Retry Studio.");
+  status("loginStatus","Supabase library unavailable. Please check your network.","error");
+  return;
+ }
+ try{
+  const result=await Promise.race([
+   sb.auth.getSession(),
+   new Promise((_,reject)=>setTimeout(()=>reject(Error("Session check timed out.")),10000))
+  ]);
+  const session=result?.data?.session;
+  if(session){
+   await openSession(session);
+  }else if(studioEmbedded){
+   showStudioConnectionError("Your dashboard session could not be found. Retry Studio or reopen the dashboard.");
+  }
+ }catch(e){
+  showStudioConnectionError(e?.message||"Unable to verify Studio access.");
+  if(!studioEmbedded)status("loginStatus",e?.message||"Unable to verify Studio access","error");
+ }
 }
 async function openSession(session){
  try{
@@ -287,6 +329,7 @@ async function openSession(session){
  }catch(e){
   $("workspace").classList.add("hidden");$("authGate").classList.remove("hidden");
   status("loginStatus",e.message||"Could not authorize your account","error");
+  showStudioConnectionError("Studio access check failed: "+(e?.message||"Please retry."));
  }
 }
 $("loginForm").addEventListener("submit",async e=>{
@@ -309,7 +352,7 @@ function newsGroup(item){
  return String(item.category||"Markets");
 }
 function newsTime(value){
- const n=Date.parse(value||"");return Number.isFinite(n)?new Intl.DateTimeFormat("en",{timeZone:"Asia/Kuala_Lumpur",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(n))+" MYT":"Time unavailable";
+ const n=Date.parse(value||"");return Number.isFinite(n)?new Intl.DateTimeFormat("en",{timeZone:"Asia/Karachi",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(n))+" PKT":"Time unavailable";
 }
 function studioSelected(){
  const row=state.studioNewsItems.find(x=>String(x.id)===$("newsChoice").value),custom=state.studioMode==="custom";
@@ -635,5 +678,5 @@ window.addEventListener("message",event=>{
  if(event.data.type==="sm:theme"&&["light","dark"].includes(event.data.theme))document.documentElement.dataset.theme=event.data.theme;
  if(event.data.type==="sm:studio-nav"&&state.user&&["dashboard","create","projects","access","sources"].includes(event.data.page))displayPage(event.data.page);
 });
-bootstrap().catch(e=>status("loginStatus",e?.message||"Unable to verify Studio access","error"));
+bootstrap().catch(e=>{showStudioConnectionError(e?.message||"Unable to verify Studio access");if(!studioEmbedded)status("loginStatus",e?.message||"Unable to verify Studio access","error")});
 </script></body></html>
