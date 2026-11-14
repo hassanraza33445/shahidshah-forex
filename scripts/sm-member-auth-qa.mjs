@@ -164,6 +164,22 @@ try{
   assert.equal(await p.locator("#profileLightTheme").getAttribute("aria-pressed"),"true");
   await p.locator('.side-links button[data-section="mentorship"]').click();
   assert.equal(await p.locator(".mentorship-highlight strong").evaluate(el=>getComputedStyle(el).color),"rgb(54, 39, 27)","Premium champagne mentor banner has a readable dark headline");
+
+  assert.equal(await p.locator("#view-mentorship .vip-process-strip>div").count(),3,"Three mentorship application stages present");
+  assert.equal(await p.locator("#view-mentorship .vip-mentor-hero").isVisible(),true,"Mentorship VIP hero visible");
+  await p.locator('.side-links button[data-section="tools"]').click();
+  assert.equal(await p.locator("#view-tools .vip-tools-grid .tool-list-row").count(),6,"Six premium Prompt Tools available");
+  assert.equal(await p.locator("#view-tools .vip-tools-hero").isVisible(),true);
+  await p.locator('#view-tools button[data-tool="banner"]').click();
+  assert.match(await p.locator("#toolModuleFrame").getAttribute("src"),/learning-hub.*embedded=1#banner/);
+  await p.locator("#closeToolModule").click();
+  await p.locator('.side-links button[data-section="library"]').click();
+  assert.equal(await p.locator("#view-studio.studio-library-mode.active").count(),1,"My Content shares private Studio");
+  assert.equal(await p.locator("#libraryActionBar").isVisible(),true,"Approved creator retains library actions");
+  await p.locator('.side-links button[data-section="notifications"]').click();
+  assert.equal(await p.locator("#view-notifications .vip-notification-benefits>div").count(),3,"Three grounded alert groups");
+  await p.locator('.side-links button[data-section="mentorship"]').click();
+  console.log("PASS VIP Tools, Mentorship, My Content and Notifications navigation");
   console.log("PASS premium icons, profile preferences and mentorship headline contrast");
 
   assert.match(await p.locator("#greeting").innerText(),/Demo/);
