@@ -482,8 +482,26 @@ async function refreshApplication(){
  $("applicationDetail").textContent=latest?
   "Application for "+latest.interest+" submitted "+formatTime(latest.created_at)+". We will review and contact you.":
   "You haven't submitted a mentorship application yet.";
- $("mentorSubmit").disabled=Boolean(latest&&["pending","reviewing"].includes(latest.status));
- if($("mentorSubmit").disabled)$("mentorMessage").textContent="You already have an application awaiting review.";
+ const mobilePaid=window.matchMedia("(max-width:720px)").matches;
+ let latestPayment=null;
+ if(mobilePaid&&latest){
+  const {data:payments,error:paymentError}=await state.client.from("mentorship_payment_submissions")
+   .select("application_id,payment_status,amount_usdt,network,submitted_at")
+   .eq("user_id",state.user.id).eq("application_id",latest.id).order("submitted_at",{ascending:false}).limit(1);
+  if(!paymentError)latestPayment=payments?.[0]||null;
+  if(latestPayment){
+   const status=String(latestPayment.payment_status||"submitted");
+   const label=status==="verified"?"PAYMENT VERIFIED":status==="rejected"?"PAYMENT REVIEW NEEDED":"PAYMENT UNDER REVIEW";
+   $("applicationStatus").textContent=label;
+   $("applicationDetail").textContent=
+    "USDT "+Number(latestPayment.amount_usdt).toFixed(2)+" on "+latestPayment.network+
+    " · "+(status==="verified"?"Payment verified. Mentorship approval is handled separately.":status==="rejected"?"Payment could not be verified. Contact the team.":"Transaction submitted for manual verification. Not yet approved.");
+  }else if(latest.status==="pending"){
+   $("applicationDetail").textContent="Application is pending. Continue to USDT Payment to submit your transaction for verification.";
+  }
+ }
+ $("mentorSubmit").disabled=Boolean(latest&&["pending","reviewing"].includes(latest.status)&&(!mobilePaid||Boolean(latestPayment)));
+ if($("mentorSubmit").disabled&&!mobilePaid)$("mentorMessage").textContent="You already have an application awaiting review.";
 }
 function setupMentorship(){
  $("mentorshipForm").addEventListener("submit",async e=>{
@@ -504,6 +522,14 @@ function setupMentorship(){
   }catch(error){$("mentorMessage").textContent=error.message||"Unable to submit. Try again."}
   finally{if(!$("mentorMessage").textContent.includes("awaiting review"))setBusy("mentorSubmit",false)}
  });
+ if(typeof window.SMSetupPaidMentorship==="function"){
+   window.SMSetupPaidMentorship({
+     getClient:()=>state.client,
+     getUser:()=>state.user,
+     getProfile:()=>state.profile,
+     refreshApplication
+   });
+ }
 }
 
 function setupProfile(){
