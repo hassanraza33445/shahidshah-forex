@@ -129,6 +129,13 @@ try{
   await p.locator('#studioSubnav [data-studio-page="record"]').click();
   await editor.locator("#page-record.active").waitFor({timeout:9000});
   assert.equal(await editor.locator("#startRecording").count(),1,"Creator voice recording is available");
+  await p.locator("#openMenu").click();
+  await p.locator('#appSidebar button[aria-label="Open AI Scripts generator"]').click();
+  await p.waitForURL(u=>u.pathname==="/app/"&&u.searchParams.get("studio")==="create",{timeout:8000});
+  await editor.locator("#page-create.active").waitFor({timeout:9000});
+  assert.equal(await p.locator('#appSidebar button[aria-label="Open AI Scripts generator"].active').count(),1,"AI Scripts shortcut is active");
+  assert.equal(await p.locator('#appSidebar button[data-studio-page="dashboard"].active').count(),0,"Studio overview is not simultaneously active");
+  console.log("PASS mobile AI Scripts sidebar opens actual creator without leaving app");
   await p.locator("#openMenu").click();await p.locator('#appSidebar button[data-section="library"]').click();
   assert.equal(await p.locator("#unifiedStudioFrame").count(),1,"One Studio iframe is reused for private library");
   await editor.locator("#page-projects.active").waitFor({timeout:9000});
@@ -152,6 +159,23 @@ try{
   assert.equal(errors.length,0,"No member or nested module JavaScript exceptions: "+JSON.stringify(errors));
   console.log("PASS unified mobile tabs, authorized real AI studio, 45 seconds, voice, library, calendar, prompt tool and notifications");
   await p.close();
+ }
+ {
+  const guest=await newPage(390,false);
+  await guest.goto(HOST+"/ai-video-scripts/",{waitUntil:"domcontentloaded"});
+  await guest.waitForURL(u=>u.pathname==="/auth/"&&u.searchParams.get("next")==="/app/?tab=studio&studio=create",{timeout:12000});
+  assert.equal(await guest.locator("#signInTab").isVisible(),true,"Guest AI Scripts route opens Login/Sign Up, not the landing page");
+  await guest.close();
+  console.log("PASS guest AI Scripts shortcut retains direct post-login destination");
+ }
+ {
+  const member=await newPage(1440,true);
+  await member.goto(HOST+"/app/?tab=studio&studio=create",{waitUntil:"domcontentloaded"});
+  await member.locator("#view-studio.active").waitFor({timeout:11000});
+  await member.frameLocator("#unifiedStudioFrame").locator("#page-create.active").waitFor({timeout:14000});
+  assert.equal(await member.locator('#studioSubnav button[data-studio-page="create"].active').count(),1,"Bookmarked AI Scripts opens creator");
+  await member.close();
+  console.log("PASS signed-in bookmarked AI Scripts opens actual generator");
  }
  for(const route of ["/economic-calendar/","/market-reaction/","/notifications/","/learning-hub.html","/content-studio/"]){
   const guest=await newPage(390,false);
