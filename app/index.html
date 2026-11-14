@@ -8,10 +8,11 @@
 <link rel="stylesheet" href="/assets/sm-member-app.css?v=20261114-finalpolish-1">
 <link rel="stylesheet" href="/assets/sm-news-reader.css?v=20261114-native-news-1">
 <link rel="stylesheet" href="/assets/sm-market-editorial.css?v=20261114-editorial-1">
+<link rel="stylesheet" href="/assets/sm-market-png-match.css?v=20261114-match-1">
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="/assets/sm-dashboard-premium.js?v=20261114-finalpolish-1"></script>
 <script defer src="/assets/sm-news-reader.js?v=20261114-native-news-1"></script>
-<script defer src="/assets/sm-member-app.js?v=20261114-editorial-1"></script>
+<script defer src="/assets/sm-member-app.js?v=20261114-match-1"></script>
 <script defer src="/assets/sm-member-icons.js?v=20261114-finalpolish-1"></script></head>
 <body class="member-boot">
 <div id="bootScreen" class="boot-screen"><img class="boot-avatar" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><strong>Opening your workspace…</strong><small>Connecting securely to your account</small></div>
@@ -107,17 +108,26 @@
  </div>
  <section class="mobile-mentor-banner"><span>♢</span><div><b>Mentorship Program</b><small>Trading, Brokerage &amp; Business Development</small></div><button data-section="mentorship" type="button">→</button></section>
 </section>
-<section class="app-view mi-premium" id="view-markets" aria-labelledby="marketsTitle">
+<section class="app-view mi-premium mi-png" id="view-markets" aria-labelledby="marketsTitle">
  <div class="mi-page-intro">
+  <svg class="mi-hero-ribbon" viewBox="0 0 930 260" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+   <defs><linearGradient id="miRibbonGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8e4b5" stop-opacity="0"/><stop offset=".48" stop-color="#dda344" stop-opacity=".36"/><stop offset=".73" stop-color="#d59e3b" stop-opacity=".66"/><stop offset="1" stop-color="#fff0d0" stop-opacity=".03"/></linearGradient></defs>
+   <path d="M-50 183 C160 100 200 184 390 136 S695 -25 980 -10" fill="none" stroke="url(#miRibbonGold)" stroke-width="25" opacity=".43"/>
+   <path d="M-50 205 C150 120 240 204 412 155 S715 5 980 7" fill="none" stroke="#c78b31" stroke-width="1.5" opacity=".5"/>
+   <path d="M-50 218 C160 132 230 216 420 166 S705 18 980 15" fill="none" stroke="#ffdb8e" stroke-width="2" opacity=".78"/>
+   <path d="M-50 230 C170 146 250 228 432 176 S730 35 980 23" fill="none" stroke="#c48c32" stroke-width="1.1" opacity=".45"/>
+   <path d="M-50 244 C140 170 280 240 452 189 S740 45 980 30" fill="none" stroke="#f4d9a0" stroke-width="1.5" opacity=".75"/>
+  </svg>
   <div class="mi-intro-content">
    <span class="eyebrow">S M SHAHID SHAH · GLOBAL FINANCIAL INTELLIGENCE</span>
    <h1 id="marketsTitle">Market <em>Intelligence.</em></h1>
-   <p>Follow developments moving the conversation in Gold, Forex, Crypto and global economics. Explore source-attributed briefings without leaving your workspace.</p>
+   <p>Follow key developments across Forex, Gold, Crypto and the global economy. Get source-linked, editorially curated briefings and market context in one workspace.</p>
   </div>
   <div class="mi-intro-status" aria-live="polite">
    <span class="mi-status-label"><span class="mi-status-dot" aria-hidden="true"></span> SOURCE-LINKED NEWS FEED</span>
    <strong id="miFeedStatus">Loading market headlines…</strong>
    <small id="miFeedUpdated">Waiting for a news source response</small>
+   <svg class="mi-hero-globe" viewBox="0 0 160 160" aria-hidden="true" focusable="false"><defs><radialGradient id="miGlobeG" cx=".34" cy=".2" r=".9"><stop stop-color="#ffe7a0"/><stop offset=".6" stop-color="#ba822e"/><stop offset="1" stop-color="#624316"/></radialGradient></defs><circle cx="80" cy="80" r="67" fill="url(#miGlobeG)" stroke="#efc97f" stroke-width="2"/><ellipse cx="80" cy="80" rx="29" ry="67" stroke="#f7deaa" stroke-opacity=".75" stroke-width="1.5" fill="none"/><ellipse cx="80" cy="80" rx="54" ry="67" stroke="#f7deaa" stroke-opacity=".42" stroke-width="1.5" fill="none"/><path d="M14 80H146M25 44H135M25 116H135" stroke="#fff0c3" stroke-opacity=".66" fill="none" stroke-width="1.7"/><path d="M30 50 65 30 92 37 111 52 103 69 81 62 72 83 56 88 40 73ZM97 90 119 86 134 97 119 116 101 123 88 106Z" fill="#7b541c" opacity=".46"/></svg>
   </div>
  </div>
  <nav class="module-tabs mi-module-tabs" aria-label="Market intelligence tools">
@@ -128,48 +138,49 @@
   <button type="button" data-market-page="alerts">Smart Alerts</button>
  </nav>
  <div id="marketFeedArea" class="mi-feed-area">
-  <div class="mi-summary-strip" aria-label="News monitoring overview">
-   <div><span>HEADLINES IN FEED</span><strong id="miTotalStories">—</strong></div>
-   <div><span>EDITORIAL PRIORITY</span><strong id="miPriorityStories">—</strong></div>
-   <div class="mi-source-note"><span>INFORMATION STATUS</span><strong>News summaries · Not live prices</strong></div>
-  </div>
-  <div class="mi-section-heading mi-feature-heading">
-   <div><span class="mi-section-eyebrow">EDITOR'S SELECTION</span><h2>Featured Developments</h2></div>
-   <small>Source-linked · Editorial relevance, not trading advice</small>
-  </div>
-  <div class="mi-feature-grid">
-   <div class="mi-feature-lead" id="miFeatureLead"><div class="mi-skeleton">Loading the featured story…</div></div>
-   <div class="mi-feature-secondary" id="miFeatureSecondary"><div class="mi-skeleton">Checking more top developments…</div></div>
-  </div>
-  <div class="mi-main-grid">
-   <div class="mi-news-column">
-    <div class="mi-section-heading mi-latest-heading">
-     <div><span class="mi-section-eyebrow">NEWS DESK</span><h2>Latest Market Headlines</h2></div>
-     <span class="mi-results-count" id="miResultCount" role="status">Loading…</span>
+  <div class="mi-png-grid">
+   <div class="mi-png-main">
+    <div class="mi-summary-strip" aria-label="News monitoring overview">
+     <div><span class="mi-kpi-glyph" aria-hidden="true">▣</span><span>HEADLINES IN FEED</span><strong id="miTotalStories">—</strong></div>
+     <div><span class="mi-kpi-glyph" aria-hidden="true">◇</span><span>FEATURED STORIES</span><strong id="miPriorityStories">—</strong></div>
+     <div class="mi-source-note"><span class="mi-kpi-glyph" aria-hidden="true">ⓘ</span><span>INFORMATION STATUS</span><strong>News summaries · Not live prices</strong></div>
     </div>
-    <div class="mi-filter-panel">
-     <div class="pills mi-categories" role="group" aria-label="Filter market news by category">
-      <button type="button" class="pill active" data-news-filter="All" aria-pressed="true">All <span data-mi-category-count="All"></span></button>
-      <button type="button" class="pill" data-news-filter="Forex" aria-pressed="false">Forex <span data-mi-category-count="Forex"></span></button>
-      <button type="button" class="pill" data-news-filter="Gold" aria-pressed="false">Gold <span data-mi-category-count="Gold"></span></button>
-      <button type="button" class="pill" data-news-filter="Crypto" aria-pressed="false">Crypto <span data-mi-category-count="Crypto"></span></button>
-      <button type="button" class="pill" data-news-filter="Economic Data" aria-pressed="false">Economy <span data-mi-category-count="Economic Data"></span></button>
+    <div class="mi-section-heading mi-feature-heading">
+     <div><span class="mi-section-eyebrow">EDITOR'S SELECTION</span><h2>Featured Developments</h2></div>
+     <small>Source-linked · Editorially relevant</small>
+    </div>
+    <div class="mi-feature-grid">
+     <div class="mi-feature-lead" id="miFeatureLead"><div class="mi-skeleton">Loading the featured story…</div></div>
+     <div class="mi-feature-secondary" id="miFeatureSecondary"><div class="mi-skeleton">Checking more developments…</div></div>
+    </div>
+    <div class="mi-news-column">
+     <div class="mi-section-heading mi-latest-heading">
+      <div><span class="mi-section-eyebrow">NEWS DESK</span><h2>Latest Market Headlines</h2></div>
+      <span class="mi-results-count" id="miResultCount" role="status">Loading…</span>
      </div>
-     <label class="mi-search-label"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.2-4.2"/></svg><input id="miSearch" type="search" maxlength="100" placeholder="Search news…" aria-label="Search market news headlines"></label>
+     <div class="mi-filter-panel">
+      <div class="pills mi-categories" role="group" aria-label="Filter market news by category">
+       <button type="button" class="pill active" data-news-filter="All" aria-pressed="true">All <span data-mi-category-count="All"></span></button>
+       <button type="button" class="pill" data-news-filter="Forex" aria-pressed="false">Forex <span data-mi-category-count="Forex"></span></button>
+       <button type="button" class="pill" data-news-filter="Gold" aria-pressed="false">Gold <span data-mi-category-count="Gold"></span></button>
+       <button type="button" class="pill" data-news-filter="Crypto" aria-pressed="false">Crypto <span data-mi-category-count="Crypto"></span></button>
+       <button type="button" class="pill" data-news-filter="Economic Data" aria-pressed="false">Economy <span data-mi-category-count="Economic Data"></span></button>
+      </div>
+      <label class="mi-search-label"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.2-4.2"/></svg><input id="miSearch" type="search" maxlength="100" placeholder="Search news, topics or publishers…" aria-label="Search market news headlines"></label>
+     </div>
+     <div id="marketNewsList" class="mi-news-grid" aria-live="polite"><div class="mi-skeleton">Loading the latest news…</div></div>
+     <div class="mi-load-more-wrap"><button id="miLoadMore" type="button" class="mi-load-more" hidden>View More Headlines ↓</button></div>
     </div>
-    <div id="marketNewsList" class="mi-news-grid" aria-live="polite"><div class="mi-skeleton">Loading the latest news…</div></div>
-    <div class="mi-load-more-wrap"><button id="miLoadMore" type="button" class="mi-load-more" hidden>View More Headlines ↓</button></div>
    </div>
    <aside class="mi-sidebar" aria-label="Market intelligence overview">
     <section class="mi-side-card">
-     <div class="mi-side-title"><span>NEWS COVERAGE</span><span class="mi-signal" aria-hidden="true"></span></div>
-     <h3>Markets in Focus</h3>
-     <p>Articles currently available by category. Counts are not price indicators.</p>
+     <div class="mi-side-title"><span>MARKETS IN FOCUS</span><span class="mi-signal" aria-hidden="true"></span></div>
+     <p>Articles currently available by topic. Counts are not price indicators.</p>
      <div id="miCoverageList" class="mi-coverage-list"><div class="mi-skeleton">Loading categories…</div></div>
     </section>
     <section class="mi-side-card mi-events-card">
-     <div class="mi-side-title"><span>ECONOMIC CALENDAR</span><svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg></div>
-     <h3>Upcoming Key Events</h3>
+     <div class="mi-side-title"><span>UPCOMING KEY EVENTS</span><svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg></div>
+     <p>Major scheduled releases and central bank events · Malaysia time.</p>
      <div id="miEventsList" class="mi-events-list"><div class="mi-skeleton">Checking upcoming events…</div></div>
      <button type="button" class="mi-side-link" data-market-page="calendar">Open Economic Calendar →</button>
     </section>
