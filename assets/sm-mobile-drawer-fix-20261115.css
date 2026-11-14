@@ -1,0 +1,42 @@
+/* 2026-11-15 mobile drawer overlay fix.
+   Scoped to member app at mobile widths; desktop stays unchanged. */
+@media screen and (max-width:720px) {
+  .member-app .app-sidebar {
+    z-index:100!important;
+    top:0;
+    bottom:auto;
+    height:100dvh;
+    max-height:100dvh;
+    overflow-x:hidden;
+    overflow-y:auto;
+    overscroll-behavior-y:contain;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:calc(22px + env(safe-area-inset-bottom));
+  }
+  .member-app .side-shade:not([hidden]) {
+    z-index:99!important;
+    height:100dvh;
+  }
+  .member-app .app-sidebar.open ~ .mobile-dock {
+    display:none!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+  .member-app .app-sidebar :is(.side-brand,.side-links,.side-bottom) {
+    flex-shrink:0;
+  }
+  .member-app .app-sidebar .side-bottom {
+    padding-bottom:6px;
+  }
+  body:has(.member-app .app-sidebar.open) {
+    overflow:hidden!important;
+  }
+  .member-app .side-bottom .sm-install-trigger[data-installed="true"] {
+    display:none!important;
+  }
+}
+@media screen and (max-width:720px) and (display-mode:standalone) {
+  .member-app .side-bottom .sm-install-trigger {
+    display:none!important;
+  }
+}
