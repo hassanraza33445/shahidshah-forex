@@ -123,3 +123,12 @@ html[data-theme="dark"] .member-app .dashboard-home .news-card .news-script-dire
 @media(prefers-reduced-motion:reduce){
  .member-app .dashboard-home .news-card,.member-app .dashboard-home .tool-card{transition:none!important}
 }
+
+/* One-click news-to-script action also available in Market Intelligence. */
+.member-app .mi-premium .news-card .news-script-direct{
+ display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 12px;
+ border-radius:10px;background:linear-gradient(115deg,#f9e4b5,#e7b359);
+ color:#37250f;border:1px solid #d8aa64;font-size:11px;font-weight:850;
+ text-decoration:none;align-self:flex-start
+}
+.member-app .mi-premium .news-card .news-script-direct:hover{filter:brightness(1.05)}
