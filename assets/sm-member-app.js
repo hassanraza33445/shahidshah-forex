@@ -147,7 +147,7 @@ function showTool(tool,updateUrl=true){
   // Keep the first iframe alive. Select the next builder when verified.
   frame.dataset.pendingTool=tool;
  }else{
-  setEmbeddedFrame("toolModuleFrame","/learning-hub.html?embedded=1&premium_prompts=1&ui="+(window.matchMedia("(max-width:720px)").matches?"20261114-prompt-vip-1":"20261114-3")+"#"+encodeURIComponent(tool),"toolModuleStatus");
+  setEmbeddedFrame("toolModuleFrame","/learning-hub.html?embedded=1&premium_prompts=1&ui="+(window.matchMedia("(max-width:720px)").matches?"20261114-prompt-vip-1":"20261114-six-desktop-1")+"#"+encodeURIComponent(tool),"toolModuleStatus");
  }
  if(updateUrl&&state.currentTab==="tools"){
   const params=new URLSearchParams(location.search);
@@ -177,7 +177,7 @@ function openTab(name,push=true){
  if(name==="mentorship")void refreshApplication();
  if(name==="markets")renderMarketModule();
  if(name==="studio")renderStudioAccess();
- if(name==="tools"&&!$("toolModuleFrame").dataset.loadedSource){const requested=new URLSearchParams(location.search).get("tool");showTool(Object.hasOwn(toolLabels,requested)?requested:(window.matchMedia("(max-width:720px)").matches?"banner":"video"),false)}
+ if(name==="tools"&&!$("toolModuleFrame").dataset.loadedSource){const requested=new URLSearchParams(location.search).get("tool");showTool(Object.hasOwn(toolLabels,requested)?requested:"banner",false)}
 }
 function closeMenu(){
  $("appSidebar").classList.remove("open");$("sideShade").hidden=true;$("openMenu").setAttribute("aria-expanded","false");
@@ -275,7 +275,7 @@ async function start(){
   openTab(tabFromLocation(),false);
   if(state.currentTab==="tools"&&Object.hasOwn(toolLabels,requested.get("tool")))showTool(requested.get("tool"),false);
   // Mobile-only Supabase catalog; desktop remains the original layout.
-  if(window.matchMedia("(max-width:720px)").matches && typeof window.SMSetupMobileToolCatalog==="function")
+  if(typeof window.SMSetupMobileToolCatalog==="function")
    void window.SMSetupMobileToolCatalog(c).catch(()=>{});
   void checkStudioAccess();
   void loadNews();
@@ -592,7 +592,7 @@ function setupNavigation(){
  const promptNav=document.querySelector("#view-tools .sm-prompt-tool-tabs");
  if(promptNav)promptNav.addEventListener("keydown",event=>{
   if(!["ArrowRight","ArrowLeft","Home","End"].includes(event.key))return;
-  const buttons=[...promptNav.querySelectorAll(".sm-prompt-tool-tab[data-tool]:not(:disabled)")];
+  const buttons=[...promptNav.querySelectorAll(".sm-prompt-tool-tab[data-tool]:not(:disabled):not([hidden])")].sort((a,b)=>(Number(a.style.order)||0)-(Number(b.style.order)||0));
   const active=document.activeElement;
   const index=buttons.indexOf(active);
   if(index<0||!buttons.length)return;
