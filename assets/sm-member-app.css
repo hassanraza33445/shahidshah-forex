@@ -122,3 +122,6 @@ html[data-theme=light] .restricted-panel{background:#fffdf8}
  .restricted-panel{padding:19px;min-height:135px}
  .embed-panel,.studio-frame-slot{border-radius:15px}
 }
+
+.module-tabs[hidden]{display:none!important}
+.module-tabs button:disabled{opacity:.46;cursor:not-allowed}
