@@ -110,6 +110,9 @@ function openTab(name,push=true){
  for(const section of views)$("view-"+section)?.classList.toggle("active",section===name||(section==="studio"&&name==="library"));
  if(name==="library")$("view-library")?.classList.remove("active");
  $("studioTitle").innerHTML=name==="library"?"My <em>Content.</em>":"AI <em>Studio.</em>";
+ $("studioEyebrow").textContent=name==="library"?"YOUR PRIVATE WORKSPACE":"CREATE · EDIT · PRODUCE";
+ $("studioDescription").textContent=name==="library"?"Browse your saved scripts, edit drafts and manage content projects in one place.":"Write, refine and organize professional scripts and content in one connected workspace.";
+ $("libraryActionBar").hidden=name!=="library";
  $("studioSubnav").hidden=name==="library";
  document.querySelectorAll("[data-section]").forEach(node=>{
   const inMenu=node.closest(".side-links,.mobile-dock")!==null;
@@ -163,6 +166,9 @@ function paintUser(user,profile){
  $("profileAvatar").textContent=first.charAt(0).toUpperCase();
  $("verifiedBadge").textContent=user.email_confirmed_at?"✓ Verified Account":"Email verification pending";
  $("mentorName").value=name;
+ if(document.activeElement!==$("profileDisplayName"))$("profileDisplayName").value=name;
+ $("profileEmailDetail").textContent=user.email||"—";
+ $("profileAccountStatus").textContent=user.email_confirmed_at?"Email verified":"Email verification pending";
 }
 function setMemberTheme(theme){
  const next=theme==="dark"?"dark":"light";
@@ -211,9 +217,11 @@ function headlineCard(item){
  const chip=create("span","chip",item.priority==="HOT"?"HOT · VERIFY SOURCE":item.category||"Markets");article.append(chip);
  const title=create("h3","",safe(item.title));article.append(title);
  const description=(item.summary||"").replace(/<[^>]*>/g," ").trim();
- if(description)article.append(create("p","",description.slice(0,150)));
+ const norm=t=>String(t||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+ const name=norm(item.title),details=norm(description);
+ if(description&&details!==name&&!(name.length>24&&details.startsWith(name.slice(0,Math.min(60,name.length))))&&!name.startsWith(details))article.append(create("p","",description.slice(0,180)));
  const foot=create("div","news-foot");
- foot.textContent=domainSource(item.original_url)+" · "+formatTime(item.published_at||item.first_seen_at);
+ foot.textContent=(item.publisher&&String(item.publisher).trim()?safe(item.publisher)+" · ":"")+domainSource(item.original_url)+" · "+formatTime(item.published_at||item.first_seen_at);
  article.append(foot);
  const link=create("a","outline-action","Original Source ↗");link.href=hrefSafe(item.original_url);link.target="_blank";link.rel="noopener noreferrer";
  link.style.cssText="margin-top:10px;align-self:flex-start;padding:8px 12px;font-size:10px";article.append(link);
@@ -222,7 +230,8 @@ function headlineCard(item){
 function renderNews(){
  const small=$("homeHeadlines"),big=$("marketNewsList");
  small.replaceChildren();big.replaceChildren();
- const latest=state.news.slice(0,3);
+ const score=x=>(x.priority==="HOT"?6:0)+(["Gold","Forex","Economic Data"].includes(x.category)?3:0);
+ const latest=state.news.map((item,index)=>({item,index})).sort((a,b)=>score(b.item)-score(a.item)||a.index-b.index).slice(0,3).map(x=>x.item);
  if(!latest.length){
   small.append(create("div","loading-line","News temporarily unavailable. Visit the Market Intelligence hub."));
   big.append(create("div","loading-line","No recent headlines available for this filter."));return;
