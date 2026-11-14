@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id),views=new Set(["home","markets","studio"
 const state={client:null,user:null,profile:null,news:[],calendar:[],filter:"All",source:"news",currentTab:"home",homeFilter:"All",marketPage:"feed",marketSearch:"",marketVisible:12,studioPage:"dashboard",studioRole:null,studioStatus:"checking",studioFrame:null,studioFrameReady:false,applications:[]};
 const safe=(value)=>String(value??"").slice(0,900);
 const create=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=String(text);return el};
-function tabFromLocation(){const requested=new URLSearchParams(location.search).get("tab")||"home";return views.has(requested)?requested:"home"}
+function tabFromLocation(){const requested=new URLSearchParams(location.search).get("tab")||"home";return requested==="library"?"studio":requested==="notifications"?"markets":views.has(requested)?requested:"home"}
 
 const marketModules={feed:true};
 const toolLabels={video:"Video Prompt Builder",article:"Article Prompt Builder",banner:"Banner Prompt Builder",indicator:"Indicator Prompt Builder","30days":"30 Days Content Planner",h1:"Daily H1 Analysis",downloads:"Downloads"};
@@ -27,18 +27,16 @@ function renderMarketModule(){
 function renderStudioAccess(){
  const allowed=state.studioStatus==="allowed",checking=state.studioStatus==="checking",error=state.studioStatus==="error";
  const studioGate=$("studioAccessState"),studioSlot=$("studioFrameSlot"),studioTabs=$("studioSubnav");
- const libraryMode=state.currentTab==="library";
- $("libraryActionBar").hidden=!allowed||!libraryMode;
  studioGate.hidden=allowed;studioSlot.hidden=!allowed;
  studioTabs.hidden=!allowed;
  if(!allowed){
   studioGate.classList.toggle("is-checking",checking);
   studioGate.classList.toggle("is-error",error);
   studioGate.classList.toggle("is-denied",!checking&&!error);
-  $("studioGateTitle").textContent=checking?"Verifying your private access…":error?"Your access could not be checked":libraryMode?"Your content library is private":"Studio access is restricted";
-  $("studioGateHint").textContent=checking?"Checking your account permissions securely.":error?"The permission service could not be reached. Your access status has not been confirmed.":libraryMode?"Saved creator projects require administrator-approved Studio access.":"Creator tools are available only to members approved by the platform administrator.";
+  $("studioGateTitle").textContent=checking?"Verifying your private access…":error?"Your access could not be checked":"Studio access is restricted";
+  $("studioGateHint").textContent=checking?"Checking your account permissions securely.":error?"The permission service could not be reached. Your access status has not been confirmed.":"Creator tools are available only to members approved by the platform administrator.";
   $("studioGateBadge").textContent=checking?"CHECKING":error?"CONNECTION ISSUE":"APPROVAL REQUIRED";
-  $("studioGateInstruction").textContent=checking?"Your account permissions are being checked. Creator features remain protected during verification.":error?"Check your connection and retry. If the issue continues, contact the platform administrator.":libraryMode?"Ask your administrator to approve Studio access for this registered account. Private projects stay protected until then.":"Ask your administrator to grant Studio access to your registered account. You'll receive a notification if email delivery is configured.";
+  $("studioGateInstruction").textContent=checking?"Your account permissions are being checked. Creator features remain protected during verification.":error?"Check your connection and retry. If the issue continues, contact the platform administrator.":"Ask your administrator to grant Studio access to your registered account.";
   const retry=$("studioRecheckAccess");
   retry.disabled=checking;
   retry.textContent=checking?"Checking permission…":error?"Retry Access Check ↻":"Check Access Again ↻";
