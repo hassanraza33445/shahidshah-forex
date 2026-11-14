@@ -79,6 +79,8 @@ html.sm-embedded #page-projects>.card{min-height:0}
 <link rel="stylesheet" href="/assets/sm-four-products-2026.css?v=20261114-products-1">
 <link rel="stylesheet" href="/assets/sm-studio-market-news-2026.css?v=20261114-news-ui-1">
 <link rel="stylesheet" href="/assets/sm-studio-auth-recovery-2026.css?v=20261114-pkt-auth-2">
+<link rel="stylesheet" href="/assets/sm-studio-creator-mobile-reference.css?v=20261114-creator-reference-1" media="screen and (max-width:720px)">
+<script defer src="/assets/sm-studio-creator-mobile-reference.js?v=20261114-creator-reference-1"></script>
 </head>
 <body>
 <div class="gate" id="authGate"><section class="login"><img src="/shahid-shah-profile.webp" alt=""><div class="upper">S M SHAHID SHAH</div><h1>AI Content Studio</h1><p class="note">Free AI script workspace for all registered members. Sign in with your S M Shahid Shah account.</p><form id="loginForm"><div><label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div><div><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required minlength="6"></div><button class="btn gold" type="submit">Sign In Securely →</button></form><div id="loginStatus" class="status" aria-live="polite"></div><div class="actions"><a class="btn ghost" href="/">← Website</a><a class="btn ghost" href="/market-intelligence/">Market Intelligence</a></div></section>
@@ -105,7 +107,7 @@ html.sm-embedded #page-projects>.card{min-height:0}
 </div>
 <div class="studio-builder-grid">
  <section class="card studio-news-card" aria-labelledby="studioNewsHeading">
-  <div class="studio-panel-head"><div><h2 id="studioNewsHeading">Select Market News</h2><p>Pick an actual headline from your Market Intelligence feed.</p></div></div>
+  <div class="studio-panel-head"><div><h2 id="studioNewsHeading"><span class="studio-desktop-heading">Select Market News</span><span class="studio-mobile-heading" style="display:none">Choose Topic</span></h2><p>Pick an actual headline from your Market Intelligence feed.</p></div></div>
   <div class="studio-news-toggle" role="group" aria-label="Script content source">
    <button type="button" id="studioModeNews" class="studio-toggle-button active" aria-pressed="true">▤ Market News</button>
    <button type="button" id="studioModeCustom" class="studio-toggle-button" aria-pressed="false">✎ Custom Topic</button>
@@ -129,7 +131,7 @@ html.sm-embedded #page-projects>.card{min-height:0}
   </select>
  </section>
  <section class="card studio-config-card" aria-labelledby="studioConfigureHeading">
-  <div class="studio-panel-head"><div><h2 id="studioConfigureHeading">Create AI Script</h2><p>Configure your video script and generate.</p></div></div>
+  <div class="studio-panel-head"><div><h2 id="studioConfigureHeading"><span class="studio-desktop-heading">Create AI Script</span><span class="studio-mobile-heading" style="display:none">Script Settings</span></h2><p>Configure your video script and generate.</p></div></div>
   <div class="studio-settings-stack">
    <div class="studio-selected-news" id="studioSelectedNewsBox">
     <span class="studio-selected-label" id="studioSelectedLabel">SELECTED NEWS</span>
