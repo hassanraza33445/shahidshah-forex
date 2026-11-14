@@ -240,3 +240,24 @@ html.sm-embedded .page .card{border-radius:16px}
 html.sm-embedded .page .btn.gold{background:linear-gradient(110deg,#f9dc99,#e9ad4d,#c78623);color:#2e1e0e;box-shadow:0 6px 15px rgba(153,94,30,.15)}
 html.sm-embedded .page .intro h1{font-size:clamp(27px,2.7vw,38px)}
 @media(max-width:720px){html.sm-embedded .page .grid2{grid-template-columns:1fr}}
+
+/* Uniform Prompt Tools grid: suppress the legacy oversized first card. */
+.member-app #view-tools .vip-tools-grid .tool-list-row:first-child{
+ grid-column:auto;min-height:118px;max-width:none;
+ background:var(--surface);border:1px solid var(--line);
+ box-shadow:0 10px 25px var(--shadow)
+}
+.member-app #view-tools .vip-tools-grid .tool-list-row:first-child:after{display:none}
+.member-app #view-tools .vip-tools-grid .tool-list-row:first-child>span{
+ width:56px;height:56px;border-radius:14px;font-size:24px;
+ background:linear-gradient(130deg,#fff3d6,#edd3a3)
+}
+.member-app #view-tools .vip-tools-grid .tool-list-row:first-child b{font-size:14px;color:var(--ink)}
+.member-app #view-tools .vip-tools-grid .tool-list-row:first-child small{font-size:12px;color:var(--muted)}
+.member-app #view-tools .vip-tools-grid .tool-list-row:first-child>i{
+ color:var(--gold);background:var(--surface2);border-color:var(--line)
+}
+@media(max-width:720px){
+ .member-app #view-tools .vip-tools-grid .tool-list-row:first-child{min-height:98px;padding:14px 15px}
+ .member-app #view-tools .vip-tools-grid .tool-list-row:first-child>span{width:50px;height:50px;font-size:21px}
+}
