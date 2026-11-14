@@ -538,3 +538,12 @@ html[data-theme="dark"] .dashboard-home .watchlist-row{border-color:#514130}
 @media(max-width:1350px){.header-greeting{display:none}}
 @media(max-width:720px){.header-greeting{display:none}}
 @media(prefers-reduced-motion:reduce){.header-greeting .greeting-symbol{animation:none}}
+
+
+/* First-party illustrated financial news covers, with gradient fallback. */
+.dashboard-home .news-visual-gold{background:#5a3c1e url("/assets/market-cover-gold.svg") center/cover no-repeat}
+.dashboard-home .news-visual-forex{background:#1d4547 url("/assets/market-cover-forex.svg") center/cover no-repeat}
+.dashboard-home .news-visual-crypto{background:#3d2e1e url("/assets/market-cover-crypto.svg") center/cover no-repeat}
+.dashboard-home .news-visual-gold:before,.dashboard-home .news-visual-forex:before,.dashboard-home .news-visual-crypto:before{opacity:.06}
+.dashboard-home .news-visual-gold:after,.dashboard-home .news-visual-forex:after,.dashboard-home .news-visual-crypto:after{display:none}
+.dashboard-home .news-visual-gold .news-visual-emblem,.dashboard-home .news-visual-forex .news-visual-emblem,.dashboard-home .news-visual-crypto .news-visual-emblem{opacity:.12}
