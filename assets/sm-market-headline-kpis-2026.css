@@ -1,0 +1,59 @@
+/* S M Shahid Shah · Market Intelligence
+   Replace two informational KPI boxes with actual Gold / Forex headline counts.
+   This affects only the News monitoring overview, not the other dashboard UI. */
+.member-app #view-markets.mi-premium.mi-png .mi-summary-strip {
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+.member-app #view-markets.mi-premium.mi-png .mi-summary-strip > .mi-kpi-stat {
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:8px!important;
+  min-width:0!important;
+  min-height:63px!important;
+}
+.member-app #view-markets.mi-premium.mi-png .mi-summary-strip > .mi-kpi-stat > span:not(.mi-kpi-glyph){
+  min-width:0!important;flex:1 1 auto!important;
+  line-height:1.3!important;font-weight:800!important;
+  overflow-wrap:break-word!important;
+}
+.member-app #view-markets.mi-premium.mi-png .mi-summary-strip > .mi-kpi-stat > strong{
+  display:block!important;flex:0 0 auto!important;
+  margin-left:auto!important;font-size:23px!important;
+  font-variant-numeric:tabular-nums!important;
+  white-space:nowrap!important;
+  color:var(--mi-ink)!important;
+}
+.member-app #view-markets.mi-premium.mi-png .mi-summary-strip > .mi-kpi-gold .mi-kpi-glyph{
+  color:#b8822e!important;
+}
+.member-app #view-markets.mi-premium.mi-png .mi-summary-strip > .mi-kpi-forex .mi-kpi-glyph{
+  color:#4571a9!important;
+}
+@media screen and (max-width:720px){
+  .member-app #view-markets.mi-premium.mi-png .mi-summary-strip {
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .member-app #view-markets.mi-premium.mi-png .mi-summary-strip > .mi-kpi-stat{
+    min-height:51px!important;
+    gap:7px!important;
+    padding:8px 10px!important;
+  }
+  /* Keep same compact mobile footprint as the previous full-width info card. */
+  .member-app #view-markets.mi-premium.mi-png .mi-summary-strip > .mi-kpi-forex{
+    grid-column:1/-1!important;
+  }
+  .member-app #view-markets.mi-premium.mi-png .mi-summary-strip > .mi-kpi-stat > strong{
+    font-size:21px!important;
+  }
+  .member-app #view-markets.mi-premium.mi-png .mi-summary-strip > .mi-kpi-stat > span:not(.mi-kpi-glyph){
+    font-size:9px!important;
+  }
+}
+html[data-theme="dark"] .member-app #view-markets.mi-premium.mi-png .mi-summary-strip > .mi-kpi-gold .mi-kpi-glyph{
+  color:#f2c67b!important;
+}
+html[data-theme="dark"] .member-app #view-markets.mi-premium.mi-png .mi-summary-strip > .mi-kpi-forex .mi-kpi-glyph{
+  color:#a7cafa!important;
+}
