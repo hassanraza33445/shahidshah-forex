@@ -11,12 +11,37 @@ const toolLabels={video:"Video Prompt Builder",article:"Article Prompt Builder",
 const sectionNames={home:"Dashboard",markets:"Market Intelligence",studio:"AI Studio & AI Scripts",tools:"Prompt Tools",mentorship:"Mentorship",profile:"My Profile"};
 function setEmbeddedFrame(id,src,statusId){
  const frame=$(id),status=$(statusId);
- if(!frame)return;
+ if(!frame||!status)return;
  if(frame.dataset.loadedSource===src)return;
- status.hidden=false;status.textContent="Opening secure workspace module…";
+ clearTimeout(frame._waitForReady);
+ status.replaceChildren();
+ status.hidden=false;status.textContent="Opening your prompt builder…";
  frame.dataset.loadedSource=src;
- frame.onload=()=>{if(frame.dataset.loadedSource===src){status.hidden=true;frame.dataset.loaded="true";frame.contentWindow?.postMessage({type:"sm:theme",theme:document.documentElement.dataset.theme},location.origin)}};
- frame.onerror=()=>{status.hidden=false;status.textContent="This module could not load. Reopen it or check your connection."};
+ frame.dataset.verified="false";
+ frame.dataset.loaded="false";
+ frame.style.visibility="hidden";
+ frame.style.height="0px"; // Prevent dark iframe overlays while auth resolves.
+ frame.onload=()=>{
+  if(frame.dataset.loadedSource!==src)return;
+  frame.dataset.loaded="true";
+  status.textContent="Preparing your prompt builder…";
+  frame.contentWindow?.postMessage({type:"sm:theme",theme:document.documentElement.dataset.theme},location.origin);
+ };
+ const showRetry=()=>{
+  if(frame.dataset.loadedSource!==src||frame.dataset.verified==="true")return;
+  status.replaceChildren();
+  status.append(create("span","","The prompt builder could not finish loading. "));
+  const retry=create("button","embed-retry","Retry Prompt Builder");
+  retry.type="button";
+  retry.addEventListener("click",()=>{
+   const url=new URL(src,location.origin);
+   url.searchParams.set("retry",String(Date.now()));
+   setEmbeddedFrame(id,url.pathname+url.search+url.hash,statusId);
+  });
+  status.append(retry);
+ };
+ frame.onerror=showRetry;
+ frame._waitForReady=setTimeout(showRetry,12000);
  frame.src=src;
 }
 function renderMarketModule(){
@@ -105,7 +130,15 @@ function showTool(tool,updateUrl=true){
   button.setAttribute("aria-selected",String(active));
   button.tabIndex=active?0:-1;
  });
- setEmbeddedFrame("toolModuleFrame","/learning-hub.html?embedded=1&premium_prompts=1&ui=20261114-2#"+encodeURIComponent(tool),"toolModuleStatus");
+ const frame=$("toolModuleFrame");
+ if(frame.dataset.verified==="true"&&frame.contentWindow){
+  frame.contentWindow.postMessage({type:"sm:prompt-select",tool},location.origin);
+ }else if(frame.dataset.loadedSource){
+  // Keep the first iframe alive. Select the next builder when verified.
+  frame.dataset.pendingTool=tool;
+ }else{
+  setEmbeddedFrame("toolModuleFrame","/learning-hub.html?embedded=1&premium_prompts=1&ui=20261114-3#"+encodeURIComponent(tool),"toolModuleStatus");
+ }
  if(updateUrl&&state.currentTab==="tools"){
   const params=new URLSearchParams(location.search);
   params.set("tab","tools");params.set("tool",tool);
@@ -535,11 +568,28 @@ function setupNavigation(){
    }
    return;
   }
+  if(event.data.type==="sm:embed-view-ready"){
+   const frame=$("toolModuleFrame");
+   if(frame&&frame.contentWindow===event.source){
+    frame.dataset.verified="true";clearTimeout(frame._waitForReady);
+    frame.style.visibility="visible";
+    frame.style.height=frame.dataset.lastEmbedHeight||"700px";
+    $("toolModuleStatus").hidden=true;
+    if(frame.dataset.pendingTool){
+     frame.contentWindow.postMessage({type:"sm:prompt-select",tool:frame.dataset.pendingTool},location.origin);
+     delete frame.dataset.pendingTool;
+    }
+   }
+   return;
+  }
   if(event.data.type==="sm:embed-height"){
    const frames=["unifiedStudioFrame","marketModuleFrame","toolModuleFrame","noticeFrame"];
    const target=frames.map(id=>$(id)).find(frame=>frame&&frame.contentWindow===event.source);
    const height=Number(event.data.height);
-   if(target&&Number.isFinite(height)&&height>200&&height<18000)target.style.height=Math.ceil(height+12)+"px";
+   if(target&&Number.isFinite(height)&&height>200&&height<18000){
+    const pixels=Math.ceil(height+12)+"px";target.dataset.lastEmbedHeight=pixels;
+    if(target.id!=="toolModuleFrame"||target.dataset.verified==="true")target.style.height=pixels;
+   }
    return;
   }
   if(event.data.type==="sm:studio-page"&&state.currentTab==="studio"&&["create","projects"].includes(event.data.page)){
