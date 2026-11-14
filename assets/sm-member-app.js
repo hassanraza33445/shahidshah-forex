@@ -72,12 +72,12 @@ async function checkStudioAccess(){
 function mountStudio(){
  if(state.studioStatus!=="allowed")return;
  const isLibrary=state.currentTab==="library";
- const place=$(isLibrary?"libraryFrameSlot":"studioFrameSlot");
+ const place=$("studioFrameSlot");
  const requested=isLibrary?"projects":state.studioPage;
  if(!state.studioFrame){
   const frame=document.createElement("iframe");
   frame.id="unifiedStudioFrame";frame.className="unified-studio-frame";frame.title="S M Shahid Shah AI Content Studio";
-  frame.setAttribute("loading","eager");
+  frame.setAttribute("loading","eager");frame.setAttribute("allow","microphone; clipboard-write");
   state.studioFrame=frame;
   state.studioFrameReady=false;
   frame.addEventListener("load",()=>{
@@ -102,7 +102,10 @@ function showTool(tool){
 function openTab(name,push=true){
  if(!views.has(name))name="home";
  state.currentTab=name;
- for(const section of views)$("view-"+section)?.classList.toggle("active",section===name);
+ for(const section of views)$("view-"+section)?.classList.toggle("active",section===name||(section==="studio"&&name==="library"));
+ if(name==="library")$("view-library")?.classList.remove("active");
+ $("studioTitle").innerHTML=name==="library"?"My <em>Content.</em>":"AI <em>Studio.</em>";
+ $("studioSubnav").hidden=name==="library";
  document.querySelectorAll("[data-section]").forEach(node=>node.classList.toggle("active",node.dataset.section===name&&node.closest(".side-links,.mobile-dock")!==null));
  $("currentSectionName").textContent=sectionNames[name]||"Dashboard";
  if(push)history.replaceState({},"",name==="home"?"/app/":"/app/?tab="+encodeURIComponent(name));
@@ -302,6 +305,10 @@ function setupNavigation(){
  window.addEventListener("popstate",()=>openTab(tabFromLocation(),false));
  window.addEventListener("message",event=>{
   if(event.origin!==location.origin||!event.data||typeof event.data!=="object")return;
+  if(event.data.type==="sm:studio-page"&&state.currentTab==="studio"&&["dashboard","create","projects","planner","record"].includes(event.data.page)){
+   state.studioPage=event.data.page;
+   document.querySelectorAll("#studioSubnav [data-studio-page]").forEach(b=>b.classList.toggle("active",b.dataset.studioPage===state.studioPage));
+  }
   if(event.data.type==="sm:open-module"){
    const view=event.data.view;
    if(view==="markets"){state.marketPage=Object.hasOwn(marketModules,event.data.page)?event.data.page:"feed";openTab("markets")}
