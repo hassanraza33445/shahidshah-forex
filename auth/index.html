@@ -1,13 +1,13 @@
 <!doctype html><html lang="en" data-theme="light"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#171008"><meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#171008"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
 <title>Login or Sign Up | S M Shahid Shah</title>
 <meta name="description" content="Sign in or create an account for the S M Shahid Shah Market Intelligence and AI Studio platform.">
 <link rel="icon" href="/icon-192.png"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/sm-auth.css?v=20261114-signup-v6">
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script defer src="/assets/sm-auth.js?v=20261114-signup-v6"></script>
+<script defer src="/assets/sm-auth.js?v=20261114-recovery-smtp-7"></script>
 </head><body>
 <div class="auth-shell">
  <section class="auth-brand"><a class="auth-brand-name" href="/"><img class="brand-portrait" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><span><b>S M Shahid Shah</b><small>BUSINESS &amp; MARKET INTELLIGENCE</small></span></a>
@@ -47,7 +47,7 @@
  </div>
  <div id="customDialWrap" class="custom-dial-wrap" hidden><label for="customDialCode">Country calling code (with +)</label><input id="customDialCode" type="tel" inputmode="tel" placeholder="+123" maxlength="5" autocomplete="off"></div>
  </div>
- <label>Email address<input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required></label>
+ <label id="emailField">Email address<input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required></label>
  <label id="passwordField">Password<input id="password" name="password" type="password" minlength="6" autocomplete="current-password" placeholder="Enter your password" required></label>
 <div id="termsField" class="auth-terms" hidden>
  <label for="acceptTerms"><input id="acceptTerms" name="accept_terms" type="checkbox" value="yes">
