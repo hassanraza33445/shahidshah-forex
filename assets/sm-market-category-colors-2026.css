@@ -1,0 +1,68 @@
+/* S M Shahid Shah — consistent category identity
+   Gold = amber; Forex = blue; Crypto = purple; Economy = teal;
+   verified source priorities (HOT) use red without making news appear like prices. */
+.member-app #view-home .market-cat-gold,
+.member-app #view-markets .market-cat-gold{--market-color:#A86D13;--market-tint:#FFF0CC;--market-border:#E7C78B}
+.member-app #view-home .market-cat-forex,
+.member-app #view-markets .market-cat-forex{--market-color:#235BB0;--market-tint:#E9F1FF;--market-border:#BFD2F4}
+.member-app #view-home .market-cat-crypto,
+.member-app #view-markets .market-cat-crypto{--market-color:#7B43A0;--market-tint:#F3EAFB;--market-border:#DBBFEF}
+.member-app #view-home .market-cat-economy,
+.member-app #view-markets .market-cat-economy{--market-color:#117C70;--market-tint:#E4F6F0;--market-border:#B6DED3}
+.member-app #view-home .market-cat-markets,
+.member-app #view-markets .market-cat-markets{--market-color:#6A6470;--market-tint:#F1EDF5;--market-border:#D6CFDD}
+.member-app #view-home :is(.dashboard-story-card.market-cat-gold,.dashboard-story-card.market-cat-forex,.dashboard-story-card.market-cat-crypto,.dashboard-story-card.market-cat-economy,.dashboard-story-card.market-cat-markets) .dashboard-story-chip,
+.member-app #view-markets :is(.mi-equal-news-card.market-cat-gold,.mi-equal-news-card.market-cat-forex,.mi-equal-news-card.market-cat-crypto,.mi-equal-news-card.market-cat-economy,.mi-equal-news-card.market-cat-markets) .mi-card-category{
+ background:var(--market-tint)!important;color:var(--market-color)!important;border-color:var(--market-border)!important;
+}
+.member-app #view-home .dashboard-story-card[class*="market-cat-"] .dashboard-story-icon{
+ color:var(--market-color)!important;
+}
+.member-app #view-markets .mi-equal-news-card[class*="market-cat-"]{
+ border-left:3px solid var(--market-border)!important;
+}
+.member-app #view-home .dashboard-story-card[class*="market-cat-"]{
+ border-top:2px solid var(--market-border)!important;
+}
+.member-app #view-home .dashboard-story-card.market-is-hot .dashboard-story-chip,
+.member-app #view-markets .mi-equal-news-card.market-is-hot .mi-card-category{
+ color:#B74E36!important;background:#FFF0EA!important;border-color:#F0B9AC!important
+}
+/* Color-coded dashboard filter underline keeps active tabs easy to distinguish. */
+.member-app #view-home .dashboard-news-filters button[data-home-filter="Forex"]{--filter-color:#2364B3;--filter-surface:#EAF2FF;--filter-border:#BAD3FB}
+.member-app #view-home .dashboard-news-filters button[data-home-filter="Gold"]{--filter-color:#A86D13;--filter-surface:#FFF0CC;--filter-border:#E3BC75}
+.member-app #view-home .dashboard-news-filters button[data-home-filter="Crypto"]{--filter-color:#7B43A0;--filter-surface:#F3EAFB;--filter-border:#D8B9EE}
+.member-app #view-home .dashboard-news-filters button[data-home-filter="Economic Data"]{--filter-color:#117C70;--filter-surface:#E4F6F0;--filter-border:#B7DCD3}
+.member-app #view-home .dashboard-news-filters button[data-home-filter]:not([data-home-filter="All"]){
+ color:var(--filter-color);border:1px solid transparent
+}
+.member-app #view-home .dashboard-news-filters button.active[data-home-filter]:not([data-home-filter="All"]){
+ background:var(--filter-surface)!important;color:var(--filter-color)!important;
+ border-color:var(--filter-border)!important;box-shadow:0 4px 10px rgba(53,70,90,.065)!important
+}
+/* Market Intelligence category controls match each market's palette. */
+.member-app #view-markets .mi-categories button.pill[data-news-filter="Forex"]{--filter-color:#235BB0;--filter-surface:#E9F1FF;--filter-border:#BCD0F3}
+.member-app #view-markets .mi-categories button.pill[data-news-filter="Gold"]{--filter-color:#A86D13;--filter-surface:#FFF0CC;--filter-border:#E6C78A}
+.member-app #view-markets .mi-categories button.pill[data-news-filter="Crypto"]{--filter-color:#7B43A0;--filter-surface:#F3EAFB;--filter-border:#DBBFEF}
+.member-app #view-markets .mi-categories button.pill[data-news-filter="Economic Data"]{--filter-color:#117C70;--filter-surface:#E4F6F0;--filter-border:#B6DED3}
+.member-app #view-markets .mi-categories button.pill[data-news-filter]:not([data-news-filter="All"]){color:var(--filter-color)!important}
+.member-app #view-markets .mi-categories button.pill.active[data-news-filter]:not([data-news-filter="All"]){
+ background:var(--filter-surface)!important;border-color:var(--filter-border)!important;
+ color:var(--filter-color)!important;box-shadow:0 3px 9px rgba(52,75,96,.07)!important
+}
+html[data-theme="dark"] .member-app #view-home .market-cat-gold,
+html[data-theme="dark"] .member-app #view-markets .market-cat-gold{--market-color:#F8D08B;--market-tint:#4B361C;--market-border:#966D33}
+html[data-theme="dark"] .member-app #view-home .market-cat-forex,
+html[data-theme="dark"] .member-app #view-markets .market-cat-forex{--market-color:#A6CAFF;--market-tint:#263951;--market-border:#3C638F}
+html[data-theme="dark"] .member-app #view-home .market-cat-crypto,
+html[data-theme="dark"] .member-app #view-markets .market-cat-crypto{--market-color:#D9B2FD;--market-tint:#3B2B4C;--market-border:#78579D}
+html[data-theme="dark"] .member-app #view-home .market-cat-economy,
+html[data-theme="dark"] .member-app #view-markets .market-cat-economy{--market-color:#9AD8CA;--market-tint:#1F423C;--market-border:#39796F}
+html[data-theme="dark"] .member-app #view-home .market-is-hot .dashboard-story-chip,
+html[data-theme="dark"] .member-app #view-markets .market-is-hot .mi-card-category{
+ color:#FFD0BE!important;background:#5E342B!important;border-color:#A66558!important
+}
+@media(prefers-reduced-motion:reduce){
+ .member-app #view-home .dashboard-news-filters button,
+ .member-app #view-markets .mi-categories button{transition:none!important}
+}
