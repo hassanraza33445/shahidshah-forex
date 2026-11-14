@@ -15,11 +15,12 @@
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="/assets/sm-dashboard-premium.js?v=20261114-four-products-1"></script>
 <script defer src="/assets/sm-news-reader.js?v=20261114-native-news-1"></script>
-<script defer src="/assets/sm-member-app.js?v=20261114-studio-builder-2"></script>
+<script defer src="/assets/sm-member-app.js?v=20261114-prompt-layout-1"></script>
 <script defer src="/assets/sm-member-icons.js?v=20261114-four-products-1"></script><link rel="stylesheet" href="/assets/sm-dashboard-finishing-2026.css?v=20261114-3">
 <link rel="stylesheet" href="/assets/sm-four-products-2026.css?v=20261114-products-1">
 <link rel="stylesheet" href="/assets/sm-market-uniform-cards.css?v=20261114-1">
 <link rel="stylesheet" href="/assets/sm-studio-app-shell-2026.css?v=20261114-studio-1">
+<link rel="stylesheet" href="/assets/sm-prompt-tools-2026.css?v=20261114-screen-1">
 </head>
 <body class="member-boot">
 <div id="bootScreen" class="boot-screen"><img class="boot-avatar" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><strong>Opening your workspace…</strong><small>Connecting securely to your account</small></div>
@@ -212,19 +213,64 @@
  </div>
  <div id="studioFrameSlot" class="studio-frame-slot" hidden></div>
 </section>
-<section class="app-view" id="view-tools" aria-labelledby="toolsTitle">
- <div class="view-heading vip-page-hero vip-tools-hero">
- <div class="vip-hero-copy"><span class="eyebrow">S M SHAHID SHAH · CREATOR TOOLKIT</span><h1><span id="toolsTitle">AI <em>Prompt Tools.</em></span></h1><p>Professional content prompts, ideas and creative workflows—all inside your connected workspace.</p></div>
- <div class="vip-hero-art" aria-hidden="true"><span class="vip-art-circle vip-circle-one"></span><span class="vip-art-circle vip-circle-two"></span><span class="vip-art-mark">✦</span><span class="vip-art-caption">CREATIVE INTELLIGENCE</span></div>
+<section class="app-view sm-premium-prompts" id="view-tools" aria-labelledby="toolsTitle">
+ <header class="sm-prompts-hero">
+  <div class="sm-prompts-hero-copy">
+   <span class="sm-prompts-eyebrow">S M SHAHID SHAH · CREATOR TOOLKIT</span>
+   <h1 id="toolsTitle">AI <em>Prompt Tools</em></h1>
+   <p>Create professional, structured prompts for videos, articles, banners and trading indicators—all in one workspace.</p>
+  </div>
+  <div class="sm-prompts-hero-visual" aria-hidden="true">
+   <svg class="sm-prompts-chart" viewBox="0 0 560 182" preserveAspectRatio="none" fill="none">
+    <g stroke="#DBAF6A" stroke-width="1.1" opacity=".32">
+      <path d="M0 153C68 112 107 167 155 124S249 114 310 68 402 83 455 34 522 43 560 10"/>
+      <path d="M0 170C78 130 119 180 173 138S259 128 318 86 405 99 467 49 522 57 560 28"/>
+      <path d="M0 184C84 156 132 187 185 149S269 136 330 104 418 117 477 71 526 71 560 52"/>
+    </g>
+    <g fill="#DDA753" opacity=".55">
+      <rect x="201" y="101" width="5" height="31" rx="1"/>
+      <rect x="217" y="94" width="5" height="23" rx="1"/>
+      <rect x="234" y="82" width="5" height="35" rx="1"/>
+      <rect x="249" y="73" width="5" height="29" rx="1"/>
+      <rect x="265" y="78" width="5" height="17" rx="1"/>
+      <rect x="282" y="62" width="5" height="32" rx="1"/>
+      <rect x="298" y="55" width="5" height="18" rx="1"/>
+      <rect x="314" y="41" width="5" height="34" rx="1"/>
+    </g>
+    <path d="M0 164C102 135 134 178 231 132 306 96 340 123 401 72 466 27 511 68 560 8" stroke="#EBC17C" stroke-width="2.2" opacity=".6"/>
+   </svg>
+   <div class="sm-prompts-ai-icon"><span>AI</span><i>✦</i></div>
+  </div>
+ </header>
+ <nav class="sm-prompt-tool-tabs" aria-label="Choose a prompt builder" role="tablist">
+  <button type="button" role="tab" aria-selected="true" class="sm-prompt-tool-tab active" data-tool="video">
+   <span class="sm-prompt-tab-icon" aria-hidden="true">▣</span>
+   <span><strong>Video Prompt Builder</strong><small>Professional video scripts</small></span>
+  </button>
+  <button type="button" role="tab" aria-selected="false" class="sm-prompt-tool-tab" data-tool="article">
+   <span class="sm-prompt-tab-icon" aria-hidden="true">▤</span>
+   <span><strong>Article Prompt Builder</strong><small>SEO-friendly educational writing</small></span>
+  </button>
+  <button type="button" role="tab" aria-selected="false" class="sm-prompt-tool-tab" data-tool="banner">
+   <span class="sm-prompt-tab-icon" aria-hidden="true">▧</span>
+   <span><strong>Banner Prompt Builder</strong><small>Professional social media briefs</small></span>
+  </button>
+  <button type="button" role="tab" aria-selected="false" class="sm-prompt-tool-tab" data-tool="indicator">
+   <span class="sm-prompt-tab-icon" aria-hidden="true">✧</span>
+   <span><strong>Indicator Prompt Builder</strong><small>Trading analysis &amp; indicators</small></span>
+  </button>
+ </nav>
+ <div class="sm-prompt-benefits" aria-label="Prompt builder advantages">
+  <div class="sm-prompt-benefit-main"><span aria-hidden="true">✧</span><strong>AI-Powered Prompt Builder</strong></div>
+  <div><span class="sm-prompt-benefit-check" aria-hidden="true">✓</span><span>Structured &amp; professional output</span></div>
+  <div><span class="sm-prompt-benefit-check" aria-hidden="true">✓</span><span>Optimized for your platform &amp; audience</span></div>
+  <div><span class="sm-prompt-benefit-check" aria-hidden="true">✓</span><span>Saves time and improves content quality</span></div>
  </div>
- <div class="vip-suite-heading"><div><span class="vip-suite-eyebrow">YOUR CREATIVE TOOLKIT</span><h2>Choose what you want to create.</h2></div><span class="vip-suite-count">4 professional prompt builders</span></div>
- <div class="tool-list vip-tools-grid">
-  <button type="button" data-tool="video" class="tool-list-row"><span>▣</span><div><b>Video Prompt Builder</b><small>Create a reusable brief for your own AI tools</small></div><i>→</i></button>
-  <button type="button" data-tool="article" class="tool-list-row"><span>▤</span><div><b>Article Prompt Builder</b><small>SEO-friendly educational writing</small></div><i>→</i></button>
-  <button type="button" data-tool="banner" class="tool-list-row"><span>▧</span><div><b>Banner Prompt Builder</b><small>Professional social media briefs</small></div><i>→</i></button>
-  <button type="button" data-tool="indicator" class="tool-list-row"><span>✦</span><div><b>Indicator Prompt Builder</b><small>Trading analysis and indicators</small></div><i>→</i></button>
+ <div id="toolModuleArea" class="sm-prompt-builder-host embed-panel">
+  <div class="sm-prompt-hidden-meta" hidden><b id="activeToolName">Video Prompt Builder</b><button type="button" id="closeToolModule">Close Tool</button></div>
+  <p id="toolModuleStatus" class="embed-status" role="status">Opening professional prompt builder…</p>
+  <iframe id="toolModuleFrame" title="Professional Prompt Builder" loading="eager"></iframe>
  </div>
- <div id="toolModuleArea" class="embed-panel" hidden><div class="embed-panel-heading"><b id="activeToolName">Prompt Builder</b><button id="closeToolModule" type="button">Close Tool ×</button></div><p id="toolModuleStatus" class="embed-status" role="status">Opening prompt builder…</p><iframe id="toolModuleFrame" title="Professional Prompt Builder" loading="lazy"></iframe></div>
 </section>
 <section class="app-view" id="view-mentorship" aria-labelledby="mentorshipTitle">
  <div class="view-heading vip-page-hero vip-mentor-hero">
