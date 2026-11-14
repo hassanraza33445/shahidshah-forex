@@ -1,0 +1,76 @@
+/* PWA install entry and sheet - mobile ONLY. Existing desktop UI unchanged. */
+@media screen and (max-width:720px) {
+  .member-app .side-bottom .sm-install-trigger {
+    display:flex!important;width:100%;min-height:66px;align-items:center;gap:10px;
+    text-align:left;margin:5px 0 13px;padding:10px 11px;cursor:pointer;
+    border:1px solid #dcb777;border-radius:14px;
+    background:linear-gradient(125deg,#fff3d8,#f1d49e);
+    color:#38250e;box-shadow:0 7px 17px rgba(109,69,24,.11);
+    transition:transform .18s ease,box-shadow .18s ease;
+  }
+  .member-app .side-bottom .sm-install-trigger:active {transform:scale(.985);}
+  .member-app .sm-install-icon {
+    flex:0 0 37px;width:37px;height:37px;display:grid;place-items:center;
+    background:linear-gradient(145deg,#865519,#b5812f);color:#ffebc2;
+    border-radius:11px;font-size:21px;font-weight:700;line-height:1;
+  }
+  .member-app .sm-install-trigger>span:nth-child(2) {flex:1;min-width:0;}
+  .member-app .sm-install-trigger b {display:block;font-size:12px;line-height:1.35;letter-spacing:-.2px;}
+  .member-app .sm-install-trigger small {display:block;font-size:9.5px;font-weight:600;line-height:1.4;color:#80613a;margin-top:2px;}
+  .member-app .sm-install-arrow {flex:0 0 auto;font-size:20px;color:#896126;}
+  html[data-theme="dark"] .member-app .sm-install-trigger {
+    color:#fbe7c2;background:linear-gradient(120deg,#392717,#54371d);
+    border-color:#855d2c;box-shadow:0 6px 17px #0004;
+  }
+  html[data-theme="dark"] .member-app .sm-install-trigger small {color:#d6b989;}
+  .sm-install-backdrop[hidden] {display:none!important;}
+  .sm-install-backdrop {
+    position:fixed;inset:0;z-index:160;
+    display:flex;align-items:flex-end;justify-content:center;
+    padding:18px 12px calc(12px + env(safe-area-inset-bottom));
+    background:rgba(24,15,8,.58);
+    -webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);
+  }
+  .sm-install-panel {
+    position:relative;width:100%;max-width:420px;max-height:calc(100dvh - 36px);
+    overflow-y:auto;background:#fffaf2;color:#2b1e13;
+    border:1px solid #e5cfaa;border-radius:25px;
+    box-shadow:0 22px 65px rgba(25,15,5,.30);padding:25px 22px 21px;
+    font-family:"Plus Jakarta Sans",system-ui,-apple-system,sans-serif;
+    animation:smInstallSlide .24s ease both;
+  }
+  .sm-install-close {
+    position:absolute;right:15px;top:15px;width:35px;height:35px;
+    display:grid;place-items:center;border:1px solid #e7d7bd;
+    background:#fff7e9;color:#6d4b24;border-radius:11px;
+    font-size:22px;line-height:1;
+  }
+  .sm-install-emblem {
+    display:grid;place-items:center;width:54px;height:54px;border-radius:15px;
+    background:linear-gradient(145deg,#422916,#9c682a);color:#ffdea1;
+    font-weight:900;font-size:18px;box-shadow:0 7px 20px #945c2628;
+    margin-bottom:14px;
+  }
+  .sm-install-eyebrow {display:block;color:#a2712c;font-size:9px;font-weight:850;letter-spacing:1.25px;}
+  .sm-install-panel h2 {font-size:23px;letter-spacing:-.8px;line-height:1.2;margin:7px 0 8px;color:#2c1d10;}
+  .sm-install-panel>p {font-size:12px;line-height:1.6;color:#786451;margin:0 0 14px;}
+  .sm-install-steps {display:grid;gap:8px;margin:10px 0 19px;}
+  .sm-install-step {display:flex;align-items:flex-start;gap:10px;font-size:12px;line-height:1.55;color:#4a3421;}
+  .sm-install-step>span {
+    display:grid;place-items:center;flex:0 0 26px;width:26px;height:26px;
+    background:#f4e2c0;border-radius:9px;color:#8e621e;font-size:11px;font-weight:850;
+  }
+  .sm-install-primary {
+    display:block;width:100%;min-height:45px;border:1px solid #d9ac64;
+    border-radius:12px;background:linear-gradient(115deg,#ffe4a5,#e9b359);
+    color:#35220c;font-size:12px;font-weight:850;
+    box-shadow:0 4px 12px #bf863229;
+  }
+  .sm-install-note {margin:10px 0 0!important;font-size:11px!important;text-align:center;line-height:1.5!important;}
+  body.sm-install-open {overflow:hidden!important;}
+  @keyframes smInstallSlide {from{transform:translateY(16px);opacity:.7}to{transform:translateY(0);opacity:1}}
+}
+@media (max-width:720px) and (prefers-reduced-motion:reduce) {
+  .sm-install-panel {animation:none;}
+  .member-app .side-bottom .sm-install-trigger {transition:none;}
+}
