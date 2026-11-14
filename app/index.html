@@ -15,9 +15,10 @@
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="/assets/sm-dashboard-premium.js?v=20261114-four-products-1"></script>
 <script defer src="/assets/sm-news-reader.js?v=20261114-native-news-1"></script>
-<script defer src="/assets/sm-member-app.js?v=20261114-four-products-1"></script>
+<script defer src="/assets/sm-member-app.js?v=20261114-uniform-news-1"></script>
 <script defer src="/assets/sm-member-icons.js?v=20261114-four-products-1"></script><link rel="stylesheet" href="/assets/sm-dashboard-finishing-2026.css?v=20261114-3">
 <link rel="stylesheet" href="/assets/sm-four-products-2026.css?v=20261114-products-1">
+<link rel="stylesheet" href="/assets/sm-market-uniform-cards.css?v=20261114-1">
 </head>
 <body class="member-boot">
 <div id="bootScreen" class="boot-screen"><img class="boot-avatar" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><strong>Opening your workspace…</strong><small>Connecting securely to your account</small></div>
@@ -133,20 +134,12 @@
    <div class="mi-png-main">
     <div class="mi-summary-strip" aria-label="News monitoring overview">
      <div><span class="mi-kpi-glyph" aria-hidden="true">▣</span><span>HEADLINES IN FEED</span><strong id="miTotalStories">—</strong></div>
-     <div><span class="mi-kpi-glyph" aria-hidden="true">◇</span><span>FEATURED STORIES</span><strong id="miPriorityStories">—</strong></div>
-     <div class="mi-source-note"><span class="mi-kpi-glyph" aria-hidden="true">ⓘ</span><span>INFORMATION STATUS</span><strong>News summaries · Not live prices</strong></div>
+     <div><span class="mi-kpi-glyph" aria-hidden="true">◇</span><span>MARKETS COVERED</span><strong id="miPriorityStories">—</strong></div>
+     <div class="mi-source-note"><span class="mi-kpi-glyph" aria-hidden="true">ⓘ</span><span>INFORMATION STATUS</span><strong>Source-linked headlines · Not live prices</strong></div>
     </div>
-    <div class="mi-section-heading mi-feature-heading">
-     <div><span class="mi-section-eyebrow">EDITOR'S SELECTION</span><h2>Featured Developments</h2></div>
-     <small>Source-linked · Editorially relevant</small>
-    </div>
-    <div class="mi-feature-grid">
-     <div class="mi-feature-lead" id="miFeatureLead"><div class="mi-skeleton">Loading the featured story…</div></div>
-     <div class="mi-feature-secondary" id="miFeatureSecondary"><div class="mi-skeleton">Checking more developments…</div></div>
-    </div>
-    <div class="mi-news-column">
+    <div class="mi-news-column mi-uniform-news-column">
      <div class="mi-section-heading mi-latest-heading">
-      <div><span class="mi-section-eyebrow">NEWS DESK</span><h2>Latest Market Headlines</h2></div>
+      <div><span class="mi-section-eyebrow">GLOBAL NEWS DESK</span><h2>Latest Market Headlines</h2></div>
       <span class="mi-results-count" id="miResultCount" role="status">Loading…</span>
      </div>
      <div class="mi-filter-panel">
@@ -159,7 +152,7 @@
       </div>
       <label class="mi-search-label"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.2-4.2"/></svg><input id="miSearch" type="search" maxlength="100" placeholder="Search news, topics or publishers…" aria-label="Search market news headlines"></label>
      </div>
-     <div id="marketNewsList" class="mi-news-grid" aria-live="polite"><div class="mi-skeleton">Loading the latest news…</div></div>
+     <div id="marketNewsList" class="mi-news-grid mi-uniform-grid" aria-live="polite"><div class="mi-skeleton">Loading the latest news…</div></div>
      <div class="mi-load-more-wrap"><button id="miLoadMore" type="button" class="mi-load-more" hidden>View More Headlines ↓</button></div>
     </div>
    </div>
