@@ -17,12 +17,28 @@
 @media(max-width:1100px){.content{padding:0 20px 30px}.stats{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:216px minmax(0,1fr)}}
 @media(max-width:780px){.layout{display:block}.side{display:none}.content{padding:0 15px 90px}.topbar{min-height:65px}.intro{align-items:start;flex-direction:column;margin-bottom:18px}.fields,.grid2,.grid3{grid-template-columns:1fr}.stat b{font-size:24px}.card{padding:17px;border-radius:16px}.mobile-bottom{position:fixed;bottom:0;left:0;right:0;z-index:25;display:grid;grid-template-columns:repeat(5,1fr);background:var(--panel);border-top:1px solid var(--border);padding:8px 5px calc(8px + env(safe-area-inset-bottom))}.mobile-bottom button{background:none;border:0;color:var(--muted);font-size:9px;font-weight:800;padding:8px 0}.mobile-bottom button.active{color:var(--gold)}.mobile-bottom b{font-size:17px;display:block;margin-bottom:3px}.tools-mobile{max-width:100%}.topbar .btn{padding:9px;font-size:10px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+/* Embedded mode: keep the full secure Studio without a second shell. */
+html.sm-embedded .layout:not(.hidden){display:block;min-height:0}
+html.sm-embedded .side,html.sm-embedded .topbar,html.sm-embedded .mobile-bottom{display:none!important}
+html.sm-embedded .content{padding:13px clamp(10px,1.7vw,24px) 35px;max-width:1430px;margin:auto}
+html.sm-embedded .page{padding-top:8px}
+html.sm-embedded .gate{min-height:65vh}
+html.sm-embedded body{min-height:100%;background:var(--bg)}
+html.sm-embedded .intro{margin-bottom:17px}
+html.sm-embedded .stat{padding:14px}
+html.sm-embedded .grid2{gap:12px}
+@media(max-width:780px){
+ html.sm-embedded .content{padding:7px 10px 30px}
+ html.sm-embedded .layout:not(.hidden){display:block}
+ html.sm-embedded .card{padding:14px}
+ html.sm-embedded .intro h1{font-size:26px}
+}
 </style>
 <link rel="stylesheet" href="/assets/site-master-header.css?v=20261114-3">
 <script src="/assets/site-master-header.js?v=20261114-3" defer></script>
-<link rel="stylesheet" href="/assets/sm-member-gate.css?v=20261114-1">
+<link rel="stylesheet" href="/assets/sm-member-gate.css?v=20261114-unified-1">
 <script>document.documentElement.classList.add("sm-member-checking");</script>
-<script defer src="/assets/sm-member-gate.js?v=20261114-1"></script>
+<script defer src="/assets/sm-member-gate.js?v=20261114-unified-1"></script>
 </head>
 <body>
 <div class="gate" id="authGate"><section class="login"><img src="/shahid-shah-profile.webp" alt=""><div class="upper">S M SHAHID SHAH</div><h1>AI Content Studio</h1><p class="note">Private editorial workspace. Sign in with your existing S M Shahid Shah account. Studio access is assigned by an administrator.</p><form id="loginForm"><div><label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div><div><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required minlength="6"></div><button class="btn gold" type="submit">Sign In Securely →</button></form><div id="loginStatus" class="status" aria-live="polite"></div><div class="actions"><a class="btn ghost" href="/">← Website</a><a class="btn ghost" href="/market-intelligence/">Market Intelligence</a></div></section></div>
@@ -37,7 +53,7 @@
 <div class="stats"><article class="stat"><span>MY PROJECTS</span><b id="countProjects">0</b></article><article class="stat"><span>DRAFTS</span><b id="countDrafts">0</b></article><article class="stat"><span>IN REVIEW</span><b id="countReview">0</b></article><article class="stat"><span>APPROVED</span><b id="countApproved">0</b></article></div>
 <div class="grid2"><section class="card"><div class="row"><h2>Recent projects</h2><button class="btn small" data-page="projects">View all</button></div><div id="recentProjects" class="list"></div></section><section class="card"><div class="row"><h2>Market watch</h2><a class="btn small" href="/market-intelligence/">Open News ↗</a></div><p class="note">Latest source-linked headlines for content ideas.</p><div id="dashboardNews" class="list"></div></section></div></section>
 <section id="page-create" class="page"><div class="intro"><div><div class="upper">CREATOR WORKSPACE</div><h1>Write your next story.</h1><p>Start from original news or an educational topic. Always review claims before publishing.</p></div><div class="actions"><button id="newProject" class="btn">New Script</button><button id="saveProject" class="btn gold">Save Project</button></div></div>
-<div class="grid2"><section class="card"><h2>1. Choose your subject</h2><p class="note">News stories retain source attribution. You can also write about any topic.</p><div class="stack"><div><label for="newsChoice">Market News</label><select id="newsChoice"><option value="">Custom topic (no news source)</option></select></div><div><label for="topic">Custom topic / additional direction</label><input id="topic" maxlength="350" placeholder="e.g. Why does Gold move after CPI?"></div></div><hr class="divider"><h2>2. Set the video style</h2><div class="fields"><div><label for="language">Language</label><select id="language"><option>Roman Urdu + English</option><option>Urdu</option><option>English</option></select></div><div><label for="duration">Duration</label><select id="duration"><option>60 seconds</option><option>30 seconds</option><option>3 minutes</option><option>8 minutes</option></select></div><div><label for="platform">Platform</label><select id="platform"><option>YouTube Shorts</option><option>Facebook</option><option>Instagram</option><option>YouTube Long</option><option>WhatsApp</option><option>Website</option></select></div><div><label for="tone">Tone</label><select id="tone"><option>Professional</option><option>Educational</option><option>Engaging</option><option>Breaking News</option><option>Simple</option><option>Detailed</option></select></div></div><div class="actions" style="margin-top:17px"><button id="generate" class="btn gold">✦ Generate AI Script</button><button id="rewrite" class="btn">Rewrite Draft</button><button id="seo" class="btn">SEO Pack</button></div><div id="aiStatus" class="status" aria-live="polite"></div><p class="note">Generated drafts are AI-assisted and unverified. Only source-linked statements may be presented as reported facts.</p></section>
+<div class="grid2"><section class="card"><h2>1. Choose your subject</h2><p class="note">News stories retain source attribution. You can also write about any topic.</p><div class="stack"><div><label for="newsChoice">Market News</label><select id="newsChoice"><option value="">Custom topic (no news source)</option></select></div><div><label for="topic">Custom topic / additional direction</label><input id="topic" maxlength="350" placeholder="e.g. Why does Gold move after CPI?"></div></div><hr class="divider"><h2>2. Set the video style</h2><div class="fields"><div><label for="language">Language</label><select id="language"><option>Roman Urdu + English</option><option>Urdu</option><option>English</option></select></div><div><label for="duration">Duration</label><select id="duration"><option>30 seconds</option><option>45 seconds</option><option selected>60 seconds</option><option>3 minutes</option><option>8 minutes</option></select></div><div><label for="platform">Platform</label><select id="platform"><option>YouTube Shorts</option><option>Facebook</option><option>Instagram</option><option>YouTube Long</option><option>WhatsApp</option><option>Website</option></select></div><div><label for="tone">Tone</label><select id="tone"><option>Professional</option><option>Educational</option><option>Engaging</option><option>Breaking News</option><option>Simple</option><option>Detailed</option></select></div></div><div class="actions" style="margin-top:17px"><button id="generate" class="btn gold">✦ Generate AI Script</button><button id="rewrite" class="btn">Rewrite Draft</button><button id="seo" class="btn">SEO Pack</button></div><div id="aiStatus" class="status" aria-live="polite"></div><p class="note">Generated drafts are AI-assisted and unverified. Only source-linked statements may be presented as reported facts.</p></section>
 <section class="card"><div class="row"><div><div class="upper">EDITORIAL DESK</div><h2>3. Edit your script</h2></div><span class="badge" id="projectState">UNSAVED</span></div><div class="stack"><div><label for="projectTitle">Project Title</label><input id="projectTitle" maxlength="200" placeholder="Your video title"></div><div class="editor" id="scriptFields"></div><div><label for="factCheck">Fact-check checklist (one per line)</label><textarea id="factCheck" rows="3" placeholder="Verify exact figures, dates and sources"></textarea></div><div class="rowwrap"><button class="btn small" id="copyScript">Copy</button><button class="btn small" id="downloadScript">Export TXT</button><button class="btn small" id="listen">▶ Listen</button><button class="btn small" id="stopSpeech">■ Stop</button><button class="btn small" id="teleprompter">Teleprompter</button><button class="btn small" id="submitReview">Submit Review</button><button class="btn small hidden" id="approve">✓ Approve</button></div><div class="note" id="wordCount">0 words · 0 min estimated</div><div id="editorStatus" class="status" aria-live="polite"></div><div><label for="versionChoice">Script version history</label><div class="actions"><select id="versionChoice" style="max-width:300px"><option value="">No saved versions</option></select><button class="btn small" id="restoreVersion" type="button">Restore Selected Version</button></div></div></div></section></div>
 </section>
 <section id="page-projects" class="page"><div class="intro"><div><div class="upper">LIBRARY</div><h1>Saved Projects</h1><p>Drafts, submitted scripts and approved work.</p></div><button class="btn gold" data-page="create">+ Create Script</button></div><section class="card"><div class="rowwrap" style="margin-bottom:16px"><label for="filterStatus" style="align-self:center">Filter</label><select id="filterStatus" style="max-width:200px"><option value="">All statuses</option><option value="draft">Draft</option><option value="review">In review</option><option value="approved">Approved</option><option value="published">Marked published</option></select><button class="btn small" id="reloadProjects">↻ Reload</button></div><div id="projectList" class="list"></div></section></section>
@@ -69,6 +85,7 @@ function displayPage(page){
  document.querySelectorAll(".page").forEach(n=>n.classList.toggle("active",n.id==="page-"+page));
  document.querySelectorAll("[data-page]").forEach(n=>n.classList.toggle("active",n.dataset.page===page));
  window.scrollTo({top:0,behavior:"instant"});
+ if(window.parent!==window)window.parent.postMessage({type:"sm:studio-page",page},location.origin);
  if(page==="projects")loadProjects();
  if(page==="planner")loadPlanner();
  if(page==="sources")loadSources();
@@ -99,7 +116,7 @@ for(const [key,label] of FIELDS){const wrap=mk("div"),lab=mk("label","",label),a
 $("projectTitle").addEventListener("input",calcWords);$("factCheck").addEventListener("input",calcWords);
 async function bootstrap(){
  if(!sb){status("loginStatus","Supabase library unavailable. Please check your network.","error");return}
- const {data:{session}}=await sb.auth.getSession();if(session)await openSession(session);
+ const {data:{session}}=await Promise.race([sb.auth.getSession(),new Promise((_,reject)=>setTimeout(()=>reject(Error("Secure session check timed out")),10000))]);if(session)await openSession(session);
 }
 async function openSession(session){
  try{
@@ -118,7 +135,10 @@ async function openSession(session){
   document.querySelectorAll(".adminOnly").forEach(e=>e.classList.toggle("hidden",!isAdmin));
   $("scheduleAdmin").classList.toggle("hidden",!isAdmin);
   $("generate").disabled=!isCreator();$("rewrite").disabled=!isCreator();$("seo").disabled=!isCreator();$("saveProject").disabled=!isCreator();
-  await Promise.allSettled([loadNews(),loadProjects()]);displayPage(new URLSearchParams(location.search).has("news")?"create":"dashboard");
+  const requested=new URLSearchParams(location.search).get("view");
+  const initial=new URLSearchParams(location.search).has("news")?"create":["dashboard","create","projects","planner","record","access","sources"].includes(requested)?requested:"dashboard";
+  displayPage(initial);
+  void Promise.allSettled([loadNews(),loadProjects()]);
  }catch(e){
   $("workspace").classList.add("hidden");$("authGate").classList.remove("hidden");
   status("loginStatus",e.message||"Could not authorize your account","error");
@@ -373,5 +393,10 @@ $("downloadSrt").addEventListener("click",()=>{
  downloadBlob(new Blob([srt],{type:"text/plain;charset=utf-8"}),"shahid-studio-subtitles.srt");
 });
 $("logoutTop").addEventListener("click",()=> $("logout").click());
-bootstrap();
+window.addEventListener("message",event=>{
+ if(event.origin!==location.origin||!event.data||typeof event.data!=="object")return;
+ if(event.data.type==="sm:theme"&&["light","dark"].includes(event.data.theme))document.documentElement.dataset.theme=event.data.theme;
+ if(event.data.type==="sm:studio-nav"&&state.user&&["dashboard","create","projects","planner","record","access","sources"].includes(event.data.page))displayPage(event.data.page);
+});
+bootstrap().catch(e=>status("loginStatus",e?.message||"Unable to verify Studio access","error"));
 </script></body></html>

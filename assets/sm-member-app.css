@@ -83,3 +83,45 @@ html[data-theme="light"] .app-footer{border-color:#e6d1b1;color:#78654f}
  html[data-theme="dark"] .mobile-dock button,html[data-theme="dark"] .mobile-dock button span{color:#dfc9a8}
  html[data-theme="dark"] .mobile-dock button.active{color:#2c1d0d}
 }
+
+
+/* One shell for Market Intelligence, AI Studio, My Content and Notifications. */
+.workspace-header-label{display:flex;flex-direction:column;gap:3px;margin-left:auto;margin-right:12px;min-width:0}
+.workspace-header-label strong{font-size:13px;letter-spacing:-.2px;color:var(--ink)}
+.workspace-header-label span{font-size:10px;color:var(--muted)}
+.app-view[hidden],.embed-panel[hidden],.restricted-panel[hidden],.studio-frame-slot[hidden],#marketFeedArea[hidden],.embed-status[hidden]{display:none!important}
+.module-tabs{display:flex;gap:8px;overflow-x:auto;padding:3px 0 14px;scrollbar-width:thin;max-width:100%;margin-bottom:12px}
+.module-tabs button{white-space:nowrap;flex:none;border:1px solid var(--line);background:var(--surface2);color:var(--muted);padding:11px 15px;border-radius:12px;font-weight:800;font-size:11px}
+.module-tabs button.active{background:linear-gradient(120deg,#ffdf76,#e69a22);border-color:#c98d2b;color:#291a0d;box-shadow:0 3px 11px #b3822b20}
+.module-tabs button:hover{border-color:var(--gold)}
+.embed-panel,.studio-frame-slot{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 5px 22px var(--shadow);overflow:hidden}
+.studio-frame-slot{min-height:560px}
+.unified-studio-frame{display:block;width:100%;height:max(660px,calc(100dvh - 200px));border:0;background:var(--surface)}
+.embed-panel iframe{display:block;width:100%;height:max(630px,calc(100dvh - 200px));border:0;background:var(--surface)}
+.embed-status{padding:14px 18px;font-size:12px;color:var(--muted)}
+.embed-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0;padding:11px 15px;border:1px solid var(--line);background:var(--surface);border-radius:14px}
+.embed-panel-heading b{font-size:13px}
+.embed-panel-heading button{background:var(--surface2);color:var(--gold);border:1px solid var(--line);padding:9px 13px;border-radius:10px;font-size:11px;font-weight:800}
+.restricted-panel{background:var(--surface);border:1px dashed var(--line);border-radius:16px;padding:26px;max-width:820px;min-height:125px}
+.restricted-panel strong{font-size:17px;display:block;margin-bottom:8px}
+.restricted-panel p{color:var(--muted);line-height:1.7;font-size:12px}
+.market-strip>button{border:0;background:transparent;color:var(--gold);font-size:10px;font-weight:800}
+.hero-shortcuts button{font:inherit;cursor:pointer}
+.tool-card:focus-visible,.module-tabs button:focus-visible,.side-links button:focus-visible,.mobile-dock button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+html[data-theme=light] .workspace-header-label strong{color:#2a1e12}
+html[data-theme=light] .restricted-panel{background:#fffdf8}
+@media(max-width:1130px){.workspace-header-label{margin-left:auto}}
+@media(max-width:720px){
+ .workspace-header-label{display:none}
+ .module-tabs{gap:6px;overflow-x:auto;padding:5px 0 13px}
+ .module-tabs button{padding:10px 12px;border-radius:10px;font-size:10px}
+ .view-heading{padding-top:22px}
+ .studio-frame-slot{min-height:620px}
+ .unified-studio-frame{height:max(670px,calc(100dvh - 270px))}
+ .embed-panel iframe{height:max(700px,calc(100dvh - 260px))}
+ .restricted-panel{padding:19px;min-height:135px}
+ .embed-panel,.studio-frame-slot{border-radius:15px}
+}
+
+.module-tabs[hidden]{display:none!important}
+.module-tabs button:disabled{opacity:.46;cursor:not-allowed}

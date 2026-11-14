@@ -126,12 +126,23 @@
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 @media handheld{html,body{min-width:1440px!important;} .wrap{max-width:1180px!important;}}
 </style>
+<style>
+/* Dedicated member-tool layout: no second page chrome, heavy banners or duplicate promotions. */
+html.sm-embedded .banner-shell,html.sm-embedded .ai-offer-card,html.sm-embedded .how,html.sm-embedded .site-footer,html.sm-embedded .site-legacy-header{display:none!important}
+html.sm-embedded main{padding-top:10px!important}
+html.sm-embedded main>.wrap{width:min(1180px,calc(100% - 24px))!important}
+html.sm-embedded .intro{padding-top:12px!important}
+html.sm-embedded .tabs-wrap{top:0!important;box-shadow:0 3px 14px #2d1f1318}
+html.sm-embedded .ai-gate{z-index:100}
+@media(max-width:700px){html.sm-embedded main>.wrap{width:calc(100% - 16px)!important}html.sm-embedded .intro h1{font-size:25px!important}html.sm-embedded .workspace{gap:10px}}
+@media handheld{html.sm-embedded,html.sm-embedded body{min-width:0!important}}
+</style>
 <link rel="stylesheet" href="/assets/site-master-header.css?v=20261114-3">
 <script src="/assets/site-master-header.js?v=20261114-3" defer></script>
 <style>.tabs-wrap{top:var(--sm-header-height,76px)!important}</style>
-<link rel="stylesheet" href="/assets/sm-member-gate.css?v=20261114-1">
+<link rel="stylesheet" href="/assets/sm-member-gate.css?v=20261114-unified-1">
 <script>document.documentElement.classList.add("sm-member-checking");</script>
-<script defer src="/assets/sm-member-gate.js?v=20261114-1"></script>
+<script defer src="/assets/sm-member-gate.js?v=20261114-unified-1"></script>
 </head>
 <body>
 <header class="site-legacy-header"><div class="wrap nav"><a class="brand" href="/"><img src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><span><b>S M Shahid Shah</b><small>SALE &amp; BUSINESS CONSULTANT</small></span></a><nav class="main-nav" aria-label="Main navigation"><a href="/">Home</a><a href="/market-intelligence/">Market Intelligence</a><a href="/content-studio/">AI Studio</a><a class="active" href="/ai-tools/">AI Scripts</a><a href="/videos/">Videos</a><a href="/about/">About</a></nav><nav class="social-mini" aria-label="Social media"><a id="hubYt" target="_blank">YT</a><a id="hubWa" target="_blank">WA</a><a id="hubFb" target="_blank">FB</a><a id="hubIg" target="_blank">IG</a></nav><button class="theme" id="themeBtn" aria-label="Switch colour theme"><svg id="hubThemeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"></svg></button></div></header>
@@ -195,6 +206,9 @@ function aiIdFromLocation(){
   return AI_ID_BY_ROUTE[path]||location.hash.slice(1)||'video';
 }
 function setAiCleanUrl(id,replace=false){
+  if(new URLSearchParams(location.search).get('embedded')==='1'){
+   history[replace?'replaceState':'pushState']({aiTool:id},'', '/learning-hub.html?embedded=1#'+encodeURIComponent(id));return;
+  }
   const path=AI_ROUTE_BY_ID[id]||'/ai-video-scripts';
   if(replace&&id==='video'&&location.pathname.replace(/\/+$/,'')==='/ai-tools'&&!location.hash)return;
   if(location.pathname.replace(/\/+$/,'')===path && !location.hash)return;
@@ -213,7 +227,7 @@ function generatePrompt(e){e.preventDefault();const data=new FormData(e.currentT
 async function copyGeneratedText(){if(!generated)return false;try{if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(generated);return true}}catch(_){}try{const area=document.createElement('textarea');area.value=generated;area.setAttribute('readonly','');area.style.position='fixed';area.style.opacity='0';document.body.appendChild(area);area.select();const ok=document.execCommand('copy');area.remove();return ok}catch{return false}}
 async function copyPrompt(){if(!generated)return;const copied=await copyGeneratedText();if(copied){gaEvent('copy_prompt',{tool_id:current.id,tool_name:current.label});showToast('Prompt copied successfully')}else showToast('Select and copy the prompt manually')}
 function shareToChatGPT(){if(!generated)return;const chatTab=window.open('https://chatgpt.com/','_blank');if(chatTab){try{chatTab.opener=null}catch(_){}gaEvent('open_chatgpt',{tool_id:current.id,tool_name:current.label});showToast('ChatGPT opened — use the separate Copy Prompt button')}else showToast('Allow pop-ups to open ChatGPT')}
-function hasAiAccess(){try{return localStorage.getItem(AI_ACCESS_KEY)==='1'}catch{return false}}
+function hasAiAccess(){if(new URLSearchParams(location.search).get('embedded')==='1'&&document.documentElement.classList.contains('sm-member-allowed'))return true;try{return localStorage.getItem(AI_ACCESS_KEY)==='1'}catch{return false}}
 function rememberAiAccess(data={}){try{localStorage.setItem(AI_ACCESS_KEY,'1');if(data.email)localStorage.setItem('smshahid_ai_access_email',String(data.email).trim().toLowerCase());if(data.whatsapp)localStorage.setItem('smshahid_ai_access_whatsapp',String(data.whatsapp).trim());if(data.name)localStorage.setItem('smshahid_ai_access_name',String(data.name).trim())}catch(_){}}
 function hideAiAccessGate(){clearTimeout(aiGateTimer);$('aiAccessGate').classList.remove('show');document.body.classList.remove('ai-gate-open')}
 function showAiAccessGate(){if(current.id==='downloads'||hasAiAccess())return;$('aiAccessGate').classList.add('show');document.body.classList.add('ai-gate-open');setTimeout(()=>$('aiAccessName').focus(),180);gaEvent('ai_access_gate_view',{tool_id:current.id})}
@@ -233,6 +247,11 @@ $('banner').addEventListener('error',()=>{
  const u=new URL(failed,location.origin);
  if(u.searchParams.get('reload')==='1')return;
  u.searchParams.set('reload','1');img.src=u.href;
+});
+document.addEventListener("sm:member-verified",()=>{if(new URLSearchParams(location.search).get("embedded")==="1")hideAiAccessGate()});
+window.addEventListener("message",event=>{
+ if(event.origin!==location.origin||event.data?.type!=="sm:theme"||!["light","dark"].includes(event.data.theme))return;
+ setHubTheme(event.data.theme,false);
 });
 $('themeBtn').onclick=()=>setHubTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');addEventListener('storage',e=>{if(['smshahid-site-theme','site-theme'].includes(e.key)&&e.newValue)setHubTheme(e.newValue,false)});if(themeChannel)themeChannel.onmessage=e=>setHubTheme(e.data,false);
 setHubTheme(document.documentElement.dataset.theme,false);current=defaults.find(t=>t.id===aiIdFromLocation())||defaults[0];render();loadCms();loadHeaderLinks();loadDownloads();
