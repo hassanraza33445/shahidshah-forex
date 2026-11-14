@@ -274,6 +274,12 @@ function headlineCard(item,featured=false){
  readButton.type="button";
  readButton.addEventListener("click",()=>window.SMNewsReader?.open(item,{trigger:readButton}));
  article.append(readButton);
+ if(item.id){
+  const script=create("a","news-script-direct","✦ Create AI Script");
+  script.href="/app/?tab=studio&studio=create&news="+encodeURIComponent(String(item.id));
+  script.setAttribute("aria-label","Create AI script from: "+safe(item.title));
+  article.append(script);
+ }
  return article;
 }
 
@@ -382,7 +388,7 @@ function renderNews(){
  const small=$("homeHeadlines");
  small.replaceChildren();
  const score=x=>(x.priority==="HOT"?6:0)+(["Gold","Forex","Economic Data"].includes(x.category)?3:0);
- const homePool=state.homeFilter==="All"?state.news:state.news.filter(x=>x.category===state.homeFilter);
+ const homePool=state.homeFilter==="All"?state.news:state.news.filter(x=>miTopicMatch(x,state.homeFilter));
  const latest=homePool.map((item,index)=>({item,index})).sort((a,b)=>score(b.item)-score(a.item)||a.index-b.index).slice(0,3).map(x=>x.item);
  if(!latest.length)small.append(create("div","loading-line",state.news.length?"No recent stories in this category.":"News temporarily unavailable. Visit Market Intelligence."));
  for(const item of latest)small.append(headlineCard(item,true));
