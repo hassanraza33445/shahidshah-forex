@@ -97,7 +97,16 @@ try{
   assert.equal(await page.locator("#newsList .news-card").count(),2,"two headlines rendered");
   assert.equal(await page.getByText("Gold extends rally after monetary-policy update").count()>0,true);
   assert.equal(await page.locator("#newsList a[href='/app/?tab=studio&studio=create&news=aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa']").count(),1);
-  assert.equal(await page.locator("#newsList a[href='https://example.com/gold']").count(),1);
+  assert.equal(await page.locator("#newsList a[href='https://example.com/gold']").count(),0,"No external publisher/Google links in news cards");
+  const details=page.locator("#newsList .news-card .sm-news-read-button").first();
+  await details.click();
+  await page.locator("#smNewsReader[open]").waitFor({timeout:5000});
+  assert.match(await page.locator("#smNewsReaderTitle").innerText(),/Gold extends rally/);
+  assert.match(await page.locator(".sm-news-reader-excerpt").innerText(),/attributed sample headline/);
+  assert.equal(await page.locator("#smNewsReader a[href^='https://']").count(),0,"Reader remains in-site");
+  assert.equal(new URL(page.url()).pathname,"/market-intelligence/","No redirect to Google News");
+  await page.keyboard.press("Escape");
+  assert.equal(await page.locator("#smNewsReader[open]").count(),0);
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth+2);
   assert.equal(overflow,false,"No horizontal overflow at "+viewport.width+"px");
   assert.deepEqual(errors,[],"No unexpected browser JavaScript errors");

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0a0e1a">
-<meta name="description" content="Global Market Intelligence by S M Shahid Shah: Gold, Forex, Bitcoin, central banks and global economic headlines with links to original publishers.">
+<meta name="description" content="Global Market Intelligence by S M Shahid Shah: Gold, Forex, Bitcoin, central banks and global economic headlines with source-attributed news briefings directly on our website.">
 <title>Global Market Intelligence | S M Shahid Shah</title>
 <link rel="icon" href="/icon-192.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -40,6 +40,8 @@ html.sm-embedded button,html.sm-embedded select,html.sm-embedded input{min-heigh
  html.sm-embedded body{font-size:13px}
 }
 </style>
+<link rel="stylesheet" href="/assets/sm-news-reader.css?v=20261114-native-news-1">
+<script defer src="/assets/sm-news-reader.js?v=20261114-native-news-1"></script>
 <script defer src="/assets/sm-embed-resize.js?v=20261114-premium-1"></script></head>
 <body>
 <header class="top site-legacy-header"><div class="frame topbar">
@@ -48,7 +50,7 @@ html.sm-embedded button,html.sm-embedded select,html.sm-embedded input{min-heigh
 <div class="tools"><button class="action icon" id="theme" type="button" aria-label="Change appearance">◐</button><a class="action gold" href="/app/?tab=studio">Create Content ↗</a></div>
 </div></header>
 <main class="frame">
-<section class="hero"><div><div class="eyebrow">GLOBAL MARKETS · FINANCIAL NEWS</div><h1>Global Market<br><em>Intelligence.</em></h1><p>Gold, Forex, Bitcoin, central banks and the economic developments shaping the conversation. Discover headlines, explore original sources and build informed educational content.</p><a class="action gold" href="/economic-calendar/" style="display:inline-flex;margin-top:18px">Economic Calendar →</a> <a class="action" href="/market-reaction/" style="display:inline-flex;margin-top:18px;margin-left:8px">Market Reaction →</a> <a class="action" href="/notifications/" style="display:inline-flex;margin-top:18px;margin-left:8px">Smart Alerts →</a></div>
+<section class="hero"><div><div class="eyebrow">GLOBAL MARKETS · FINANCIAL NEWS</div><h1>Global Market<br><em>Intelligence.</em></h1><p>Gold, Forex, Bitcoin, central banks and the economic developments shaping the conversation. Read source-attributed market news summaries directly in this workspace and build informed educational content.</p><a class="action gold" href="/economic-calendar/" style="display:inline-flex;margin-top:18px">Economic Calendar →</a> <a class="action" href="/market-reaction/" style="display:inline-flex;margin-top:18px;margin-left:8px">Market Reaction →</a> <a class="action" href="/notifications/" style="display:inline-flex;margin-top:18px;margin-left:8px">Smart Alerts →</a></div>
 <div class="market-status"><span class="state">● NEWS MONITOR</span><strong id="refreshLabel">Checking market headlines…</strong><p id="refreshInfo">Headlines are collected from public news feeds. HOT denotes editorial relevance, not a confirmed price move or trading recommendation.</p></div></section>
 <section class="summary" aria-label="News overview"><article><span>Visible headlines</span><b id="total">—</b></article><article><span>HOT</span><b id="hotTotal">—</b></article><article><span>WARM</span><b id="warmTotal">—</b></article><article><span>Last refreshed</span><b id="updated" style="font-size:16px;line-height:2">—</b></article></section>
 <section aria-labelledby="featuredTitle"><div class="section-head"><h2 id="featuredTitle">Featured developments</h2><small>Editorially prioritized</small></div><div id="featured" class="highlight"></div></section>
@@ -56,7 +58,7 @@ html.sm-embedded button,html.sm-embedded select,html.sm-embedded input{min-heigh
 <form class="filters" id="filterForm" role="search"><label class="sr" for="query">Search headlines</label><input id="query" placeholder="Search Gold, Fed, Bitcoin, CPI…" maxlength="80"><label class="sr" for="category">Category</label><select id="category"><option value="All">All categories</option><option>Gold</option><option>Forex</option><option>Crypto</option><option>Central Banks</option><option>Economic Data</option><option>Energy</option><option>Geopolitics</option></select><label class="sr" for="priority">Priority</label><select id="priority"><option value="">All priorities</option><option>HOT</option><option>WARM</option><option>COLD</option></select><button class="action gold" type="submit">Search</button><button type="button" class="action" id="reload">↻ Refresh</button></form>
 <div id="status" aria-live="polite"></div><div id="newsList" class="feed"></div><div class="more"><button class="action" id="previous" type="button">← Previous</button><span id="pageIndicator" class="meta" style="align-self:center"></span><button class="action" id="next" type="button">Next →</button></div>
 </section>
-<footer class="foot"><span>© <span id="year"></span> S M Shahid Shah · Financial education only</span><span>Headlines credited to their publishers. Verify originals before publishing or trading.</span></footer>
+<footer class="foot"><span>© <span id="year"></span> S M Shahid Shah · Financial education only</span><span>News summaries credited to publishers. Verify claims before publishing or trading.</span></footer>
 </main>
 <nav class="mobile-dock" aria-label="Mobile"><a href="/">Home</a><a class="active" href="/market-intelligence/">Markets</a><a href="/app/?tab=studio">AI Studio</a></nav>
 <script>
@@ -74,11 +76,15 @@ function card(item,featured=false){
  const box=make("article",featured?"lead-card":"news-card");
  const top=make("div","row"); const badge=make("span","tag "+String(item.priority||"COLD").toLowerCase(),item.priority||"COLD");
  const cat=make("span","meta",item.category||"Markets");badge.title=item.priority_reason||"Editorial relevance; not a price prediction";top.append(badge,cat);box.append(top);
- const h=make("h3","",item.title||"Untitled article");box.append(h);
+ const h=make("h3");const headline=make("button","sm-news-title-button",item.title||"Untitled article");
+ headline.type="button";headline.addEventListener("click",()=>window.SMNewsReader?.open(item,{trigger:headline}));
+ h.append(headline);box.append(h);
  if(item.summary)box.append(make("p","",item.summary.length>240?item.summary.slice(0,237)+"…":item.summary));
  const info=make("div","meta");info.append(make("span","",item.publisher||"Publisher"),make("span","",niceDate(item.published_at)));if(Number(item.source_count)>1)info.append(make("span","","Grouped reports: "+Number(item.source_count)));box.append(info);
- const actions=make("div","push");const original=safeURL(item.original_url);
- if(original)actions.append(link("Read original ↗",original));
+ const actions=make("div","push");
+ const read=make("button","sm-news-read-button","Read News Details →");read.type="button";
+ read.addEventListener("click",()=>window.SMNewsReader?.open(item,{trigger:read}));
+ actions.append(read);
  const create=make("a","textlink","Create AI script →");create.href="/app/?tab=studio&studio=create&news="+encodeURIComponent(item.id);actions.append(create);box.append(actions);return box;
 }
 function display(items){
