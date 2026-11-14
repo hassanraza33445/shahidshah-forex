@@ -12,10 +12,54 @@
 <link rel="stylesheet" href="/assets/sm-studio-premium.css?v=20261114-studio-1">
 <link rel="stylesheet" href="/assets/sm-premium-unified-2026.css?v=20261114-1">
 <link rel="stylesheet" href="/assets/sm-member-vip-suite.css?v=20261114-vip-1">
-<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// Load authentication independently: one slow CDN must never block the entire app.
+(()=>{
+ const sources=[
+  "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
+  "https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"
+ ];
+ let next=0,ready=false;
+ const resolved=()=>{
+  if(ready)return;ready=true;
+  window.dispatchEvent(new Event("sm:supabase-ready"));
+ };
+ function attempt(){
+  if(ready)return;
+  if(next>=sources.length){
+   window.dispatchEvent(new Event("sm:supabase-failed"));return;
+  }
+  const script=document.createElement("script");
+  script.src=sources[next++];script.async=true;
+  let completed=false;
+  const finish=()=>{
+   if(completed)return;completed=true;clearTimeout(timeout);
+   if(window.supabase?.createClient)resolved();else attempt();
+  };
+  const timeout=setTimeout(finish,4400);
+  script.onload=finish;script.onerror=finish;
+  document.head.appendChild(script);
+ }
+ attempt();
+ // Independent recovery if another deferred asset fails before dashboard JS runs.
+ setTimeout(()=>{
+  const boot=document.getElementById("bootScreen");
+  if(!boot||boot.hidden||document.querySelector("#bootScreen .boot-retry"))return;
+  const title=boot.querySelector("strong"),description=boot.querySelector("small");
+  if(title)title.textContent="Your workspace is taking longer to open";
+  if(description)description.textContent="Please check your connection and retry.";
+  const retry=document.createElement("a");
+  retry.className="boot-retry";
+  retry.href=location.pathname+location.search;
+  retry.textContent="Retry Workspace";
+  retry.style.cssText="display:inline-flex;margin-top:14px;padding:11px 18px;border-radius:10px;background:linear-gradient(110deg,#ffda89,#d69a38);color:#3b2710;font-weight:800;text-decoration:none";
+  boot.append(retry);
+ },14500);
+})();
+</script>
 <script defer src="/assets/sm-dashboard-premium.js?v=20261114-four-products-1"></script>
 <script defer src="/assets/sm-news-reader.js?v=20261114-native-news-1"></script>
-<script defer src="/assets/sm-member-app.js?v=20261114-prompt-layout-2"></script>
+<script defer src="/assets/sm-member-app.js?v=20261114-session-loader-fix-1"></script>
 <script defer src="/assets/sm-member-icons.js?v=20261114-four-products-1"></script><link rel="stylesheet" href="/assets/sm-dashboard-finishing-2026.css?v=20261114-3">
 <link rel="stylesheet" href="/assets/sm-four-products-2026.css?v=20261114-products-1">
 <link rel="stylesheet" href="/assets/sm-market-uniform-cards.css?v=20261114-1">
