@@ -271,47 +271,39 @@ async function start(){
  }
 }
 function goToLogin(){location.replace("/auth/?next="+encodeURIComponent("/app/"+location.search))}
-function headlineCard(item,featured=false){
- const article=create("article","news-card"+(featured?" news-card-featured":""));
- if(featured){
-  const category=String(item.category||"").toLowerCase();
-  const text=String(item.title||"")+" "+String(item.summary||"");
-  const graphic=/\b(gold|xau|bullion)\b/i.test(text)?"gold":
-   /\b(btc|bitcoin|crypto|ethereum)\b/i.test(text)?"crypto":
-   /\b(usd\/?jpy|jpy|yen|bank of japan|boj)\b/i.test(text)?"forex-yen":
-   /\b(eur\/?usd|euro|ecb|gbp\/?usd|sterling|dxy)\b/i.test(text)?"forex-euro":
-   category.includes("forex")?"forex":category.includes("economic")?"economy":"markets";
-  const visual=create("div","news-visual news-visual-"+graphic);
-  visual.setAttribute("aria-hidden","true");
-  visual.append(create("span","news-visual-emblem",graphic==="gold"?"Au":graphic==="crypto"?"₿":graphic==="forex-yen"?"¥":graphic==="forex-euro"?"€":graphic==="forex"?"FX":graphic==="economy"?"%":"↗"));
-  article.append(visual);
- }
- const story=String(item.title||"")+" "+String(item.summary||"");
- const tags=(["economic data","central banks","economy"].includes(String(item.category||"").toLowerCase())&&/\b(gold|xau|bullion)\b/i.test(story))?"Gold · Economy":item.category||"Markets";
- const chip=create("span","chip",item.priority==="HOT"?"HOT · VERIFY SOURCE":tags);article.append(chip);
- const title=create("h3");
- const headlineButton=create("button","sm-news-title-button",safe(item.title));
- headlineButton.type="button";headlineButton.setAttribute("aria-label","Read news details: "+safe(item.title));
- headlineButton.addEventListener("click",()=>window.SMNewsReader?.open(item,{trigger:headlineButton}));
- title.append(headlineButton);article.append(title);
- const description=(item.summary||"").replace(/<[^>]*>/g," ").trim();
- const norm=t=>String(t||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
- const name=norm(item.title),details=norm(description);
- if(description&&details!==name&&!(name.length>24&&details.startsWith(name.slice(0,Math.min(60,name.length))))&&!name.startsWith(details))article.append(create("p","",description.slice(0,220)));
- else if(featured)article.append(create("p","news-card-summary-unavailable","Headline-only feed · No additional summary supplied."));
- const foot=create("div","news-foot");
- foot.textContent=(item.publisher&&String(item.publisher).trim()?"Publisher: "+safe(item.publisher):"Source-linked headline")+" · "+formatTime(item.published_at||item.first_seen_at);
- article.append(foot);
- const readButton=create("button","sm-news-read-button","Read News Details →");
- readButton.type="button";
- readButton.addEventListener("click",()=>window.SMNewsReader?.open(item,{trigger:readButton}));
- article.append(readButton);
- if(item.id){
-  const script=create("a","news-script-direct","✦ Create AI Script");
-  script.href="/app/?tab=studio&studio=create&news="+encodeURIComponent(String(item.id));
-  script.setAttribute("aria-label","Create AI script from: "+safe(item.title));
-  article.append(script);
- }
+/* Dashboard stories are purpose-built editorial cards, not price/trend charts.
+   Metadata and headlines come only from the live source-linked feed. */
+function dashboardStoryCard(item){
+ const article=create("article","dashboard-story-card");
+ const source=String(item.category||"Markets");
+ const headline=String(item.title||"Market update");
+ const text=headline+" "+String(item.summary||"");
+ const label=/\b(gold|bullion|xau)\b/i.test(text)?"Gold":
+  /\b(bitcoin|btc|crypto|ethereum|eth)\b/i.test(text)?"Crypto":
+  /^(forex)$/i.test(source)||/\b(usd\/jpy|eur\/usd|gbp\/usd|currency|forex|yen|dollar)\b/i.test(text)?"Forex":
+  /^(economic data|economy|central banks)$/i.test(source)?"Economy":source;
+ const icons={Gold:"▥",Crypto:"₿",Forex:"⇄",Economy:"▤"};
+ const top=create("div","dashboard-story-top");
+ top.append(create("span","dashboard-story-icon",icons[label]||"▦"));
+ top.append(create("span","dashboard-story-chip",item.priority==="HOT"?"HOT · "+label:label));
+ article.append(top);
+ const h=create("h3","dashboard-story-title");
+ const title=create("button","dashboard-story-read",safe(headline));
+ title.type="button";
+ title.setAttribute("aria-label","Read news details: "+headline);
+ title.addEventListener("click",()=>window.SMNewsReader?.open(item,{trigger:title}));
+ h.append(title);article.append(h);
+ const footer=create("div","dashboard-story-footer");
+ footer.append(create("span","dashboard-story-calendar","▦"));
+ footer.append(create("time","dashboard-story-time",formatTime(item.published_at||item.first_seen_at)));
+ footer.append(create("span","dashboard-story-separator","·"));
+ footer.append(create("span","dashboard-story-publisher",String(item.publisher||"Source-linked news").slice(0,70)));
+ const read=create("button","dashboard-story-arrow","↗");
+ read.type="button";
+ read.setAttribute("aria-label","Read full story: "+headline);
+ read.addEventListener("click",()=>window.SMNewsReader?.open(item,{trigger:read}));
+ footer.append(read);
+ article.append(footer);
  return article;
 }
 
@@ -440,7 +432,7 @@ function renderNews(){
  const homePool=state.homeFilter==="All"?state.news:state.news.filter(x=>miTopicMatch(x,state.homeFilter));
  const latest=homePool.map((item,index)=>({item,index})).sort((a,b)=>score(b.item)-score(a.item)||a.index-b.index).slice(0,3).map(x=>x.item);
  if(!latest.length)small.append(create("div","loading-line",state.news.length?"No recent stories in this category.":"News temporarily unavailable. Visit Market Intelligence."));
- for(const item of latest)small.append(headlineCard(item,true));
+ for(const item of latest)small.append(dashboardStoryCard(item));
  renderMarketEditorial();
 }
 async function loadNews(){
