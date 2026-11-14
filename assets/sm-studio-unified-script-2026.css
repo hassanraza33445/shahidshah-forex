@@ -1,3 +1,11 @@
+/* Hide the transient progress/status row after successful generation, while
+   keeping error and in-progress messages visible. */
+.studio-workspace-page .studio-creation-status:empty {
+ display:none!important;
+ min-height:0!important;
+ margin:0!important;
+ padding:0!important;
+}
 /* S M Shahid Shah · AI Studio: unified generated-script reading sheet.
    Hook, Main Script, Closing & CTA remain separately labeled but share ONE
    contiguous surface; no separate stacked cards, no truncated copy. */
