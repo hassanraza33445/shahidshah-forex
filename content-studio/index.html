@@ -164,7 +164,7 @@ async function openSession(session){
   ]);
   ok(pro);ok(access);
   const isAdmin=pro.data&&pro.data.is_admin===true,role=isAdmin?"admin":access.data&&access.data.enabled?access.data.role:"";
-  if(!role)throw Error("Your account does not have Studio access. Ask the administrator to grant access.");
+  if(!role)throw Error("Free Studio access is automatic for registered users. Sign out and back in, or contact support if it is still unavailable.");
   state.user=user;state.session=session;state.admin=isAdmin;state.role=role;state.ownerId=user.id;
   $("authGate").classList.add("hidden");$("workspace").classList.remove("hidden");
   $("sideName").textContent=pro.data?.full_name||user.email||"Creator";$("sideRole").textContent="Role: "+role;
