@@ -62,9 +62,14 @@ $("authForm").addEventListener("submit",async e=>{e.preventDefault();if(busy||!c
  if(mode==="recovery"){const {error}=await client.auth.updateUser({password});if(error)throw error;message("Password updated. Opening dashboard…");await verifiedRedirect();return}
  if(mode==="signup"){
   const fullname=$("fullname").value.trim();
-  const phone=$("phone").value.trim().replace(/[\s().-]/g,"");
+  // The signup input has a fixed Pakistan +92 prefix; accept pasted 03..., +92..., 0092... as well.
+  let phoneDigits=$("phone").value.trim().replace(/\D/g,"");
+  if(phoneDigits.startsWith("0092"))phoneDigits=phoneDigits.slice(4);
+  else if(phoneDigits.startsWith("92"))phoneDigits=phoneDigits.slice(2);
+  else if(phoneDigits.startsWith("0"))phoneDigits=phoneDigits.slice(1);
   if(fullname.length<2)throw Error("Please enter your full name.");
-  if(!/^\+?[0-9]{8,16}$/.test(phone))throw Error("Enter a valid phone number with country code, e.g. +60 12 345 6789.");
+  if(!/^3\d{9}$/.test(phoneDigits))throw Error("Enter a valid Pakistani mobile number, e.g. 300 1234567.");
+  const phone="+92"+phoneDigits;
   const {data,error}=await client.auth.signUp({
    email,password,
    options:{data:{full_name:fullname,phone},emailRedirectTo:location.origin+"/auth/"}
