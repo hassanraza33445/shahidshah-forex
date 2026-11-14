@@ -29,7 +29,7 @@ window.supabase={createClient:()=>({
  from(table){let query={};
  const builder={
   select(){return this},eq(){return this},order(){return this},limit(){return Promise.resolve({data:table==="member_mentorship_applications"?JSON.parse(localStorage.getItem("SM_QA_APPLICATIONS")||"[]"):[],error:null})},
-  in(){return this},maybeSingle(){return Promise.resolve({data:table==="profiles"?{full_name:"Demo QA User",email:"demo@example.test",is_admin:false,avatar_url:null}:null,error:null})},
+  in(){return this},maybeSingle(){return Promise.resolve({data:table==="profiles"?{full_name:"Demo QA User",email:"demo@example.test",is_admin:false,avatar_url:null}:table==="content_access"&&localStorage.getItem("SM_QA_STUDIO_ACCESS")==="true"?{enabled:true,role:"creator"}:null,error:null})},
   insert(payload){if(table==="member_mentorship_applications"){window.__submittedMentorship=payload;localStorage.setItem("SM_QA_APPLICATIONS",JSON.stringify([{id:"22222222-2222-4222-8222-222222222222",status:"pending",created_at:new Date().toISOString(),interest:payload.interest}]))}return Promise.resolve({data:null,error:null})}
  };return builder}
 })};
@@ -40,7 +40,7 @@ const alerts={success:true,items:[{id:"33333333-aaaa-4aaa-8aaa-333333333333",kin
 const browser=await chromium.launch({headless:true});
 async function newPage(width=390,authenticated=false){
  const p=await browser.newPage({viewport:{width,height:860},serviceWorkers:"block"});
- if(authenticated)await p.addInitScript(()=>localStorage.setItem("SM_QA_SIGNED_IN","true"));
+ if(authenticated)await p.addInitScript(()=>{localStorage.setItem("SM_QA_SIGNED_IN","true");localStorage.setItem("SM_QA_STUDIO_ACCESS","true")});
  await p.route("**/cdn.jsdelivr.net/npm/@supabase/supabase-js@2**",r=>r.fulfill({status:200,contentType:"application/javascript",body:sbFake}));
  await p.route("**/functions/v1/market-intelligence-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(news)}));
  await p.route("**/functions/v1/economic-calendar-api?**",r=>r.fulfill({status:200,contentType:"application/json",body:JSON.stringify(calendar)}));
@@ -77,15 +77,12 @@ try{
   await p.locator("#view-studio.active").waitFor({timeout:9000});
   assert.equal(await p.locator("#view-home.active").count(),0);
   assert.equal(await p.locator(".mobile-dock button").count(),5);
-  await p.locator('[data-source="topic"]').click();
-  await p.locator("#customTopic").fill("Gold Inflation Explained");
-  await p.locator('input[name="duration"][value="45"]').check();
-  await p.locator("#scriptBuilderForm button[type=submit]").click();
-  assert.match(await p.locator("#briefText").innerText(),/45 seconds/);
-  assert.match(await p.locator("#briefText").innerText(),/This is a brief, not an AI-generated video script/);
+  await p.waitForFunction(()=>document.querySelector("#studioAccessState")?.textContent.includes("restricted"),{},{timeout:9000});
+  assert.equal(await p.locator("#unifiedStudioFrame").count(),0,"Unassigned users cannot load the creator frame");
+  assert.equal(await p.locator("#studioAccessState").isVisible(),true,"Access rules are explained in the original dashboard");
   const noOverflow=await p.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+2);
   assert.equal(noOverflow,true,"Mobile app has no horizontal overflow");
-  console.log("PASS sign-in, redirect, mobile app navigation, 45s script brief and no overflow");
+  console.log("PASS sign-in, redirect, role-based Studio lock and no mobile overflow");
   await p.close();
  }
  {
@@ -102,7 +99,8 @@ try{
   await p.locator("#memberThemeToggle").click();
   assert.equal(await p.locator("html").getAttribute("data-theme"),"light","Theme switch returns to light");
   assert.equal(await p.locator(".app-sidebar").count(),1);
-  assert.equal(await p.locator(".desktop-header-links").count(),1);
+  assert.equal(await p.locator(".desktop-header-links").count(),0,"No second desktop navigation");
+  assert.equal(await p.locator(".workspace-header-label").count(),1,"Unified workspace header");
   assert.match(await p.locator("#greeting").innerText(),/Demo/);
   await p.locator('button[data-section="mentorship"]').first().click();
   await p.locator("#mentorPhone").fill("+60123456789");
@@ -112,6 +110,47 @@ try{
   assert.equal(await p.evaluate(()=>window.__submittedMentorship.interest),"Forex Trading");
   assert.equal(errors.length,0,"No desktop JavaScript errors");
   console.log("PASS desktop premium sidebar, real data loading and mentorship submission");
+  await p.close();
+ }
+ {
+  const p=await newPage(390,true);
+  const errors=[];p.on("pageerror",e=>errors.push(e.message));
+  await p.goto(HOST+"/app/",{waitUntil:"domcontentloaded"});
+  await p.locator("#view-home.active").waitFor({timeout:11000});
+  await p.locator('.mobile-dock button[data-section="studio"]').click();
+  await p.waitForFunction(()=>document.querySelector("#studioAccessState")?.hidden===true,{},{timeout:11000});
+  const editor=p.frameLocator("#unifiedStudioFrame");
+  await editor.locator("#page-create.active").waitFor({timeout:14000});
+  assert.equal(await editor.locator('#duration option').allTextContents().then(v=>v.includes("45 seconds")),true,"Real AI creator supports 45 sec");
+  assert.equal(await editor.locator(".side").isVisible(),false,"No duplicate Studio sidebar in embedded mode");
+  assert.equal(await editor.locator(".mobile-bottom").isVisible(),false,"No duplicate Studio mobile dock");
+  assert.equal(await editor.locator(".sm-private-dock").count(),0,"Embedded route does not inject a second dock");
+  assert.equal(await editor.locator("html.sm-embedded").count(),1,"Studio is in embedded mode");
+  await p.locator('#studioSubnav [data-studio-page="record"]').click();
+  await editor.locator("#page-record.active").waitFor({timeout:9000});
+  assert.equal(await editor.locator("#startRecording").count(),1,"Creator voice recording is available");
+  await p.locator('#appSidebar button[data-section="library"]').click({force:true});
+  assert.equal(await p.locator("#unifiedStudioFrame").count(),1,"One Studio iframe is reused for private library");
+  await editor.locator("#page-projects.active").waitFor({timeout:9000});
+  assert.match(await p.locator("#studioTitle").innerText(),/My Content/);
+  await p.locator('.mobile-dock button[data-section="home"]').click();
+  await p.locator('#view-home button[data-section="studio"][data-studio-page="record"]').click();
+  await editor.locator("#page-record.active").waitFor({timeout:9000});
+  await p.locator('#appSidebar button[data-section="markets"]').click({force:true});
+  await p.locator('#view-markets button[data-market-page="calendar"]').click();
+  await p.waitForFunction(()=>document.querySelector("#marketModuleFrame")?.getAttribute("src")?.includes("economic-calendar"),{},{timeout:9000});
+  assert.equal(await p.locator("#marketModuleFrame").count(),1);
+  await p.locator('#appSidebar button[data-section="tools"]').click({force:true});
+  await p.locator('#view-tools button[data-tool="article"]').click();
+  assert.match(await p.locator("#toolModuleFrame").getAttribute("src"),/learning-hub.*embedded=1#article/);
+  await p.locator("#closeToolModule").click();
+  assert.equal(await p.locator("#toolModuleArea").isVisible(),false);
+  await p.locator('#appSidebar button[data-section="notifications"]').click({force:true});
+  await p.waitForFunction(()=>document.querySelector("#noticeFrame")?.getAttribute("src")?.includes("notifications"),{},{timeout:9000});
+  assert.equal(await p.locator(".mobile-dock").count(),1);
+  assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+2),true,"No mobile horizontal overflow with modules");
+  assert.equal(errors.length,0,"No member or nested module JavaScript exceptions: "+JSON.stringify(errors));
+  console.log("PASS unified mobile tabs, authorized real AI studio, 45 seconds, voice, library, calendar, prompt tool and notifications");
   await p.close();
  }
  for(const route of ["/economic-calendar/","/market-reaction/","/notifications/","/learning-hub.html","/content-studio/"]){
