@@ -15,3 +15,9 @@ iframe[src*="youtube.com/live"],.video-thumb[href*="youtube"],
 [data-brand="youtube"],[data-brand="whatsapp"],[data-brand="facebook"],
 [data-brand="instagram"],[data-brand="tiktok"],[data-brand="linkedin"],
 [data-brand="telegram"]){display:none!important}
+
+/* Temporary hide: Complete IB Development Course — $3,000 promo banner. */
+html body section#course-promo,
+html body .course-promo[aria-label*="IB Development Course"] {
+  display:none!important;
+}
