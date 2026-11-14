@@ -523,6 +523,18 @@ function setupNavigation(){
  window.addEventListener("popstate",()=>openTab(tabFromLocation(),false));
  window.addEventListener("message",event=>{
   if(event.origin!==location.origin||!event.data||typeof event.data!=="object")return;
+  // The main dashboard has already verified the login with auth.getUser().
+  // Same-origin embedded modules request only a yes/no UI acknowledgement;
+  // never transmit credentials, tokens or privileged user information.
+  if(event.data.type==="sm:embed-auth-request"){
+   const knownFrames=["toolModuleFrame","unifiedStudioFrame","marketModuleFrame","noticeFrame"]
+    .map(id=>$(id)).filter(Boolean);
+   const known=knownFrames.some(frame=>frame.contentWindow===event.source);
+   if(known){
+    event.source.postMessage({type:"sm:embed-auth-response",allowed:!!state.user},location.origin);
+   }
+   return;
+  }
   if(event.data.type==="sm:embed-height"){
    const frames=["unifiedStudioFrame","marketModuleFrame","toolModuleFrame","noticeFrame"];
    const target=frames.map(id=>$(id)).find(frame=>frame&&frame.contentWindow===event.source);
