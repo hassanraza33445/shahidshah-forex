@@ -358,16 +358,35 @@ $("studioPdfExport").addEventListener("click",()=>{
  status("aiStatus","Print preview opened. Choose Save as PDF.","ok");
 });
 async function loadNews(){
- const {data,error}=await sb.from("news_articles").select("id,title,publisher,published_at,category,original_url").eq("is_visible",true).order("published_at",{ascending:false}).limit(40);if(error){say("News suggestions unavailable: "+error.message,"error");return}
- $("newsChoice").replaceChildren(new Option("Custom topic (no news source)",""));
- $("dashboardNews").replaceChildren();
- for(const item of data||[]){const opt=new Option(item.title.slice(0,90),item.id);$("newsChoice").add(opt)}
- for(const item of (data||[]).slice(0,5)){
-  const box=mk("div","item"),h=mk("strong","",item.title),m=mk("p","",item.publisher||"Publisher");
-  const btn=mk("button","btn small","Create Script ↗");btn.addEventListener("click",()=>{$("newsChoice").value=item.id;displayPage("create")});box.append(h,m,btn);$("dashboardNews").append(box)
+ const {data,error}=await sb.from("news_articles").select("id,title,publisher,published_at,category,original_url")
+  .eq("is_visible",true).order("published_at",{ascending:false}).limit(60);
+ if(error){
+  $("dashboardNews").replaceChildren(mk("div","empty","News feed is temporarily unavailable."));
+  $("studioNewsResultCount").textContent="Could not load market news";
+  studioMode("custom");say("News suggestions unavailable: "+error.message,"error");return;
  }
- if(!data?.length)$("dashboardNews").replaceChildren(mk("div","empty","News ingesting — check Market Intelligence later."));
- const id=new URLSearchParams(location.search).get("news");if(id&&Array.from($("newsChoice").options).some(x=>x.value===id))$("newsChoice").value=id;
+ state.studioNewsItems=Array.isArray(data)?data:[];
+ const deepId=new URLSearchParams(location.search).get("news");
+ if(deepId&&!state.studioNewsItems.some(x=>String(x.id)===deepId)){
+  // An older market card can link to a visible story outside the latest 60.
+  const {data:older}=await sb.from("news_articles").select("id,title,publisher,published_at,category,original_url")
+    .eq("is_visible",true).eq("id",deepId).maybeSingle();
+  if(older)state.studioNewsItems.unshift(older);
+ }
+ $("newsChoice").replaceChildren(new Option("Custom topic (no news source)",""));
+ for(const item of state.studioNewsItems)$("newsChoice").add(new Option(String(item.title||"Market headline").slice(0,100),String(item.id)));
+ $("dashboardNews").replaceChildren();
+ for(const item of state.studioNewsItems.slice(0,5)){
+  const box=mk("div","item"),h=mk("strong","",item.title),m=mk("p","",item.publisher||"Publisher");
+  const btn=mk("button","btn small","Create AI Script");btn.type="button";
+  btn.addEventListener("click",()=>{studioSelectNews(item.id);displayPage("create")});
+  box.append(h,m,btn);$("dashboardNews").append(box);
+ }
+ if(!state.studioNewsItems.length)$("dashboardNews").append(mk("div","empty","Market news not available yet. Try a custom topic."));
+ const chosen=(deepId&&state.studioNewsItems.find(x=>String(x.id)===deepId))||state.studioNewsItems[0];
+ if(chosen){
+  state.studioLastNewsId=String(chosen.id);$("newsChoice").value=state.studioLastNewsId;studioMode("news");
+ }else studioMode("custom");
 }
 function paintProject(item){
  const box=mk("div","item"),title=mk("strong","",item.title||"Untitled"),summary=mk("p","",String(item.status).toUpperCase()+" · "+new Date(item.updated_at).toLocaleString());
@@ -427,6 +446,7 @@ function editProject(row){
  fillFields(row.script||{});$("projectTitle").value=row.title||row.script?.title||"";
  $("language").value=row.language||"Roman Urdu + English";$("platform").value=row.platform||"YouTube Shorts";
  $("newsChoice").value=row.news_article_id||"";
+ if(row.news_article_id&&state.studioNewsItems.some(item=>String(item.id)===String(row.news_article_id)))studioMode("news");else studioMode("custom");
  $("projectState").textContent=row.status.toUpperCase();
  $("approve").classList.toggle("hidden",!(row.status==="review"&&isApprover()));
  $("saveProject").disabled=!isCreator()||row.status==="approved"||row.status==="published"||row.owner_id!==state.user.id;
@@ -435,7 +455,7 @@ function editProject(row){
 }
 function resetProject(){
  state.projectId=null;state.projectStatus="draft";state.ownerId=state.user.id;state.versions=[];$("versionChoice").replaceChildren(new Option("No saved versions",""));
- fillFields({});$("topic").value="";$("newsChoice").value="";$("projectState").textContent="UNSAVED";$("saveProject").disabled=!isCreator();
+ fillFields({});$("topic").value="";$("newsChoice").value="";studioMode(state.studioNewsItems.length?"news":"custom");$("projectState").textContent="UNSAVED";$("saveProject").disabled=!isCreator();
  $("submitReview").disabled=!isCreator();$("approve").classList.add("hidden");status("editorStatus","");
 }
 $("newProject").addEventListener("click",resetProject);
@@ -471,7 +491,7 @@ async function save(){
  const v=await sb.from("content_project_versions").insert({project_id:saved.id,edited_by:state.user.id,script});if(v.error)console.warn("Script version save failed",v.error.message);
  await loadProjects();await loadVersions();return saved;
 }
-$("saveProject").addEventListener("click",async()=>{status("editorStatus","Saving securely…");try{await save();status("editorStatus","Saved to your private projects.","ok")}catch(e){status("editorStatus",e.message,"error")}});
+$("saveProject").addEventListener("click",async()=>{status("editorStatus","Saving securely…");try{await save();status("editorStatus","Saved to your private projects.","ok");status("aiStatus","Script saved to My Scripts.","ok")}catch(e){status("editorStatus",e.message,"error");status("aiStatus",e.message,"error")}});
 $("submitReview").addEventListener("click",async()=>{
  try{
   if(!state.projectId)await save();
