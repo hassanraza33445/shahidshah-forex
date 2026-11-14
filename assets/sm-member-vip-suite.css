@@ -404,3 +404,14 @@ html[data-theme="dark"] #view-profile .theme-choice button.active{color:#382511;
   background:linear-gradient(110deg,#614321,#49301b);color:#f7ca7e
  }
 }
+
+
+/* The sidebar mentorship call-to-action is now a real navigation link with SPA handling. */
+.app-sidebar .mentor-promo .vip-promo-nav{
+ display:flex;align-items:center;justify-content:center;width:100%;min-height:43px;
+ padding:11px 15px;border:0;border-radius:11px;text-decoration:none;
+ color:#291b0b;background:linear-gradient(110deg,#ffe181,#efa92c,#d4880c);
+ font-size:11px;font-weight:850;text-align:center;box-shadow:0 7px 17px #0002
+}
+.app-sidebar .mentor-promo .vip-promo-nav:hover{filter:brightness(1.05)}
+.app-sidebar .mentor-promo .vip-promo-nav:focus-visible{outline:2px solid #ffe1a2;outline-offset:3px}
