@@ -6,7 +6,7 @@ const $=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className
 const clean=v=>String(v??"").replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim().slice(0,1400);
 function formatDate(value){
  const d=new Date(value);
- return Number.isFinite(d.getTime())?new Intl.DateTimeFormat("en-MY",{weekday:"short",day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",timeZone:"Asia/Kuala_Lumpur"}).format(d)+" MYT":"Published date unavailable";
+ return Number.isFinite(d.getTime())?new Intl.DateTimeFormat("en-MY",{weekday:"short",day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",timeZone:"Asia/Karachi"}).format(d)+" PKT":"Published date unavailable";
 }
 function init(){
  if(dialog)return dialog;
