@@ -2,3 +2,17 @@ html.sm-member-checking body{visibility:hidden!important}html.sm-member-checking
 .sm-private-dock{display:none}.sm-back-to-app{position:fixed;bottom:14px;right:14px;z-index:69;padding:10px 14px;border-radius:24px;background:linear-gradient(115deg,#f7c34e,#e58b0d);color:#291707!important;box-shadow:0 7px 22px #331e0a42;font:800 11px "Plus Jakarta Sans",system-ui,sans-serif;text-decoration:none;border:1px solid #ffe18c}
 @media(max-width:780px){body{padding-bottom:calc(78px + env(safe-area-inset-bottom))!important}.sm-private-dock{display:grid;position:fixed;z-index:2147483000;left:0;right:0;bottom:0;grid-template-columns:repeat(5,minmax(0,1fr));padding:9px 5px calc(8px + env(safe-area-inset-bottom));border-top:1px solid #e8c58e;background:linear-gradient(#fffaf2,#ffefdc);box-shadow:0 -8px 22px #42280f1c;color:#33271c}.sm-private-dock a{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;font:800 9px "Plus Jakarta Sans",system-ui,sans-serif;color:#392b1c!important;text-decoration:none;border-radius:11px;min-width:0;padding:5px 1px}.sm-private-dock a span{font-size:22px;line-height:1}.sm-private-dock a.active{background:linear-gradient(#ffe284,#f3aa1b);box-shadow:0 2px 10px #cb801d30}.sm-back-to-app{display:none}}
 @media(min-width:781px){.sm-back-to-app{display:block}}
+
+
+/* Nested modules share the only member shell: no second header or navigation. */
+html.sm-embedded #sm-site-header,html.sm-embedded .site-legacy-header,html.sm-embedded .sm-private-dock,html.sm-embedded .sm-back-to-app,html.sm-embedded .mobile-bottom,html.sm-embedded .site-footer{display:none!important}
+html.sm-embedded body{padding-bottom:0!important}
+html.sm-embedded .tabs-wrap{top:0!important}
+html.sm-member-failed body{visibility:visible!important}
+html.sm-member-failed body>:not(#smMemberFailure){display:none!important}
+#smMemberFailure{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:13px;padding:24px;text-align:center;background:#15100b;color:#f6e8d4;font:12px "Plus Jakarta Sans",system-ui,sans-serif}
+#smMemberFailure img{width:65px;height:65px;border:2px solid #e0a03b;border-radius:17px;object-fit:cover}
+#smMemberFailure strong{font-size:17px}
+#smMemberFailure p{max-width:350px;line-height:1.6;color:#d1bca0}
+#smMemberFailure a{display:inline-block;padding:10px 18px;border:1px solid #ba862e;border-radius:11px;color:#f4c469;text-decoration:none;font-weight:800}
+#smMemberFailure a:first-of-type{background:linear-gradient(100deg,#ffd675,#d68e19);color:#251a0d}
