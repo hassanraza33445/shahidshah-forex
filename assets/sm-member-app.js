@@ -265,7 +265,7 @@ async function loadNews(){
 async function loadEconomic(){
  try{
   const r=await api("economic-calendar-api?mode=events");
-  state.calendar=(r.items||[]).filter(x=>new Date(x.scheduled_at).getTime()>=Date.now());
+  state.calendar=(r.items||[]).filter(x=>new Date(x.scheduled_at).getTime()>=Date.now()).sort((a,b)=>new Date(a.scheduled_at)-new Date(b.scheduled_at));
   $("calendarCount").textContent=String(state.calendar.length);
  }catch(e){$("calendarCount").textContent="—"}
  window.dispatchEvent(new CustomEvent("sm:premium-events",{detail:{items:state.calendar}}));
