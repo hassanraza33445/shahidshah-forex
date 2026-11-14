@@ -1,0 +1,131 @@
+/* Cohesive VIP embedded tools — scoped ONLY to authenticated member iframes.
+   Public pages retain their existing header and marketing styles. */
+html.sm-embedded[data-suite-page]{
+ color-scheme:light;--bg:#faf6ef;--soft:#f7efdf;--card:#fffcf7;--card2:#f7eddd;
+ --surface:#fffcf7;--surface2:#f7eddd;--text:#302419;--ink:#302419;--muted:#796c5b;
+ --gold:#b47b27;--gold2:#d9a044;--green:#168053;--border:#e6d5ba;--line:#e6d5ba;
+ --input:#fffaf3;--shadow:rgba(79,50,18,.08);--glow:rgba(203,147,61,.1);--glass:#fff6e6
+}
+html.sm-embedded[data-theme="dark"][data-suite-page]{
+ color-scheme:dark;--bg:#17120e;--soft:#241b15;--card:#281f18;--card2:#30251b;
+ --surface:#281f18;--surface2:#30251b;--text:#fff0dc;--ink:#fff0dc;--muted:#c8b59b;
+ --gold:#f1bd69;--gold2:#d59a44;--green:#8bdeb1;--border:#5c4630;--line:#5c4630;
+ --input:#241a13;--shadow:rgba(0,0,0,.35);--glow:rgba(209,151,56,.12);--glass:#33281c
+}
+html.sm-embedded[data-suite-page] body{
+ font-family:"Plus Jakarta Sans",system-ui,sans-serif!important;
+ background:radial-gradient(ellipse at 77% -13%,rgba(198,139,55,.12),transparent 54%),var(--bg)!important;
+ color:var(--ink)!important;overflow-x:hidden!important;max-width:100%
+}
+html.sm-embedded[data-suite-page] :is(button,input,textarea,select){font-family:inherit}
+html.sm-embedded[data-suite-page] :is(button,input,textarea,select,a):focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+html.sm-embedded[data-suite-page] :is(.panel,.metric,.stat,.card,.event,.monitor,.source-card){
+ border-color:var(--line)!important;background:var(--surface)!important;
+ box-shadow:0 8px 22px var(--shadow);border-radius:16px
+}
+html.sm-embedded[data-suite-page] :is(.panel,.card,.event){transition:box-shadow .2s,border-color .2s}
+html.sm-embedded[data-suite-page] :is(.panel,.card,.event):hover{border-color:color-mix(in srgb,var(--gold) 42%,var(--line));box-shadow:0 12px 27px var(--shadow)}
+html.sm-embedded[data-suite-page] :is(.eyebrow,.upper){letter-spacing:1.35px}
+html.sm-embedded[data-suite-page] :is(.lead,.muted,.note){color:var(--muted)!important;line-height:1.65}
+html.sm-embedded[data-suite-page] :is(input,textarea,select){
+ background:var(--input)!important;border-color:var(--line)!important;color:var(--ink)!important;border-radius:10px
+}
+html.sm-embedded[data-suite-page] :is(input,textarea,select):focus{border-color:var(--gold)!important;box-shadow:0 0 0 4px rgba(209,153,62,.15)}
+html.sm-embedded[data-suite-page] :is(.tab.active,.btn.gold,.generate){
+ background:linear-gradient(120deg,#f6d38c,#d99c37)!important;color:#2b1c0e!important;
+ border-color:#e6b665!important;box-shadow:0 6px 17px rgba(180,124,42,.16)
+}
+html.sm-embedded[data-suite-page] :is(.tab,.btn,.button,.generate){transition:transform .18s,border-color .18s}
+html.sm-embedded[data-suite-page] :is(.tab,.btn,.button,.generate):not(:disabled):hover{transform:translateY(-1px)}
+html.sm-embedded[data-suite-page] :is(.tabs,.filters,.controls){border-color:var(--line)!important;background:var(--surface)!important}
+html.sm-embedded[data-suite-page] :is(.tabs-wrap,.panel-head){border-color:var(--line)!important}
+html.sm-embedded[data-suite-page] h1{font-size:clamp(27px,3.3vw,40px)!important;line-height:1.15!important;letter-spacing:-1.3px!important}
+html.sm-embedded[data-suite-page] :is(.hero,.intro){padding-top:18px!important;padding-bottom:16px!important}
+html.sm-embedded[data-suite-page] :is(.metrics,.stats){gap:10px;margin-bottom:18px}
+html.sm-embedded[data-suite-page] :is(.metric,.stat){padding:16px 18px}
+html.sm-embedded[data-suite-page] :is(.metric strong,.stat strong,.stat b){font-size:22px;line-height:1.15}
+html.sm-embedded[data-suite-page] :is(.monitor,.source-card){padding:16px 18px}
+html.sm-embedded[data-suite-page] :is(.panel-head,.heading){padding:16px 18px}
+html.sm-embedded[data-suite-page] :is(.panel-head h2,.heading h2){font-size:17px;letter-spacing:-.4px}
+html.sm-embedded[data-suite-page] :is(.feed-tools,.controls,.filters){padding:12px;border-radius:13px}
+html.sm-embedded[data-suite-page] :is(.notice,.event){border-radius:13px}
+html.sm-embedded[data-suite-page] :is(.feed-list,.results){gap:11px}
+html.sm-embedded[data-suite-page] :is(.tabs,.tabs-wrap){border-radius:13px}
+html.sm-embedded[data-suite-page] .tab{border-radius:10px;color:var(--muted);font-weight:800}
+html.sm-embedded[data-suite-page] .tab.active{color:#2b1c0e!important}
+html.sm-embedded[data-suite-page] .tab:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+/* Prompt builder/editor inside Prompt Tools. */
+html.sm-embedded[data-suite-page="prompts"] .tabs-wrap{
+ position:relative!important;top:0!important;z-index:5;background:var(--surface)!important;
+ border:1px solid var(--line);border-radius:13px;margin:10px 0 13px;padding:4px
+}
+html.sm-embedded[data-suite-page="prompts"] .tabs{padding:4px 0;gap:4px}
+html.sm-embedded[data-suite-page="prompts"] .tab{min-height:41px;padding:9px 13px}
+html.sm-embedded[data-suite-page="prompts"] .intro{text-align:left!important}
+html.sm-embedded[data-suite-page="prompts"] .intro h1{font-weight:850}
+html.sm-embedded[data-suite-page="prompts"] .workspace{gap:15px}
+html.sm-embedded[data-suite-page="prompts"] .panel{
+ background:var(--surface)!important;box-shadow:0 10px 26px var(--shadow)!important
+}
+html.sm-embedded[data-suite-page="prompts"] .form-panel{padding:21px}
+html.sm-embedded[data-suite-page="prompts"] .panel-head{padding:0 0 15px}
+html.sm-embedded[data-suite-page="prompts"] .step-no{
+ background:var(--surface2)!important;border:1px solid var(--line);
+ border-radius:11px;color:var(--gold)!important
+}
+html.sm-embedded[data-suite-page="prompts"] .field :is(input,select){min-height:46px}
+html.sm-embedded[data-suite-page="prompts"] .field textarea{min-height:105px}
+html.sm-embedded[data-suite-page="prompts"] .result-panel{min-width:0}
+/* Notification center within member tab. */
+html.sm-embedded[data-suite-page="notices"] .page{width:min(1240px,calc(100% - 28px))}
+html.sm-embedded[data-suite-page="notices"] .hero{padding:12px 0 17px!important}
+html.sm-embedded[data-suite-page="notices"] .hero h1{font-size:clamp(26px,3vw,36px)!important;margin:9px 0 7px}
+html.sm-embedded[data-suite-page="notices"] .monitor{max-width:280px}
+html.sm-embedded[data-suite-page="notices"] .metrics{margin-bottom:16px}
+html.sm-embedded[data-suite-page="notices"] .layout{gap:14px}
+html.sm-embedded[data-suite-page="notices"] .panel-head{border-bottom:1px solid var(--line)}
+html.sm-embedded[data-suite-page="notices"] .panel-head .tabs{padding:4px}
+html.sm-embedded[data-suite-page="notices"] .feed-tools{background:var(--surface2)!important;border-radius:0}
+html.sm-embedded[data-suite-page="notices"] .notice{padding:15px 0}
+html.sm-embedded[data-suite-page="notices"] :is(.settings,.pref-row){color:var(--ink)}
+/* Calendar & reaction engine in a consistent member console. */
+html.sm-embedded[data-suite-page="calendar"] .shell,
+html.sm-embedded[data-suite-page="reaction"] .wrap-content{width:min(1240px,calc(100% - 28px))}
+html.sm-embedded[data-suite-page="calendar"] .hero,
+html.sm-embedded[data-suite-page="reaction"] .hero{padding:15px 0!important}
+html.sm-embedded[data-suite-page="calendar"] .stats,
+html.sm-embedded[data-suite-page="reaction"] .stats{margin:4px 0 20px}
+html.sm-embedded[data-suite-page="reaction"] .controls{border-radius:13px}
+html.sm-embedded[data-suite-page="reaction"] .event{padding:17px}
+html.sm-embedded[data-suite-page="calendar"] .filters{margin-bottom:14px}
+html.sm-embedded[data-suite-page="calendar"] .filters :is(.button,.select){
+ border:1px solid var(--line);background:var(--surface2);color:var(--ink);
+ border-radius:10px;min-height:42px
+}
+html.sm-embedded[data-suite-page="reaction"] .controls :is(select,button){
+ border-color:var(--line);background:var(--surface2);color:var(--ink);
+ border-radius:10px;min-height:42px
+}
+/* Embedded content respects small screens without nested horizontal scrolling. */
+@media(max-width:900px){
+ html.sm-embedded[data-suite-page="notices"] .layout{grid-template-columns:1fr}
+ html.sm-embedded[data-suite-page="prompts"] .workspace{grid-template-columns:1fr}
+}
+@media(max-width:650px){
+ html.sm-embedded[data-suite-page] :is(.hero,.intro){padding-top:11px!important}
+ html.sm-embedded[data-suite-page] h1{font-size:26px!important}
+ html.sm-embedded[data-suite-page] :is(.panel,.card,.event){border-radius:13px}
+ html.sm-embedded[data-suite-page] :is(.metric,.stat){padding:11px}
+ html.sm-embedded[data-suite-page] :is(.metric strong,.stat strong,.stat b){font-size:18px}
+ html.sm-embedded[data-suite-page] :is(.metric small,.stat small){font-size:10px}
+ html.sm-embedded[data-suite-page="notices"] .hero{grid-template-columns:1fr}
+ html.sm-embedded[data-suite-page="notices"] .monitor{max-width:none}
+ html.sm-embedded[data-suite-page="prompts"] .tabs-wrap{max-width:100%;overflow:hidden}
+ html.sm-embedded[data-suite-page="prompts"] .tabs{overflow-x:auto;flex-wrap:nowrap;justify-content:flex-start}
+ html.sm-embedded[data-suite-page="prompts"] .form-panel{padding:15px}
+ html.sm-embedded[data-suite-page="calendar"] .filters,
+ html.sm-embedded[data-suite-page="reaction"] .controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){
+ html.sm-embedded[data-suite-page] :is(.panel,.card,.event,.tab,.btn,.button,.generate){transition:none!important}
+}
