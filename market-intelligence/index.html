@@ -65,7 +65,7 @@ function card(item,featured=false){
  const info=make("div","meta");info.append(make("span","",item.publisher||"Publisher"),make("span","",niceDate(item.published_at)));if(Number(item.source_count)>1)info.append(make("span","","Grouped reports: "+Number(item.source_count)));box.append(info);
  const actions=make("div","push");const original=safeURL(item.original_url);
  if(original)actions.append(link("Read original ↗",original));
- const create=make("a","textlink","Create AI script →");create.href="/content-studio/?news="+encodeURIComponent(item.id);actions.append(create);box.append(actions);return box;
+ const create=make("a","textlink","Create AI script →");create.href="/app/?tab=studio&studio=create&news="+encodeURIComponent(item.id);actions.append(create);box.append(actions);return box;
 }
 function display(items){
  el("newsList").replaceChildren();el("featured").replaceChildren();
