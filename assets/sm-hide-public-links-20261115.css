@@ -1,0 +1,17 @@
+/* Temporary public-visibility switch — personal contact, social and YouTube links. 2026-11-15.
+   Does not remove source data or alter admin settings. */
+html body :is(.social-dock,.social-mini,.footer-socials,.social-grid,.social-links,
+.social-card,.social-platforms,#community,#videos,#videoGrid,.about-youtube,
+#aboutYoutube,.support-box,.contact-numbers,.contact-number,.whatsapp-channel,
+.whatsapp-link,.youtube-link,.youtube-videos,.youtube-videos-grid){display:none!important}
+html body a:is([href*="youtube.com"],[href*="youtu.be"],[href*="wa.me"],
+[href*="whatsapp.com"],[href*="facebook.com"],[href*="instagram.com"],
+[href*="tiktok.com"],[href*="linkedin.com"],[href*="t.me/"],
+[href*="telegram.me"],[href^="tel:"],[href^="mailto:"],
+[href^="/videos/"],[href="/videos"],[href^="/social/"],[href="/social"],
+[href^="/community/"],[href="/community"]){display:none!important}
+html body :is(iframe[src*="youtube.com/embed"],iframe[src*="youtube-nocookie.com/embed"],
+iframe[src*="youtube.com/live"],.video-thumb[href*="youtube"],
+[data-brand="youtube"],[data-brand="whatsapp"],[data-brand="facebook"],
+[data-brand="instagram"],[data-brand="tiktok"],[data-brand="linkedin"],
+[data-brand="telegram"]){display:none!important}
