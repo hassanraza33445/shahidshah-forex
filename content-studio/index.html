@@ -82,7 +82,7 @@ html.sm-embedded #page-projects>.card{min-height:0}
 <link rel="stylesheet" href="/assets/sm-studio-creator-mobile-reference.css?v=20261114-creator-reference-1" media="screen and (max-width:720px)">
 <link rel="stylesheet" href="/assets/sm-ai-brain-loader-mobile-2026.css?v=20261114-brain-1" media="screen and (max-width:720px)">
 <script defer src="/assets/sm-studio-creator-mobile-reference.js?v=20261114-creator-reference-1"></script>
-<link rel="stylesheet" href="/assets/sm-studio-unified-script-2026.css?v=20261115-unified-1">
+<link rel="stylesheet" href="/assets/sm-studio-unified-script-2026.css?v=20261115-neutral-2">
 </head>
 <body>
 <div class="gate" id="authGate"><section class="login"><img src="/shahid-shah-profile.webp" alt=""><div class="upper">S M SHAHID SHAH</div><h1>AI Content Studio</h1><p class="note">Free AI script workspace for all registered members. Sign in with your S M Shahid Shah account.</p><form id="loginForm"><div><label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div><div><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required minlength="6"></div><button class="btn gold" type="submit">Sign In Securely →</button></form><div id="loginStatus" class="status" aria-live="polite"></div><div class="actions"><a class="btn ghost" href="/">← Website</a><a class="btn ghost" href="/market-intelligence/">Market Intelligence</a></div></section>
@@ -286,16 +286,36 @@ function displayPage(page){
 }
 document.querySelectorAll("[data-page]").forEach(x=>x.addEventListener("click",()=>displayPage(x.dataset.page)));
 $("theme").addEventListener("click",()=>{const t=document.documentElement.dataset.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=t;try{localStorage.setItem("smshahid-site-theme",t)}catch(e){}});
+// AI Studio scripts are presenter-neutral. Keep the website branding and
+// independently attributed source metadata intact; clean only script contents.
+// This also removes the unwanted speaker introduction in older saved drafts
+// when they are opened, copied, exported or saved again.
+function removeSpeakerName(value){
+ let text=String(value||"");
+ text=text.replace(/^\s*(?:hello|assalam[-\s]*o[-\s]*alaikum|salaam)?[\s,!.-]*(?:main|mein|mai)\s+(?:hoon|hun|hu)\s+[^,\n.!?]{2,80}\s*[,;.!–—-]?\s*(?:aur\s+)?/iu,"");
+ text=text.replace(/^\s*(?:mera)\s+naam\s+[^,\n.!?]{2,80}\s+(?:hai|he)\s*[,;.!–—-]?\s*/iu,"");
+ text=text.replace(/^\s*(?:my name is|i am|i'm|this is)\s+[^,\n.!?]{2,80}\s*[,;.!–—-]?\s*/iu,"");
+ text=text.replace(/\bs\.?\s*m\.?\s*shahid\s*shah\b/giu,"");
+ text=text.replace(/^[\s,;:–—-]+/u,"").trim();
+ return text;
+}
 function fillFields(script={}){
- for(const [key] of FIELDS){const input=$("field-"+key);const value=script[key];input.value=key==="hashtags"?(Array.isArray(value)?value.join(", "):String(value||"")):String(value||"")}
+ for(const [key] of FIELDS){
+  const input=$("field-"+key),value=script[key];
+  input.value=removeSpeakerName(key==="hashtags"?(Array.isArray(value)?value.join(", "):String(value||"")):String(value||""));
+ }
  $("factCheck").value=Array.isArray(script.fact_check)?script.fact_check.join("\n"):"";
- $("projectTitle").value=script.title||"";
+ $("projectTitle").value=removeSpeakerName(script.title||"");
  state.script=script;calcWords();
 }
 function currentScript(){
- const s={title:$("projectTitle").value.trim()};
- for(const [key] of FIELDS)s[key]=key==="hashtags"?$("field-"+key).value.split(",").map(x=>x.trim()).filter(Boolean):$("field-"+key).value.trim();
- s.fact_check=$("factCheck").value.split("\n").map(x=>x.trim()).filter(Boolean);return s;
+ const s={title:removeSpeakerName($("projectTitle").value.trim())};
+ for(const [key] of FIELDS){
+  const value=removeSpeakerName($("field-"+key).value.trim());
+  s[key]=key==="hashtags"?value.split(",").map(x=>x.trim()).filter(Boolean):value;
+ }
+ s.fact_check=$("factCheck").value.split("\n").map(x=>x.trim()).filter(Boolean);
+ return s;
 }
 function rawScript(){
  const s=currentScript(),labels={hook:"Hook",introduction:"Introduction",explanation:"Explanation",impact:"Market Impact",key_takeaway:"Key Takeaway",closing:"Closing",cta:"CTA",seo_title:"SEO Title",description:"Description",hashtags:"Hashtags"};
