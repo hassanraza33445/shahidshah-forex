@@ -114,6 +114,17 @@ try{
   await p.locator("#miFeatureLead .news-card").waitFor({timeout:9000});
   assert.equal(await p.locator("#miTotalStories").innerText(),"1","Editorial desk reflects actual API headline count");
   assert.equal(await p.locator("#miFeatureLead .news-visual-gold").count(),1,"Featured Gold story gets relevant illustration");
+  assert.equal(await p.locator(".mi-png-grid").count(),1,"Reference-style editorial grid exists");
+  const layout=await p.locator(".mi-png-grid").evaluate(el=>({
+   columns:getComputedStyle(el).gridTemplateColumns.split(" ").filter(Boolean).length,
+   summaryTop:el.querySelector(".mi-summary-strip").getBoundingClientRect().top,
+   railTop:el.querySelector(".mi-sidebar").getBoundingClientRect().top
+  }));
+  assert.equal(layout.columns,2,"Desktop reference puts market rail alongside editorial content");
+  assert(Math.abs(layout.summaryTop-layout.railTop)<16,"Market rail must start alongside KPI strip");
+  assert.equal(await p.locator(".mi-feature-lead .news-card .sm-news-read-button").count(),1,"Featured story retains on-site details");
+  assert.equal(await p.locator("#miPriorityStories").innerText(),"1","Featured count reflects selected stories, not fabricated HOT flags");
+  assert.equal(await p.locator(".mi-coverage-row .mi-topic-symbol").count(),4,"Market focus rows display topic icons");
   assert.equal(await p.locator("#miEventsList .mi-event").count(),1,"Economic calendar is visible in market sidebar");
   assert.equal(await p.locator("#miCoverageList .mi-coverage-row").count(),4,"Four categories show real feed coverage");
   await p.locator('#miFeatureLead .sm-news-read-button').click();
@@ -191,6 +202,12 @@ try{
   await p.locator("#openMenu").click();await p.locator('#appSidebar button[data-section="markets"]').click();
   await p.locator("#miFeatureLead .news-card").waitFor({timeout:10000});
   assert.equal(await p.locator(".mi-feature-grid").isVisible(),true,"Mobile featured news area appears");
+  const mobileLayout=await p.locator(".mi-png-grid").evaluate(el=>({
+   columns:getComputedStyle(el).gridTemplateColumns.split(" ").filter(Boolean).length,
+   shellWidth:el.getBoundingClientRect().width
+  }));
+  assert.equal(mobileLayout.columns,1,"Mobile reference stacks market sidebar below news");
+  assert(mobileLayout.shellWidth<=p.viewportSize().width,"Market layout must fit mobile viewport");
   assert.equal(await p.locator("#miCoverageList .mi-coverage-row").count(),4,"Mobile coverage panel shows all categories");
   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+2),true,"Premium Market Intelligence has no mobile horizontal overflow");
   await p.locator('#view-markets .mi-module-tabs button[data-market-page="calendar"]').click();
