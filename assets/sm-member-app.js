@@ -488,6 +488,19 @@ function setupNavigation(){
  document.querySelectorAll("[data-tool]:not([data-section])").forEach(button=>button.addEventListener("click",()=>{
   openTab("tools");showTool(button.dataset.tool);
  }));
+ const promptNav=document.querySelector("#view-tools .sm-prompt-tool-tabs");
+ if(promptNav)promptNav.addEventListener("keydown",event=>{
+  if(!["ArrowRight","ArrowLeft","Home","End"].includes(event.key))return;
+  const buttons=[...promptNav.querySelectorAll(".sm-prompt-tool-tab[data-tool]:not(:disabled)")];
+  const active=document.activeElement;
+  const index=buttons.indexOf(active);
+  if(index<0||!buttons.length)return;
+  event.preventDefault();
+  const next=event.key==="Home"?0:event.key==="End"?buttons.length-1:
+   (index+(event.key==="ArrowRight"?1:-1)+buttons.length)%buttons.length;
+  const target=buttons[next];
+  target.focus();showTool(target.dataset.tool);
+ });
  $("closeToolModule").addEventListener("click",()=>{$("toolModuleArea").hidden=true});
  document.querySelectorAll("[data-home-filter]").forEach(button=>button.addEventListener("click",()=>{
   state.homeFilter=button.dataset.homeFilter;
