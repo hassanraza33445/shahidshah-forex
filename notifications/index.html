@@ -306,6 +306,7 @@ async function awaitPushSubscription(sdk){
  return null;
 }
 async function enableBrowserPush(){
+ if(window.self!==window.top){pushMessage("Open Push Settings in a separate tab to enable browser push. The in-app inbox will continue working.",true);return}
  if(!state.session){pushMessage("Please sign in to enable push notifications.",true);return}
  if(!state.pushConfig?.configured){pushMessage("OneSignal provider configuration is not ready.",true);return}
  if(location.origin!==state.pushConfig.canonical_origin){
