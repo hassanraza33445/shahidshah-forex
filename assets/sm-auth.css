@@ -34,3 +34,6 @@ form label{display:block;font-weight:800;font-size:11px;margin-bottom:16px}form 
  font-size:13px;color:#201710
 }
 .auth-panel .pk-phone-wrap input:focus-visible{border:0;box-shadow:none}
+
+/* Hide empty status space; errors and successful form feedback remain visible. */
+.auth-panel #authStatus:empty{display:none!important}
