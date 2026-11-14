@@ -255,6 +255,12 @@ try{
   assert.match(await p.locator("#toolModuleFrame").getAttribute("src"),/learning-hub.*embedded=1#article/);
   await p.locator("#closeToolModule").click();
   assert.equal(await p.locator("#toolModuleArea").isVisible(),false);
+  await p.locator("#openMenu").click();await p.locator('#appSidebar button[data-section="mentorship"]').click();
+  assert.equal(await p.locator("#view-mentorship .vip-process-strip>div").count(),3,"Mobile mentorship process works");
+  assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+2),true,"No mobile mentorship overflow");
+  await p.locator("#openMenu").click();await p.locator('#appSidebar button[data-section="profile"]').click();
+  assert.equal(await p.locator("#view-profile .vip-profile-hero").isVisible(),true);
+  assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+2),true,"No mobile profile overflow");
   await p.locator("#openMenu").click();await p.locator('#appSidebar button[data-section="notifications"]').click();
   await p.waitForFunction(()=>document.querySelector("#noticeFrame")?.getAttribute("src")?.includes("notifications"),{},{timeout:9000});
   assert.equal(await p.locator(".mobile-dock").count(),1);
