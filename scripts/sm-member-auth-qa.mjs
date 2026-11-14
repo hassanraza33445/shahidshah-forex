@@ -193,7 +193,7 @@ try{
   assert.equal(await p.locator(".mi-feature-grid").isVisible(),true,"Mobile featured news area appears");
   assert.equal(await p.locator("#miCoverageList .mi-coverage-row").count(),4,"Mobile coverage panel shows all categories");
   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+2),true,"Premium Market Intelligence has no mobile horizontal overflow");
-  await p.locator('#view-markets button[data-market-page="calendar"]').click();
+  await p.locator('#view-markets .mi-module-tabs button[data-market-page="calendar"]').click();
   await p.waitForFunction(()=>document.querySelector("#marketModuleFrame")?.getAttribute("src")?.includes("economic-calendar"),{},{timeout:9000});
   assert.equal(await p.locator("#marketModuleFrame").count(),1);
   await p.locator("#openMenu").click();await p.locator('#appSidebar button[data-section="tools"]').click();
