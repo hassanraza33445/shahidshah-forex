@@ -1,0 +1,274 @@
+/* S M Shahid Shah — Mentorship mobile premium design, 2026-11-14.
+   Scoped to authenticated /app/ Mentorship tab on <=720px.
+   No changes to desktop/laptop styling, database flows or application permissions. */
+@media screen and (max-width:720px){
+  .member-app #view-mentorship{
+    --mentor-shadow:0 5px 18px rgba(81,48,19,.072);
+    --mentor-gold:#b58236;
+    width:100%!important;min-width:0!important;max-width:100%!important;
+    overflow-x:clip!important;padding:0 0 17px!important;
+  }
+  /* Portrait-free premium compact hero. */
+  .member-app #view-mentorship .vip-page-hero.vip-mentor-hero{
+    display:block!important;position:relative!important;isolation:isolate!important;
+    min-height:0!important;height:auto!important;
+    padding:17px 16px 15px!important;margin:12px 0 11px!important;
+    border-radius:19px!important;border:1px solid #9b733c!important;
+    background:radial-gradient(ellipse at 95% 17%,rgba(241,190,115,.20),transparent 49%),
+      linear-gradient(116deg,#211710 0%,#3b281c 60%,#51331c 100%)!important;
+    box-shadow:0 9px 24px rgba(76,43,16,.15)!important;overflow:hidden!important;
+  }
+  .member-app #view-mentorship .vip-page-hero.vip-mentor-hero:before{
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    opacity:.24;background:repeating-linear-gradient(90deg,transparent 0 32px,rgba(244,198,116,.17) 33px 34px),
+      repeating-linear-gradient(0deg,transparent 0 32px,rgba(244,198,116,.09) 33px 34px);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000);mask-image:linear-gradient(90deg,transparent,#000);
+  }
+  .member-app #view-mentorship .vip-page-hero.vip-mentor-hero:after{
+    content:"";position:absolute;right:-24px;bottom:-24px;width:120px;height:120px;
+    border:1px solid rgba(235,175,87,.23);border-radius:50%;pointer-events:none;
+    box-shadow:0 0 0 17px rgba(235,175,87,.055),0 0 0 38px rgba(235,175,87,.035);
+  }
+  .member-app #view-mentorship .vip-hero-copy{position:relative!important;z-index:1!important;max-width:100%!important;}
+  .member-app #view-mentorship .vip-hero-copy .eyebrow{
+    display:block!important;margin:0 0 6px!important;
+    color:#efc88c!important;font-size:8.1px!important;letter-spacing:1.12px!important;
+    line-height:1.4!important;font-weight:900!important;
+  }
+  .member-app #view-mentorship .vip-hero-copy h1{
+    font-size:clamp(24px,6.5vw,29px)!important;font-weight:850!important;
+    letter-spacing:-1px!important;line-height:1.13!important;
+    margin:0 0 6px!important;color:#fff7ec!important;max-width:100%!important;
+  }
+  .member-app #view-mentorship .vip-hero-copy h1 em{
+    color:#f1c778!important;font-style:normal!important;
+    background:linear-gradient(90deg,#ffe6b2,#e6ad5b)!important;
+    -webkit-background-clip:text!important;background-clip:text!important;
+    -webkit-text-fill-color:transparent!important;
+  }
+  .member-app #view-mentorship .vip-hero-copy>p:not(.sm-mentor-mobile-summary){display:none!important;}
+  .member-app #view-mentorship .vip-hero-copy>.sm-mentor-mobile-summary{
+    display:block!important;max-width:95%!important;
+    font-size:10.8px!important;line-height:1.5!important;
+    color:#e7d1b3!important;margin:0 0 12px!important;
+  }
+  .member-app #view-mentorship .sm-mentor-mobile-cta{
+    display:inline-flex!important;align-items:center!important;justify-content:center!important;
+    min-height:39px!important;width:auto!important;max-width:100%!important;
+    padding:9px 14px!important;border:1px solid #e0b46e!important;
+    border-radius:11px!important;
+    color:#35220e!important;text-decoration:none!important;
+    background:linear-gradient(115deg,#ffe6aa,#e7b258)!important;
+    box-shadow:0 5px 15px rgba(209,145,57,.16)!important;
+    font-size:11px!important;font-weight:850!important;
+  }
+  .member-app #view-mentorship .sm-mentor-mobile-cta:active{transform:scale(.98)!important;}
+  .member-app #view-mentorship .vip-hero-art{display:none!important;}
+
+  /* Place real application status before marketing highlights. */
+  .member-app #view-mentorship .vip-mentorship-grid{
+    display:flex!important;flex-direction:column!important;
+    width:100%!important;max-width:100%!important;
+    gap:10px!important;margin:0 0 11px!important;min-width:0!important;
+  }
+  .member-app #view-mentorship .vip-application-status-card{
+    order:0!important;display:flex!important;flex-direction:column!important;
+    gap:6px!important;min-height:0!important;
+    padding:12px 13px!important;border-radius:15px!important;
+    border:1px solid var(--line)!important;
+    background:var(--surface)!important;box-shadow:var(--mentor-shadow)!important;
+  }
+  .member-app #view-mentorship .vip-application-status-card h2{
+    margin:0 0 3px!important;font-size:13px!important;line-height:1.3!important;
+    font-weight:850!important;letter-spacing:-.2px!important;color:var(--ink)!important;
+  }
+  .member-app #view-mentorship #applicationStatus{
+    display:inline-flex!important;width:max-content!important;max-width:100%!important;
+    align-items:center!important;padding:5px 10px!important;margin:0!important;
+    min-height:27px!important;border-radius:18px!important;
+    font-size:10px!important;letter-spacing:.15px!important;line-height:1.35!important;
+    color:#8c5b1c!important;border:1px solid #e3bd85!important;
+    background:linear-gradient(120deg,#fff2d5,#f6e4c4)!important;
+    box-shadow:none!important;
+  }
+  .member-app #view-mentorship .vip-application-status-card p{
+    margin:1px 0 0!important;font-size:10.3px!important;
+    line-height:1.47!important;color:var(--muted)!important;
+  }
+  .member-app #view-mentorship .vip-highlights-card{
+    order:1!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    align-content:start!important;gap:8px!important;
+    min-height:0!important;padding:12px!important;
+    border:1px solid var(--line)!important;border-radius:15px!important;
+    background:var(--surface)!important;
+    box-shadow:var(--mentor-shadow)!important;
+  }
+  .member-app #view-mentorship .vip-highlights-card h2{
+    grid-column:1/-1!important;margin:0 0 2px!important;
+    font-size:13px!important;line-height:1.25!important;color:var(--ink)!important;
+    font-weight:850!important;letter-spacing:-.2px!important;
+  }
+  .member-app #view-mentorship .vip-highlights-card>div{
+    display:flex!important;align-items:flex-start!important;min-width:0!important;
+    min-height:52px!important;
+    padding:10px 9px!important;gap:6px!important;
+    border:1px solid var(--line)!important;border-radius:12px!important;
+    background:var(--surface2)!important;
+    font-size:10px!important;line-height:1.35!important;
+    font-weight:700!important;color:var(--ink)!important;
+    box-shadow:none!important;
+  }
+  /* Status text and program benefits are always real, never placeholder metrics. */
+  .member-app #view-mentorship .vip-process-strip{
+    width:100%!important;max-width:100%!important;
+    display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:6px!important;align-items:stretch!important;
+    margin:0 0 11px!important;padding:0!important;
+    background:transparent!important;border:0!important;box-shadow:none!important;
+  }
+  .member-app #view-mentorship .vip-process-strip>div{
+    display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+    min-width:0!important;gap:4px!important;margin:0!important;
+    padding:9px 8px!important;min-height:77px!important;
+    border:1px solid var(--line)!important;border-radius:13px!important;
+    background:var(--surface)!important;box-shadow:var(--mentor-shadow)!important;
+  }
+  .member-app #view-mentorship .vip-process-strip>div>span{
+    display:grid!important;place-items:center!important;
+    width:23px!important;height:23px!important;min-width:23px!important;
+    padding:0!important;margin:0!important;
+    border-radius:8px!important;color:#8b5619!important;
+    background:linear-gradient(135deg,#ffedc9,#efd5a6)!important;
+    border:1px solid #e4c58d!important;
+    font-size:9px!important;font-weight:900!important;
+  }
+  .member-app #view-mentorship .vip-process-strip strong{
+    display:block!important;min-width:0!important;
+    font-size:9px!important;line-height:1.25!important;
+    letter-spacing:-.08px!important;font-weight:850!important;color:var(--ink)!important;
+  }
+  .member-app #view-mentorship .vip-process-strip small{
+    display:none!important;
+  }
+  /* Straightforward, touch-friendly application form. */
+  .member-app #view-mentorship .vip-application-box{
+    display:block!important;min-width:0!important;max-width:100%!important;
+    padding:15px 13px!important;margin:0 0 14px!important;
+    border:1px solid var(--line)!important;border-radius:17px!important;
+    background:var(--surface)!important;box-shadow:var(--mentor-shadow)!important;
+    scroll-margin-top:75px!important;
+  }
+  .member-app #view-mentorship .application-heading{
+    display:flex!important;justify-content:space-between!important;align-items:flex-start!important;
+    flex-wrap:nowrap!important;gap:9px!important;
+    border-bottom:1px solid var(--line)!important;margin:0 0 11px!important;
+    padding:0 0 11px!important;
+  }
+  .member-app #view-mentorship .application-heading>div{min-width:0!important;flex:1!important;}
+  .member-app #view-mentorship .application-heading h2{
+    font-size:17px!important;line-height:1.23!important;
+    margin:0 0 4px!important;letter-spacing:-.5px!important;font-weight:850!important;
+    color:var(--ink)!important;
+  }
+  .member-app #view-mentorship .application-heading p{
+    font-size:10.5px!important;line-height:1.5!important;margin:0!important;color:var(--muted)!important;
+  }
+  .member-app #view-mentorship .application-heading>span{
+    flex:0 0 auto!important;
+    padding:5px 8px!important;margin:0!important;
+    border:1px solid #e0ba7e!important;border-radius:20px!important;
+    font-size:9px!important;line-height:1.3!important;font-weight:850!important;
+    color:#916019!important;background:var(--surface2)!important;
+    white-space:nowrap!important;
+  }
+  .member-app #view-mentorship .vip-application-box>p{
+    margin:0 0 11px!important;padding:9px 11px!important;
+    border:1px solid var(--line)!important;border-radius:10px!important;
+    background:var(--surface2)!important;color:var(--muted)!important;
+    font-size:9.8px!important;line-height:1.5!important;
+  }
+  .member-app #view-mentorship #mentorshipForm{
+    display:flex!important;flex-direction:column!important;
+    width:100%!important;max-width:100%!important;min-width:0!important;
+    gap:10px!important;
+  }
+  .member-app #view-mentorship #mentorshipForm .two-col{
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+    gap:10px!important;
+  }
+  .member-app #view-mentorship #mentorshipForm label{
+    display:block!important;min-width:0!important;
+    margin:0!important;color:var(--ink)!important;
+    font-size:11.2px!important;font-weight:850!important;line-height:1.36!important;
+  }
+  .member-app #view-mentorship #mentorshipForm :is(input,select,textarea){
+    display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;
+    min-height:45px!important;
+    padding:11px 12px!important;margin:6px 0 0!important;
+    background:var(--surface2)!important;color:var(--ink)!important;
+    border:1px solid var(--line)!important;border-radius:11px!important;
+    font-size:16px!important;line-height:1.4!important;
+    outline:none!important;box-shadow:none!important;
+  }
+  .member-app #view-mentorship #mentorshipForm input::placeholder,
+  .member-app #view-mentorship #mentorshipForm textarea::placeholder {
+    font-size:11px!important;color:var(--muted)!important;opacity:.83;
+  }
+  .member-app #view-mentorship #mentorshipForm textarea{
+    min-height:88px!important;resize:vertical!important;
+  }
+  .member-app #view-mentorship #mentorshipForm :is(input,select,textarea):focus-visible{
+    border-color:#c59442!important;
+    box-shadow:0 0 0 3px rgba(211,162,75,.13)!important;
+  }
+  .member-app #view-mentorship #mentorSubmit{
+    display:flex!important;justify-content:center!important;align-items:center!important;
+    width:100%!important;max-width:100%!important;
+    min-height:46px!important;padding:11px 12px!important;margin:3px 0 0!important;
+    border:1px solid #d3a25a!important;border-radius:12px!important;
+    background:linear-gradient(115deg,#ffe5a7,#e9b45e 62%,#d79837)!important;
+    color:#34200d!important;font-size:12px!important;font-weight:900!important;
+    line-height:1.3!important;box-shadow:0 6px 15px rgba(160,99,28,.15)!important;
+    cursor:pointer!important;transition:transform .16s ease!important;
+  }
+  .member-app #view-mentorship #mentorSubmit:active:not(:disabled){transform:scale(.985)!important;}
+  .member-app #view-mentorship #mentorSubmit:disabled{
+    background:var(--surface2)!important;color:var(--muted)!important;
+    border-color:var(--line)!important;opacity:1!important;
+    box-shadow:none!important;cursor:not-allowed!important;
+  }
+  .member-app #view-mentorship #mentorMessage{
+    margin:0!important;padding:0!important;min-height:0!important;
+    font-size:10.3px!important;line-height:1.5!important;color:var(--muted)!important;
+  }
+  .member-app #view-mentorship #mentorMessage:not(:empty){
+    padding:9px 10px!important;border:1px solid var(--line)!important;
+    border-radius:10px!important;background:var(--surface2)!important;
+  }
+  html[data-theme="dark"] .member-app #view-mentorship :is(.vip-application-status-card,.vip-highlights-card,.vip-process-strip>div,.vip-application-box){
+    background:#281e17!important;border-color:#5b432c!important;
+    box-shadow:0 5px 17px #0003!important;
+  }
+  html[data-theme="dark"] .member-app #view-mentorship .vip-highlights-card>div,
+  html[data-theme="dark"] .member-app #view-mentorship .vip-application-box>p,
+  html[data-theme="dark"] .member-app #view-mentorship #mentorshipForm :is(input,select,textarea),
+  html[data-theme="dark"] .member-app #view-mentorship #mentorMessage:not(:empty) {
+    background:#34271c!important;color:#f2e6d4!important;border-color:#6d5134!important;
+  }
+  html[data-theme="dark"] .member-app #view-mentorship #applicationStatus{
+    background:#44311d!important;color:#f2c47e!important;border-color:#906438!important;
+  }
+  html[data-theme="dark"] .member-app #view-mentorship .application-heading>span{
+    background:#403020!important;color:#f0c181!important;border-color:#896032!important;
+  }
+}
+@media screen and (max-width:365px){
+  .member-app #view-mentorship .vip-process-strip{gap:5px!important;}
+  .member-app #view-mentorship .vip-process-strip>div{padding:8px 6px!important;}
+  .member-app #view-mentorship .vip-process-strip strong{font-size:8.3px!important;}
+  .member-app #view-mentorship .vip-highlights-card>div{font-size:9.3px!important;padding:8px!important;}
+}
+@media screen and (max-width:720px) and (prefers-reduced-motion:reduce){
+  .member-app #view-mentorship #mentorSubmit,
+  .member-app #view-mentorship .sm-mentor-mobile-cta{transition:none!important;transform:none!important;}
+}
