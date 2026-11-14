@@ -157,3 +157,18 @@ html[data-theme="dark"] .mi-premium .mi-summary-strip .mi-source-note strong{col
  .mi-premium .mi-feature-secondary .news-card h3{font-size:14px}
 }
 @media(prefers-reduced-motion:reduce){.mi-premium *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Original first-party imagery, matched to the headline topic instead of repeating one stock photo. */
+.mi-premium .news-visual{position:relative;overflow:hidden;background:linear-gradient(130deg,#29364e,#a77439);background-size:cover;background-position:center}
+.mi-premium .news-visual:before{content:"";position:absolute;inset:0;opacity:.24;background:repeating-linear-gradient(90deg,transparent 0 26px,rgba(255,242,190,.25) 27px 28px)}
+.mi-premium .news-visual-emblem{position:absolute;top:7px;right:14px;font-size:56px;font-weight:900;letter-spacing:-3px;color:rgba(255,230,165,.16)}
+.mi-premium .news-visual-gold{background-image:url("/assets/market-cover-gold.svg")}
+.mi-premium .news-visual-forex,.mi-premium .news-visual-forex-euro{background-image:url("/assets/market-cover-euro.svg")}
+.mi-premium .news-visual-forex-yen{background-image:url("/assets/market-cover-yen.svg")}
+.mi-premium .news-visual-crypto{background-image:url("/assets/market-cover-crypto.svg")}
+.mi-premium .news-visual-economy{background-image:linear-gradient(120deg,#263b33,#6e8a5d,#152722)}
+.mi-premium .news-visual-markets{background-image:linear-gradient(130deg,#182f40,#537681,#1e354c)}
+.mi-premium .news-card .sm-news-title-button:hover{color:var(--mi-gold);text-decoration:underline}
+.mi-premium .mi-feature-secondary .mi-empty-state{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+html[data-theme="dark"] .mi-premium .mi-coverage-row{color:#f8eddb}
+html[data-theme="dark"] .mi-premium .mi-module-tabs button.active{color:#2c1b0b!important;background:linear-gradient(120deg,#f5d389,#d59a3d)}
