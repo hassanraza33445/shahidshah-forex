@@ -47,15 +47,53 @@ function timed(promise,ms){return new Promise((resolve,reject)=>{
  const t=setTimeout(()=>reject(Error("Session verification timed out. Check your connection.")),ms);
  Promise.resolve(promise).then(x=>{clearTimeout(t);resolve(x)},e=>{clearTimeout(t);reject(e)});
 })}
+function trustedParentSession(){
+ if(!embedded||window.parent===window)return Promise.resolve(null);
+ return new Promise(resolve=>{
+  let done=false;
+  const finish=value=>{
+   if(done)return;done=true;clearTimeout(timer);
+   window.removeEventListener("message",onMessage);
+   resolve(value);
+  };
+  function onMessage(event){
+   if(event.origin!==location.origin||event.source!==window.parent||
+      event.data?.type!=="sm:embed-auth-response")return;
+   finish(event.data.allowed===true);
+  }
+  const timer=setTimeout(()=>finish(null),2300);
+  window.addEventListener("message",onMessage);
+  try{window.parent.postMessage({type:"sm:embed-auth-request"},location.origin)}
+  catch(_){finish(null)}
+ });
+}
+function grantView(){
+ root.classList.remove("sm-member-checking","sm-member-failed");
+ root.classList.add("sm-member-allowed");
+ addNavigation();
+ addEmbeddedRouting();
+ document.dispatchEvent(new CustomEvent("sm:member-verified"));
+ if(embedded&&window.parent!==window){
+  window.parent.postMessage({type:"sm:embed-view-ready"},location.origin);
+ }
+}
 async function validate(){
  try{
+  const parentApproved=await trustedParentSession();
+  if(parentApproved===true){
+   // The trusted parent has already performed auth.getUser(); the browser
+   // continues to enforce RLS and user session for every Supabase API call.
+   grantView();return;
+  }
+  if(parentApproved===false){
+   fail("Your dashboard session is no longer active. Please sign in again.");return;
+  }
+  // Standalone tools and unrecognized embedded callers still verify directly.
   if(!window.supabase?.createClient)throw Error("Secure login service could not load.");
   const client=window.supabase.createClient(base,key);
-  const {data,error}=await timed(client.auth.getUser(),10500);
+  const {data,error}=await timed(client.auth.getUser(),8500);
   if(error||!data?.user){signin();return}
-  root.classList.remove("sm-member-checking");root.classList.add("sm-member-allowed");
-  addNavigation();addEmbeddedRouting();
-  document.dispatchEvent(new CustomEvent("sm:member-verified"));
+  grantView();
  }catch(e){fail(e?.message||"Please try again.")}
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",validate,{once:true});else validate();
