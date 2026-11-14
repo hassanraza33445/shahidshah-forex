@@ -5,9 +5,9 @@
 <meta name="description" content="Sign in or create an account for the S M Shahid Shah Market Intelligence and AI Studio platform.">
 <link rel="icon" href="/icon-192.png"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/sm-auth.css?v=20261114-auth-fields-3">
+<link rel="stylesheet" href="/assets/sm-auth.css?v=20261114-pk-4">
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script defer src="/assets/sm-auth.js?v=20261114-auth-fields-3"></script>
+<script defer src="/assets/sm-auth.js?v=20261114-pk-4"></script>
 </head><body>
 <div class="auth-shell">
  <section class="auth-brand"><a class="auth-brand-name" href="/"><img class="brand-portrait" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><span><b>S M Shahid Shah</b><small>BUSINESS &amp; MARKET INTELLIGENCE</small></span></a>
@@ -19,7 +19,7 @@
  <div class="panel-hero"><span class="eyebrow">WELCOME TO THE PLATFORM</span><h2 id="authTitle">Welcome back.</h2><p id="authSubtitle">Sign in to continue to your private dashboard.</p></div>
  <div class="auth-tabs" role="tablist" aria-label="Account options"><button type="button" id="signInTab" class="selected" role="tab" aria-selected="true">Login</button><button type="button" id="signUpTab" role="tab" aria-selected="false">Sign Up</button></div>
  <form id="authForm"><label id="nameField" hidden>Full name<input name="fullname" id="fullname" type="text" maxlength="90" autocomplete="name" placeholder="Your full name"></label>
- <label id="phoneField" hidden>Phone number <span class="field-required">Required on Sign Up</span><input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+60 12 345 6789" maxlength="24"></label>
+ <label id="phoneField" hidden>Phone number <span class="field-required">Pakistan (+92)</span><span class="pk-phone-wrap"><span class="pk-phone-prefix" aria-hidden="true">🇵🇰 +92</span><input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" aria-label="Pakistan mobile number" placeholder="300 1234567" maxlength="24"></span></label>
  <label>Email address<input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required></label>
  <label id="passwordField">Password<input id="password" name="password" type="password" minlength="6" autocomplete="current-password" placeholder="Enter your password" required></label>
  <div class="form-options"><span id="securityHint">Secure account access</span><button type="button" id="forgot" class="text-button">Forgot password?</button></div>
