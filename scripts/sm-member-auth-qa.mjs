@@ -101,6 +101,19 @@ try{
   assert.equal(await p.locator(".app-sidebar").count(),1);
   assert.equal(await p.locator(".desktop-header-links").count(),0,"No second desktop navigation");
   assert.equal(await p.locator(".workspace-header-label").count(),1,"Unified workspace header");
+  assert.equal(await p.locator(".side-links .ui-icon").count(),9,"All sidebar sections have consistent outline SVG icons");
+  await p.locator('.side-links button[data-section="profile"]').click();
+  await p.locator("#view-profile.active").waitFor({timeout:5000});
+  assert.equal(await p.locator("#profileDisplayName").inputValue(),"Demo QA User","Profile name is prefilled from the authenticated account");
+  await p.locator("#profileDarkTheme").click();
+  assert.equal(await p.locator("html").getAttribute("data-theme"),"dark");
+  await p.locator("#profileLightTheme").click();
+  assert.equal(await p.locator("html").getAttribute("data-theme"),"light");
+  assert.equal(await p.locator("#profileLightTheme").getAttribute("aria-pressed"),"true");
+  await p.locator('.side-links button[data-section="mentorship"]').click();
+  assert.equal(await p.locator(".mentorship-highlight strong").evaluate(el=>getComputedStyle(el).color),"rgb(255, 249, 239)","Mentorship headline has readable light text");
+  console.log("PASS premium icons, profile preferences and mentorship headline contrast");
+
   assert.match(await p.locator("#greeting").innerText(),/Demo/);
   await p.locator('button[data-section="mentorship"]').first().click();
   await p.locator("#mentorPhone").fill("+60123456789");
