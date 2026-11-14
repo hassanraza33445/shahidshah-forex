@@ -8,7 +8,7 @@ function tabFromLocation(){const requested=new URLSearchParams(location.search).
 
 const marketModules={feed:true};
 const toolLabels={video:"Video Prompt Builder",article:"Article Prompt Builder",banner:"Banner Prompt Builder",indicator:"Indicator Prompt Builder","30days":"30 Days Content Planner",h1:"Daily H1 Analysis",downloads:"Downloads"};
-const sectionNames={home:"Dashboard",markets:"Market Intelligence",studio:"AI Studio & Scripts",tools:"Prompt Tools",mentorship:"Mentorship",profile:"My Profile"};
+const sectionNames={home:"Dashboard",markets:"Market Intelligence",studio:"AI Studio & AI Scripts",tools:"Prompt Tools",mentorship:"Mentorship",profile:"My Profile"};
 function setEmbeddedFrame(id,src,statusId){
  const frame=$(id),status=$(statusId);
  if(!frame)return;
