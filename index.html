@@ -388,9 +388,12 @@ header{animation:navDrop .7s cubic-bezier(.2,.8,.2,1) both}
 
 
 
+/* Keep homepage brand portrait at the exact shared header dimensions. */
+header .brand-avatar{flex:0 0 46px;min-width:46px}
+@media(max-width:620px){header .brand-avatar{flex-basis:27px;min-width:27px}}
 /* Minimal account CTAs: preserve existing approved hero and public theme. */
 header .account-links{display:flex;gap:6px;align-items:center;flex:none}
-header .account-links a{min-height:36px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;padding:8px 10px;border:1px solid var(--border);border-radius:10px;font-size:10px;font-weight:800;text-decoration:none;line-height:1}
+header .account-links a{min-height:36px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;padding:8px 7px;border:1px solid var(--border);border-radius:10px;font-size:10px;font-weight:800;text-decoration:none;line-height:1}
 header .account-login{background:var(--bg-card);color:var(--gold)}
 header .account-signup{background:linear-gradient(110deg,#e7a03a,#b97508);color:#fff;border-color:#bd7c15!important}
 header .account-links a:hover{transform:translateY(-2px);box-shadow:0 6px 14px var(--gold-glow)}
