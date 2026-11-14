@@ -1,7 +1,7 @@
 (()=>{"use strict";
 const PROJECT="https://qggtdwixwafcmorepkks.supabase.co",KEY="sb_publishable_HnYmHQbt42OfjmRk09OfoQ_fq5TPYpb";
 const $=id=>document.getElementById(id),views=new Set(["home","markets","studio","tools","mentorship","library","notifications","profile"]);
-const state={client:null,user:null,profile:null,news:[],calendar:[],filter:"All",source:"news",currentTab:"home",marketPage:"feed",studioPage:"create",studioRole:null,studioStatus:"checking",studioFrame:null,studioFrameReady:false,applications:[]};
+const state={client:null,user:null,profile:null,news:[],calendar:[],filter:"All",source:"news",currentTab:"home",homeFilter:"All",marketPage:"feed",studioPage:"create",studioRole:null,studioStatus:"checking",studioFrame:null,studioFrameReady:false,applications:[]};
 const safe=(value)=>String(value??"").slice(0,900);
 const create=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=String(text);return el};
 function tabFromLocation(){const requested=new URLSearchParams(location.search).get("tab")||"home";return views.has(requested)?requested:"home"}
@@ -161,6 +161,9 @@ function withTimeout(request,ms,label){
 function paintUser(user,profile){
  const name=nameFor(user,profile),first=name.split(/\s+/)[0]||"Member";
  $("greeting").textContent="Welcome Back, "+first+" 👋";
+ const hour=Number(new Intl.DateTimeFormat("en-GB",{hour:"2-digit",hourCycle:"h23",timeZone:"Asia/Kuala_Lumpur"}).format(new Date()));
+ const greeting=hour<12?"Good Morning":hour<17?"Good Afternoon":"Good Evening";
+ if($("dashboardGreeting"))$("dashboardGreeting").textContent=greeting+", "+first;
  $("profileName").textContent=name;
  $("profileEmail").textContent=user.email||"";
  $("profileAvatar").textContent=first.charAt(0).toUpperCase();
@@ -212,8 +215,16 @@ async function start(){
  }
 }
 function goToLogin(){location.replace("/auth/?next="+encodeURIComponent("/app/"+location.search))}
-function headlineCard(item){
- const article=create("article","news-card");
+function headlineCard(item,featured=false){
+ const article=create("article","news-card"+(featured?" news-card-featured":""));
+ if(featured){
+  const category=String(item.category||"").toLowerCase();
+  const graphic=category.includes("gold")?"gold":category.includes("forex")?"forex":category.includes("crypto")?"crypto":category.includes("economic")?"economy":"markets";
+  const visual=create("div","news-visual news-visual-"+graphic);
+  visual.setAttribute("aria-hidden","true");
+  visual.append(create("span","news-visual-emblem",graphic==="gold"?"Au":graphic==="crypto"?"₿":graphic==="forex"?"FX":graphic==="economy"?"%":"↗"));
+  article.append(visual);
+ }
  const chip=create("span","chip",item.priority==="HOT"?"HOT · VERIFY SOURCE":item.category||"Markets");article.append(chip);
  const title=create("h3","",safe(item.title));article.append(title);
  const description=(item.summary||"").replace(/<[^>]*>/g," ").trim();
@@ -231,12 +242,10 @@ function renderNews(){
  const small=$("homeHeadlines"),big=$("marketNewsList");
  small.replaceChildren();big.replaceChildren();
  const score=x=>(x.priority==="HOT"?6:0)+(["Gold","Forex","Economic Data"].includes(x.category)?3:0);
- const latest=state.news.map((item,index)=>({item,index})).sort((a,b)=>score(b.item)-score(a.item)||a.index-b.index).slice(0,3).map(x=>x.item);
- if(!latest.length){
-  small.append(create("div","loading-line","News temporarily unavailable. Visit the Market Intelligence hub."));
-  big.append(create("div","loading-line","No recent headlines available for this filter."));return;
- }
- for(const item of latest)small.append(headlineCard(item));
+ const homePool=state.homeFilter==="All"?state.news:state.news.filter(x=>x.category===state.homeFilter);
+ const latest=homePool.map((item,index)=>({item,index})).sort((a,b)=>score(b.item)-score(a.item)||a.index-b.index).slice(0,3).map(x=>x.item);
+ if(!latest.length)small.append(create("div","loading-line",state.news.length?"No recent stories in this category.":"News temporarily unavailable. Visit Market Intelligence."));
+ for(const item of latest)small.append(headlineCard(item,true));
  const filtered=state.filter==="All"?state.news:state.news.filter(x=>x.category===state.filter);
  if(!filtered.length)big.append(create("div","loading-line","No headlines for this category right now."));
  for(const item of filtered.slice(0,18))big.append(headlineCard(item));
@@ -250,6 +259,7 @@ async function loadNews(){
  }catch(e){
   $("newsCount").textContent="—";renderNews();
  }
+ window.dispatchEvent(new CustomEvent("sm:premium-news",{detail:{items:state.news}}));
  $("lastUpdated").textContent=new Intl.DateTimeFormat("en",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Kuala_Lumpur"}).format(new Date());
 }
 async function loadEconomic(){
@@ -258,6 +268,7 @@ async function loadEconomic(){
   state.calendar=(r.items||[]).filter(x=>new Date(x.scheduled_at).getTime()>=Date.now());
   $("calendarCount").textContent=String(state.calendar.length);
  }catch(e){$("calendarCount").textContent="—"}
+ window.dispatchEvent(new CustomEvent("sm:premium-events",{detail:{items:state.calendar}}));
 }
 async function loadAlerts(){
  try{
@@ -349,6 +360,11 @@ function setupNavigation(){
   openTab("tools");showTool(button.dataset.tool);
  }));
  $("closeToolModule").addEventListener("click",()=>{$("toolModuleArea").hidden=true});
+ document.querySelectorAll("[data-home-filter]").forEach(button=>button.addEventListener("click",()=>{
+  state.homeFilter=button.dataset.homeFilter;
+  document.querySelectorAll("[data-home-filter]").forEach(x=>{x.classList.toggle("active",x===button);x.setAttribute("aria-pressed",String(x===button))});
+  renderNews();
+ }));
  document.querySelectorAll("[data-news-filter]").forEach(button=>button.addEventListener("click",()=>{
   state.filter=button.dataset.newsFilter;
   document.querySelectorAll("[data-news-filter]").forEach(x=>x.classList.toggle("active",x===button));
