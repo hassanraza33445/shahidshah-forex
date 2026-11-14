@@ -7,7 +7,7 @@ const create=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.cla
 function tabFromLocation(){const requested=new URLSearchParams(location.search).get("tab")||"home";return requested==="library"?"studio":requested==="notifications"?"markets":views.has(requested)?requested:"home"}
 
 const marketModules={feed:true};
-const toolLabels={video:"Video Prompt Builder",article:"Article Prompt Builder",banner:"Banner Prompt Builder",indicator:"Indicator Prompt Builder"};
+const toolLabels={video:"Video Prompt Builder",article:"Article Prompt Builder",banner:"Banner Prompt Builder",indicator:"Indicator Prompt Builder","30days":"30-Day Content Planner",downloads:"Downloads"};
 const sectionNames={home:"Dashboard",markets:"Market Intelligence",studio:"AI Studio & AI Scripts",tools:"Prompt Tools",mentorship:"Mentorship",profile:"My Profile"};
 // Same-origin Studio uses the dashboard's already verified Supabase client.
 // No duplicate login screen, temporary URL token, or postMessage credential handoff.
