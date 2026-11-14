@@ -240,7 +240,7 @@ function startMarketNewsClock(){
  window.setInterval(()=>{
   if(document.visibilityState==="visible"&&["markets","home"].includes(state.currentTab||""))
    void loadNews();
- },300000);
+ },120000);
 }
 function domainSource(value){try{const u=new URL(value);return u.protocol==="https:"?u.hostname.replace(/^www\./,""):"External source"}catch{return"Source"}}
 function hrefSafe(input){try{const u=new URL(input,location.origin);return u.protocol==="https:"||u.origin===location.origin&&u.protocol==="http:"?u.href:"#"}catch{return"#"}}
@@ -475,10 +475,13 @@ function renderMarketEditorial(){
  $("miGoldStories").textContent=state.news.length?String(counts.Gold||0):"—";
  $("miForexStories").textContent=state.news.length?String(counts.Forex||0):"—";
  const filtered=state.news.filter(miNewsMatch);
- // Preserve the API's deliberate Gold/Forex/General balance in the All feed.
- // Category-specific filters remain most-recent-first.
- const sorted=state.filter==="All"?filtered:
-  [...filtered].sort((a,b)=>Date.parse(b.published_at||0)-Date.parse(a.published_at||0));
+ // The actual article publication time determines order across ALL categories.
+ // No HOT/Gold/Forex score is allowed to put older news above newer news.
+ const sorted=[...filtered].sort((a,b)=>{
+  const at=Date.parse(String(a.published_at||a.first_seen_at||""));
+  const bt=Date.parse(String(b.published_at||b.first_seen_at||""));
+  return (Number.isFinite(bt)?bt:0)-(Number.isFinite(at)?at:0);
+ });
  $("miResultCount").textContent=filtered.length+" matching headlines";
  if(!sorted.length){
   grid.append(miBlank(state.news.length?"No matching headlines":"News feed unavailable",
@@ -518,9 +521,12 @@ function renderMarketEditorial(){
 function renderNews(){
  const small=$("homeHeadlines");
  small.replaceChildren();
- const score=x=>(x.priority==="HOT"?6:0)+(["Gold","Forex","Economic Data"].includes(x.category)?3:0);
  const homePool=state.homeFilter==="All"?state.news:state.news.filter(x=>miTopicMatch(x,state.homeFilter));
- const latest=homePool.map((item,index)=>({item,index})).sort((a,b)=>score(b.item)-score(a.item)||a.index-b.index).slice(0,3).map(x=>x.item);
+ const latest=[...homePool].sort((a,b)=>{
+  const at=Date.parse(String(a.published_at||a.first_seen_at||""));
+  const bt=Date.parse(String(b.published_at||b.first_seen_at||""));
+  return (Number.isFinite(bt)?bt:0)-(Number.isFinite(at)?at:0);
+ }).slice(0,3);
  if(!latest.length)small.append(create("div","loading-line",state.news.length?"No recent stories in this category.":"News temporarily unavailable. Visit Market Intelligence."));
  for(const item of latest)small.append(dashboardStoryCard(item));
  renderMarketEditorial();
@@ -528,7 +534,7 @@ function renderNews(){
 async function loadNews(){
  let loaded=false;
  try{
-  const v=await api("market-intelligence-api?mode=feed&focus=gold-forex&limit=72&page=1");
+  const v=await api("market-intelligence-api?mode=feed&focus=gold-forex&limit=120&page=1");
   state.news=v.items||[];$("newsCount").textContent=String(state.news.length);
   $("hotCount").textContent=String(["Gold","Forex","Crypto","Economic Data"].filter(topic=>state.news.some(item=>miTopicMatch(item,topic))).length);
   renderNews();loaded=true;
