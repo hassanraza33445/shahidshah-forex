@@ -21,6 +21,11 @@
     admin=$("mentorPaymentAdminConfig");
    if(!form||!next||!panel||!details||!unavailable||!submit||!txid||!proof||!back||!wallet||!admin)return;
    let settings=null,processing=false,submitted=false;
+   const stepBadge=form.closest(".vip-application-box")?.querySelector(".application-heading > span");
+   function syncStepBadge(){
+     if(!stepBadge || !onPhone())return;
+     stepBadge.textContent=panel.hidden?"Step 1 of 2":"Step 2 of 2";
+   }
 
    function messageText(text){message.textContent=text;}
    function configured(data){
@@ -77,6 +82,7 @@
      if(!onPhone()||!validateFirstStep())return;
      panel.hidden=false;
      form.classList.add("sm-mentor-payment-active");
+     syncStepBadge();
      txid.required=true;
      submit.textContent="Submit Payment for Verification →";
      render();
@@ -86,6 +92,7 @@
    next.addEventListener("click",openPayment);
    back.addEventListener("click",()=>{
      panel.hidden=true;
+     syncStepBadge();
      txid.required=false;
      form.classList.remove("sm-mentor-payment-active");
      messageText("");
@@ -175,6 +182,7 @@
    window.addEventListener("sm:paid-mentor-refresh",()=>{if(onPhone())void fetchConfig()});
    // First fetch only after the user navigates to the paid step, when auth is ready.
    if(onPhone()){
+     syncStepBadge();
      const btn=submit;
      btn.textContent="Submit Payment for Verification →";
      btn.disabled=true;
