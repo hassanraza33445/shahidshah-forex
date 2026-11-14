@@ -48,7 +48,7 @@ function start(){
  iconButton(document.querySelector(".profile-icon"),"user");
  iconButton(document.querySelector(".notification-icon"),"bell");
  document.querySelectorAll(".dashboard-metrics .metric>span").forEach((el,i)=>fill(el,["file","flame","calendar","clock"][i]));
- document.querySelectorAll(".quick-grid .tool-card>span").forEach((el,i)=>fill(el,["play","file","image","wand","mic"][i]));
+ document.querySelectorAll(".quick-grid .tool-card>span").forEach((el,i)=>fill(el,["sparkles","play","wand","folder","graduation"][i]));
  fill(document.querySelector(".mentor-promo>span"),"crown");
  fill(document.querySelector(".mentorship-highlight>span"),"crown");
  document.querySelectorAll(".profile-actions>a,.profile-actions>button").forEach((el,i)=>{if(!el.querySelector(".ui-icon"))el.prepend(svg(["folder","graduation","bell","calendar","settings"][i]))});
