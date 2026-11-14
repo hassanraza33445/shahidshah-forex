@@ -525,3 +525,16 @@ html[data-theme="dark"] .dashboard-home .watchlist-row{border-color:#514130}
 @media(prefers-reduced-motion:reduce){
  .dashboard-home *, .dashboard-home *:before, .dashboard-home *:after{animation:none!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
+
+/* Shared header greeting and snapshot specificity corrections. */
+.header-greeting{display:flex;align-items:center;gap:11px;margin-left:auto;margin-right:17px;min-width:0}
+.header-greeting .greeting-symbol{font-size:26px;color:#e0a332;line-height:1;animation:premiumSunIn .7s ease both}
+.header-greeting strong{display:block;color:var(--ink);font-size:13px;letter-spacing:-.25px;white-space:nowrap}
+.header-greeting small{display:block;color:var(--muted);font-size:10px;white-space:nowrap;margin-top:3px}
+@keyframes premiumSunIn{from{opacity:.2;transform:rotate(-28deg) scale(.7)}to{opacity:1;transform:rotate(0) scale(1)}}
+.dashboard-home .market-strip .snapshot-item{flex:0 0 auto;min-width:0}
+.dashboard-home .market-strip .snapshot-item strong,.dashboard-home .market-strip .snapshot-item small{flex:initial;min-width:0}
+@media(min-width:1131px){.member-header .workspace-header-label{margin-left:0;margin-right:auto}}
+@media(max-width:1350px){.header-greeting{display:none}}
+@media(max-width:720px){.header-greeting{display:none}}
+@media(prefers-reduced-motion:reduce){.header-greeting .greeting-symbol{animation:none}}
