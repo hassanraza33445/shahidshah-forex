@@ -140,9 +140,9 @@ html.sm-embedded .ai-gate{z-index:100}
 <link rel="stylesheet" href="/assets/site-master-header.css?v=20261114-3">
 <script src="/assets/site-master-header.js?v=20261114-ai-routefix-2" defer></script>
 <style>.tabs-wrap{top:var(--sm-header-height,76px)!important}</style>
-<link rel="stylesheet" href="/assets/sm-member-gate.css?v=20261114-unified-1">
+<link rel="stylesheet" href="/assets/sm-member-gate.css?v=20261114-embed-auth-fix-1">
 <script>document.documentElement.classList.add("sm-member-checking");</script>
-<script defer src="/assets/sm-member-gate.js?v=20261114-unified-1"></script>
+<script defer src="/assets/sm-member-gate.js?v=20261114-embed-auth-fix-1"></script>
 <style>
 /* Member-embedded prompt tools: readable on every screen; one parent page scroll. */
 html.sm-embedded,html.sm-embedded body{width:100%;min-width:0!important;height:auto!important;min-height:0!important;overflow-x:hidden!important;overflow-y:hidden!important}
@@ -329,6 +329,15 @@ $('banner').addEventListener('error',()=>{
  u.searchParams.set('reload','1');img.src=u.href;
 });
 document.addEventListener("sm:member-verified",()=>{if(new URLSearchParams(location.search).get("embedded")==="1")hideAiAccessGate()});
+// Parent dashboard keeps this iframe mounted; tab switching never reauthenticates.
+window.addEventListener("message",event=>{
+ if(event.source!==window.parent||event.origin!==location.origin||
+    event.data?.type!=="sm:prompt-select")return;
+ const tool=String(event.data.tool||"");
+ if(!["video","article","banner","indicator"].includes(tool))return;
+ const item=templates.find(t=>t.id===tool);
+ if(item&&item.id!==current.id){current=item;render()}
+});
 window.addEventListener("message",event=>{
  if(event.origin!==location.origin||event.data?.type!=="sm:theme"||!["light","dark"].includes(event.data.theme))return;
  setHubTheme(event.data.theme,false);
