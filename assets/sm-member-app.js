@@ -232,7 +232,7 @@ function headlineCard(item,featured=false){
   article.append(visual);
  }
  const story=String(item.title||"")+" "+String(item.summary||"");
- const tags=(String(item.category||"").toLowerCase().includes("economic")&&/\b(gold|xau|bullion)\b/i.test(story))?"Gold · Economy":item.category||"Markets";
+ const tags=(["economic data","central banks","economy"].includes(String(item.category||"").toLowerCase())&&/\b(gold|xau|bullion)\b/i.test(story))?"Gold · Economy":item.category||"Markets";
  const chip=create("span","chip",item.priority==="HOT"?"HOT · VERIFY SOURCE":tags);article.append(chip);
  const title=create("h3");
  const headlineButton=create("button","sm-news-title-button",safe(item.title));
@@ -242,7 +242,8 @@ function headlineCard(item,featured=false){
  const description=(item.summary||"").replace(/<[^>]*>/g," ").trim();
  const norm=t=>String(t||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
  const name=norm(item.title),details=norm(description);
- if(description&&details!==name&&!(name.length>24&&details.startsWith(name.slice(0,Math.min(60,name.length))))&&!name.startsWith(details))article.append(create("p","",description.slice(0,180)));
+ if(description&&details!==name&&!(name.length>24&&details.startsWith(name.slice(0,Math.min(60,name.length))))&&!name.startsWith(details))article.append(create("p","",description.slice(0,220)));
+ else if(featured)article.append(create("p","news-card-summary-unavailable","Headline-only feed · No additional summary supplied."));
  const foot=create("div","news-foot");
  foot.textContent=(item.publisher&&String(item.publisher).trim()?"Publisher: "+safe(item.publisher):"Source-linked headline")+" · "+formatTime(item.published_at||item.first_seen_at);
  article.append(foot);
@@ -257,8 +258,18 @@ function miScore(item){
  const category=String(item?.category||"");
  return (item?.priority==="HOT"?6:0)+(["Gold","Forex","Economic Data"].includes(category)?3:0);
 }
+function miTopicMatch(item,category){
+ if(category==="All")return true;
+ const original=String(item.category||"").toLowerCase();
+ const text=(String(item.title||"")+" "+String(item.summary||"")).toLowerCase();
+ if(category==="Gold")return original==="gold"||/\b(gold|bullion|xau\/?usd|xau)\b/i.test(text);
+ if(category==="Forex")return original==="forex"||/\b(forex|currency|currencies|usd|eur|gbp|jpy|yen|dollar|sterling|euro|dxy)\b/i.test(text);
+ if(category==="Crypto")return original==="crypto"||/\b(bitcoin|btc|crypto|ethereum|eth)\b/i.test(text);
+ if(category==="Economic Data")return ["economic data","economy","central banks"].includes(original)||/\b(inflation|interest rates?|rate hike|rate cut|cpi|ppi|gdp|fed|fomc|jobs report|payroll|central bank|employment|opec)\b/i.test(text);
+ return original===String(category).toLowerCase();
+}
 function miNewsMatch(item){
- if(state.filter!=="All"&&item.category!==state.filter)return false;
+ if(!miTopicMatch(item,state.filter))return false;
  const query=state.marketSearch.trim().toLowerCase();
  return !query||[item.title,item.summary,item.publisher,item.category].some(value=>String(value||"").toLowerCase().includes(query));
 }
@@ -272,10 +283,10 @@ function renderMarketEditorial(){
  if(!lead||!secondary||!big)return;
  lead.replaceChildren();secondary.replaceChildren();big.replaceChildren();
  const counts={All:state.news.length};
- for(const category of ["Forex","Gold","Crypto","Economic Data"])counts[category]=state.news.filter(item=>item.category===category).length;
+ for(const category of ["Forex","Gold","Crypto","Economic Data"])counts[category]=state.news.filter(item=>miTopicMatch(item,category)).length;
  document.querySelectorAll("[data-mi-category-count]").forEach(span=>{const n=counts[span.dataset.miCategoryCount]||0;span.textContent="("+n+")"});
  $("miTotalStories").textContent=state.news.length?String(state.news.length):"—";
- $("miPriorityStories").textContent=state.news.length?String(state.news.filter(item=>item.priority==="HOT").length):"—";
+ $("miPriorityStories").textContent=state.news.length?String(Math.min(3,state.news.length)):"—";
  const filtered=state.news.filter(miNewsMatch);
  const sorted=filtered.map((item,index)=>({item,index})).sort((a,b)=>miScore(b.item)-miScore(a.item)||a.index-b.index).map(pair=>pair.item);
  $("miResultCount").textContent=filtered.length+" matching headlines";
