@@ -147,7 +147,7 @@ function showTool(tool,updateUrl=true){
   // Keep the first iframe alive. Select the next builder when verified.
   frame.dataset.pendingTool=tool;
  }else{
-  setEmbeddedFrame("toolModuleFrame","/learning-hub.html?embedded=1&premium_prompts=1&ui=20261114-3#"+encodeURIComponent(tool),"toolModuleStatus");
+  setEmbeddedFrame("toolModuleFrame","/learning-hub.html?embedded=1&premium_prompts=1&ui="+(window.matchMedia("(max-width:720px)").matches?"20261114-prompt-vip-1":"20261114-3")+"#"+encodeURIComponent(tool),"toolModuleStatus");
  }
  if(updateUrl&&state.currentTab==="tools"){
   const params=new URLSearchParams(location.search);
