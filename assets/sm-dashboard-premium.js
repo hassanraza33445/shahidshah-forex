@@ -7,13 +7,22 @@ const assets=[
  {symbol:"USD/JPY",label:"Dollar / Japanese Yen",match:/\b(usd\/?jpy|yen|boj)\b/i,category:"Forex"},
  {symbol:"BTC/USD",label:"Bitcoin",match:/\b(btc|bitcoin|crypto)\b/i,category:"Crypto"}
 ];
+function storyMatches(item,category){
+ const label=String(item?.category||"").toLowerCase();
+ const text=(String(item?.title||"")+" "+String(item?.summary||"")).toLowerCase();
+ if(category==="Gold")return label==="gold"||/\b(gold|bullion|xau\/?usd|xau)\b/i.test(text);
+ if(category==="Forex")return label==="forex"||/\b(forex|currency|currencies|usd|eur|gbp|jpy|yen|dollar|sterling|euro|dxy)\b/i.test(text);
+ if(category==="Crypto")return label==="crypto"||/\b(bitcoin|btc|crypto|ethereum|eth)\b/i.test(text);
+ if(category==="Economic Data")return ["economic data","economy","central banks"].includes(label)||/\b(inflation|interest rates?|rate hike|rate cut|cpi|ppi|gdp|fed|fomc|jobs report|payroll|central bank|employment|opec)\b/i.test(text);
+ return label===String(category).toLowerCase();
+}
 function showNews(items){
  const data=Array.isArray(items)?items:[],root=$("marketSnapshotItems"),watch=$("dashboardWatchlist");
  if(root){
   root.replaceChildren();
   if(!data.length)root.append(make("span","snapshot-item","Source-linked news temporarily unavailable"));
   else for(const [title,category] of [["Gold","Gold"],["Forex","Forex"],["Crypto","Crypto"],["Economy","Economic Data"]]){
-   const count=data.filter(x=>x.category===category).length;
+   const count=data.filter(x=>storyMatches(x,category)).length;
    const item=make("span","snapshot-item");item.append(make("i","snapshot-dot"),make("strong","",title),make("small","",count+" headlines"));root.append(item);
   }
  }
