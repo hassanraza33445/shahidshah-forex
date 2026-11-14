@@ -1,0 +1,139 @@
+/* Paid Mentorship UI: real wallet/network, TXID and private optional receipt.
+   All new visual changes mobile only. Desktop form remains visually identical. */
+.sm-mentor-personal{display:contents}
+#mentorPaymentPanel[hidden],#mentorPaymentDetails[hidden],#mentorPaymentAdminConfig[hidden]{display:none!important}
+@media screen and (max-width:720px){
+ .member-app #view-mentorship #mentorshipForm .sm-mentor-personal{display:contents!important}
+ .member-app #view-mentorship #mentorshipForm.sm-mentor-payment-active .sm-mentor-personal{display:none!important}
+ .member-app #view-mentorship .sm-mentor-next{
+   display:flex!important;align-items:center!important;justify-content:space-between!important;
+   min-height:47px!important;width:100%!important;padding:10px 13px!important;
+   border-radius:12px!important;border:1px solid #dca756!important;
+   background:linear-gradient(120deg,#ffe3a1,#eab65c)!important;color:#39230d!important;
+   font-size:12px!important;font-weight:850!important;
+   box-shadow:0 6px 17px rgba(153,96,27,.13)!important;
+ }
+ .member-app #view-mentorship #mentorshipForm.sm-mentor-payment-active .sm-mentor-next{display:none!important}
+ .member-app #view-mentorship #mentorshipForm .sm-mentor-payment-submit{display:none!important}
+ .member-app #view-mentorship #mentorshipForm.sm-mentor-payment-active .sm-mentor-payment-submit{display:flex!important}
+ .member-app #view-mentorship #mentorPaymentPanel:not([hidden]){
+   display:flex!important;flex-direction:column!important;gap:12px!important;
+   min-width:0!important;width:100%!important;animation:smMentorPanelIn .2s ease both;
+ }
+ .member-app #view-mentorship .sm-mentor-payment-head {
+   padding:13px!important;border:1px solid #dab87e!important;
+   background:linear-gradient(125deg,#fff2d6,#f9e6c4)!important;
+   border-radius:14px!important;
+ }
+ .member-app #view-mentorship .sm-mentor-payment-step{
+   color:#a06c23!important;font-size:9px!important;font-weight:850!important;letter-spacing:1px!important;
+ }
+ .member-app #view-mentorship .sm-mentor-payment-head h3{
+   margin:5px 0!important;font-size:20px!important;letter-spacing:-.6px!important;
+   line-height:1.25!important;color:#36230d!important;
+ }
+ .member-app #view-mentorship .sm-mentor-payment-head h3 span{color:#b47c2f!important;}
+ .member-app #view-mentorship .sm-mentor-payment-head p{
+   margin:0!important;font-size:10.7px!important;line-height:1.5!important;color:#80633f!important;
+ }
+ .member-app #view-mentorship .sm-mentor-payment-warning{
+   padding:12px 13px!important;border-radius:12px!important;
+   border:1px solid #ddbf8d!important;background:var(--surface2)!important;
+   font-size:11px!important;line-height:1.5!important;color:var(--ink)!important;
+ }
+ .member-app #view-mentorship #mentorPaymentDetails:not([hidden]) {
+   display:flex!important;flex-direction:column!important;gap:11px!important;
+ }
+ .member-app #view-mentorship .sm-mentor-payment-stats{
+   display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;
+ }
+ .member-app #view-mentorship .sm-mentor-payment-stats>div{
+   display:flex!important;flex-direction:column!important;gap:4px!important;
+   padding:12px!important;border:1px solid var(--line)!important;
+   background:var(--surface2)!important;border-radius:12px!important;
+ }
+ .member-app #view-mentorship .sm-mentor-payment-stats small{
+   color:var(--muted)!important;font-size:9px!important;letter-spacing:.6px!important;
+   line-height:1.3!important;font-weight:850!important;
+ }
+ .member-app #view-mentorship .sm-mentor-payment-stats strong{
+   color:var(--ink)!important;font-size:15px!important;line-height:1.25!important;
+   font-weight:900!important;overflow-wrap:anywhere!important;
+ }
+ .member-app #view-mentorship .sm-mentor-wallet-label{
+   margin-bottom:-5px!important;
+ }
+ .member-app #view-mentorship .sm-mentor-wallet-box{
+   display:flex!important;align-items:center!important;gap:7px!important;
+   padding:8px!important;border-radius:12px!important;
+   border:1px solid #d9b474!important;background:var(--surface2)!important;
+   min-width:0!important;
+ }
+ .member-app #view-mentorship .sm-mentor-wallet-address{
+   flex:1!important;min-width:0!important;padding:3px!important;
+   font-family:ui-monospace,SFMono-Regular,Consolas,monospace!important;
+   font-size:10.6px!important;line-height:1.5!important;
+   color:var(--ink)!important;overflow-wrap:anywhere!important;word-break:break-all!important;
+   -webkit-user-select:all!important;user-select:all!important;
+ }
+ .member-app #view-mentorship .sm-mentor-wallet-copy{
+   flex:0 0 auto!important;padding:8px 10px!important;min-height:36px!important;
+   border-radius:10px!important;border:1px solid #dcb277!important;
+   background:linear-gradient(115deg,#ffebc0,#e9bc74)!important;
+   color:#38260f!important;font-size:10px!important;font-weight:850!important;
+ }
+ .member-app #view-mentorship .sm-mentor-network-note{
+   margin:0!important;padding:10px 11px!important;
+   border-left:3px solid #c58a32!important;border-radius:8px!important;
+   color:var(--muted)!important;background:var(--surface2)!important;
+   font-size:9.7px!important;line-height:1.5!important;
+ }
+ .member-app #view-mentorship .sm-required{float:right;color:#b78132;font-size:8.7px;font-weight:850}
+ .member-app #view-mentorship .sm-optional{float:right;color:var(--muted);font-size:8.7px;font-weight:850}
+ .member-app #view-mentorship .sm-mentor-proof-note{font-size:9.3px!important;color:var(--muted)!important;margin-top:-7px!important;}
+ .member-app #view-mentorship #mentorProofFile{
+   font-size:11px!important;height:auto!important;min-height:43px!important;padding:8px!important;
+ }
+ .member-app #view-mentorship #mentorProofFile::file-selector-button{
+   padding:7px!important;background:#f0d5a5;color:#573b18;border-radius:8px;border:0;margin-right:10px;
+ }
+ .member-app #view-mentorship .sm-mentor-payment-back{
+   display:block!important;align-self:flex-start!important;
+   background:transparent!important;color:var(--gold)!important;
+   border:0!important;padding:5px 2px!important;
+   font-size:10.5px!important;font-weight:850!important;
+ }
+ .member-app #view-mentorship .sm-mentor-admin-config{
+   border:1px dashed #c39550!important;border-radius:12px!important;
+   padding:11px!important;background:var(--surface2)!important;
+ }
+ .member-app #view-mentorship .sm-mentor-admin-config summary{font-size:11px!important;font-weight:850!important;color:var(--ink)!important;cursor:pointer!important}
+ .member-app #view-mentorship .sm-mentor-admin-fields{display:grid!important;gap:9px!important;padding-top:12px!important;}
+ .member-app #view-mentorship .sm-mentor-admin-config label{font-size:10px!important;font-weight:800!important;}
+ .member-app #view-mentorship .sm-mentor-admin-config :is(input,select){
+   display:block!important;min-height:40px!important;width:100%!important;
+   border:1px solid var(--line)!important;border-radius:10px!important;
+   margin-top:5px!important;padding:9px!important;font-size:16px!important;
+   background:var(--surface)!important;color:var(--ink)!important;
+ }
+ .member-app #view-mentorship .sm-mentor-admin-save{
+   min-height:42px!important;border-radius:11px!important;
+   color:#35220e!important;background:#efc179!important;border:1px solid #dca65a!important;
+   padding:10px!important;font-size:11px!important;font-weight:850!important;
+ }
+ .member-app #view-mentorship #mentorAdminUSDTMessage{font-size:10px!important;margin:0!important;color:var(--muted)!important;}
+ @keyframes smMentorPanelIn{from{opacity:.5;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+ html[data-theme="dark"] .member-app #view-mentorship .sm-mentor-payment-head{
+   background:linear-gradient(130deg,#49311d,#302219)!important;border-color:#936c3c!important;
+ }
+ html[data-theme="dark"] .member-app #view-mentorship .sm-mentor-payment-head :is(h3,p){color:#f4dcc0!important;}
+ html[data-theme="dark"] .member-app #view-mentorship .sm-mentor-payment-stats>div,
+ html[data-theme="dark"] .member-app #view-mentorship .sm-mentor-wallet-box,
+ html[data-theme="dark"] .member-app #view-mentorship .sm-mentor-network-note,
+ html[data-theme="dark"] .member-app #view-mentorship .sm-mentor-admin-config {
+   background:#33271b!important;border-color:#6b4e31!important;
+ }
+}
+@media screen and (max-width:720px) and (prefers-reduced-motion:reduce){
+ .member-app #view-mentorship #mentorPaymentPanel{animation:none!important;}
+}
