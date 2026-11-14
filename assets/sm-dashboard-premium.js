@@ -37,30 +37,6 @@ function showNews(items){
   row.append(left,right);watch.append(row);
  }
 }
-function showEvents(items){
- const root=$("dashboardEventsList");if(!root)return;root.replaceChildren();
- const now=Date.now();
- const events=(Array.isArray(items)?items:[]).filter(e=>e&&e.scheduled_at&&Number.isFinite(new Date(e.scheduled_at).getTime())&&new Date(e.scheduled_at).getTime()>=now).sort((a,b)=>new Date(a.scheduled_at)-new Date(b.scheduled_at)).slice(0,4);
- if(!events.length){root.append(make("div","mini-empty","No upcoming events with verified scheduled times."));return}
- const dateFormat=new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Asia/Kuala_Lumpur"});
- const timeFormat=new Intl.DateTimeFormat("en-US",{hour:"2-digit",minute:"2-digit",hour12:true,timeZone:"Asia/Kuala_Lumpur"});
- for(const event of events){
-  const scheduled=new Date(event.scheduled_at),row=make("div","dashboard-event");
-  const when=make("time","event-time");
-  when.dateTime=scheduled.toISOString();
-  when.append(make("strong","event-day",dateFormat.format(scheduled)),make("small","event-hour",timeFormat.format(scheduled)+" MYT"));
-  row.append(when);
-  const body=make("span","event-copy");
-  body.append(make("strong","",String(event.title||event.event_name||event.name||event.event||"Economic event").slice(0,105)));
-  const region=[event.currency,event.country].filter(Boolean).join(" · ");
-  if(region)body.append(make("small","",region.slice(0,60)));
-  row.append(body);
-  const impact=String(event.impact||event.importance||"").toLowerCase();
-  const level=impact.includes("high")?"high":impact.includes("medium")?"medium":impact.includes("low")?"low":"";
-  if(level)row.append(make("span","event-impact event-impact-"+level,level.toUpperCase()));
-  root.append(row);
- }
-}
 window.addEventListener("sm:premium-news",event=>showNews(event.detail?.items));
-window.addEventListener("sm:premium-events",event=>showEvents(event.detail?.items));
+
 })();
