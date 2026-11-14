@@ -34,16 +34,18 @@ function renderMarketModule(){
 function renderStudioAccess(){
  const allowed=state.studioStatus==="allowed",checking=state.studioStatus==="checking",error=state.studioStatus==="error";
  const studioGate=$("studioAccessState"),studioSlot=$("studioFrameSlot"),studioTabs=$("studioSubnav");
+ const libraryMode=state.currentTab==="library";
+ $("libraryActionBar").hidden=!allowed||!libraryMode;
  studioGate.hidden=allowed;studioSlot.hidden=!allowed;
  studioTabs.hidden=!allowed||state.currentTab==="library";
  if(!allowed){
   studioGate.classList.toggle("is-checking",checking);
   studioGate.classList.toggle("is-error",error);
   studioGate.classList.toggle("is-denied",!checking&&!error);
-  $("studioGateTitle").textContent=checking?"Verifying your Studio access…":error?"Studio access could not be checked":"Studio access is restricted";
-  $("studioGateHint").textContent=checking?"Checking your account permissions securely.":error?"The permission service could not be reached. Your access status has not been confirmed.":"Creator tools are available only to members approved by the platform administrator.";
+  $("studioGateTitle").textContent=checking?"Verifying your private access…":error?"Your access could not be checked":libraryMode?"Your content library is private":"Studio access is restricted";
+  $("studioGateHint").textContent=checking?"Checking your account permissions securely.":error?"The permission service could not be reached. Your access status has not been confirmed.":libraryMode?"Saved creator projects require administrator-approved Studio access.":"Creator tools are available only to members approved by the platform administrator.";
   $("studioGateBadge").textContent=checking?"CHECKING":error?"CONNECTION ISSUE":"APPROVAL REQUIRED";
-  $("studioGateInstruction").textContent=checking?"Your account permissions are being checked. Creator features remain protected during verification.":error?"Check your connection and retry. If the issue continues, contact the platform administrator.":"Ask your administrator to grant Studio access to your registered account. You'll receive a notification if email delivery is configured.";
+  $("studioGateInstruction").textContent=checking?"Your account permissions are being checked. Creator features remain protected during verification.":error?"Check your connection and retry. If the issue continues, contact the platform administrator.":libraryMode?"Ask your administrator to approve Studio access for this registered account. Private projects stay protected until then.":"Ask your administrator to grant Studio access to your registered account. You'll receive a notification if email delivery is configured.";
   const retry=$("studioRecheckAccess");
   retry.disabled=checking;
   retry.textContent=checking?"Checking permission…":error?"Retry Access Check ↻":"Check Access Again ↻";
@@ -128,11 +130,12 @@ function openTab(name,push=true){
  state.currentTab=name;
  for(const section of views)$("view-"+section)?.classList.toggle("active",section===name||(section==="studio"&&name==="library"));
  if(name==="library")$("view-library")?.classList.remove("active");
+ $("view-studio").classList.toggle("studio-library-mode",name==="library");
  $("studioTitle").innerHTML=name==="library"?"My <em>Content.</em>":"AI <em>Studio.</em>";
  $("studioEyebrow").textContent=name==="library"?"S M SHAHID SHAH · YOUR PRIVATE LIBRARY":"S M SHAHID SHAH · CREATE · EDIT · PRODUCE";
  $("studioHeroTagline").textContent=name==="library"?"Your ideas. Always organized.":"Create smarter. Publish better.";
  $("studioDescription").textContent=name==="library"?"Browse your saved scripts, edit drafts and manage content projects in one place.":"Write, refine and organize professional scripts and content in one connected workspace.";
- $("libraryActionBar").hidden=name!=="library";
+ $("libraryActionBar").hidden=name!=="library"||state.studioStatus!=="allowed";
  $("studioSubnav").hidden=name==="library"||state.studioStatus!=="allowed";
  document.querySelectorAll("[data-section]").forEach(node=>{
   const inMenu=node.closest(".side-links,.mobile-dock")!==null;
@@ -479,7 +482,7 @@ function setupProfile(){
 }
 
 function setupNavigation(){
- document.querySelectorAll("[data-section]").forEach(button=>button.addEventListener("click",()=>{
+ document.querySelectorAll("[data-section]").forEach(button=>button.addEventListener("click",event=>{if(button.tagName==="A")event.preventDefault();
   if(button.dataset.marketPage)state.marketPage=button.dataset.marketPage;
   if(button.dataset.studioPage)state.studioPage=button.dataset.studioPage;
   openTab(button.dataset.section);
