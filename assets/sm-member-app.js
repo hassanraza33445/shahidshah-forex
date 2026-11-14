@@ -20,6 +20,7 @@ function setEmbeddedFrame(id,src,statusId){
  frame.dataset.verified="false";
  frame.dataset.loaded="false";
  frame.style.visibility="hidden";
+ frame.style.minHeight="0px";
  frame.style.height="0px"; // Prevent dark iframe overlays while auth resolves.
  frame.onload=()=>{
   if(frame.dataset.loadedSource!==src)return;
@@ -222,9 +223,27 @@ function setupTheme(){
  setMemberTheme(document.documentElement.dataset.theme);
  $("memberThemeToggle").addEventListener("click",()=>setMemberTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
 }
+async function waitForSupabaseLibrary(){
+ if(window.supabase?.createClient)return;
+ await new Promise((resolve,reject)=>{
+  let done=false;
+  const finish=error=>{
+   if(done)return;done=true;clearTimeout(timer);
+   window.removeEventListener("sm:supabase-ready",ready);
+   window.removeEventListener("sm:supabase-failed",failed);
+   if(error)reject(error);else resolve();
+  };
+  const ready=()=>window.supabase?.createClient?finish():null;
+  const failed=()=>finish(Error("Login service could not load. Check your connection and retry."));
+  const timer=setTimeout(()=>finish(Error("Login service is taking too long to load.")),10500);
+  window.addEventListener("sm:supabase-ready",ready);
+  window.addEventListener("sm:supabase-failed",failed);
+  ready();
+ });
+}
 async function start(){
  try{
-  if(!window.supabase?.createClient)throw Error("Login library could not load");
+  await waitForSupabaseLibrary();
   const c=window.supabase.createClient(PROJECT,KEY);state.client=c;
   const {data,error}=await withTimeout(c.auth.getUser(),11000,"Secure login check took too long");
   if(error||!data?.user){goToLogin();return}
@@ -573,6 +592,7 @@ function setupNavigation(){
    if(frame&&frame.contentWindow===event.source){
     frame.dataset.verified="true";clearTimeout(frame._waitForReady);
     frame.style.visibility="visible";
+    frame.style.minHeight="";
     frame.style.height=frame.dataset.lastEmbedHeight||"700px";
     $("toolModuleStatus").hidden=true;
     if(frame.dataset.pendingTool){
