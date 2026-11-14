@@ -1,19 +1,14 @@
 (()=>{"use strict";
 const PROJECT="https://qggtdwixwafcmorepkks.supabase.co",KEY="sb_publishable_HnYmHQbt42OfjmRk09OfoQ_fq5TPYpb";
-const $=id=>document.getElementById(id),views=new Set(["home","markets","studio","tools","mentorship","library","notifications","profile"]);
-const state={client:null,user:null,profile:null,news:[],calendar:[],filter:"All",source:"news",currentTab:"home",homeFilter:"All",marketPage:"feed",marketSearch:"",marketVisible:12,studioPage:"create",studioRole:null,studioStatus:"checking",studioFrame:null,studioFrameReady:false,applications:[]};
+const $=id=>document.getElementById(id),views=new Set(["home","markets","studio","tools","mentorship","profile"]);
+const state={client:null,user:null,profile:null,news:[],calendar:[],filter:"All",source:"news",currentTab:"home",homeFilter:"All",marketPage:"feed",marketSearch:"",marketVisible:12,studioPage:"dashboard",studioRole:null,studioStatus:"checking",studioFrame:null,studioFrameReady:false,applications:[]};
 const safe=(value)=>String(value??"").slice(0,900);
 const create=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=String(text);return el};
 function tabFromLocation(){const requested=new URLSearchParams(location.search).get("tab")||"home";return views.has(requested)?requested:"home"}
 
-const marketModules={
- hub:"/market-intelligence/?embedded=1",
- calendar:"/economic-calendar/?embedded=1",
- reaction:"/market-reaction/?embedded=1",
- alerts:"/notifications/?embedded=1"
-};
+const marketModules={feed:true};
 const toolLabels={video:"Video Prompt Builder",article:"Article Prompt Builder",banner:"Banner Prompt Builder",indicator:"Indicator Prompt Builder","30days":"30 Days Content Planner",h1:"Daily H1 Analysis",downloads:"Downloads"};
-const sectionNames={home:"Dashboard",markets:"Market Intelligence",studio:"AI Studio",tools:"Prompt Tools",mentorship:"Mentorship",library:"My Content",notifications:"Notifications",profile:"My Profile"};
+const sectionNames={home:"Dashboard",markets:"Market Intelligence",studio:"AI Studio & Scripts",tools:"Prompt Tools",mentorship:"Mentorship",profile:"My Profile"};
 function setEmbeddedFrame(id,src,statusId){
  const frame=$(id),status=$(statusId);
  if(!frame)return;
@@ -25,11 +20,9 @@ function setEmbeddedFrame(id,src,statusId){
  frame.src=src;
 }
 function renderMarketModule(){
- const selected=state.marketPage in marketModules?state.marketPage:"feed";
- document.querySelectorAll("#view-markets [data-market-page]").forEach(btn=>btn.classList.toggle("active",btn.dataset.marketPage===selected));
- $("marketFeedArea").hidden=selected!=="feed";
- $("marketModuleArea").hidden=selected==="feed";
- if(selected!=="feed")setEmbeddedFrame("marketModuleFrame",marketModules[selected],"marketModuleStatus");
+ state.marketPage="feed";
+ const feed=$("marketFeedArea");
+ if(feed)feed.hidden=false;
 }
 function renderStudioAccess(){
  const allowed=state.studioStatus==="allowed",checking=state.studioStatus==="checking",error=state.studioStatus==="error";
@@ -37,7 +30,7 @@ function renderStudioAccess(){
  const libraryMode=state.currentTab==="library";
  $("libraryActionBar").hidden=!allowed||!libraryMode;
  studioGate.hidden=allowed;studioSlot.hidden=!allowed;
- studioTabs.hidden=!allowed||state.currentTab==="library";
+ studioTabs.hidden=!allowed;
  if(!allowed){
   studioGate.classList.toggle("is-checking",checking);
   studioGate.classList.toggle("is-error",error);
@@ -55,20 +48,7 @@ function renderStudioAccess(){
    void checkStudioAccess();
   };
  }
- const libraryGate=$("libraryAccessState"),librarySlot=$("libraryFrameSlot");
- libraryGate.hidden=allowed;librarySlot.hidden=!allowed;
- if(!allowed){
-  libraryGate.replaceChildren();
-  const title=create("strong","",checking?"Verifying your private library access…":error?"Library access could not be checked":"Private library access is restricted");
-  const hint=create("p","",checking?"Your account is being verified securely.":error?"Your connection or permission service is unavailable. Please retry.":"Only members granted Studio access by an administrator can open saved creator projects.");
-  libraryGate.append(title,hint);
-  if(error){
-   const retry=create("button","outline-action","Retry Access Check");
-   retry.type="button";retry.addEventListener("click",()=>{state.studioStatus="checking";renderStudioAccess();void checkStudioAccess()});
-   libraryGate.append(retry);
-  }
- }
- if(allowed&&(state.currentTab==="studio"||state.currentTab==="library"))mountStudio();
+ if(allowed&&state.currentTab==="studio")mountStudio();
 }
 async function checkStudioAccess(){
  if(!state.client||!state.user)return;
@@ -95,19 +75,17 @@ async function checkStudioAccess(){
 }
 function mountStudio(){
  if(state.studioStatus!=="allowed")return;
- const isLibrary=state.currentTab==="library";
  const place=$("studioFrameSlot");
- const requested=isLibrary?"projects":state.studioPage;
+ const requested=state.studioPage;
  if(!state.studioFrame){
   const frame=document.createElement("iframe");
   frame.id="unifiedStudioFrame";frame.className="unified-studio-frame";frame.title="S M Shahid Shah AI Content Studio";
   frame.setAttribute("loading","eager");frame.setAttribute("allow","microphone; clipboard-write");
-  state.studioFrame=frame;
-  state.studioFrameReady=false;
+  state.studioFrame=frame;state.studioFrameReady=false;
   frame.addEventListener("load",()=>{
    state.studioFrameReady=true;
    frame.contentWindow?.postMessage({type:"sm:theme",theme:document.documentElement.dataset.theme},location.origin);
-   frame.contentWindow?.postMessage({type:"sm:studio-nav",page:state.currentTab==="library"?"projects":state.studioPage},location.origin);
+   frame.contentWindow?.postMessage({type:"sm:studio-nav",page:state.studioPage},location.origin);
   });
   const newsId=new URLSearchParams(location.search).get("news");
   frame.src="/content-studio/?embedded=1&view="+encodeURIComponent(requested)+(newsId?"&news="+encodeURIComponent(newsId):"");
@@ -126,22 +104,14 @@ function showTool(tool,updateUrl=true){
  area.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function openTab(name,push=true){
+ if(name==="library"){name="studio";state.studioPage="projects"}
+ if(name==="notifications")name="markets";
  if(!views.has(name))name="home";
  state.currentTab=name;
- for(const section of views)$("view-"+section)?.classList.toggle("active",section===name||(section==="studio"&&name==="library"));
- if(name==="library")$("view-library")?.classList.remove("active");
- $("view-studio").classList.toggle("studio-library-mode",name==="library");
- $("studioTitle").innerHTML=name==="library"?"My <em>Content.</em>":"AI <em>Studio.</em>";
- $("studioEyebrow").textContent=name==="library"?"S M SHAHID SHAH · YOUR PRIVATE LIBRARY":"S M SHAHID SHAH · CREATE · EDIT · PRODUCE";
- $("studioHeroTagline").textContent=name==="library"?"Your ideas. Always organized.":"Create smarter. Publish better.";
- $("studioDescription").textContent=name==="library"?"Browse your saved scripts, edit drafts and manage content projects in one place.":"Write, refine and organize professional scripts and content in one connected workspace.";
- $("libraryActionBar").hidden=name!=="library"||state.studioStatus!=="allowed";
- $("studioSubnav").hidden=name==="library"||state.studioStatus!=="allowed";
+ for(const section of views) $("view-"+section)?.classList.toggle("active",section===name);
  document.querySelectorAll("[data-section]").forEach(node=>{
-  const inMenu=node.closest(".side-links,.mobile-dock")!==null;
-  const studioSubtab=node.closest(".side-links")&&name==="studio"&&node.dataset.studioPage;
-  const active=inMenu&&node.dataset.section===name&&(!studioSubtab||node.dataset.studioPage===state.studioPage);
-  node.classList.toggle("active",Boolean(active));
+  const inNav=node.closest(".side-links,.mobile-dock")!==null;
+  node.classList.toggle("active",inNav&&node.dataset.section===name);
  });
  $("currentSectionName").textContent=sectionNames[name]||"Dashboard";
  if(push){
@@ -154,8 +124,7 @@ function openTab(name,push=true){
  if(typeof window.scrollTo==="function")window.scrollTo({top:0,behavior:"instant"});
  if(name==="mentorship")void refreshApplication();
  if(name==="markets")renderMarketModule();
- if(name==="studio"||name==="library")renderStudioAccess();
- if(name==="notifications")setEmbeddedFrame("noticeFrame","/notifications/?embedded=1","noticeFrameStatus");
+ if(name==="studio")renderStudioAccess();
 }
 function closeMenu(){
  $("appSidebar").classList.remove("open");$("sideShade").hidden=true;$("openMenu").setAttribute("aria-expanded","false");
@@ -224,10 +193,11 @@ async function start(){
   const requested=new URLSearchParams(location.search);
   const studio=requested.get("studio");
   if(["dashboard","create","projects","planner","record"].includes(studio))state.studioPage=studio;
+  if(requested.get("tab")==="library")state.studioPage="projects";
   openTab(tabFromLocation(),false);
   if(state.currentTab==="tools"&&Object.hasOwn(toolLabels,requested.get("tool")))showTool(requested.get("tool"),false);
   void checkStudioAccess();
-  void Promise.allSettled([loadNews(),loadEconomic(),loadAlerts()]);
+  void loadNews();
  }catch(e){
   const screen=$("bootScreen");
   screen.replaceChildren(create("img","boot-avatar"));
@@ -361,29 +331,6 @@ function renderMarketEditorial(){
   }
  }
 }
-function renderMarketEvents(){
- const root=$("miEventsList");if(!root)return;
- root.replaceChildren();
- const next=state.calendar.filter(event=>Number.isFinite(new Date(event.scheduled_at).getTime())&&new Date(event.scheduled_at).getTime()>=Date.now()).slice(0,4);
- if(!next.length){root.append(miBlank("No confirmed upcoming events","Open the Economic Calendar to check the current schedule."));return}
- const dateFmt=new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Asia/Kuala_Lumpur"});
- const timeFmt=new Intl.DateTimeFormat("en-US",{hour:"2-digit",minute:"2-digit",hour12:true,timeZone:"Asia/Kuala_Lumpur"});
- for(const event of next){
-  const date=new Date(event.scheduled_at),row=create("div","mi-event");
-  const time=create("time");time.dateTime=date.toISOString();time.append(create("span","",dateFmt.format(date)),create("small","",timeFmt.format(date)+" MYT"));
-  const copy=create("div","mi-event-info");
-  copy.append(create("strong","",safe(event.title||event.event_name||event.name||event.event||"Economic event")));
-  const detail=[event.currency,event.country].filter(Boolean).join(" · ");
-  if(detail)copy.append(create("small","",safe(detail)));
-  row.append(time,copy);
-  const impact=String(event.impact||event.importance||"").toLowerCase();
-  if(/high|medium|low/.test(impact)){
-   const level=impact.includes("high")?"high":impact.includes("medium")?"medium":"low";
-   row.append(create("span","mi-impact "+level,level.toUpperCase()));
-  }
-  root.append(row);
- }
-}
 function renderNews(){
  const small=$("homeHeadlines");
  small.replaceChildren();
@@ -399,32 +346,16 @@ async function loadNews(){
  try{
   const v=await api("market-intelligence-api?mode=feed&limit=36&page=1");
   state.news=v.items||[];$("newsCount").textContent=String(state.news.length);
+  $("hotCount").textContent=String(["Gold","Forex","Crypto","Economic Data"].filter(topic=>state.news.some(item=>miTopicMatch(item,topic))).length);
   renderNews();loaded=true;
   $("miFeedStatus").textContent="Headlines available";
  }catch(e){
-  $("newsCount").textContent="—";renderNews();
+  $("newsCount").textContent="—";$("hotCount").textContent="—";renderNews();
   $("miFeedStatus").textContent="News source temporarily unavailable";
  }
  window.dispatchEvent(new CustomEvent("sm:premium-news",{detail:{items:state.news}}));
  $("lastUpdated").textContent=loaded?new Intl.DateTimeFormat("en",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Kuala_Lumpur"}).format(new Date()):"Unavailable";
  $("miFeedUpdated").textContent=loaded?"Last checked "+$("lastUpdated").textContent+" MYT · Source-linked headlines":"Retry after checking your connection";
-}
-async function loadEconomic(){
- try{
-  const r=await api("economic-calendar-api?mode=events");
-  state.calendar=(r.items||[]).filter(x=>new Date(x.scheduled_at).getTime()>=Date.now()).sort((a,b)=>new Date(a.scheduled_at)-new Date(b.scheduled_at));
-  $("calendarCount").textContent=String(state.calendar.length);
- }catch(e){$("calendarCount").textContent="—"}
- window.dispatchEvent(new CustomEvent("sm:premium-events",{detail:{items:state.calendar}}));
- renderMarketEvents();
-}
-async function loadAlerts(){
- try{
-  const r=await api("market-notifications-api?mode=feed&limit=30");
-  const hot=(r.items||[]).filter(x=>x.kind==="breaking_news");
-  $("hotCount").textContent=String(hot.length);
-  $("alertDot").hidden=hot.length===0;
- }catch(e){$("hotCount").textContent="—";$("alertDot").hidden=true}
 }
 async function refreshApplication(){
  if(!state.client||!state.user)return;
@@ -542,7 +473,7 @@ function setupNavigation(){
   }
   if(event.data.type==="sm:open-module"){
    const view=event.data.view;
-   if(view==="markets"){state.marketPage=Object.hasOwn(marketModules,event.data.page)?event.data.page:"feed";openTab("markets")}
+   if(view==="markets"){state.marketPage="feed";openTab("markets")}
    else if(views.has(view))openTab(view);
   }
  });
