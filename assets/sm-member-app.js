@@ -32,19 +32,38 @@ function renderMarketModule(){
  if(selected!=="feed")setEmbeddedFrame("marketModuleFrame",marketModules[selected],"marketModuleStatus");
 }
 function renderStudioAccess(){
- const allowed=state.studioStatus==="allowed";
- for(const [view,gateId,slotId] of [["studio","studioAccessState","studioFrameSlot"],["library","libraryAccessState","libraryFrameSlot"]]){
-  const gate=$(gateId),slot=$(slotId);
-  gate.hidden=allowed;
-  slot.hidden=!allowed;
-  if(!allowed){
-   gate.replaceChildren();
-   const title=create("strong","",state.studioStatus==="checking"?"Verifying your Studio access…":state.studioStatus==="error"?"Studio access could not be checked":"Studio access is restricted");
-   const hint=create("p","",state.studioStatus==="checking"?"Your account is being verified securely.":state.studioStatus==="error"?"Your connection or permission service is unavailable. Please retry.":"Only accounts granted Studio access by the administrator can use the creator workspace.");
-   gate.append(title,hint);
-   if(state.studioStatus==="error"){
-    const retry=create("button","outline-action","Retry Access Check");retry.type="button";retry.addEventListener("click",()=>{state.studioStatus="checking";renderStudioAccess();void checkStudioAccess()});gate.append(retry);
-   }
+ const allowed=state.studioStatus==="allowed",checking=state.studioStatus==="checking",error=state.studioStatus==="error";
+ const studioGate=$("studioAccessState"),studioSlot=$("studioFrameSlot"),studioTabs=$("studioSubnav");
+ studioGate.hidden=allowed;studioSlot.hidden=!allowed;
+ studioTabs.hidden=!allowed||state.currentTab==="library";
+ if(!allowed){
+  studioGate.classList.toggle("is-checking",checking);
+  studioGate.classList.toggle("is-error",error);
+  studioGate.classList.toggle("is-denied",!checking&&!error);
+  $("studioGateTitle").textContent=checking?"Verifying your Studio access…":error?"Studio access could not be checked":"Studio access is restricted";
+  $("studioGateHint").textContent=checking?"Checking your account permissions securely.":error?"The permission service could not be reached. Your access status has not been confirmed.":"Creator tools are available only to members approved by the platform administrator.";
+  $("studioGateBadge").textContent=checking?"CHECKING":error?"CONNECTION ISSUE":"APPROVAL REQUIRED";
+  $("studioGateInstruction").textContent=checking?"Your account permissions are being checked. Creator features remain protected during verification.":error?"Check your connection and retry. If the issue continues, contact the platform administrator.":"Ask your administrator to grant Studio access to your registered account. You'll receive a notification if email delivery is configured.";
+  const retry=$("studioRecheckAccess");
+  retry.disabled=checking;
+  retry.textContent=checking?"Checking permission…":error?"Retry Access Check ↻":"Check Access Again ↻";
+  retry.onclick=()=>{
+   if(state.studioStatus==="checking"||!state.client||!state.user)return;
+   state.studioStatus="checking";renderStudioAccess();
+   void checkStudioAccess();
+  };
+ }
+ const libraryGate=$("libraryAccessState"),librarySlot=$("libraryFrameSlot");
+ libraryGate.hidden=allowed;librarySlot.hidden=!allowed;
+ if(!allowed){
+  libraryGate.replaceChildren();
+  const title=create("strong","",checking?"Verifying your private library access…":error?"Library access could not be checked":"Private library access is restricted");
+  const hint=create("p","",checking?"Your account is being verified securely.":error?"Your connection or permission service is unavailable. Please retry.":"Only members granted Studio access by an administrator can open saved creator projects.");
+  libraryGate.append(title,hint);
+  if(error){
+   const retry=create("button","outline-action","Retry Access Check");
+   retry.type="button";retry.addEventListener("click",()=>{state.studioStatus="checking";renderStudioAccess();void checkStudioAccess()});
+   libraryGate.append(retry);
   }
  }
  if(allowed&&(state.currentTab==="studio"||state.currentTab==="library"))mountStudio();
@@ -110,10 +129,11 @@ function openTab(name,push=true){
  for(const section of views)$("view-"+section)?.classList.toggle("active",section===name||(section==="studio"&&name==="library"));
  if(name==="library")$("view-library")?.classList.remove("active");
  $("studioTitle").innerHTML=name==="library"?"My <em>Content.</em>":"AI <em>Studio.</em>";
- $("studioEyebrow").textContent=name==="library"?"YOUR PRIVATE WORKSPACE":"CREATE · EDIT · PRODUCE";
+ $("studioEyebrow").textContent=name==="library"?"S M SHAHID SHAH · YOUR PRIVATE LIBRARY":"S M SHAHID SHAH · CREATE · EDIT · PRODUCE";
+ $("studioHeroTagline").textContent=name==="library"?"Your ideas. Always organized.":"Create smarter. Publish better.";
  $("studioDescription").textContent=name==="library"?"Browse your saved scripts, edit drafts and manage content projects in one place.":"Write, refine and organize professional scripts and content in one connected workspace.";
  $("libraryActionBar").hidden=name!=="library";
- $("studioSubnav").hidden=name==="library";
+ $("studioSubnav").hidden=name==="library"||state.studioStatus!=="allowed";
  document.querySelectorAll("[data-section]").forEach(node=>{
   const inMenu=node.closest(".side-links,.mobile-dock")!==null;
   const studioSubtab=node.closest(".side-links")&&name==="studio"&&node.dataset.studioPage;
