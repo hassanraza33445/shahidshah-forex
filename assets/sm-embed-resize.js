@@ -1,6 +1,7 @@
 (()=>{"use strict";
 if(window.parent===window||new URLSearchParams(location.search).get("embedded")!=="1")return;
 document.documentElement.classList.add("sm-embed-surface");
+window.addEventListener("message",event=>{if(event.origin!==location.origin||event.data?.type!=="sm:theme")return;const theme=event.data.theme;if(theme==="light"||theme==="dark"){document.documentElement.dataset.theme=theme;schedule()}});
 let requested=false,lastHeight=0;
 function contentNode(){
  const selectors=["#workspace:not(.hidden) .content","main",".layout:not(.hidden) .content",".page.active",".content","body"];
