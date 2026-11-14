@@ -6,6 +6,8 @@ on:
       - 'app/**'
       - 'assets/sm-auth*'
       - 'assets/sm-member-*'
+      - 'assets/sm-news-reader.*'
+      - 'scripts/sm-news-reader-qa.mjs'
       - 'market-intelligence/**'
       - 'learning-hub.html'
       - 'content-studio/**'
@@ -33,5 +35,8 @@ jobs:
           node --check assets/sm-auth.js
           node --check assets/sm-member-gate.js
           node --check assets/sm-member-app.js
+          node --check assets/sm-news-reader.js
       - name: Simulate signup/login/secure redirects and new mobile/desktop UI
         run: node scripts/sm-member-auth-qa.mjs
+      - name: Verify on-site market news reader in mobile and desktop
+        run: node scripts/sm-news-reader-qa.mjs
