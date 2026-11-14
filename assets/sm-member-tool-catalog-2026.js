@@ -54,7 +54,7 @@
     container.append(article);
   }
   window.SMSetupMobileToolCatalog=async function(client) {
-    if(!mobile.matches||!client)return;
+    if(!client)return;
     const nav=document.querySelector("#view-tools .sm-prompt-tool-tabs");
     if(!nav||nav.dataset.catalogLoaded==="true")return;
     nav.dataset.catalogLoaded="true";
@@ -66,7 +66,6 @@
       console.warn("Mobile tool catalog unavailable; keeping default tool navigation.");
       return;
     }
-    if(!mobile.matches)return;
     const eligible=data.filter(item=>item && (item.item_kind==="prompt" || item.item_kind==="folder") &&
       allowed.has(item.tool_slug));
     const buttons=[...nav.querySelectorAll(".sm-prompt-tool-tab[data-tool]")];
@@ -79,6 +78,10 @@
       if(name&&item.title)name.textContent=item.title;
       if(detail&&item.description)detail.textContent=item.description;
     });
+
+    // Desktop uses the same Supabase order/visibility as mobile, but displays
+    // download cards inside its existing Downloads iframe instead of duplicating them.
+    if(!mobile.matches)return;
 
     let region=document.getElementById("smToolResourceList");
     if(!region){
