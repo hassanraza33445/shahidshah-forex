@@ -65,8 +65,8 @@ browser.newPage=async options=>{
 
 try{
  const expectedNav=[
-  ["/","Home"],["/market-intelligence/","Market Intelligence"],["/content-studio/","AI Studio"],
-  ["/ai-tools/","AI Scripts"],["/videos/","Videos"],["/about/","About"]
+  ["/","Home"],["/market-intelligence/","Market Intelligence"],["/app/?tab=studio","AI Studio"],
+  ["/app/?tab=studio&studio=create","AI Scripts"],["/videos/","Videos"],["/about/","About"]
  ];
  for(const route of ["/","/about/","/course/","/community/","/videos/"]){
   for(const width of [1440,390]){
@@ -76,7 +76,7 @@ try{
    await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:20000});
    await page.waitForTimeout(220);
    const nav=await page.locator(".learning-nav a").evaluateAll(anchors=>anchors.map(a=>{
-    const cs=getComputedStyle(a);return {href:new URL(a.href).pathname,label:a.textContent.trim(),font:cs.fontFamily,size:cs.fontSize,weight:cs.fontWeight};
+    const cs=getComputedStyle(a);return {href:new URL(a.href).pathname+new URL(a.href).search,label:a.textContent.trim(),font:cs.fontFamily,size:cs.fontSize,weight:cs.fontWeight};
    }));
    assert.deepEqual(nav.map(x=>[x.href,x.label]),expectedNav,"six header links must remain visible on "+route);
    const sample=nav[0];
@@ -96,7 +96,7 @@ try{
   await page.locator("#newsList .news-card").first().waitFor({timeout:10000});
   assert.equal(await page.locator("#newsList .news-card").count(),2,"two headlines rendered");
   assert.equal(await page.getByText("Gold extends rally after monetary-policy update").count()>0,true);
-  assert.equal(await page.locator("#newsList a[href='/content-studio/?news=aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa']").count(),1);
+  assert.equal(await page.locator("#newsList a[href='/app/?tab=studio&studio=create&news=aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa']").count(),1);
   assert.equal(await page.locator("#newsList a[href='https://example.com/gold']").count(),1);
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth+2);
   assert.equal(overflow,false,"No horizontal overflow at "+viewport.width+"px");
@@ -160,10 +160,10 @@ try{
     const brand=h.querySelector(".brand-avatar"),image=brand.querySelector("img"),link=h.querySelector(".learning-nav a");
     const icons=[...h.querySelectorAll(".social-link")],toggle=h.querySelector("#themeToggle"),nav=h.querySelector(".learning-nav"); const row=h.querySelector(".wrap.nav"),rect=row.getBoundingClientRect();
     const css=x=>getComputedStyle(x);
-    return {navLabels:[...nav.querySelectorAll("a")].map(x=>x.textContent.trim()),navHrefs:[...nav.querySelectorAll("a")].map(x=>new URL(x.href).pathname),headerHeight:Math.round(h.getBoundingClientRect().height),navFont:css(link).fontFamily,navSize:css(link).fontSize,navWeight:css(link).fontWeight,navPad:css(link).padding,brandWidth:Math.round(brand.getBoundingClientRect().width),brandHeight:Math.round(brand.getBoundingClientRect().height),containerWidth:Math.round(rect.width),containerLeft:Math.round(rect.left),iconWidth:Math.round(icons[0].getBoundingClientRect().width),iconCount:icons.length,svgCount:icons.filter(x=>!!x.querySelector("svg")).length,themeIcon:!!toggle.querySelector("svg"),imageLoaded:image.complete&&image.naturalWidth>0,htmlTheme:document.documentElement.dataset.theme};
+    return {navLabels:[...nav.querySelectorAll("a")].map(x=>x.textContent.trim()),navHrefs:[...nav.querySelectorAll("a")].map(x=>new URL(x.href).pathname+new URL(x.href).search),headerHeight:Math.round(h.getBoundingClientRect().height),navFont:css(link).fontFamily,navSize:css(link).fontSize,navWeight:css(link).fontWeight,navPad:css(link).padding,brandWidth:Math.round(brand.getBoundingClientRect().width),brandHeight:Math.round(brand.getBoundingClientRect().height),containerWidth:Math.round(rect.width),containerLeft:Math.round(rect.left),iconWidth:Math.round(icons[0].getBoundingClientRect().width),iconCount:icons.length,svgCount:icons.filter(x=>!!x.querySelector("svg")).length,themeIcon:!!toggle.querySelector("svg"),imageLoaded:image.complete&&image.naturalWidth>0,htmlTheme:document.documentElement.dataset.theme};
    });
    assert.deepEqual(m.navLabels,labels,"exact header link labels on "+route);
-   assert.deepEqual(m.navHrefs,["/","/market-intelligence/","/content-studio/","/ai-tools/","/videos/","/about/"],"exact navigation routes on "+route);
+   assert.deepEqual(m.navHrefs,["/","/market-intelligence/","/app/?tab=studio","/app/?tab=studio&studio=create","/videos/","/about/"],"exact navigation routes on "+route);
    assert.equal(m.iconCount,4,"four identical social icons on "+route);
    assert.equal(m.svgCount,4,"SVG social buttons, no text placeholders on "+route);
    assert.equal(m.themeIcon,true,"theme SVG exists on "+route);
@@ -350,19 +350,50 @@ try{
   assert.equal(after,before==="dark"?"light":"dark","theme toggle switches on "+page.url());
  }
 
- for(const [route,pathPart] of [["/ai-banner-scripts/","/learning-hub.html#banner"],["/expo.html","/expo/"],["/webinar-admin/","/webinar-admin.html"]]){
+
+ // Real click-through on the header must reach the member generator, never the marketing page.
+ for(const [route,width] of [["/",1440],["/",390],["/about/",1440],["/market-intelligence/",390]]){
+  const page=await browser.newPage({viewport:{width,height:900},serviceWorkers:"block"});
+  await page.route("**/www.googletagmanager.com/**",r=>r.abort());
+  await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:20000});
+  const link=page.locator("body > header:not(.site-legacy-header) .learning-nav a").filter({hasText:"AI Scripts"});
+  await link.waitFor({timeout:10000});await link.click();
+  await page.waitForURL(u=>u.pathname==="/app/"&&u.searchParams.get("tab")==="studio"&&u.searchParams.get("studio")==="create",{timeout:12000});
+  await page.locator("#view-studio.active").waitFor({timeout:11000});
+  assert.equal(await page.locator("#studioSubnav [data-studio-page='create']").count(),1,"AI Scripts should be the real generator module");
+  console.log("PASS AI Scripts click-through without landing",route,width+"px");
+  await page.close();
+ }
+ // Bookmarks and old URLs route to the correct signed-in module.
+ const redirects=[
+  ["/ai-video-scripts/","studio","create",null],
+  ["/ai-tools/","tools",null,null],
+  ["/ai-banner-scripts/","tools",null,"banner"],
+  ["/ai-daily-article/","tools",null,"article"],
+  ["/ai-30-days-content/","tools",null,"30days"],
+  ["/ai-daily-h1-analysis/","tools",null,"h1"],
+  ["/ai-indicator-prompts/","tools",null,"indicator"],
+  ["/downloads/","tools",null,"downloads"]
+ ];
+ for(const [route,tab,studio,tool] of redirects){
+  const page=await browser.newPage({serviceWorkers:"block"});
+  await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:20000});
+  await page.waitForURL(u=>u.pathname==="/app/"&&u.searchParams.get("tab")===tab&&(!studio||u.searchParams.get("studio")===studio)&&(!tool||u.searchParams.get("tool")===tool),{timeout:12000});
+  await page.locator("#memberApp").waitFor({state:"visible",timeout:10000});
+  assert.equal(new URL(page.url()).pathname,"/app/","Legacy shortcut must not open the landing page");
+  if(tool)assert.equal(await page.locator("#toolModuleFrame").getAttribute("src"),"/learning-hub.html?embedded=1#"+tool,"Tool runs embedded in dashboard");
+  await page.close();console.log("PASS legacy AI shortcut",route,"→",tab,studio||tool||"");
+ }
+ for(const [route,pathPart] of [["/expo.html","/expo/"],["/webinar-admin/","/webinar-admin.html"]]){
   const page=await browser.newPage({serviceWorkers:"block"});
   await page.route("**/cdn.jsdelivr.net/**",r=>r.abort());
   await page.route("**/www.googletagmanager.com/**",r=>r.abort());
   await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:20000});
-  const destination=u=>u.href.includes(pathPart)||(route==="/ai-banner-scripts/"&&u.pathname==="/ai-banner-scripts");
   await page.waitForTimeout(850);
-  const current=new URL(page.url());
-  console.log("Alias navigation observed:",route,current.pathname,current.hash);
-  assert.equal(destination(current)||((route==="/ai-banner-scripts/")&&current.pathname.startsWith("/ai-")),true,"alias must reach central content");
-  await page.close();console.log("PASS legacy redirect "+route);
+  assert.equal(page.url().includes(pathPart),true,"legacy redirect must reach its expected page");
+  await page.close();console.log("PASS legacy redirect",route);
  }
-}catch(e){failures++;console.error("Browser smoke FAILED:",e.stack||e)}
+ }catch(e){failures++;console.error("Browser smoke FAILED:",e.stack||e)}
 finally{await browser.close();await new Promise(resolve=>server.close(resolve))}
 if(failures)process.exit(1);
 console.log("All browser smoke cases passed.");

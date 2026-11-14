@@ -21,7 +21,7 @@
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 </style>
 <link rel="stylesheet" href="/assets/site-master-header.css?v=20261114-3">
-<script src="/assets/site-master-header.js?v=20261114-3" defer></script>
+<script src="/assets/site-master-header.js?v=20261114-ai-routefix-2" defer></script>
 <link rel="stylesheet" href="/assets/sm-member-gate.css?v=20261114-unified-1">
 <script>document.documentElement.classList.add("sm-member-checking");</script>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -30,8 +30,8 @@
 <body>
 <header class="top site-legacy-header"><div class="frame topbar">
 <a class="brand" href="/" aria-label="S M Shahid Shah home"><img src="/shahid-shah-profile.webp" alt=""><div><strong>S M SHAHID SHAH</strong><span>MARKET INTELLIGENCE</span></div></a>
-<nav class="topnav" aria-label="Main"><a href="/">Home</a><a class="active" href="/market-intelligence/">Market Intelligence</a><a href="/content-studio/">AI Content Studio</a><a href="/ai-tools/">AI Tools</a><a href="/about/">About</a></nav>
-<div class="tools"><button class="action icon" id="theme" type="button" aria-label="Change appearance">◐</button><a class="action gold" href="/content-studio/">Create Content ↗</a></div>
+<nav class="topnav" aria-label="Main"><a href="/">Home</a><a class="active" href="/market-intelligence/">Market Intelligence</a><a href="/app/?tab=studio">AI Content Studio</a><a href="/app/?tab=studio&amp;studio=create">AI Tools</a><a href="/about/">About</a></nav>
+<div class="tools"><button class="action icon" id="theme" type="button" aria-label="Change appearance">◐</button><a class="action gold" href="/app/?tab=studio">Create Content ↗</a></div>
 </div></header>
 <main class="frame">
 <section class="hero"><div><div class="eyebrow">GLOBAL MARKETS · FINANCIAL NEWS</div><h1>Global Market<br><em>Intelligence.</em></h1><p>Gold, Forex, Bitcoin, central banks and the economic developments shaping the conversation. Discover headlines, explore original sources and build informed educational content.</p><a class="action gold" href="/economic-calendar/" style="display:inline-flex;margin-top:18px">Economic Calendar →</a> <a class="action" href="/market-reaction/" style="display:inline-flex;margin-top:18px;margin-left:8px">Market Reaction →</a> <a class="action" href="/notifications/" style="display:inline-flex;margin-top:18px;margin-left:8px">Smart Alerts →</a></div>
@@ -44,7 +44,7 @@
 </section>
 <footer class="foot"><span>© <span id="year"></span> S M Shahid Shah · Financial education only</span><span>Headlines credited to their publishers. Verify originals before publishing or trading.</span></footer>
 </main>
-<nav class="mobile-dock" aria-label="Mobile"><a href="/">Home</a><a class="active" href="/market-intelligence/">Markets</a><a href="/content-studio/">AI Studio</a></nav>
+<nav class="mobile-dock" aria-label="Mobile"><a href="/">Home</a><a class="active" href="/market-intelligence/">Markets</a><a href="/app/?tab=studio">AI Studio</a></nav>
 <script>
 "use strict";
 const ENDPOINT="https://qggtdwixwafcmorepkks.supabase.co/functions/v1/market-intelligence-api";
@@ -65,7 +65,7 @@ function card(item,featured=false){
  const info=make("div","meta");info.append(make("span","",item.publisher||"Publisher"),make("span","",niceDate(item.published_at)));if(Number(item.source_count)>1)info.append(make("span","","Grouped reports: "+Number(item.source_count)));box.append(info);
  const actions=make("div","push");const original=safeURL(item.original_url);
  if(original)actions.append(link("Read original ↗",original));
- const create=make("a","textlink","Create AI script →");create.href="/content-studio/?news="+encodeURIComponent(item.id);actions.append(create);box.append(actions);return box;
+ const create=make("a","textlink","Create AI script →");create.href="/app/?tab=studio&studio=create&news="+encodeURIComponent(item.id);actions.append(create);box.append(actions);return box;
 }
 function display(items){
  el("newsList").replaceChildren();el("featured").replaceChildren();

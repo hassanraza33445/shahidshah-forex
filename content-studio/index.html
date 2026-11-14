@@ -35,7 +35,7 @@ html.sm-embedded .grid2{gap:12px}
 }
 </style>
 <link rel="stylesheet" href="/assets/site-master-header.css?v=20261114-3">
-<script src="/assets/site-master-header.js?v=20261114-3" defer></script>
+<script src="/assets/site-master-header.js?v=20261114-ai-routefix-2" defer></script>
 <link rel="stylesheet" href="/assets/sm-member-gate.css?v=20261114-unified-1">
 <script>document.documentElement.classList.add("sm-member-checking");</script>
 <script defer src="/assets/sm-member-gate.js?v=20261114-unified-1"></script>
@@ -150,7 +150,7 @@ $("loginForm").addEventListener("submit",async e=>{
  if(error)return status("loginStatus",error.message,"error");
  $("loginPassword").value="";await openSession(data.session);
 });
-$("logout").addEventListener("click",async()=>{stopSpeech();if(state.stream)state.stream.getTracks().forEach(t=>t.stop());await sb.auth.signOut();location.href="/content-studio/"});
+$("logout").addEventListener("click",async()=>{stopSpeech();if(state.stream)state.stream.getTracks().forEach(t=>t.stop());await sb.auth.signOut();location.href="/app/?tab=studio"});
 async function loadNews(){
  const {data,error}=await sb.from("news_articles").select("id,title,publisher,published_at,category,original_url").eq("is_visible",true).order("published_at",{ascending:false}).limit(40);if(error){say("News suggestions unavailable: "+error.message,"error");return}
  $("newsChoice").replaceChildren(new Option("Custom topic (no news source)",""));

@@ -7,7 +7,7 @@
 <script>try{document.documentElement.dataset.theme=(localStorage.getItem("smshahid-site-theme")||localStorage.getItem("site-theme"))==="dark"?"dark":"light"}catch(_){document.documentElement.dataset.theme="light"}</script>
 <link rel="stylesheet" href="/assets/sm-member-app.css?v=20261114-unified-1">
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script defer src="/assets/sm-member-app.js?v=20261114-unified-1"></script></head>
+<script defer src="/assets/sm-member-app.js?v=20261114-navfix-1"></script></head>
 <body class="member-boot">
 <div id="bootScreen" class="boot-screen"><img class="boot-avatar" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><strong>Opening your workspace…</strong><small>Connecting securely to your account</small></div>
 <div id="memberApp" class="member-app" hidden>
@@ -16,7 +16,8 @@
  <nav class="side-links" aria-label="Member sections">
   <button type="button" data-section="home" class="active"><span class="nav-icon">⌂</span>Dashboard</button>
   <button type="button" data-section="markets"><span class="nav-icon">▥</span>Market Intelligence</button>
-  <button type="button" data-section="studio"><span class="nav-icon">✦</span>AI Studio</button>
+  <button type="button" data-section="studio" data-studio-page="dashboard"><span class="nav-icon">✦</span>AI Studio</button>
+  <button type="button" data-section="studio" data-studio-page="create" aria-label="Open AI Scripts generator"><span class="nav-icon">▣</span>AI Scripts</button>
   <button type="button" data-section="tools"><span class="nav-icon">◈</span>Prompt Tools</button>
   <button type="button" data-section="mentorship"><span class="nav-icon">♢</span>Mentorship</button>
   <button type="button" data-section="library"><span class="nav-icon">▤</span>My Content</button>
@@ -48,7 +49,7 @@
  <div class="dashboard-metrics"><div class="metric"><span>▣</span><div><strong id="newsCount">—</strong><small>Latest Headlines</small></div></div><div class="metric"><span>⌁</span><div><strong id="hotCount">—</strong><small>HOT News Alerts</small></div></div><div class="metric"><span>▦</span><div><strong id="calendarCount">—</strong><small>Upcoming Events</small></div></div><div class="metric"><span>◷</span><div><strong id="lastUpdated">—</strong><small>Last Checked</small></div></div></div>
  <div class="section-title"><h2>AI Content Creation Tools</h2><button type="button" data-section="tools">View all tools →</button></div>
  <div class="quick-grid">
-  <button data-section="studio" type="button" class="tool-card selected"><span>▶</span><b>Video Script</b><small>30s · 45s · 60s</small></button>
+  <button data-section="studio" data-studio-page="create" type="button" class="tool-card selected"><span>▶</span><b>Video Script</b><small>30s · 45s · 60s</small></button>
   <button type="button" class="tool-card" data-section="tools" data-tool="article"><span>▤</span><b>Article Prompts</b><small>SEO Friendly</small></button>
   <button type="button" class="tool-card" data-section="tools" data-tool="banner"><span>▧</span><b>Banner Prompts</b><small>Social Media</small></button>
   <button type="button" class="tool-card" data-section="tools" data-tool="indicator"><span>✦</span><b>Prompt Builder</b><small>Market Analysis</small></button>

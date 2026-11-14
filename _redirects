@@ -8,14 +8,14 @@
 /content-studio /content-studio/index.html 200
 
 # Clean public routes
-/ai-tools /learning-hub.html 200
-/ai-video-scripts /learning-hub.html 200
-/ai-banner-scripts /learning-hub.html 200
-/ai-30-days-content /learning-hub.html 200
-/ai-daily-article /learning-hub.html 200
-/ai-daily-h1-analysis /learning-hub.html 200
-/ai-indicator-prompts /learning-hub.html 200
-/downloads /learning-hub.html 200
+/ai-tools /app/?tab=tools 302
+/ai-video-scripts /app/?tab=studio&studio=create 302
+/ai-banner-scripts /app/?tab=tools&tool=banner 302
+/ai-30-days-content /app/?tab=tools&tool=30days 302
+/ai-daily-article /app/?tab=tools&tool=article 302
+/ai-daily-h1-analysis /app/?tab=tools&tool=h1 302
+/ai-indicator-prompts /app/?tab=tools&tool=indicator 302
+/downloads /app/?tab=tools&tool=downloads 302
 /webinar-admin /webinar-admin.html 200
 
 /expo /expo/index.html 200
