@@ -90,6 +90,14 @@ try{
   const errors=[];p.on("pageerror",e=>errors.push(e.message));
   await p.goto(HOST+"/app/",{waitUntil:"domcontentloaded"});
   await p.locator("#view-home.active").waitFor({timeout:11000});
+  await p.locator("#dashboardWatchlist .watchlist-row").first().waitFor({timeout:11000});
+  await p.locator("#dashboardEventsList .dashboard-event").first().waitFor({timeout:11000});
+  assert.equal(await p.locator(".dashboard-layout .dashboard-primary").count(),1,"Premium dashboard has a main intelligence column");
+  assert.equal(await p.locator(".dashboard-layout .dashboard-right").count(),1,"Premium dashboard has its own watchlist/events rail");
+  assert.equal(await p.locator(".dashboard-metrics .metric").count(),4,"All four grounded KPI cards are displayed");
+  assert.equal(await p.locator("#view-home .quick-grid .tool-card").count(),5,"Five premium tool shortcuts are available");
+  assert.match(await p.locator("#dashboardGreeting").innerText(),/Demo/,"Personalized greeting is based on signed-in user");
+  assert.equal(await p.locator(".dashboard-watchlist").innerText().then(v=>v.includes("not live quotes")),true,"Watchlist must not imply a live price feed");
   assert.equal(await p.locator("#bootScreen").isVisible(),false,"Successful login must hide the boot screen");
   assert.equal(await p.locator(".side-brand .side-portrait").count(),1,"Sidebar displays the homepage portrait");
   assert.equal(await p.locator("#memberThemeToggle").count(),1,"Dashboard theme switch exists");
@@ -130,6 +138,12 @@ try{
   const errors=[];p.on("pageerror",e=>errors.push(e.message));
   await p.goto(HOST+"/app/",{waitUntil:"domcontentloaded"});
   await p.locator("#view-home.active").waitFor({timeout:11000});
+  await p.locator("#dashboardWatchlist .watchlist-row").first().waitFor({timeout:11000});
+  assert.equal(await p.locator(".dashboard-home .feature-hero").isVisible(),true,"Luxury dashboard hero renders on mobile");
+  assert.equal(await p.locator(".dashboard-home .market-strip").isVisible(),true,"Market snapshot is accessible on mobile");
+  assert.equal(await p.locator("#homeHeadlines .news-visual").count(),1,"Featured news includes its own premium visual");
+  assert.equal(await p.locator(".dashboard-events .dashboard-event").count(),1,"Source-backed economic event appears in mobile dashboard");
+  assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+2),true,"Premium dashboard has no horizontal overflow at 390px");
   await p.locator('.mobile-dock button[data-section="studio"]').click();
   await p.waitForFunction(()=>document.querySelector("#studioAccessState")?.hidden===true,{},{timeout:11000});
   const editor=p.frameLocator("#unifiedStudioFrame");
@@ -154,7 +168,8 @@ try{
   await editor.locator("#page-projects.active").waitFor({timeout:9000});
   assert.match(await p.locator("#studioTitle").innerText(),/My Content/);
   await p.locator('.mobile-dock button[data-section="home"]').click();
-  await p.locator('#view-home button[data-section="studio"][data-studio-page="record"]').click();
+  await p.locator('#view-home button[data-section="studio"][data-studio-page="dashboard"]').first().click();
+  await p.locator('#studioSubnav [data-studio-page="record"]').click();
   await editor.locator("#page-record.active").waitFor({timeout:9000});
   await p.locator("#openMenu").click();await p.locator('#appSidebar button[data-section="markets"]').click();
   await p.locator('#view-markets button[data-market-page="calendar"]').click();
