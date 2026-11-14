@@ -163,7 +163,7 @@ try{
   assert.equal(await p.locator("html").getAttribute("data-theme"),"light");
   assert.equal(await p.locator("#profileLightTheme").getAttribute("aria-pressed"),"true");
   await p.locator('.side-links button[data-section="mentorship"]').click();
-  assert.equal(await p.locator(".mentorship-highlight strong").evaluate(el=>getComputedStyle(el).color),"rgb(255, 249, 239)","Mentorship headline has readable light text");
+  assert.equal(await p.locator(".mentorship-highlight strong").evaluate(el=>getComputedStyle(el).color),"rgb(54, 39, 27)","Premium champagne mentor banner has a readable dark headline");
   console.log("PASS premium icons, profile preferences and mentorship headline contrast");
 
   assert.match(await p.locator("#greeting").innerText(),/Demo/);
