@@ -36,7 +36,7 @@ async function handle(job:any){
  try{
   const [n,d,p]=await Promise.all([
    db.from("market_notification_events")
-    .select("id,title,body,kind,trust_status,topic,reminder_minutes,source_article_id,target_url,expires_at,created_at,is_active")
+    .select("id,title,body,kind,impact,trust_status,topic,reminder_minutes,source_article_id,target_url,expires_at,created_at,is_active")
     .eq("id",job.notice_id).maybeSingle(),
    db.from("market_push_subscriptions").select("user_id,active,browser_permission_granted")
     .eq("subscription_id",job.subscription_id).maybeSingle(),
@@ -57,7 +57,7 @@ async function handle(job:any){
   // Explicit keyword alerts are independent of general breaking alerts, but never
   // bypass topic consent, article verification, quiet hours, or device consent.
   let keywordMatch=false;
-  if(notice.kind==="breaking_news"&&notice.trust_status==="verified"&&pref.keyword_alerts_enabled&&notice.source_article_id){
+  if(notice.kind==="breaking_news"&&["verified","unverified"].includes(notice.trust_status)&&pref.keyword_alerts_enabled&&notice.source_article_id){
     const [watch,article]=await Promise.all([
       db.from("news_keyword_watchlists").select("keyword,category").eq("user_id",job.user_id).eq("enabled",true).limit(100),
       db.from("news_articles").select("title").eq("id",notice.source_article_id).maybeSingle()
@@ -69,7 +69,7 @@ async function handle(job:any){
   }
   const canSend=notice.kind==="economic_reminder"?
    notice.trust_status==="official_schedule"&&pref.economic_enabled&&pref.reminders?.includes(notice.reminder_minutes):
-   notice.kind==="breaking_news"&&notice.trust_status==="verified"&&pref.topics?.includes(notice.topic)&&(pref.breaking_enabled||keywordMatch);
+   notice.kind==="breaking_news"&&["verified","unverified"].includes(notice.trust_status)&&pref.topics?.includes(notice.topic)&&(pref.breaking_enabled||keywordMatch);
   if(!canSend){
    await finalize(job.id,"no_recipient","Source or topic is not opted in");return "skipped";
   }
@@ -79,11 +79,14 @@ async function handle(job:any){
   }
   const link=notice.target_url.startsWith("/")?ORIGIN+notice.target_url:notice.target_url;
   const isCalendar=notice.kind==="economic_reminder";
-  const heading=(isCalendar?"📅 Economic Calendar":"🔥 HOT Market News")+"\n"+BRAND_LINE;
+  const heading=(isCalendar?"📅 Economic Calendar":notice.impact==="HOT"?"🔥 HOT Market News":"📰 Market News")+"\n"+BRAND_LINE;
   // Display only the stored real headline; do not fabricate market conclusions.
   const headline=String(notice.title||"Market update").replace(/\s+/g," ").trim();
   const prefix=isCalendar?"":notice.topic==="Gold"?"🟡 Gold · ":notice.topic==="Forex"?"💱 Forex · ":"";
-  const bodyText=(prefix+headline).slice(0,185);
+  // Every non-official/unverified source is clearly labeled. These are headlines,
+  // not independent fact checks, predictions, or trading signals.
+  const tag=!isCalendar&&notice.trust_status!=="verified"?"UNVERIFIED REPORT · ":"";
+  const bodyText=(tag+prefix+headline).slice(0,185);
   const response=await fetch("https://api.onesignal.com/notifications",{
    method:"POST",signal:AbortSignal.timeout(12000),
    headers:{"Authorization":"Key "+KEY,"Content-Type":"application/json"},
@@ -118,11 +121,17 @@ async function handle(job:any){
 }
 Deno.serve(async(req:Request)=>{
  if(req.method!=="POST")return json({error:"Method not allowed"},405);
- // Cron or manual verified service-only requests: no public and no logged-in user access.
- if(!SECRET||SECRET.length<30||req.headers.get("authorization")!=="Bearer "+SECRET)
-  return json({error:"Service authorization required"},403);
- if(Deno.env.get("ONESIGNAL_DISPATCH_ENABLED")!=="true"||!/^[0-9a-f-]{36}$/i.test(APP)||KEY.length<12)return json({
-  success:false,error:"Configure OneSignal App ID and REST key in Supabase Secrets first",
+ // The only scheduled caller carries a random token stored solely in a
+ // private Postgres table. Service-role calls are allowed for administration.
+ const {data:runtime,error:runtimeError}=await db.from("market_push_runtime")
+  .select("dispatch_enabled,run_token").eq("id",true).maybeSingle();
+ if(runtimeError||!runtime)return json({success:false,error:"Dispatch configuration unavailable"},503);
+ const privateToken=String(req.headers.get("x-dispatch-key")||"");
+ const authorizedByCron=privateToken.length>=36&&privateToken===String(runtime.run_token);
+ const authorizedByService=SECRET.length>30&&req.headers.get("authorization")==="Bearer "+SECRET;
+ if(!authorizedByCron&&!authorizedByService)return json({error:"Service authorization required"},403);
+ if(runtime.dispatch_enabled!==true||!/^[0-9a-f-]{36}$/i.test(APP)||KEY.length<12)return json({
+  success:false,error:"Automatic dispatch is disabled or provider credentials are unavailable",
   dispatch_enabled:false
  },503);
  try{
