@@ -1,0 +1,48 @@
+/* Only the sidebar's Notifications and PWA area is changed. No dashboard redesign. */
+.member-app .side-bottom .sm-sidebar-notifications{
+ display:flex;align-items:center;gap:9px;min-height:63px;margin:5px 0 10px;
+ padding:10px 11px;border:1px solid var(--line);border-radius:13px;
+ background:var(--surface2);color:var(--ink);
+}
+.member-app .sm-sidebar-notify-icon{width:31px;flex:0 0 31px;font-size:20px;text-align:center;line-height:1}
+.member-app .sm-sidebar-notify-info{flex:1;min-width:0}
+.member-app .sm-sidebar-notify-info b{display:block;font-size:11.5px;line-height:1.3;font-weight:800;color:var(--ink)}
+.member-app .sm-sidebar-notify-info small{display:block;font-size:9px;line-height:1.35;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+.member-app .sm-sidebar-switch{flex:0 0 auto;position:relative;display:inline-flex;align-items:center;cursor:pointer}
+.member-app .sm-sidebar-switch input{position:absolute;opacity:0;width:1px;height:1px}
+.member-app .sm-sidebar-switch-track{width:40px;height:23px;border-radius:20px;display:block;position:relative;background:#80776e;box-shadow:inset 0 1px 3px #0004;transition:background .18s}
+.member-app .sm-sidebar-switch-track::before{content:"";position:absolute;width:17px;height:17px;top:3px;left:3px;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0004;transition:transform .18s}
+.member-app .sm-sidebar-switch input:checked+.sm-sidebar-switch-track{background:#229d6f}
+.member-app .sm-sidebar-switch input:checked+.sm-sidebar-switch-track::before{transform:translateX(17px)}
+.member-app .sm-sidebar-switch input:focus-visible+.sm-sidebar-switch-track{outline:2px solid var(--gold);outline-offset:3px}
+.member-app .sm-sidebar-switch input:disabled+.sm-sidebar-switch-track{opacity:.48;cursor:wait}
+@media(min-width:721px){
+ .member-app .side-bottom .sm-install-trigger{
+  display:flex!important;align-items:center;gap:9px;width:100%;min-height:56px;
+  text-align:left;padding:9px 12px;border:1px solid var(--line);
+  background:var(--surface2);color:var(--ink);border-radius:12px;cursor:pointer;
+  margin:0 0 9px;
+ }
+ .member-app .sm-install-trigger .sm-install-icon{font-size:19px;color:var(--gold)}
+ .member-app .sm-install-trigger>span:nth-child(2){flex:1;min-width:0}
+ .member-app .sm-install-trigger b{font-weight:800;font-size:11px;display:block}
+ .member-app .sm-install-trigger small{display:block;color:var(--muted);font-size:9px}
+ .member-app .sm-install-trigger .sm-install-arrow{color:var(--gold);font-size:17px}
+ /* Reuse existing PWA sheet on desktop, without affecting other panels. */
+ .sm-install-backdrop[hidden]{display:none!important}
+ .sm-install-backdrop{position:fixed;inset:0;z-index:160;background:#0009;display:flex;justify-content:center;align-items:center;padding:20px}
+ .sm-install-panel{position:relative;background:var(--surface);color:var(--ink);width:min(460px,100%);padding:26px;border-radius:20px;border:1px solid var(--line);box-shadow:0 25px 70px #0005}
+ .sm-install-close{position:absolute;right:13px;top:13px;font-size:22px;border:0;background:transparent;color:inherit;cursor:pointer}
+ .sm-install-emblem{font-size:23px;color:var(--gold);margin-bottom:8px}
+ .sm-install-eyebrow{font-size:10px;color:var(--gold)}
+ .sm-install-panel h2{font-size:22px;margin:9px 0}
+ .sm-install-panel p{font-size:12px;color:var(--muted);line-height:1.6}
+ .sm-install-steps{display:grid;gap:10px;margin:15px 0}
+ .sm-install-step{display:flex;gap:12px;font-size:12px;line-height:1.5}
+ .sm-install-step>span{font-weight:900;color:var(--gold)}
+ .sm-install-primary{padding:11px 17px;border:0;background:var(--gold);color:#221608;border-radius:10px;font-weight:800;cursor:pointer}
+ .sm-install-note{margin:12px 0 0}
+ body.sm-install-open{overflow:hidden}
+}
+@media(max-width:720px){.member-app .side-bottom .sm-sidebar-notifications{margin-bottom:9px}}
+@media(prefers-reduced-motion:reduce){.member-app .sm-sidebar-switch-track,.member-app .sm-sidebar-switch-track::before{transition:none}}
