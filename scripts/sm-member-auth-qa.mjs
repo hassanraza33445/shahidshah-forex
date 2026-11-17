@@ -74,31 +74,20 @@ try{
    authStatus:document.querySelector("#authStatus")?.textContent,formMode:document.querySelector("#authTitle")?.textContent,
    email:document.querySelector("#email")?.value,button:document.querySelector("#submitBtn")?.disabled}));
    console.log("AUTH_TEST_DIAGNOSTIC "+JSON.stringify(d));throw e}
-  await p.locator("#view-studio.active").waitFor({timeout:9000});
-  assert.equal(await p.locator("#view-home.active").count(),0);
-  assert.equal(await p.locator(".mobile-dock button").count(),5);
-  await p.waitForFunction(()=>document.querySelector("#studioAccessState")?.textContent.includes("restricted"),{},{timeout:9000});
-  assert.equal(await p.locator("#unifiedStudioFrame").count(),0,"Unassigned users cannot load the creator frame");
-  assert.equal(await p.locator("#studioAccessState").isVisible(),true,"Restricted Studio access remains visible");
-  assert.equal(await p.locator("#studioSubnav").isVisible(),false,"Unauthorized users do not see clickable creator tabs");
-  assert.equal(await p.locator("#studioAccessState .studio-gate-feature").count(),4,"Premium restricted workspace previews four tools without unlocking them");
-  assert.equal(await p.locator("#studioAccessState .studio-gate-feature button").count(),0,"Preview cards never bypass access");
-  assert.match(await p.locator("#studioGateBadge").innerText(),/APPROVAL REQUIRED/,"Permission state is clearly labeled");
-  assert.equal(await p.locator("#studioRecheckAccess").isEnabled(),true,"Access can be rechecked safely");
-  assert.equal(await p.locator("#studioHeroTagline").innerText(),"Create smarter. Publish better.");
-  await p.locator("#studioRecheckAccess").click();
-  await p.waitForFunction(()=>document.querySelector("#studioGateBadge")?.textContent==="APPROVAL REQUIRED",{},{timeout:9000});
-  assert.equal(await p.locator("#unifiedStudioFrame").count(),0,"Rechecking without admin approval does not unlock Studio");
-  const gateContrast=await p.locator("#studioGateTitle").evaluate(el=>({color:getComputedStyle(el).color,size:parseFloat(getComputedStyle(el).fontSize)}));
-  assert(gateContrast.size>=19,"Restricted access heading is readable on mobile");
+  await p.locator("#view-home.active").waitFor({timeout:9000});
+  await p.waitForFunction(()=>document.documentElement.dataset.smStudio==="denied",{},{timeout:9000});
+  assert.equal(await p.locator("#view-studio.active").count(),0,"Unapproved member cannot open Studio via URL");
+  assert.equal(await p.locator("#unifiedStudioFrame").count(),0,"Unapproved user cannot load creator iframe");
+  assert.equal(await p.locator('.mobile-dock [data-section="studio"]').isVisible(),false,"Studio mobile tab is hidden unless approved");
+  assert.equal(await p.locator('.side-links [data-section="studio"]').isVisible(),false,"Studio sidebar item is hidden unless approved");
+  assert.equal(await p.locator("#view-studio").isVisible(),false,"Private Studio workspace stays hidden");
   await p.locator("#memberThemeToggle").click();
-  assert.equal(await p.locator("html").getAttribute("data-theme"),"dark","Dark theme applies to locked Studio");
-  assert.equal(await p.locator("#studioGateTitle").isVisible(),true,"Locked Studio heading stays readable in dark theme");
+  assert.equal(await p.locator("html").getAttribute("data-theme"),"dark");
   await p.locator("#memberThemeToggle").click();
-  assert.equal(await p.locator("html").getAttribute("data-theme"),"light","Studio returns to light theme");
+  assert.equal(await p.locator("html").getAttribute("data-theme"),"light");
   const noOverflow=await p.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+2);
-  assert.equal(noOverflow,true,"Mobile app has no horizontal overflow");
-  console.log("PASS sign-in, redirect, role-based Studio lock and no mobile overflow");
+  assert.equal(noOverflow,true,"No horizontal overflow after hiding Studio");
+  console.log("PASS unapproved member gets Dashboard, no Studio tabs or creator access");
   await p.close();
  }
  {
