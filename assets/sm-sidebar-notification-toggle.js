@@ -56,9 +56,14 @@
    window.OneSignalDeferred=window.OneSignalDeferred||[];
    window.OneSignalDeferred.push(async OneSignal=>{
     try{
+     // An installed WebAPK must use its own /app/ worker so Android can
+     // associate eligible notifications with the installed application.
+     // Browser-tab subscriptions retain the existing isolated /onesignal/ worker.
+     const standalone=window.matchMedia("(display-mode: standalone)").matches||
+       window.navigator.standalone===true;
      await OneSignal.init({appId:config.app_id,
-      serviceWorkerPath:config.worker||"/onesignal/OneSignalSDKWorker.js",
-      serviceWorkerParam:{scope:"/onesignal/"},
+      serviceWorkerPath:standalone?"/app/sw.js":(config.worker||"/onesignal/OneSignalSDKWorker.js"),
+      serviceWorkerParam:{scope:standalone?"/app/":"/onesignal/"},
       notifyButton:{enable:false},promptOptions:{autoPrompt:false}});
      clearTimeout(timeout);sdk=OneSignal;resolve(OneSignal);
     }catch(e){clearTimeout(timeout);reject(e)}
