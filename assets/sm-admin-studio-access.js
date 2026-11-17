@@ -153,7 +153,12 @@
    status((type==="grant"?"Access enabled":type==="revoke"?"Access removed":"Email resent request completed")+". Email: "+email+(data.email_error?" · "+data.email_error:""),data.email_status==="failed"?"bad":"good");
    await Promise.all([metrics(),history()]);
   }catch(err){status(err?.message||"Permission change failed. Please retry.","bad")}
-  finally{S.actionBusy=false;selectUser(target)}
+  finally{
+   const message=$("saActionStatus").textContent;
+   const kind=$("saActionStatus").classList.contains("bad")?"bad":$("saActionStatus").classList.contains("good")?"good":"";
+   S.actionBusy=false;selectUser(target);
+   status(message,kind);
+  }
  }
  let searchTimer=null;
  async function mount(){
