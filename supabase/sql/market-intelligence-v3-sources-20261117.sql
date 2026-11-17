@@ -1,7 +1,7 @@
 -- Financial News Intelligence V3 source registry, 2026-11-17.
 -- Additive and idempotent: existing feeds, news, user preferences and layouts stay unchanged.
 -- Google News feeds index publisher headlines; they are not licensed publisher APIs.
--- Official EIA feeds stay disabled until the approved-host API revision passes smoke tests.
+-- Official EIA feeds are enabled after the approved-host API revision passes smoke tests.
 -- IMPORTANT: do not introduce direct premium publisher RSS without validating availability and terms.
 
 INSERT INTO public.news_sources(name, feed_url, category, priority_weight, polling_minutes, enabled)
@@ -17,6 +17,6 @@ VALUES
   ('Ethereum ETFs Crypto Regulation', 'https://news.google.com/rss/search?q=Ethereum%20ETH%20ETF%20SEC%20cryptocurrency%20regulation%20when%3A1d&hl=en-US&gl=US&ceid=US%3Aen', 'Crypto', 88, 5, true),
   ('EIA OPEC Oil Supply', 'https://news.google.com/rss/search?q=EIA%20OPEC%20oil%20supply%20crude%20inventories%20when%3A1d&hl=en-US&gl=US&ceid=US%3Aen', 'Energy', 87, 10, true),
   ('ECB Official Press', 'https://www.ecb.europa.eu/rss/press.html', 'Central Banks', 100, 15, true),
-  ('EIA Official Today in Energy', 'https://www.eia.gov/rss/todayinenergy.xml', 'Energy', 100, 15, false),
-  ('EIA Official Press Releases', 'https://www.eia.gov/rss/press_rss.xml', 'Energy', 98, 15, false)
+  ('EIA Official Today in Energy', 'https://www.eia.gov/rss/todayinenergy.xml', 'Energy', 100, 15, true),
+  ('EIA Official Press Releases', 'https://www.eia.gov/rss/press_rss.xml', 'Energy', 98, 15, true)
 ON CONFLICT (feed_url) DO NOTHING;
