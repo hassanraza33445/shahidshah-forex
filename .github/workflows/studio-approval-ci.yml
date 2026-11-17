@@ -70,12 +70,12 @@ jobs:
           if(!master.includes('data-sm-studio-access')||
              !master.includes('sm-studio-permission-visibility.js'))
             throw Error('Master header must also hide Studio links');
-          if(!admin.includes('AI Studio Access')||!admin.includes('/content-studio/?view=access'))
+          if(!admin.includes('AI Studio Access')||!admin.includes('id="page-studioaccess"')||!admin.includes('SMStudioAccessAdmin?.load()')||!studio.includes('/admin-panel.html#studio-access'))
             throw Error('Admin must have a role management shortcut');
           if(!studio.includes('Studio access has not been approved for this account'))
             throw Error('Direct studio must fail closed for unapproved accounts');
-          if(!api.includes('profiles').valueOf()||!api.includes('admin?.is_admin!==true')||
-             !api.includes('granted_by:user.id'))
+          if(!api.includes('profiles')||!api.includes('admin?.is_admin!==true')||
+             !api.includes('target.is_admin===true')||!api.includes('granted_by:user.id'))
             throw Error('Only admin Edge Function may grant access');
           console.log('PASS Studio private UI, admin-only grants and no auto signup');
           JS
