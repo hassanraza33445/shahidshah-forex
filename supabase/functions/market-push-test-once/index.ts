@@ -14,6 +14,12 @@ const db=createClient(URL,SERVICE||"unconfigured",{auth:{persistSession:false,au
 const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{
  status,headers:{"Content-Type":"application/json","Cache-Control":"no-store"}
 });
+const DEMOS={
+ gold:{title:"🟡 GOLD MARKET · S M Shahid Shah",body:"DEMO 1/4 · XAUUSD market news notification preview. Not a live trading signal."},
+ forex:{title:"💱 FOREX MARKET · S M Shahid Shah",body:"DEMO 2/4 · Major currency news alert preview. No real announcement is implied."},
+ calendar:{title:"📅 ECONOMIC CALENDAR · S M Shahid Shah",body:"DEMO 3/4 · CPI, NFP and FOMC event reminder preview. No event is currently scheduled by this test."},
+ breaking:{title:"🔥 HOT MARKET NEWS · S M Shahid Shah",body:"DEMO 4/4 · Premium breaking news notification preview. No real market event is implied."}
+} as const;
 const validUuid=(x:string)=>/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(x);
 
 Deno.serve(async(req:Request)=>{
@@ -27,7 +33,7 @@ Deno.serve(async(req:Request)=>{
  const {data:claim,error:claimError}=await db.from("market_push_test_requests")
   .update({used_at:new Date().toISOString(),status:"sending"})
   .eq("token",token).is("used_at",null).gt("expires_at",new Date().toISOString())
-  .select("user_id,subscription_id").maybeSingle();
+  .select("user_id,subscription_id,demo_type").maybeSingle();
  if(claimError)return json({success:false,error:"Unable to claim one-time test"},503);
  if(!claim)return json({success:false,error:"Invalid, used or expired one-time authorization"},403);
  const done=async(status:string,reason:string|null=null,id:string|null=null)=>{
@@ -51,18 +57,19 @@ Deno.serve(async(req:Request)=>{
    await done("no_recipient","Consent or active subscription missing");
    return json({success:false,error:"The registered test device is no longer opted in"},422);
   }
+  const demo=DEMOS[claim.demo_type as keyof typeof DEMOS]||DEMOS.gold;
   const response=await fetch("https://api.onesignal.com/notifications",{
    method:"POST",signal:AbortSignal.timeout(15000),
    headers:{"Authorization":"Key "+API,"Content-Type":"application/json"},
    body:JSON.stringify({
     app_id:APP,target_channel:"push",include_subscription_ids:[claim.subscription_id],
-    headings:{en:"🔥 HOT Market News · S M Shahid Shah"},
-    contents:{en:"TEST PREVIEW — Gold & Forex notification branding is now active."},
+    headings:{en:demo.title},
+    contents:{en:demo.body},
     chrome_web_icon:BRAND_ICON,
     url:ORIGIN+"/app/",
     idempotency_key:token,
     ttl:300,
-    data:{test:true}
+    data:{test:true,demo_type:claim.demo_type}
    })
   });
   const payload=await response.json().catch(()=>({}));
