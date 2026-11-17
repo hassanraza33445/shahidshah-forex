@@ -44,5 +44,9 @@
  .sm-install-note{margin:12px 0 0}
  body.sm-install-open{overflow:hidden}
 }
-@media(max-width:720px){.member-app .side-bottom .sm-sidebar-notifications{margin-bottom:9px}}
+@media(max-width:720px){
+ .member-app .side-bottom .sm-sidebar-notifications{margin-bottom:9px;background:#2f251b;border-color:#6b5033}
+ .member-app .sm-sidebar-notify-info b{color:#fff7e7}
+ .member-app .sm-sidebar-notify-info small{color:#d0bc9d}
+}
 @media(prefers-reduced-motion:reduce){.member-app .sm-sidebar-switch-track,.member-app .sm-sidebar-switch-track::before{transition:none}}
