@@ -5,7 +5,7 @@
 ## New public route
 - `/market-intelligence/`: source-linked Gold, Forex, Bitcoin, central-bank and economic headlines; category/priority filters, search, recent articles, refresh and editor handoff.
 - Feed implementation: `supabase/functions/market-intelligence-api/index.ts`.
-- Background fetch is scheduled every five minutes through pg_cron + pg_net. Source settings, ingest logs and dedupe hashes live in Supabase. Jobs use approved Google News and official feeds rather than private premium feeds.
+- Background fetch is scheduled every three minutes through pg_cron + pg_net. Finished refreshes can reclaim the lock on the next scheduled run after at least two minutes; a four-minute lease remains a crash watchdog. Source settings, ingest logs and dedupe hashes live in Supabase. Jobs use approved Google News and official feeds rather than private premium feeds.
 - Editorial HOT means potentially important, not verified price movement.
 
 ## New private route
@@ -46,3 +46,14 @@
 `node scripts/check-site-scripts.mjs`
 
 These check static routes and inline JS syntax; they are not a substitute for browser/E2E tests.
+
+
+## Market Intelligence V3 rollout — 17 November 2026
+- Live database source registry expanded from 15 to 28 enabled feeds: ten new targeted Google News RSS topic searches and three directly published official feeds (ECB press, EIA Today in Energy, EIA press).
+- The live `market-intelligence-api` Edge Function was updated to version 6. The deployed code (including its Gold/Forex balanced latest-first logic) was synchronized into the repo so future deploys do not accidentally revert it.
+- An administrator-only `?mode=health` source-health API reports source count, errors, retry status and latency; unauthenticated access returned HTTP 403 in the smoke test.
+- An empty-but-valid RSS search is treated as a successful zero-result fetch, not a failed source.
+- The three-minute cron lock policy was repaired with the idempotent SQL migration `market-intelligence-v3-refresh-lock-20261117.sql`.
+- Verified successful 200 responses for `?mode=stats`, `?mode=feed&focus=gold-forex&limit=40` and `?mode=feed&category=Gold&heat=hot&limit=10`. EIA Today in Energy delivered actual articles; the EIA press feed fetched successfully but had no new qualifying stories at the check.
+- GitHub PR #36 passed repository and Deno checks and merged to main. **No desktop or mobile HTML/CSS was changed by this rollout.**
+- Remaining advanced specification work: directly licensed publisher feed evaluation; multi-stage cross-publisher near-duplicate similarity; keyword watchlists and saved articles; optional notification scheduling refinements; additional economic reminder rules; licensed market-candle integration; full admin control UI; end-to-end mobile/browser validation.
