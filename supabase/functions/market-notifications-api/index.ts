@@ -20,7 +20,7 @@ const ZONES=["Asia/Kuala_Lumpur","Asia/Karachi","America/New_York","UTC"] as con
 const REMINDERS=[60,15,0] as const;
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DEFAULTS={
- in_app_enabled:false,breaking_enabled:false,economic_enabled:false,
+ in_app_enabled:false,breaking_enabled:false,economic_enabled:false,keyword_alerts_enabled:false,
  topics:["Gold","Forex","Crypto","Central Banks","Economic Data"],
  reminders:[60,15,0],timezone:"Asia/Kuala_Lumpur",
  quiet_start:null,quiet_end:null,push_enabled:false
@@ -31,6 +31,7 @@ function includesString<T extends string>(list:readonly T[],x:unknown):x is T{
 function cleanPreferences(body:any){
  if(!body||typeof body!=="object"||Array.isArray(body))throw Error("Invalid notification settings");
  const bools=["in_app_enabled","breaking_enabled","economic_enabled"] as const;
+ if(body.keyword_alerts_enabled!==undefined&&typeof body.keyword_alerts_enabled!=="boolean")throw Error("Expected keyword alerts toggle");
  for(const name of bools)if(typeof body[name]!=="boolean")throw Error("Expected "+name+" toggle");
  if(!Array.isArray(body.topics)||body.topics.length>TOPICS.length||
   body.topics.some((v:unknown)=>!includesString(TOPICS,v)))throw Error("Invalid topics");
@@ -49,6 +50,7 @@ function cleanPreferences(body:any){
   in_app_enabled:body.in_app_enabled,
   breaking_enabled:body.breaking_enabled,
   economic_enabled:body.economic_enabled,
+  keyword_alerts_enabled:body.keyword_alerts_enabled===true,
   topics:[...new Set(body.topics)],
   reminders:[...new Set(body.reminders)],
   timezone:body.timezone,
@@ -88,7 +90,7 @@ async function privateGet(req:Request,mode:string){
  if(!user)return reply({success:false,error:"Sign in to use account-synced notification preferences"},401);
  if(mode==="preferences"){
   const {data,error}=await db.from("market_notification_preferences")
-   .select("in_app_enabled,breaking_enabled,economic_enabled,topics,reminders,timezone,quiet_start,quiet_end,push_enabled,updated_at")
+   .select("in_app_enabled,breaking_enabled,economic_enabled,keyword_alerts_enabled,topics,reminders,timezone,quiet_start,quiet_end,push_enabled,updated_at")
    .eq("user_id",user.id).maybeSingle();
   if(error)throw Error("Notification settings unavailable");
   return reply({success:true,settings:data||DEFAULTS,account_synced:!!data,push_available:ready()});
@@ -186,9 +188,12 @@ async function privatePost(req:Request){
    return reply({success:false,error:e instanceof Error?e.message:"Invalid settings"},400);
   }
   const {data:prior,error:lookupError}=await db.from("market_notification_preferences")
-   .select("push_enabled").eq("user_id",user.id).maybeSingle();
+   .select("push_enabled,keyword_alerts_enabled").eq("user_id",user.id).maybeSingle();
   if(lookupError)throw Error("Unable to check consent");
   settings.push_enabled=prior?.push_enabled===true&&settings.in_app_enabled;
+  // Older clients must not disable keyword alerts by omitting the new optional field.
+  settings.keyword_alerts_enabled=body.settings.keyword_alerts_enabled===undefined
+   ? prior?.keyword_alerts_enabled===true : settings.keyword_alerts_enabled;
   const {error}=await db.from("market_notification_preferences")
    .upsert({...settings,user_id:user.id},{onConflict:"user_id"});
   if(error)throw Error("Unable to save notification settings");
