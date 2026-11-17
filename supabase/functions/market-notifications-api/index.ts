@@ -175,6 +175,28 @@ async function changeDevice(user:any,body:any,req:Request){
  return reply({success:false,error:"Unknown device action"},400);
 }
 
+
+async function adminHealth(req:Request){
+ const user=await signedIn(req);
+ if(!user)return reply({success:false,error:"Admin sign-in required"},401);
+ const {data:profile,error:profileError}=await db.from("profiles").select("is_admin").eq("id",user.id).maybeSingle();
+ if(profileError||profile?.is_admin!==true)return reply({success:false,error:"Administrator access required"},403);
+ const since=new Date(Date.now()-86400000).toISOString();
+ const [events,inbox,push,pending,failed,runs]=await Promise.all([
+  db.from("market_notification_events").select("id",{count:"exact",head:true}).gte("created_at",since),
+  db.from("market_notification_inbox").select("notice_id",{count:"exact",head:true}).gte("queued_at",since),
+  db.from("market_push_deliveries").select("id",{count:"exact",head:true}).eq("state","sent").gte("created_at",since),
+  db.from("market_push_deliveries").select("id",{count:"exact",head:true}).in("state",["pending","sending","retry"]),
+  db.from("market_push_deliveries").select("id",{count:"exact",head:true}).eq("state","failed").gte("created_at",since),
+  db.from("market_notification_worker_runs").select("started_at,result,news_created,reminders_created,inbox_queued").order("started_at",{ascending:false}).limit(4)
+ ]);
+ if([events,inbox,push,pending,failed,runs].some(r=>r.error))throw Error("Admin notification metrics unavailable");
+ return reply({success:true,window:"24h",events:events.count||0,inbox_queued:inbox.count||0,
+  accepted_by_onesignal:push.count||0,push_pending:pending.count||0,push_failed:failed.count||0,
+  one_signal_configured:ready(),recent_workers:runs.data||[],
+  note:"Accepted by OneSignal does not mean device delivery."});
+}
+
 async function privatePost(req:Request){
  const user=await signedIn(req);
  if(!user)return reply({success:false,error:"Sign in required"},401);
@@ -223,6 +245,7 @@ Deno.serve(async(req:Request)=>{
     app_id:ready()?ONE_APP:null,canonical_origin:CANONICAL,
     worker:"/onesignal/OneSignalSDKWorker.js"});
    if(mode==="preferences"||mode==="inbox")return await privateGet(req,mode);
+   if(mode==="admin-health")return await adminHealth(req);
    return reply({success:false,error:"Unknown mode"},400);
   }
   if(req.method==="POST")return await privatePost(req);
