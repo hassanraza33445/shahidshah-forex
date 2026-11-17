@@ -1,5 +1,15 @@
 /* SM Shahid Shah member PWA: scope /app/ only.
    No authenticated pages, Supabase responses, news, or other personal data are cached. */
+// Installed PWA web push: share the existing /app/ service worker registration with OneSignal.
+// The old /onesignal/ worker remains available for existing browser-tab subscribers.
+// Do not unregister either worker or intercept push events here.
+try {
+  importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
+} catch (e) {
+  // Keep the existing offline fallback functional if the third-party SDK is unavailable.
+  console.warn("OneSignal PWA service worker extension unavailable", e);
+}
+
 const CACHE = "sm-member-offline-v1";
 const OFFLINE = "/app/offline.html";
 self.addEventListener("install", event => {

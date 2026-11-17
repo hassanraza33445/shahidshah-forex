@@ -6,6 +6,7 @@ on:
       - 'assets/sm-sidebar-notification-toggle.*'
       - 'assets/sm-member-app.js'
       - 'assets/sm-pwa-install.js'
+      - 'app/sw.js'
       - '.github/workflows/sidebar-notification-toggle.yml'
 jobs:
   test:
@@ -47,11 +48,20 @@ jobs:
           for(const topic of all)if(!js.includes('"'+topic+'"'))throw Error('Missing topic '+topic);
           if(!js.includes('const REMINDERS=[60,15,0]'))throw Error('Missing safe reminder presets');
           for(const token of ['register_push_device','unregister_all_push_devices','save_preferences',
-                              'Notification.permission','serviceWorkerParam:{scope:"/onesignal/"}',
+                              'Notification.permission','standalone?"/app/":"/onesignal/"',
                               'aria-checked','requestPermission()','getSubscriptionId()','restoreSettings'])
             if(!js.includes(token))throw Error('Missing consent or state safeguard '+token);
           const init=js.split('async function init(c,verifiedUser)')[1]||'';
           if(init.includes('requestPermission()'))throw Error('Never prompt the browser automatically on load');
+          const appSW=fs.readFileSync('app/sw.js','utf8');
+          if(!js.includes('serviceWorkerPath:standalone?"/app/sw.js"') ||
+             !js.includes('window.matchMedia("(display-mode: standalone)")') ||
+             !appSW.includes('importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js")') ||
+             !appSW.includes('sm-member-offline-v1') ||
+             !fs.readFileSync('onesignal/OneSignalSDKWorker.js','utf8').includes('OneSignalSDK.sw.js'))
+            throw Error('PWA and Chrome must keep separate, functional push workers');
+          if(!html.includes('sm-sidebar-notification-toggle.js?v=20261117-pwa-scope-2'))
+            throw Error('Installed app worker selection must bypass cached sidebar script');
           if(!pwa.includes('trigger.addEventListener("click"'))throw Error('Original PWA installation shortcut broken');
           if(js.includes('ONESIGNAL_REST_API_KEY')||js.includes('ONESIGNAL_DISPATCH_ENABLED'))
             throw Error('No OneSignal private credentials or dispatch controls in browser code');
