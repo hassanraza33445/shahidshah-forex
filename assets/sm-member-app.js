@@ -314,6 +314,8 @@ async function start(){
   const {data,error}=await withTimeout(c.auth.getUser(),11000,"Secure login check took too long");
   if(error||!data?.user){goToLogin();return}
   const user=data.user;state.user=user;
+  // Only a verified signed-in user may load their notification consent state.
+  void window.SMSidebarPush?.init(c,user);
   // Automatic SMTP welcome notification for newly registered members only.
   // Secure Edge Function verifies the session, signup consent and one-time delivery.
   // Do not block the dashboard if the email provider is unavailable.
