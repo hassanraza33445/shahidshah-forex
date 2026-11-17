@@ -47,7 +47,7 @@ jobs:
             if(!api.includes(k))throw Error('OneSignal account-synced guard missing: '+k);
           }
           for(const k of ['include_subscription_ids','idempotency_key','quiet_hours',
-            'verified','official_schedule','ONESIGNAL_DISPATCH_ENABLED',
+            'verified','official_schedule','market_push_runtime','dispatch_enabled',
             'Authorization','req.headers.get("authorization")']){
             if(!worker.includes(k))throw Error('Delivery safety guard missing: '+k);
           }
