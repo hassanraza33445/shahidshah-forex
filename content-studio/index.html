@@ -86,7 +86,7 @@ html.sm-embedded #page-projects>.card{min-height:0}
 <link rel="stylesheet" href="/assets/sm-hide-public-links-20261115.css?v=hide-personal-1">
 </head>
 <body>
-<div class="gate" id="authGate"><section class="login"><img src="/shahid-shah-profile.webp" alt=""><div class="upper">S M SHAHID SHAH</div><h1>AI Content Studio</h1><p class="note">Free AI script workspace for all registered members. Sign in with your S M Shahid Shah account.</p><form id="loginForm"><div><label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div><div><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required minlength="6"></div><button class="btn gold" type="submit">Sign In Securely →</button></form><div id="loginStatus" class="status" aria-live="polite"></div><div class="actions"><a class="btn ghost" href="/">← Website</a><a class="btn ghost" href="/market-intelligence/">Market Intelligence</a></div></section>
+<div class="gate" id="authGate"><section class="login"><img src="/shahid-shah-profile.webp" alt=""><div class="upper">S M SHAHID SHAH</div><h1>AI Content Studio</h1><p class="note">Private AI script workspace for admin-approved members only. Sign in with your authorized account.</p><form id="loginForm"><div><label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div><div><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required minlength="6"></div><button class="btn gold" type="submit">Sign In Securely →</button></form><div id="loginStatus" class="status" aria-live="polite"></div><div class="actions"><a class="btn ghost" href="/">← Website</a><a class="btn ghost" href="/market-intelligence/">Market Intelligence</a></div></section>
 <section class="studio-embedded-connecting" id="studioEmbedConnecting" role="status" aria-live="polite">
  <span class="studio-connecting-symbol" aria-hidden="true">✦</span>
  <strong>Connecting your AI Studio</strong>
@@ -368,7 +368,7 @@ async function openSession(session){
   ]);
   ok(pro);ok(access);
   const isAdmin=pro.data&&pro.data.is_admin===true,role=isAdmin?"admin":access.data&&access.data.enabled?access.data.role:"";
-  if(!role)throw Error("Free Studio access is automatic for registered users. Sign out and back in, or contact support if it is still unavailable.");
+  if(!role)throw Error("Studio access has not been approved for this account. Contact the website administrator.");
   state.user=user;state.session=session;state.admin=isAdmin;state.role=role;state.ownerId=user.id;
   $("authGate").classList.add("hidden");$("workspace").classList.remove("hidden");
   $("sideName").textContent=pro.data?.full_name||user.email||"Creator";$("sideRole").textContent="Role: "+role;

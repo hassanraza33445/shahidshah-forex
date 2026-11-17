@@ -6,6 +6,20 @@
  if(!existing)document.body.insertAdjacentHTML("afterbegin",HEADER_TEMPLATE);
  const header=document.getElementById("sm-site-header");
  if(!header)return;
+ // Hide creator-only public header links until the signed-in account is approved.
+ header.querySelectorAll('.learning-nav a[href*="tab=studio"]').forEach(link=>{
+  link.setAttribute("data-sm-studio-access",link.href.includes("studio=create")?"create":"studio");
+ });
+ if(!document.getElementById("sm-studio-visibility-style")){
+  const style=document.createElement("style");style.id="sm-studio-visibility-style";
+  style.textContent='[data-sm-studio-access]:not(.sm-studio-authorized){display:none!important}';
+  document.head.append(style);
+ }
+ if(!document.querySelector('script[src*="sm-studio-permission-visibility.js"]')){
+  const gate=document.createElement("script");gate.async=true;
+  gate.src="/assets/sm-studio-permission-visibility.js?v=20261117-admin-only-1";
+  document.head.append(gate);
+ }
  // Keep Login and Sign Up visible on every public route, without replacing the approved header.
  const actions=header.querySelector(".nav-actions");
  if(actions&&!actions.querySelector(".account-links")){
