@@ -33,3 +33,15 @@ The public notification API returns only `app_id` once App ID, REST key and `ONE
 4. Only then set `ONESIGNAL_DISPATCH_ENABLED=true`, redeploy affected Edge Functions if necessary, and run end-to-end tests again.
 5. Monitor `market_push_deliveries` for errors and user opt-out; disable dispatch flag to stop deliveries.
 6. iOS Safari push may require installing the website to the home screen on a supported iOS release.
+
+
+## Phase 4 — Keyword HOT notification workflow (17 November 2026)
+- `market_notification_preferences.keyword_alerts_enabled` is an **explicit opt-in**, default `false`.
+- The existing five-minute in-app worker checks enabled, category-compatible watchwords using literal case-insensitive substring matching against article titles. HOT news must already have a unique, real, source-linked notification event; unique `(user_id,notice_id)` prevents duplicate inbox deliveries.
+- General breaking-news preferences and separately opted-in keyword alerts can coexist, without sending the same event twice to the same account.
+- Browser push stays isolated from this feature: only articles marked **verified** and official economic reminders are eligible. Unverified HOT news may show in-app with its warning but is **never** sent via browser push.
+- Both the push queue and Edge Function dispatcher check topic/keyword opt-in, active browser subscription, verified source, quiet hours, expiry and prior idempotency. The corrected push queue includes `source_article_id` in its due CTE.
+- The Market Intelligence personal dialog now supports Inbox, Watchlist, keyword HOT toggles, and a manual OneSignal opt-in flow. No auto browser prompts, background OneSignal SDK loading, or activation of the dispatch secret.
+- `ONESIGNAL_APP_ID`, `ONESIGNAL_REST_API_KEY`, `ONESIGNAL_SUBSCRIPTIONS_ENABLED`, and `ONESIGNAL_DISPATCH_ENABLED` must be configured and re-tested before any real push is possible. Keep dispatch **false** until a verified consent/test device and independent live deployment are confirmed.
+- Database migrations: `market-notification-v4-keyword-optin-20261117.sql` and the production follow-up `market-notification-v4-push-article-fix-20261117.sql`.
+- Existing landing-page layout, private account data, historical articles, and AI Studio were not redesigned or reset.

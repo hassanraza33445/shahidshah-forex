@@ -20,7 +20,7 @@ const ZONES=["Asia/Kuala_Lumpur","Asia/Karachi","America/New_York","UTC"] as con
 const REMINDERS=[60,15,0] as const;
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DEFAULTS={
- in_app_enabled:false,breaking_enabled:false,economic_enabled:false,
+ in_app_enabled:false,breaking_enabled:false,economic_enabled:false,keyword_alerts_enabled:false,
  topics:["Gold","Forex","Crypto","Central Banks","Economic Data"],
  reminders:[60,15,0],timezone:"Asia/Kuala_Lumpur",
  quiet_start:null,quiet_end:null,push_enabled:false
@@ -31,6 +31,7 @@ function includesString<T extends string>(list:readonly T[],x:unknown):x is T{
 function cleanPreferences(body:any){
  if(!body||typeof body!=="object"||Array.isArray(body))throw Error("Invalid notification settings");
  const bools=["in_app_enabled","breaking_enabled","economic_enabled"] as const;
+ if(body.keyword_alerts_enabled!==undefined&&typeof body.keyword_alerts_enabled!=="boolean")throw Error("Expected keyword alerts toggle");
  for(const name of bools)if(typeof body[name]!=="boolean")throw Error("Expected "+name+" toggle");
  if(!Array.isArray(body.topics)||body.topics.length>TOPICS.length||
   body.topics.some((v:unknown)=>!includesString(TOPICS,v)))throw Error("Invalid topics");
@@ -49,6 +50,7 @@ function cleanPreferences(body:any){
   in_app_enabled:body.in_app_enabled,
   breaking_enabled:body.breaking_enabled,
   economic_enabled:body.economic_enabled,
+  keyword_alerts_enabled:body.keyword_alerts_enabled===true,
   topics:[...new Set(body.topics)],
   reminders:[...new Set(body.reminders)],
   timezone:body.timezone,
@@ -88,7 +90,7 @@ async function privateGet(req:Request,mode:string){
  if(!user)return reply({success:false,error:"Sign in to use account-synced notification preferences"},401);
  if(mode==="preferences"){
   const {data,error}=await db.from("market_notification_preferences")
-   .select("in_app_enabled,breaking_enabled,economic_enabled,topics,reminders,timezone,quiet_start,quiet_end,push_enabled,updated_at")
+   .select("in_app_enabled,breaking_enabled,economic_enabled,keyword_alerts_enabled,topics,reminders,timezone,quiet_start,quiet_end,push_enabled,updated_at")
    .eq("user_id",user.id).maybeSingle();
   if(error)throw Error("Notification settings unavailable");
   return reply({success:true,settings:data||DEFAULTS,account_synced:!!data,push_available:ready()});
@@ -102,7 +104,7 @@ async function privateGet(req:Request,mode:string){
   let notices:any[]=[];
   if(ids.length){
    const result=await db.from("market_notification_events")
-    .select("id,kind,title,body,topic,impact,trust_status,target_url,reminder_minutes,created_at,expires_at,is_active")
+    .select("id,kind,title,body,topic,impact,trust_status,target_url,source_article_id,reminder_minutes,created_at,expires_at,is_active")
     .in("id",ids).eq("is_active",true).gt("expires_at",new Date().toISOString());
    if(result.error)throw Error("Notification items unavailable");
    notices=result.data||[];
@@ -126,9 +128,9 @@ async function changeDevice(user:any,body:any,req:Request){
    return reply({success:false,error:"Use the www website to enable push"},403);
   if(body.browser_permission_granted!==true)return reply({success:false,error:"Browser consent required"},422);
   const {data:pref,error:prefError}=await db.from("market_notification_preferences")
-   .select("in_app_enabled,breaking_enabled,economic_enabled").eq("user_id",user.id).maybeSingle();
+   .select("in_app_enabled,breaking_enabled,economic_enabled,keyword_alerts_enabled").eq("user_id",user.id).maybeSingle();
   if(prefError)throw Error("Unable to read notification preferences");
-  if(!pref?.in_app_enabled||!(pref.breaking_enabled||pref.economic_enabled))
+  if(!pref?.in_app_enabled||!(pref.breaking_enabled||pref.economic_enabled||pref.keyword_alerts_enabled))
    return reply({success:false,error:"Save your enabled notification preferences first"},422);
   const {data:prior,error:priorError}=await db.from("market_push_subscriptions")
    .select("user_id").eq("subscription_id",sub).maybeSingle();
@@ -173,6 +175,28 @@ async function changeDevice(user:any,body:any,req:Request){
  return reply({success:false,error:"Unknown device action"},400);
 }
 
+
+async function adminHealth(req:Request){
+ const user=await signedIn(req);
+ if(!user)return reply({success:false,error:"Admin sign-in required"},401);
+ const {data:profile,error:profileError}=await db.from("profiles").select("is_admin").eq("id",user.id).maybeSingle();
+ if(profileError||profile?.is_admin!==true)return reply({success:false,error:"Administrator access required"},403);
+ const since=new Date(Date.now()-86400000).toISOString();
+ const [events,inbox,push,pending,failed,runs]=await Promise.all([
+  db.from("market_notification_events").select("id",{count:"exact",head:true}).gte("created_at",since),
+  db.from("market_notification_inbox").select("notice_id",{count:"exact",head:true}).gte("queued_at",since),
+  db.from("market_push_deliveries").select("id",{count:"exact",head:true}).eq("state","sent").gte("created_at",since),
+  db.from("market_push_deliveries").select("id",{count:"exact",head:true}).in("state",["pending","sending","retry"]),
+  db.from("market_push_deliveries").select("id",{count:"exact",head:true}).eq("state","failed").gte("created_at",since),
+  db.from("market_notification_worker_runs").select("started_at,result,news_created,reminders_created,inbox_queued").order("started_at",{ascending:false}).limit(4)
+ ]);
+ if([events,inbox,push,pending,failed,runs].some(r=>r.error))throw Error("Admin notification metrics unavailable");
+ return reply({success:true,window:"24h",events:events.count||0,inbox_queued:inbox.count||0,
+  accepted_by_onesignal:push.count||0,push_pending:pending.count||0,push_failed:failed.count||0,
+  one_signal_configured:ready(),recent_workers:runs.data||[],
+  note:"Accepted by OneSignal does not mean device delivery."});
+}
+
 async function privatePost(req:Request){
  const user=await signedIn(req);
  if(!user)return reply({success:false,error:"Sign in required"},401);
@@ -186,9 +210,12 @@ async function privatePost(req:Request){
    return reply({success:false,error:e instanceof Error?e.message:"Invalid settings"},400);
   }
   const {data:prior,error:lookupError}=await db.from("market_notification_preferences")
-   .select("push_enabled").eq("user_id",user.id).maybeSingle();
+   .select("push_enabled,keyword_alerts_enabled").eq("user_id",user.id).maybeSingle();
   if(lookupError)throw Error("Unable to check consent");
   settings.push_enabled=prior?.push_enabled===true&&settings.in_app_enabled;
+  // Older clients must not disable keyword alerts by omitting the new optional field.
+  settings.keyword_alerts_enabled=body.settings.keyword_alerts_enabled===undefined
+   ? prior?.keyword_alerts_enabled===true : settings.keyword_alerts_enabled;
   const {error}=await db.from("market_notification_preferences")
    .upsert({...settings,user_id:user.id},{onConflict:"user_id"});
   if(error)throw Error("Unable to save notification settings");
@@ -218,6 +245,7 @@ Deno.serve(async(req:Request)=>{
     app_id:ready()?ONE_APP:null,canonical_origin:CANONICAL,
     worker:"/onesignal/OneSignalSDKWorker.js"});
    if(mode==="preferences"||mode==="inbox")return await privateGet(req,mode);
+   if(mode==="admin-health")return await adminHealth(req);
    return reply({success:false,error:"Unknown mode"},400);
   }
   if(req.method==="POST")return await privatePost(req);

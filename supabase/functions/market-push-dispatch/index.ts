@@ -32,12 +32,12 @@ async function handle(job:any){
  try{
   const [n,d,p]=await Promise.all([
    db.from("market_notification_events")
-    .select("id,title,body,kind,trust_status,topic,reminder_minutes,target_url,expires_at,created_at,is_active")
+    .select("id,title,body,kind,trust_status,topic,reminder_minutes,source_article_id,target_url,expires_at,created_at,is_active")
     .eq("id",job.notice_id).maybeSingle(),
    db.from("market_push_subscriptions").select("user_id,active,browser_permission_granted")
     .eq("subscription_id",job.subscription_id).maybeSingle(),
    db.from("market_notification_preferences")
-    .select("push_enabled,in_app_enabled,breaking_enabled,economic_enabled,topics,reminders,timezone,quiet_start,quiet_end")
+    .select("push_enabled,in_app_enabled,breaking_enabled,economic_enabled,keyword_alerts_enabled,topics,reminders,timezone,quiet_start,quiet_end")
     .eq("user_id",job.user_id).maybeSingle()
   ]);
   if(n.error||d.error||p.error)throw Error("Recipient records inaccessible");
@@ -50,9 +50,22 @@ async function handle(job:any){
   if(now.getTime()>Date.parse(notice.expires_at)||now.getTime()-Date.parse(notice.created_at)>fresh){
    await finalize(job.id,"expired","Alert no longer timely");return "skipped";
   }
+  // Explicit keyword alerts are independent of general breaking alerts, but never
+  // bypass topic consent, article verification, quiet hours, or device consent.
+  let keywordMatch=false;
+  if(notice.kind==="breaking_news"&&notice.trust_status==="verified"&&pref.keyword_alerts_enabled&&notice.source_article_id){
+    const [watch,article]=await Promise.all([
+      db.from("news_keyword_watchlists").select("keyword,category").eq("user_id",job.user_id).eq("enabled",true).limit(100),
+      db.from("news_articles").select("title").eq("id",notice.source_article_id).maybeSingle()
+    ]);
+    if(watch.error||article.error)throw Error("Unable to verify keyword alert preferences");
+    const title=String(article.data?.title||"").toLowerCase();
+    keywordMatch=(watch.data||[]).some(w=> (!w.category||w.category===notice.topic)&&
+      title.includes(String(w.keyword||"").toLowerCase()));
+  }
   const canSend=notice.kind==="economic_reminder"?
    notice.trust_status==="official_schedule"&&pref.economic_enabled&&pref.reminders?.includes(notice.reminder_minutes):
-   notice.kind==="breaking_news"&&notice.trust_status==="verified"&&pref.breaking_enabled&&pref.topics?.includes(notice.topic);
+   notice.kind==="breaking_news"&&notice.trust_status==="verified"&&pref.topics?.includes(notice.topic)&&(pref.breaking_enabled||keywordMatch);
   if(!canSend){
    await finalize(job.id,"no_recipient","Source or topic is not opted in");return "skipped";
   }

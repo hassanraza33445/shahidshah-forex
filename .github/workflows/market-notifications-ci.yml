@@ -4,6 +4,7 @@ on:
     paths:
       - 'supabase/functions/market-notifications-api/**'
       - 'supabase/sql/market-notification-*.sql'
+      - 'assets/sm-news-personal.js'
       - 'notifications/**'
       - '.github/workflows/market-notifications-ci.yml'
 jobs:
@@ -29,6 +30,7 @@ jobs:
           const sql=readFileSync('supabase/sql/market-notification-center-optin-20261114.sql','utf8');
           const code=readFileSync('supabase/functions/market-notifications-api/index.ts','utf8');
           const html=readFileSync('notifications/index.html','utf8');
+          const page=readFileSync('assets/sm-news-personal.js','utf8');
           for(const token of [
             'market_notification_events','market_notification_preferences','market_notification_inbox',
             'ENABLE ROW LEVEL SECURITY','push_enabled=false','refresh_market_notification_feed',
@@ -42,11 +44,15 @@ jobs:
             'Unknown mode','in_app_only','Notification service temporarily unavailable']){
             if(!code.includes(token))throw Error('API guard missing '+token);
           }
-          for(const token of ['Unverified source','Browser/mobile push notifications are not active yet.',
-            'Asia/Kuala_Lumpur','Asia/Karachi','Sign in','saveSettings','localStorage']){
-            if(!html.includes(token))throw Error('UI privacy or opt-in content missing '+token);
+          for(const token of ['/app/?tab=markets','Market Intelligence']){
+            if(!html.includes(token))throw Error('Notification route continuity missing '+token);
           }
-          const permissionCall=html.indexOf('requestPermission()');
-          if(permissionCall>=0 && !(permissionCall>html.indexOf('async function enableBrowserPush(){') && permissionCall<html.indexOf('async function disableBrowserPush(){')))throw Error('Push permission outside deliberate opt-in handler');
+          for(const token of ['renderPrefs','renderInbox','keyword_alerts_enabled',
+            'notificationAPI','requestPermission()','OneSignalSDK.page.js',
+            'unregister_all_push_devices','OneSignalDeferred']){
+            if(!page.includes(token))throw Error('In-app/OneSignal opt-in control missing '+token);
+          }
+          if(page.indexOf('requestPermission()')<page.indexOf('Allow browser notifications'))
+            throw Error('Browser permission may only be requested from deliberate consent handler');
           console.log('PASS notification integrity, RLS access, double opt-in and source verification labels');
           JS

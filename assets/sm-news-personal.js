@@ -5,7 +5,7 @@ const BASE="https://qggtdwixwafcmorepkks.supabase.co";
 const KEY="sb_publishable_HnYmHQbt42OfjmRk09OfoQ_fq5TPYpb";
 const TOPICS=["Gold","Forex","Crypto","Central Banks","Economic Data","Energy","Geopolitics"];
 const $=(t,cls,text)=>{const n=document.createElement(t);if(cls)n.className=cls;if(text!==undefined)n.textContent=String(text);return n};
-const state={client:null,user:null,ready:false,init:false,loading:null,saved:new Map(),watch:[],prefs:null,dialog:null,tab:"saved",toolbar:null,status:null,body:null};
+const state={client:null,user:null,ready:false,init:false,loading:null,saved:new Map(),watch:[],prefs:null,inbox:[],dialog:null,tab:"saved",toolbar:null,status:null,body:null};
 const badge=(t)=>$("span","sm-personal-muted",t);
 function setStatus(text,error=false){if(state.status){state.status.textContent=text;state.status.dataset.error=String(error)}const tip=document.getElementById("smNewsPersonalCount");if(tip)tip.textContent=text||state.saved.size+" saved • "+state.watch.length+" watchwords"}
 function addButton(parent,label,onClick){const b=$("button","",label);b.type="button";b.addEventListener("click",onClick);parent.append(b);return b}
@@ -21,7 +21,7 @@ async function fetchWatch(){
  if(error)throw error;state.watch=data||[];
 }
 async function fetchPrefs(){
- const {data,error}=await state.client.from("market_notification_preferences").select("user_id,in_app_enabled,breaking_enabled,economic_enabled,topics,timezone").eq("user_id",state.user.id).maybeSingle();
+ const {data,error}=await state.client.from("market_notification_preferences").select("user_id,in_app_enabled,breaking_enabled,economic_enabled,keyword_alerts_enabled,push_enabled,topics,timezone").eq("user_id",state.user.id).maybeSingle();
  if(error)throw error;state.prefs=data;
 }
 async function loadPrivate(){
@@ -68,7 +68,7 @@ function drawDialog(){
  const close=addButton(head,"×",()=>dialog.close());close.className="sm-personal-close";close.setAttribute("aria-label","Close news workspace");
  head.prepend(titles);dialog.append(head);
  const nav=$("div","sm-personal-tabs");nav.setAttribute("role","tablist");
- for(const [tab,label] of [["saved","Saved Articles"],["watch","Watchlist"],["prefs","Alerts"]]){
+ for(const [tab,label] of [["saved","Saved Articles"],["watch","Watchlist"],["prefs","Alerts"],["inbox","Inbox"]]){
   const b=addButton(nav,label,()=>{state.tab=tab;renderCurrent()});b.dataset.tab=tab;b.setAttribute("role","tab");
  }
  dialog.append(nav);state.body=$("section","sm-personal-content");dialog.append(state.body);
@@ -138,7 +138,7 @@ function renderWatch(){
  b.append(sel);line.append(a,b);
  const submit=$("button","","Add");submit.type="submit";line.append(submit);form.append(line);
  form.addEventListener("submit",e=>{e.preventDefault();addWatch(input.value,sel.value)});
- state.body.append(form,badge("Keywords help you find matching headlines. Automatic keyword push alerts are not enabled yet."));
+ state.body.append(form,badge("Enable Keyword HOT Alerts under Alerts to receive matching headlines in your private inbox. Browser push needs separate permission."));
  for(const item of state.watch){
   const {card,actions}=rowItem(item.keyword,(item.category||"All categories")+" • "+(item.enabled?"Active":"Paused"));
   addButton(actions,"Search headlines",()=>searchWord(item));
@@ -153,11 +153,117 @@ function optionCheck(parent,label,checked,field,value){
  const cb=$("input");cb.type="checkbox";cb.checked=checked;cb.dataset.field=field;if(value)cb.value=value;
  lab.append(cb,document.createTextNode(label));parent.append(lab);return cb;
 }
+
+async function notificationAPI(mode,body){
+ const {data:{session},error:sessionError}=await state.client.auth.getSession();
+ if(sessionError||!session?.access_token)throw new Error("Please sign in again.");
+ const url=BASE+"/functions/v1/market-notifications-api"+(mode?"?mode="+encodeURIComponent(mode):"");
+ const res=await fetch(url,{method:body?"POST":"GET",cache:"no-store",headers:{
+  apikey:KEY,Authorization:"Bearer "+session.access_token,...(body?{"Content-Type":"application/json"}:{})
+ },...(body?{body:JSON.stringify(body)}:{})});
+ const data=await res.json().catch(()=>null);
+ if(!res.ok||!data?.success)throw new Error(data?.error||"Notification service unavailable");
+ return data;
+}
+async function renderInbox(){
+ if(!state.user)return;
+ const loading=badge("Loading your private notification inbox…");state.body.append(loading);
+ const data=await notificationAPI("inbox");
+ if(state.tab!=="inbox")return;
+ state.inbox=data.items||[];
+ state.body.replaceChildren(badge("Notifications are delivered only for topics you opted into. Unverified news is clearly labeled."));
+ if(!state.inbox.length){state.body.append(badge("No alerts in your inbox yet. Enable your preferences and add watchlist keywords."));return}
+ for(const n of state.inbox.slice(0,80)){
+  const {card,actions}=rowItem(n.title,(n.read_at?"Read":"Unread")+" • "+(n.topic||"Market")+" • "+(n.trust_status||"unverified")+" • "+new Date(n.created_at).toLocaleString());
+  if(n.body)card.insertBefore($("p","sm-personal-muted",n.body),actions);
+  if(n.source_article_id){
+   addButton(actions,"Read news",async()=>{
+    const {data:item,error}=await state.client.from("news_articles")
+     .select("id,title,summary,publisher,original_url,published_at,category,priority,priority_reason,verification_status")
+     .eq("id",n.source_article_id).maybeSingle();
+    if(error||!item){setStatus("Article is no longer available.",true);return}
+    state.dialog?.close();window.SMNewsReader?.open(item);
+   });
+  }
+  if(!n.read_at)addButton(actions,"Mark read",async()=>{
+   try{await notificationAPI("",{action:"mark_read",id:n.id});renderInbox()}
+   catch(e){setStatus("Could not mark alert as read.",true)}
+  });
+  state.body.append(card);
+ }
+}
+let sdkPromise=null;
+async function loadOneSignal(config){
+ if(sdkPromise)return sdkPromise;
+ sdkPromise=new Promise((resolve,reject)=>{
+  window.OneSignalDeferred=window.OneSignalDeferred||[];
+  window.OneSignalDeferred.push(async OneSignal=>{
+   try{
+    await OneSignal.init({appId:config.app_id,serviceWorkerPath:config.worker,
+     serviceWorkerParam:{scope:"/onesignal/"},notifyButton:{enable:false},promptOptions:{autoPrompt:false}});
+    resolve(OneSignal);
+   }catch(e){reject(e)}
+  });
+  const script=$("script");script.src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
+  script.async=true;script.onerror=()=>reject(Error("Unable to load OneSignal SDK"));
+  document.head.append(script);
+ }).catch(e=>{sdkPromise=null;throw e});
+ return sdkPromise;
+}
+async function renderPushControls(root,pref){
+ const label=badge("Checking browser push configuration…");root.append(label);
+ try{
+  const res=await fetch(BASE+"/functions/v1/market-notifications-api?mode=push-config",{headers:{apikey:KEY},cache:"no-store"});
+  const config=await res.json();if(!res.ok||!config.success)throw Error("Push status unavailable");
+  label.textContent=config.configured?"OneSignal is available. Browser permission is always optional.":"OneSignal is not configured yet. Browser push remains OFF; in-app alerts work independently.";
+  if(!config.configured)return;
+  if(location.origin!==config.canonical_origin){
+   const a=$("a","","Open official www website to manage browser push");
+   a.href=config.canonical_origin+location.pathname+location.search;a.rel="noopener noreferrer";root.append(a);
+   return;
+  }
+  if(!pref?.in_app_enabled||!(pref.breaking_enabled||pref.economic_enabled||pref.keyword_alerts_enabled)){
+   root.append(badge("Save at least one enabled in-app alert preference before enabling browser push."));return;
+  }
+  const buttons=$("div","sm-personal-actions");root.append(buttons);
+  if(pref.push_enabled){
+   addButton(buttons,"Disable browser push",async()=>{
+    try{
+     await notificationAPI("",{action:"unregister_all_push_devices"});
+     const sdk=await sdkPromise?.catch(()=>null);if(sdk)await sdk.User.PushSubscription.optOut();
+     await fetchPrefs();renderCurrent();setStatus("Browser push disabled for your account.");
+    }catch(e){setStatus("Unable to disable push. Please retry.",true)}
+   });
+   return;
+  }
+  const prepare=addButton(buttons,"Prepare browser push",async()=>{
+   prepare.disabled=true;
+   try{
+    const sdk=await loadOneSignal(config);
+    prepare.remove();
+    addButton(buttons,"Allow browser notifications",async()=>{
+     try{
+      await sdk.Notifications.requestPermission();
+      if(Notification.permission!=="granted")throw Error("Browser permission was not granted");
+      await sdk.User.PushSubscription.optIn();
+      const id=sdk.User.PushSubscription.id;
+      if(!id)throw Error("No active OneSignal subscription ID was received");
+      await notificationAPI("",{action:"register_push_device",subscription_id:id,browser_permission_granted:true});
+      await fetchPrefs();renderCurrent();setStatus("Browser push registered for this device.");
+     }catch(e){setStatus(e.message||"Browser notification registration failed.",true)}
+    });
+    setStatus("OneSignal ready. Permission is requested only when you click Allow.");
+   }catch(e){setStatus(e.message||"OneSignal could not initialize.",true);prepare.disabled=false}
+  });
+ }catch(e){label.textContent="Browser push configuration could not be checked. In-app preferences remain available."}
+}
+
 function renderPrefs(){
  const form=$("form","sm-personal-form");const p=state.prefs;
  const inapp=optionCheck(form,"In-app notifications",p?.in_app_enabled===true,"in_app");
  const breaking=optionCheck(form,"Important HOT market news",p?.breaking_enabled===true,"breaking");
  const economic=optionCheck(form,"Confirmed economic calendar reminders",p?.economic_enabled===true,"economic");
+ const keywords=optionCheck(form,"HOT news matching my enabled watchlist keywords",p?.keyword_alerts_enabled===true,"keywords");
  form.append(badge("Choose which news topics you want in your in-app notification inbox."));
  const topics=$("div","sm-personal-topics");const selected=Array.isArray(p?.topics)?p.topics:["Gold","Forex","Crypto","Central Banks","Economic Data"];
  for(const topic of TOPICS)optionCheck(topics,topic,selected.includes(topic),"topic",topic);form.append(topics);
@@ -165,7 +271,7 @@ function renderPrefs(){
  form.addEventListener("submit",async e=>{
   e.preventDefault();if(!ensureLogin()||!state.ready)return;
   const values={user_id:state.user.id,in_app_enabled:inapp.checked,breaking_enabled:breaking.checked,
-   economic_enabled:economic.checked,topics:Array.from(topics.querySelectorAll("input:checked")).map(x=>x.value)};
+   economic_enabled:economic.checked,keyword_alerts_enabled:keywords.checked,topics:Array.from(topics.querySelectorAll("input:checked")).map(x=>x.value)};
   submit.disabled=true;
   try{
    const {error}=await state.client.from("market_notification_preferences").upsert(values,{onConflict:"user_id"});
@@ -173,7 +279,10 @@ function renderPrefs(){
   }catch(e){setStatus("Unable to save preferences.",true);console.warn("Notification preference save failed",e)}
   finally{submit.disabled=false}
  });
- state.body.append(form,badge("Browser push and email notifications are configured separately. This form does not grant push permission."));
+ state.body.append(form,badge("Browser push is separate from in-app alerts. No browser permission is requested by saving these settings."));
+ const pushArea=$("section","sm-personal-card");pushArea.append($("h3","","Browser Push (optional)"));
+ state.body.append(pushArea);renderPushControls(pushArea,p).catch(()=>{});
+
 }
 function renderCurrent(){
  if(!state.dialog||!state.body)return;
@@ -183,6 +292,7 @@ function renderCurrent(){
  if(!state.ready){state.body.append(badge("Loading your private news preferences…"));return}
  if(state.tab==="saved"){renderSaved().catch(()=>setStatus("Could not display saved articles.",true))}
  else if(state.tab==="watch")renderWatch();
+ else if(state.tab==="inbox")renderInbox().catch(()=>setStatus("Unable to load inbox.",true));
  else renderPrefs();
 }
 function open(tab){
