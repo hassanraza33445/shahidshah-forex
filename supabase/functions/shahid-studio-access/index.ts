@@ -38,11 +38,12 @@ Deno.serve(async(req:Request)=>{
   if(!["grant","revoke","resend"].includes(action))return send({success:false,error:"Unsupported action"},400);
   const address=clip(body.email,180).toLowerCase();
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(address))return send({success:false,error:"Valid registered email required"},400);
-  const {data:target,error:targetError}=await db.from("profiles").select("id,full_name,email").ilike("email",address).maybeSingle();
+  const {data:target,error:targetError}=await db.from("profiles").select("id,full_name,email,is_admin").ilike("email",address).maybeSingle();
   if(targetError||!target)return send({success:false,error:"No existing website account found. User must sign up first."},404);
+  if(target.is_admin===true)return send({success:false,error:"Platform admin accounts are protected. Manage owner roles separately."},409);
   const {data:current}=await db.from("content_access").select("role,enabled").eq("user_id",target.id).maybeSingle();
   const role=action==="grant"?clip(body.role,20):current?.role||"viewer";
-  if(!["viewer","creator","editor","approver","admin"].includes(role))return send({success:false,error:"Invalid role"},400);
+  if(!["viewer","creator","editor","approver"].includes(role))return send({success:false,error:"Invalid role"},400);
   if(action==="grant"){
    const {error:change}=await db.from("content_access").upsert({user_id:target.id,role,enabled:true,granted_at:new Date().toISOString(),granted_by:user.id},{onConflict:"user_id"});
    if(change)throw change;

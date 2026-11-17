@@ -1,0 +1,30 @@
+name: Premium Studio Access Admin QA
+on:
+  pull_request:
+    paths:
+      - 'admin-panel.html'
+      - 'content-studio/index.html'
+      - 'assets/sm-admin-studio-access.*'
+      - 'supabase/functions/shahid-studio-access/**'
+      - 'scripts/studio-access-admin-check.mjs'
+      - '.github/workflows/studio-access-admin-qa.yml'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify client JavaScript syntax
+        run: node --check assets/sm-admin-studio-access.js
+      - name: Verify secure role manager and premium responsive page
+        run: node scripts/studio-access-admin-check.mjs
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Typecheck protected Studio permission API
+        run: deno check supabase/functions/shahid-studio-access/index.ts
