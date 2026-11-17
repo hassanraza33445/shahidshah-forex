@@ -1,0 +1,81 @@
+name: Studio Admin Approval and Visibility
+on:
+  pull_request:
+    paths:
+      - 'supabase/sql/studio-admin-approval-only-*'
+      - 'supabase/functions/shahid-studio-access/**'
+      - 'assets/sm-studio-permission-visibility.js'
+      - 'assets/sm-member-app.js'
+      - 'assets/site-master-header.js'
+      - 'app/index.html'
+      - 'market-intelligence/index.html'
+      - 'content-studio/index.html'
+      - 'admin-panel.html'
+      - 'index.html'
+      - '.github/workflows/studio-approval-ci.yml'
+jobs:
+  access_checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify browser script syntax
+        run: |
+          node --check assets/sm-studio-permission-visibility.js
+          node --check assets/sm-member-app.js
+          node --check assets/site-master-header.js
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Verify Studio admin endpoint types
+        run: deno check supabase/functions/shahid-studio-access/index.ts
+      - name: Verify opt-in only privileges, hidden links, admin controls and backend gating
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const get=(path)=>fs.readFileSync(path,'utf8');
+          const sql=get('supabase/sql/studio-admin-approval-only-20261117.sql');
+          const app=get('app/index.html'), member=get('assets/sm-member-app.js');
+          const market=get('market-intelligence/index.html'), root=get('index.html');
+          const pub=get('assets/sm-studio-permission-visibility.js');
+          const admin=get('admin-panel.html'), studio=get('content-studio/index.html');
+          const api=get('supabase/functions/shahid-studio-access/index.ts');
+          const master=get('assets/site-master-header.js');
+          for(const x of [
+           'DROP TRIGGER IF EXISTS on_auth_user_free_studio_access',
+           'SET enabled=false','owner.is_admin=true',
+           'REVOKE ALL ON public.content_access FROM anon',
+           'REVOKE INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER',
+           'GRANT SELECT ON public.content_access TO authenticated'
+          ])if(!sql.includes(x))throw Error('Missing Studio auto-grant revocation or RLS protection '+x);
+          for(const x of ['data-sm-studio="allowed"','data-sm-studio-create="allowed"',
+            '#view-studio','[data-section="studio"]','mi-card-script'])
+            if(!app.includes(x))throw Error('App must hide unapproved features: '+x);
+          for(const x of ['state.studioStatus!=="allowed"','renderNews();',
+            'document.documentElement.dataset.smStudioCreate=creator','openTab("home",true)'])
+            if(!member.includes(x))throw Error('Member app role check/revocation missing: '+x);
+          for(const x of ['data-sm-studio-access="studio"','data-sm-studio-access="create"',
+            'SMStudioRights?.create','sm:studio-access'])
+            if(!market.includes(x))throw Error('Market news button gate missing: '+x);
+          if(!market.includes('sm-studio-permission-visibility.js')||!root.includes('sm-studio-permission-visibility.js'))
+            throw Error('Public market and landing need permission SDK');
+          for(const x of ['auth.getUser()','profiles','content_access','a.data?.enabled===true',
+             'SMStudioRights','sm-studio-authorized'])
+            if(!pub.includes(x))throw Error('Public gate not role-verified: '+x);
+          if(!master.includes('data-sm-studio-access')||
+             !master.includes('sm-studio-permission-visibility.js'))
+            throw Error('Master header must also hide Studio links');
+          if(!admin.includes('AI Studio Access')||!admin.includes('/content-studio/?view=access'))
+            throw Error('Admin must have a role management shortcut');
+          if(!studio.includes('Studio access has not been approved for this account'))
+            throw Error('Direct studio must fail closed for unapproved accounts');
+          if(!api.includes('profiles').valueOf()||!api.includes('admin?.is_admin!==true')||
+             !api.includes('granted_by:user.id'))
+            throw Error('Only admin Edge Function may grant access');
+          console.log('PASS Studio private UI, admin-only grants and no auto signup');
+          JS
