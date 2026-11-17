@@ -42,6 +42,8 @@ html.sm-embedded button,html.sm-embedded select,html.sm-embedded input{min-heigh
 </style>
 <link rel="stylesheet" href="/assets/sm-news-reader.css?v=20261114-native-news-1">
 <script defer src="/assets/sm-news-reader.js?v=20261114-native-news-1"></script>
+<link rel="stylesheet" href="/assets/sm-news-personal.css?v=20261117-p3-1">
+<script defer src="/assets/sm-news-personal.js?v=20261117-p3-1"></script>
 <script defer src="/assets/sm-embed-resize.js?v=20261114-premium-1"></script><link rel="stylesheet" href="/assets/sm-premium-embedded-2026.css?v=20261114-1">
 <link rel="stylesheet" href="/assets/sm-hide-public-links-20261115.css?v=hide-personal-1">
 </head>
@@ -75,7 +77,7 @@ function safeURL(value){try{const u=new URL(value);return ["https:","http:"].inc
 function make(tag,cls,txt){const x=document.createElement(tag);if(cls)x.className=cls;if(txt!==undefined)x.textContent=String(txt);return x}
 function link(txt,href){const a=make("a","textlink",txt);a.href=href;a.target="_blank";a.rel="noopener noreferrer";return a}
 function card(item,featured=false){
- const box=make("article",featured?"lead-card":"news-card");
+ const box=make("article",featured?"lead-card":"news-card");box.dataset.newsArticleId=String(item.id||"");
  const top=make("div","row"); const badge=make("span","tag "+String(item.priority||"COLD").toLowerCase(),item.priority||"COLD");
  const cat=make("span","meta",item.category||"Markets");badge.title=item.priority_reason||"Editorial relevance; not a price prediction";top.append(badge,cat);box.append(top);
  const h=make("h3");const headline=make("button","sm-news-title-button",item.title||"Untitled article");
@@ -102,6 +104,7 @@ function display(items){
  el("pageIndicator").textContent="Page "+state.page;
  el("previous").disabled=state.page===1;
  el("next").disabled=items.length<24;
+ window.dispatchEvent(new Event("sm:news-displayed"));
 }
 function queryURL(){
  const u=new URL(ENDPOINT);u.searchParams.set("mode","feed");u.searchParams.set("page",state.page);u.searchParams.set("limit","24");
@@ -112,7 +115,7 @@ function queryURL(){
 }
 async function loadNews(force=false){
  const url=queryURL(),key="smshahid-news-v2:"+url,seq=++state.seq;
- if(!force){try{const c=JSON.parse(sessionStorage.getItem(key)||"null");if(c&&Date.now()-c.saved<180000){state.items=c.items;state.last=c.last;display(c.items);el("refreshLabel").textContent="Cached market headlines";el("updated").textContent=niceDate(c.last)}}catch(e){}}
+ if(!force){try{const c=JSON.parse(sessionStorage.getItem(key)||"null");if(c&&Array.isArray(c.items)&&Date.now()-c.saved<900000){state.items=c.items;state.last=c.last;display(c.items);el("refreshLabel").textContent="Cached market headlines";el("updated").textContent=niceDate(c.last);if(Date.now()-c.saved<45000)return}}catch(e){}}
  state.loading=true;el("reload").disabled=true;el("refreshInfo").textContent="Updating from the market-news service…";
  try{
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);
@@ -138,5 +141,8 @@ el("reload").addEventListener("click",()=>loadNews(true));
 el("previous").addEventListener("click",()=>{if(state.page>1){state.page--;loadNews();window.scrollTo({top:400,behavior:"smooth"})}});
 el("next").addEventListener("click",()=>{if(!state.loading&&state.items.length===24){state.page++;loadNews();window.scrollTo({top:400,behavior:"smooth"})}});
 loadNews();
+// Keep cached headlines instantly visible; poll only while the page is in use.
+setInterval(()=>{if(!document.hidden&&!state.loading)loadNews()},180000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!state.loading)loadNews()});
 </script>
 </body></html>
