@@ -7,6 +7,8 @@ on:
       - 'supabase/sql/market-onesignal-*.sql'
       - 'onesignal/**'
       - 'notifications/**'
+      - 'assets/sm-news-personal.js'
+      - 'supabase/sql/market-notification-v4-*.sql'
       - '.github/workflows/onesignal-webpush-ci.yml'
 jobs:
   checks:
@@ -31,7 +33,8 @@ jobs:
           const sql=readFileSync('supabase/sql/market-onesignal-push-consent-20261114.sql','utf8');
           const api=readFileSync('supabase/functions/market-notifications-api/index.ts','utf8');
           const worker=readFileSync('supabase/functions/market-push-dispatch/index.ts','utf8');
-          const page=readFileSync('notifications/index.html','utf8');
+          const page=readFileSync('assets/sm-news-personal.js','utf8');
+          const route=readFileSync('notifications/index.html','utf8');
           const sw=readFileSync('onesignal/OneSignalSDKWorker.js','utf8');
           for(const k of ['ENABLE ROW LEVEL SECURITY','consented_at',
             'market_push_deliveries','enqueue_verified_market_pushes',
@@ -48,12 +51,14 @@ jobs:
             'Authorization','req.headers.get("authorization")']){
             if(!worker.includes(k))throw Error('Delivery safety guard missing: '+k);
           }
-          for(const k of ['Enable Browser Push','Disable All Push','setConsentRequired(true)',
-            'requestPermission()','OneSignalSDK.page.js','saveSettings','Asia/Karachi']){
+          for(const k of ['Prepare browser push','Allow browser notifications',
+            'requestPermission()','OneSignalSDK.page.js','notificationAPI',
+            'keyword_alerts_enabled','unregister_all_push_devices','OneSignalDeferred']){
             if(!page.includes(k))throw Error('UI consent control missing: '+k);
           }
-          if(!page.includes('scope:"/onesignal/"')||!sw.includes('OneSignalSDK.sw.js'))
-            throw Error('Service worker must not overwrite existing PWA scope');
+          if(!page.includes('serviceWorkerParam:{scope:"/onesignal/"}')||
+             !sw.includes('OneSignalSDK.sw.js')||!route.includes('/app/?tab=markets'))
+            throw Error('Service worker scope and notification route must remain isolated');
           if(!readFileSync('sw.js','utf8').length)throw Error('Original PWA worker missing');
           console.log('PASS OneSignal consent, auth, strict sources, idempotency, quiet hours and PWA isolation');
           JS
