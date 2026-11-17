@@ -113,7 +113,7 @@ AS $$
 DECLARE inserted_count integer:=0;
 BEGIN
  WITH due AS(
-   SELECT n.id,n.kind,n.topic,n.reminder_minutes,n.trust_status,n.created_at
+   SELECT n.id,n.kind,n.topic,n.reminder_minutes,n.source_article_id,n.trust_status,n.created_at
    FROM public.market_notification_events n
    WHERE n.is_active AND n.expires_at>now() AND n.created_at<=now()
    AND (
