@@ -63,7 +63,6 @@
     }
 
     trigger.addEventListener("click", () => {
-      if (!mobile.matches) return;
       const sidebar = document.getElementById("appSidebar");
       const shade = document.getElementById("sideShade");
       const menuButton = document.getElementById("openMenu");
@@ -101,7 +100,6 @@
     });
 
     window.addEventListener("beforeinstallprompt", event => {
-      if (!mobile.matches) return;
       event.preventDefault();
       deferredPrompt = event;
       if (!sheet.hidden) render();
