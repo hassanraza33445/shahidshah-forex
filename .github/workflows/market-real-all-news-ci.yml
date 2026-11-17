@@ -1,0 +1,59 @@
+name: Real All News OneSignal dispatch checks
+on:
+  pull_request:
+    paths:
+      - 'supabase/sql/market-real-all-news-push-*.sql'
+      - 'supabase/functions/market-push-dispatch/**'
+      - '.github/workflows/market-real-all-news-ci.yml'
+jobs:
+  news_push:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Edge TypeScript check
+        run: deno check supabase/functions/market-push-dispatch/index.ts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify source-backed all-news opt-in, no historical flood, duplicate constraints and private scheduling
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const sql=fs.readFileSync('supabase/sql/market-real-all-news-push-20261117.sql','utf8');
+          const ts=fs.readFileSync('supabase/functions/market-push-dispatch/index.ts','utf8');
+          for(const x of [
+            "a.priority IN ('HOT','WARM','COLD')",
+            "a.first_seen_at >= now()-interval '10 minutes'",
+            "a.original_url LIKE 'https://%'",
+            "COALESCE(a.cluster_id,a.id)",
+            "ON CONFLICT(dedupe_key) DO NOTHING",
+            "ON CONFLICT(user_id,notice_id) DO NOTHING",
+            "ON CONFLICT(notice_id,subscription_id) DO NOTHING",
+            "n.trust_status IN ('verified','unverified')",
+            "pref.push_enabled AND pref.in_app_enabled",
+            "sub.active AND sub.browser_permission_granted",
+            "ALTER TABLE public.market_push_runtime ENABLE ROW LEVEL SECURITY",
+            "REVOKE ALL ON TABLE public.market_push_runtime FROM PUBLIC,anon,authenticated",
+            "dispatch_enabled boolean NOT NULL DEFAULT false",
+            "'smshahid-real-all-news-push-every-minute'",
+            "(SELECT run_token::text FROM public.market_push_runtime",
+          ])if(!sql.includes(x))throw Error('Missing all-news safety rule: '+x);
+          for(const x of [
+            'authorizedByCron','authorizedByService',
+            '.eq("id",true).maybeSingle()', 'runtime.dispatch_enabled!==true',
+            'UNVERIFIED REPORT','📰 Market News','🔥 HOT Market News',
+            'pref?.push_enabled','pref.in_app_enabled',
+            'idempotency_key:job.idempotency_key',
+            'include_subscription_ids:[job.subscription_id]'
+          ])if(!ts.includes(x))throw Error('Missing protected dispatcher rule: '+x);
+          if(sql.includes('UPDATE public.market_push_runtime SET dispatch_enabled=true')||
+             sql.includes('DROP TABLE public.news_articles'))
+            throw Error('Migration must never turn push on before explicit live QA');
+          console.log('PASS all new source-linked headlines + user opt-in + secure scheduled dispatch');
+          NODE
