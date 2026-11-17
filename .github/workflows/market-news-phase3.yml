@@ -1,0 +1,40 @@
+name: Market News Phase 3 personal tools checks
+on:
+  pull_request:
+    paths:
+      - 'market-intelligence/index.html'
+      - 'assets/sm-news-personal.js'
+      - 'assets/sm-news-personal.css'
+      - 'supabase/sql/market-news-v3-personal-*.sql'
+      - '.github/workflows/market-news-phase3.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate external personal-news JavaScript
+        run: node --check assets/sm-news-personal.js
+      - name: Validate static route scripts and embedded JavaScript
+        run: node scripts/check-site-scripts.mjs
+      - name: Validate Phase 3 integration and non-destructive RLS migration
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const html=fs.readFileSync('market-intelligence/index.html','utf8');
+          const js=fs.readFileSync('assets/sm-news-personal.js','utf8');
+          const sql=fs.readFileSync('supabase/sql/market-news-v3-personal-20261117.sql','utf8');
+          for(const token of ['sm-news-personal.js','sm-news-personal.css','sm:news-displayed','box.dataset.newsArticleId','sessionStorage.getItem','document.hidden'])
+            if(!html.includes(token))throw new Error('News UI integration missing '+token);
+          for(const token of ['auth.getUser()', 'market_notification_preferences','news_saved_articles','news_keyword_watchlists','SMNewsPersonal','toggleSaved','showModal()'])
+            if(!js.includes(token))throw new Error('Personal tools implementation missing '+token);
+          for(const token of ['ENABLE ROW LEVEL SECURITY','user_id = (SELECT auth.uid())','REFERENCES auth.users(id) ON DELETE CASCADE','ON CONFLICT'])
+            if(!sql.includes(token)&&token!=='ON CONFLICT')throw new Error('Private RLS policy missing '+token);
+          if(/DROP TABLE|TRUNCATE|DELETE FROM public\.news_articles/i.test(sql))throw new Error('Destructive migration not permitted');
+          console.log('Phase 3 integration and RLS contracts present');
+          NODE
