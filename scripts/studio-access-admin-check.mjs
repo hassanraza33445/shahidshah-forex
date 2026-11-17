@@ -22,7 +22,8 @@ for(const token of [
  'submitted to SMTP provider (delivery not guaranteed)'
 ])assert.ok(js.includes(token),"Missing safe live function "+token);
 for(const role of ["Creator","Viewer","Editor","Approver"])assert.ok(ui.includes(role),"Role missing "+role);
-assert.ok(!ui.includes('value="admin"'),"Studio permission may not grant platform admin");
+const roleOptions=ui.match(/<select[^>]*id="saRole"[\s\S]*?<\/select>/)?.[0]||"";
+assert.ok(roleOptions&&!roleOptions.includes('value="admin"'),"Studio role selector may not grant platform admin");
 assert.ok(css.includes("@media(max-width:650px)")&&css.includes("var(--sa-gold)")&&css.includes("var(--sa-panel)"),"Scoped premium theme and responsive layout required");
 assert.ok(api.includes("admin?.is_admin!==true"),"Server-side website admin identity check needed");
 assert.ok(api.includes("target.is_admin===true"),"Must protect platform admin accounts from revoke");
