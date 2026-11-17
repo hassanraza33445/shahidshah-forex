@@ -1,0 +1,51 @@
+<section class="studio-admin" aria-label="AI Studio access administration">
+ <div class="sa-hero">
+  <div><span class="sa-kicker">PRIVATE CONTENT CONTROL</span><h2>AI Studio Access Management</h2>
+   <p>Manage who can use AI Creator Studio and Create AI Script from Market Headlines. Only approved accounts see these tools. Every change is recorded.</p>
+  </div>
+  <div class="sa-hero-actions"><button type="button" class="sa-btn" id="saRefresh">↻ Refresh</button>
+   <a class="sa-btn primary" href="/content-studio/?view=create" target="_blank" rel="noopener">✦ Open Studio</a></div>
+ </div>
+ <div class="sa-metrics" aria-label="Studio access summary">
+  <div class="sa-metric"><small>REGISTERED USERS</small><strong id="saTotalUsers">—</strong><span>Website accounts</span></div>
+  <div class="sa-metric"><small>ACTIVE STUDIO ACCESS</small><strong id="saActiveCount">—</strong><span>Approved roles</span></div>
+  <div class="sa-metric"><small>ACCESS REMOVED</small><strong id="saRemovedCount">—</strong><span>Revoked accounts</span></div>
+  <div class="sa-metric"><small>PLATFORM ADMINS</small><strong id="saAdminCount">—</strong><span>Protected admins</span></div>
+ </div>
+ <div class="sa-workspace">
+  <section class="sa-panel" aria-labelledby="saDirectoryTitle">
+   <div class="sa-panel-heading"><div><h3 id="saDirectoryTitle">Registered Users</h3><p>Search and select a user to manage their Studio permission.</p></div><span class="sa-pill" id="saLoadedCount">Loading…</span></div>
+   <div class="sa-panel-pad"><div class="sa-toolbar">
+    <input class="sa-input" id="saSearch" type="search" autocomplete="off" placeholder="Search registered email or name" aria-label="Search registered users">
+    <select class="sa-select" id="saFilter" aria-label="Filter access status"><option value="all">All users</option><option value="active">Active</option><option value="removed">Removed</option><option value="none">Not assigned</option><option value="admin">Admins</option></select>
+   </div><p class="sa-status" id="saDirectoryStatus" role="status" aria-live="polite">Loading secure directory…</p></div>
+   <div class="sa-table-scroll"><table class="sa-table"><thead><tr><th>User</th><th>Role</th><th>Status</th></tr></thead><tbody id="saUsersBody"><tr><td colspan="3" class="sa-empty">Checking administrator access…</td></tr></tbody></table></div>
+   <div class="sa-list-footer"><span id="saPageInfo">Registered website accounts only</span><button type="button" class="sa-btn" id="saMore">Load more</button></div>
+  </section>
+  <div style="display:grid;gap:16px;min-width:0">
+   <section class="sa-panel" aria-labelledby="saEditorTitle">
+    <div class="sa-panel-heading"><div><h3 id="saEditorTitle">Manage Permission</h3><p>Only registered users can receive access.</p></div><span class="sa-pill" id="saCurrentTag">No selection</span></div>
+    <div class="sa-person-detail">
+     <div class="sa-profile"><span class="sa-avatar" id="saSelectedAvatar" aria-hidden="true">+</span><div><b id="saSelectedName">Select a registered user</b><p id="saSelectedEmail">Choose a user from the directory.</p></div></div>
+     <div class="sa-field"><label for="saRole">Studio role</label><select class="sa-select" id="saRole" disabled>
+      <option value="creator">Creator — Generate and save scripts</option>
+      <option value="viewer">Viewer — View Studio projects</option>
+      <option value="editor">Editor — Create and edit projects</option>
+      <option value="approver">Approver — Review content</option></select>
+      <p>Studio roles never grant website-admin privileges. Website admin accounts cannot be revoked here.</p>
+     </div>
+     <div class="sa-actionbar"><button type="button" class="sa-btn primary" id="saGrant" disabled>✓ Grant / Update</button>
+      <button type="button" class="sa-btn warn" id="saRevoke" disabled>Remove Access</button>
+      <button type="button" class="sa-btn" id="saResend" disabled>Resend Email</button></div>
+     <div class="sa-callout">Access changes are saved to the server. Email submission status is shown separately. Removing Studio access does not delete saved scripts.</div>
+     <p id="saActionStatus" class="sa-status" role="status" aria-live="polite">Select a user to begin.</p>
+    </div>
+   </section>
+   <section class="sa-panel" aria-labelledby="saAuditTitle">
+    <div class="sa-panel-heading"><div><h3 id="saAuditTitle">Recent Activity</h3><p>Access updates and email submissions.</p></div><button type="button" class="sa-btn" id="saAuditRefresh">↻</button></div>
+    <ol id="saAuditList" class="sa-history"><li><div><b>Loading activity…</b></div></li></ol>
+   </section>
+  </div>
+ </div>
+ <div class="sa-guide"><strong>How it works:</strong> New signups have no Studio access by default. Grant Creator or another appropriate role to registered accounts only. Removing access hides Studio in the sidebar/mobile menu and hides Create AI Script actions in News and Market Headlines.</div>
+</section>
