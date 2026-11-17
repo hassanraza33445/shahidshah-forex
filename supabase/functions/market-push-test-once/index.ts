@@ -8,6 +8,8 @@ const SERVICE=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")||keys.default||"";
 const APP=Deno.env.get("ONESIGNAL_APP_ID")||"";
 const API=Deno.env.get("ONESIGNAL_REST_API_KEY")||"";
 const ORIGIN="https://www.smshahidshah.com";
+// Consistent PWA brand icon for Android Chrome/Web Push. The OS may still show Chrome as the sending app.
+const BRAND_ICON=ORIGIN+"/icon-192.png";
 const db=createClient(URL,SERVICE||"unconfigured",{auth:{persistSession:false,autoRefreshToken:false}});
 const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{
  status,headers:{"Content-Type":"application/json","Cache-Control":"no-store"}
@@ -54,8 +56,9 @@ Deno.serve(async(req:Request)=>{
    headers:{"Authorization":"Key "+API,"Content-Type":"application/json"},
    body:JSON.stringify({
     app_id:APP,target_channel:"push",include_subscription_ids:[claim.subscription_id],
-    headings:{en:"S M Shahid Shah • Test 🔔"},
-    contents:{en:"Test notification: your browser is connected successfully."},
+    headings:{en:"🔥 HOT Market News · S M Shahid Shah"},
+    contents:{en:"TEST PREVIEW — Gold & Forex notification branding is now active."},
+    chrome_web_icon:BRAND_ICON,
     url:ORIGIN+"/app/",
     idempotency_key:token,
     ttl:300,
