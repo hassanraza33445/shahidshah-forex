@@ -318,6 +318,10 @@ async function init(){
  try{
   const {data,error}=await state.client.auth.getUser();if(error||!data?.user)throw error||new Error("Not signed in");
   state.user=data.user;await loadPrivate();
+   // Deep-link from the member sidebar opens the requested private workspace tab.
+   // Only recognized tabs are accepted; no authorization is inferred from the URL.
+   const tab=new URLSearchParams(location.search).get("panel");
+   if(["inbox","prefs","watch","saved"].includes(tab))open(tab);
  }catch(e){state.ready=false;setStatus("Sign in for personal news tools.",true);syncSaves()}
 }
 window.addEventListener("sm:news-displayed",syncSaves);
