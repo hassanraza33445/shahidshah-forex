@@ -1,0 +1,36 @@
+/* Phase 3: additive controls only. Existing News Hub/desktop theme remains untouched. */
+.sm-news-personal-tools{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:-5px 0 18px}
+.sm-news-personal-tools .sm-news-personal-count{font-size:11px;color:var(--muted)}
+.sm-news-personal-tools button,.sm-news-save{border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);padding:9px 13px;font:700 12px "Plus Jakarta Sans",system-ui,sans-serif;cursor:pointer}
+.sm-news-personal-tools button:hover,.sm-news-save:hover{border-color:var(--gold)}
+.sm-news-save[aria-pressed="true"]{color:var(--gold);border-color:var(--gold)}
+.sm-news-save{padding:7px 10px;white-space:nowrap;font-size:11px}
+.sm-personal-dialog{box-sizing:border-box;width:min(94vw,670px);max-height:min(90vh,820px);overflow:auto;border:1px solid var(--line);border-radius:22px;background:var(--surface);color:var(--ink);box-shadow:0 25px 85px rgba(0,0,0,.26);padding:22px;font-family:"Plus Jakarta Sans",system-ui,sans-serif}
+.sm-personal-dialog::backdrop{background:rgba(6,14,25,.72)}
+.sm-personal-dialog button,.sm-personal-dialog input,.sm-personal-dialog select{font:inherit}
+.sm-personal-dialog button{cursor:pointer}
+.sm-personal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.sm-personal-head h2{margin:0;font-size:21px;line-height:1.25}
+.sm-personal-head p{margin:6px 0 0;color:var(--muted);font-size:12px}
+.sm-personal-close{border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:10px;padding:7px 12px;font-size:18px!important}
+.sm-personal-tabs{display:flex;gap:7px;margin:20px 0 16px;flex-wrap:wrap}
+.sm-personal-tabs button{border:1px solid var(--line);background:var(--surface2);color:var(--muted);border-radius:10px;padding:10px 13px;font-size:12px;font-weight:800}
+.sm-personal-tabs button[aria-selected="true"]{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+.sm-personal-content{min-height:100px;max-height:55vh;overflow-y:auto}
+.sm-personal-content .sm-personal-muted{font-size:12px;color:var(--muted);margin:12px 0}
+.sm-personal-card{border:1px solid var(--line);border-radius:13px;padding:13px;margin:10px 0;background:var(--surface2)}
+.sm-personal-card h3{font-size:13px;margin:0 0 6px;line-height:1.45}
+.sm-personal-card small{font-size:10px;color:var(--muted)}
+.sm-personal-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sm-personal-actions button,.sm-personal-actions a,.sm-personal-form button{display:inline-block;background:var(--surface);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:8px 12px;font-size:11px;font-weight:700;text-decoration:none}
+.sm-personal-actions button:hover,.sm-personal-actions a:hover{border-color:var(--gold)}
+.sm-personal-form{display:grid;gap:10px;margin-bottom:14px}
+.sm-personal-form label{display:grid;gap:5px;font-size:11px;font-weight:700;color:var(--muted)}
+.sm-personal-form input,.sm-personal-form select{background:var(--surface2);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px}
+.sm-personal-form .sm-personal-form-row{display:grid;grid-template-columns:1fr 165px auto;gap:10px;align-items:end}
+.sm-personal-switch{display:flex!important;align-items:center;gap:10px;cursor:pointer;font-size:12px!important;color:var(--ink)!important}
+.sm-personal-switch input{accent-color:var(--gold)}
+.sm-personal-topics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sm-personal-status{font-size:11px;color:var(--muted);min-height:1.1em;margin:12px 0 0}
+.sm-personal-status[data-error="true"]{color:#d4604a}
+@media(max-width:640px){.sm-personal-dialog{width:calc(100vw - 18px);max-height:88dvh;padding:16px;border-radius:18px}.sm-personal-form .sm-personal-form-row{grid-template-columns:1fr}.sm-personal-tabs button{flex:1;padding:9px 5px}.sm-personal-topics{grid-template-columns:1fr 1fr}.sm-news-personal-tools{margin-top:0}}
