@@ -10,15 +10,17 @@ const API=Deno.env.get("ONESIGNAL_REST_API_KEY")||"";
 const ORIGIN="https://www.smshahidshah.com";
 // Consistent PWA brand icon for Android Chrome/Web Push. The OS may still show Chrome as the sending app.
 const BRAND_ICON=ORIGIN+"/icon-192.png";
+// NBSP keeps the full display name together on the second title line.
+const BRAND_LINE="S\u00a0M\u00a0Shahid\u00a0Shah";
 const db=createClient(URL,SERVICE||"unconfigured",{auth:{persistSession:false,autoRefreshToken:false}});
 const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{
  status,headers:{"Content-Type":"application/json","Cache-Control":"no-store"}
 });
 const DEMOS={
- gold:{title:"🟡 GOLD MARKET · S M Shahid Shah",body:"DEMO 1/4 · XAUUSD market news notification preview. Not a live trading signal."},
- forex:{title:"💱 FOREX MARKET · S M Shahid Shah",body:"DEMO 2/4 · Major currency news alert preview. No real announcement is implied."},
- calendar:{title:"📅 ECONOMIC CALENDAR · S M Shahid Shah",body:"DEMO 3/4 · CPI, NFP and FOMC event reminder preview. No event is currently scheduled by this test."},
- breaking:{title:"🔥 HOT MARKET NEWS · S M Shahid Shah",body:"DEMO 4/4 · Premium breaking news notification preview. No real market event is implied."}
+ gold:{title:"🟡 GOLD MARKET",body:"DEMO 1/4 · XAUUSD market news notification preview. Not a live trading signal."},
+ forex:{title:"💱 FOREX MARKET",body:"DEMO 2/4 · Major currency news alert preview. No real announcement is implied."},
+ calendar:{title:"📅 ECONOMIC CALENDAR",body:"DEMO 3/4 · CPI, NFP and FOMC event reminder preview. No event is currently scheduled by this test."},
+ breaking:{title:"🔥 HOT MARKET NEWS",body:"DEMO 4/4 · Premium breaking news notification preview. No real market event is implied."}
 } as const;
 const validUuid=(x:string)=>/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(x);
 
@@ -63,7 +65,7 @@ Deno.serve(async(req:Request)=>{
    headers:{"Authorization":"Key "+API,"Content-Type":"application/json"},
    body:JSON.stringify({
     app_id:APP,target_channel:"push",include_subscription_ids:[claim.subscription_id],
-    headings:{en:demo.title},
+    headings:{en:demo.title+"\n"+BRAND_LINE},
     contents:{en:demo.body},
     chrome_web_icon:BRAND_ICON,
     url:ORIGIN+"/app/",

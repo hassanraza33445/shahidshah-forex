@@ -33,13 +33,17 @@ jobs:
             for(const token of [
               'BRAND_ICON=ORIGIN+"/icon-192.png"',
               'chrome_web_icon:BRAND_ICON',
-              'S M Shahid Shah',
+              'const BRAND_LINE=',
               'include_subscription_ids:'
             ])if(!code.includes(token))throw new Error('Missing brand or narrow target: '+token);
           }
-          if(!push.includes('🔥 HOT Market News · S M Shahid Shah')||
-             !push.includes('📅 Economic Calendar · S M Shahid Shah')||
-             !push.includes('notice.trust_status==="verified"'))
+          if(!push.includes('🔥 HOT Market News')||
+             !push.includes('📅 Economic Calendar')||
+             !push.includes('notice.trust_status==="verified"')||
+             !push.includes('"\\n"+BRAND_LINE')||
+             !test.includes('demo.title+"\\n"+BRAND_LINE')||
+             ![push,test].every(s=>s.includes('S\\u00a0M\\u00a0Shahid\\u00a0Shah'))||
+             test.includes('GOLD MARKET · S M Shahid Shah'))
             throw new Error('Verified market and calendar presentation contract missing');
           if(!['DEMO 1/4','DEMO 2/4','DEMO 3/4','DEMO 4/4'].every(x=>test.includes(x))||
              !test.includes('chrome_web_icon:BRAND_ICON')||
