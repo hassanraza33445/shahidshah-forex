@@ -9,6 +9,8 @@ const KEY=Deno.env.get("ONESIGNAL_REST_API_KEY")||"";
 const ORIGIN="https://www.smshahidshah.com";
 // Consistent PWA brand icon for Android Chrome/Web Push. The OS may still show Chrome as the sending app.
 const BRAND_ICON=ORIGIN+"/icon-192.png";
+// NBSP keeps the full display name together on the second title line.
+const BRAND_LINE="S\u00a0M\u00a0Shahid\u00a0Shah";
 const db=createClient(DB,SECRET||"unconfigured",{auth:{persistSession:false,autoRefreshToken:false}});
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{
  status,headers:{"Content-Type":"application/json","Cache-Control":"no-store"}
@@ -77,7 +79,7 @@ async function handle(job:any){
   }
   const link=notice.target_url.startsWith("/")?ORIGIN+notice.target_url:notice.target_url;
   const isCalendar=notice.kind==="economic_reminder";
-  const heading=isCalendar?"📅 Economic Calendar · S M Shahid Shah":"🔥 HOT Market News · S M Shahid Shah";
+  const heading=(isCalendar?"📅 Economic Calendar":"🔥 HOT Market News")+"\n"+BRAND_LINE;
   // Display only the stored real headline; do not fabricate market conclusions.
   const headline=String(notice.title||"Market update").replace(/\s+/g," ").trim();
   const prefix=isCalendar?"":notice.topic==="Gold"?"🟡 Gold · ":notice.topic==="Forex"?"💱 Forex · ":"";
