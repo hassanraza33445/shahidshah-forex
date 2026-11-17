@@ -79,7 +79,7 @@ async function handle(job:any){
   const isCalendar=notice.kind==="economic_reminder";
   const heading=isCalendar?"📅 Economic Calendar · S M Shahid Shah":"🔥 HOT Market News · S M Shahid Shah";
   // Display only the stored real headline; do not fabricate market conclusions.
-  const headline=String(notice.title||"Market update").replace(/\\s+/g," ").trim();
+  const headline=String(notice.title||"Market update").replace(/\s+/g," ").trim();
   const prefix=isCalendar?"":notice.topic==="Gold"?"🟡 Gold · ":notice.topic==="Forex"?"💱 Forex · ":"";
   const bodyText=(prefix+headline).slice(0,185);
   const response=await fetch("https://api.onesignal.com/notifications",{
