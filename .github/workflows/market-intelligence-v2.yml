@@ -4,6 +4,7 @@ on:
     paths:
       - 'supabase/functions/market-intelligence-api/**'
       - 'supabase/sql/market-intelligence-v2-*.sql'
+      - 'supabase/sql/market-intelligence-v3-*.sql'
       - '.github/workflows/market-intelligence-v2.yml'
 jobs:
   typecheck:
@@ -18,6 +19,8 @@ jobs:
           deno-version: v2.x
       - name: Check Deno Edge Function TypeScript against real npm/jsr types
         run: deno check supabase/functions/market-intelligence-api/index.ts
+      - name: Unit test conservative headline classification and duplicate guards
+        run: deno test supabase/functions/market-intelligence-api/news-quality.test.ts
       - name: Ensure no public HTML was altered by database/backend PR
         run: |
           node --input-type=module <<'NODE'

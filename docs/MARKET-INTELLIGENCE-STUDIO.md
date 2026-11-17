@@ -57,3 +57,15 @@ These check static routes and inline JS syntax; they are not a substitute for br
 - Verified successful 200 responses for `?mode=stats`, `?mode=feed&focus=gold-forex&limit=40` and `?mode=feed&category=Gold&heat=hot&limit=10`. EIA Today in Energy delivered actual articles; the EIA press feed fetched successfully but had no new qualifying stories at the check.
 - GitHub PR #36 passed repository and Deno checks and merged to main. **No desktop or mobile HTML/CSS was changed by this rollout.**
 - Remaining advanced specification work: directly licensed publisher feed evaluation; multi-stage cross-publisher near-duplicate similarity; keyword watchlists and saved articles; optional notification scheduling refinements; additional economic reminder rules; licensed market-candle integration; full admin control UI; end-to-end mobile/browser validation.
+
+
+## Phase 2 — Editorial headline quality and publisher discovery (17 November 2026)
+- New code lives in `supabase/functions/market-intelligence-api/news-quality.ts`, tested by `news-quality.test.ts`.
+- Source discovery adds nine enabled, publisher-filtered **Google News RSS** searches for Reuters (Gold / Forex), FXStreet, ForexLive, Bloomberg, CNBC, Investing.com, Financial Times and Forex Factory. FinancialJuice and Newsquawk queries are registered but disabled pending validation. They are *not* direct/premium publisher subscriptions.
+- Headline classification now separates speculative forecasts/previews from major reported economic/policy outcomes. HOT represents potential editorial market relevance, not fact-checking or measured price impact.
+- The V3 feed performs conservative, source-independent near-duplicate suppression with category, publication-time, numeric-value and opposing-direction guards. Underlying articles, original URLs, and historic cluster IDs are never deleted or rewritten by this feature; notifications still use their own independent processing.
+- Existing strict DB deduplication remains in place, as does the homepage's newest-first Gold/Forex feed. Initial quality changes apply to newly ingested articles; historic editorial labels are not automatically overwritten.
+- The Edge Function bundle must include **both** `index.ts` and `news-quality.ts`; deploying the first file alone will break imports.
+- Tests: `deno check supabase/functions/market-intelligence-api/index.ts` and `deno test supabase/functions/market-intelligence-api/news-quality.test.ts`.
+- Live smoke checks: stats 200, balanced latest-first feed 200, Gold HOT filter 200, unauthenticated admin-health 403, background warm trigger 202. Confirm individual new source ingestion results separately before declaring every source operational.
+- No changes to desktop/mobile HTML, CSS, auth, stored scripts, user preferences, notification keys, or landing page in this phase.
