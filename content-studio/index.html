@@ -241,7 +241,18 @@ html.sm-embedded #page-projects>.card{min-height:0}
 <section id="page-projects" class="page"><div class="intro"><div><div class="upper">YOUR PRIVATE SCRIPT LIBRARY</div><h1>My Scripts</h1><p>Find, edit and manage your saved AI video scripts.</p></div><button class="btn gold" data-page="create">+ Create Script</button></div><section class="card"><div class="rowwrap" style="margin-bottom:16px"><label for="filterStatus" style="align-self:center">Filter</label><select id="filterStatus" style="max-width:200px"><option value="">All statuses</option><option value="draft">Draft</option><option value="review">In review</option><option value="approved">Approved</option><option value="published">Marked published</option></select><button class="btn small" id="reloadProjects">↻ Reload</button></div><div id="projectList" class="list"></div></section></section>
 <section id="page-planner" class="page"><div class="intro"><div><div class="upper">PLANNING</div><h1>Content Planner</h1><p>Plan a publication date. Scheduling does not automatically publish to social platforms.</p></div></div><section class="card"><h2>Planned content</h2><div id="plannerList" class="list"></div><div id="scheduleAdmin" class="hidden"><hr class="divider"><h3>Create a schedule (Admin)</h3><form class="fields" id="scheduleForm" style="margin-top:15px"><div><label for="scheduleProject">Approved project</label><select id="scheduleProject"></select></div><div><label for="scheduleDate">Date & time</label><input id="scheduleDate" type="datetime-local" required></div><div><label for="schedulePlatform">Platform</label><select id="schedulePlatform"><option>YouTube</option><option>Facebook</option><option>Instagram</option><option>Website</option></select></div><div style="display:flex;align-items:end"><button class="btn gold" type="submit">Add to Planner</button></div></form></div></section></section>
 <section id="page-record" class="page"><div class="intro"><div><div class="upper">CREATOR TOOLS</div><h1>Recording Studio</h1><p>Record your voice with device permission and save it privately against a project.</p></div></div><div class="grid2"><section class="card"><h2>Audio recorder</h2><p class="note">Recording happens only after you grant microphone permission. Nothing is uploaded automatically.</p><div class="actions" style="margin:17px 0"><button id="startRecording" class="btn gold">● Start Recording</button><button id="stopRecording" class="btn" disabled>■ Stop</button><span id="recordTimer" class="badge">00:00</span></div><audio id="recordPreview" controls style="width:100%;max-width:100%"></audio><div class="actions" style="margin-top:17px"><button id="recordDownload" class="btn small">Download Recording</button><button id="recordCloud" class="btn small">Save Privately to Cloud</button></div><p class="note">Save a project in the Script Editor first before uploading a recording.</p><hr class="divider"><h3>Transcription</h3><p class="note">Requires saved cloud audio and an authorized transcription provider. Transcripts remain editable.</p><div class="actions" style="margin:12px 0"><button class="btn small" id="transcribeRecording">Transcribe Saved Audio</button><button class="btn small" id="downloadTranscript">Export TXT</button><button class="btn small" id="downloadSrt">Export SRT</button></div><label for="transcript">Editable transcript</label><textarea id="transcript" rows="5" placeholder="Transcription will appear here."></textarea><div id="recordStatus" class="status" aria-live="polite"></div></section><section class="card"><h2>Voice & Teleprompter</h2><p class="note">Listen using your device's voices. Browser voice availability varies by language.</p><label for="voiceRate">Playback speed</label><select id="voiceRate"><option value="0.8">0.8×</option><option selected value="1">1×</option><option value="1.2">1.2×</option><option value="1.5">1.5×</option></select><div class="actions" style="margin-top:16px"><button class="btn" id="recordListen">▶ Read Script</button><button class="btn" id="recordTele">Teleprompter</button></div></section></div></section>
-<section id="page-access" class="page"><div class="intro"><div><div class="upper">ADMINISTRATION</div><h1>Studio Access</h1><p>Grant or revoke access for registered website accounts. Email status is reported separately.</p></div><button class="btn" data-page="sources">News Source Health →</button></div><section class="card"><form id="accessForm" class="fields"><div><label for="accessEmail">Registered account email</label><input id="accessEmail" type="email" required placeholder="creator@example.com"></div><div><label for="accessRole">Access role</label><select id="accessRole"><option value="creator">Creator</option><option value="viewer">Viewer</option><option value="editor">Editor</option><option value="approver">Approver</option><option value="admin">Studio Admin</option></select></div><div class="field full actions"><button class="btn gold" name="accessAction" value="grant" type="submit">Grant Access & Email</button><button class="btn danger" name="accessAction" value="revoke" type="submit">Remove Access</button><button class="btn" name="accessAction" value="resend" type="submit">Resend Email</button></div></form><div id="accessStatus" class="status" aria-live="polite"></div><hr class="divider"><h2>Assigned users</h2><div class="list" id="accessList"></div></section></section>
+<section id="page-access" class="page">
+ <div class="intro"><div><div class="upper">SECURE ADMINISTRATION</div><h1>AI Studio Access</h1><p>Creator access is managed centrally in the S M Shahid Shah Admin Panel.</p></div></div>
+ <section class="card" style="background:linear-gradient(135deg,var(--panel),var(--panel2));max-width:850px">
+  <div class="upper">ADMIN-APPROVED MEMBERS</div>
+  <h2 style="margin:12px 0 9px">One place for all access controls</h2>
+  <p class="note" style="font-size:13px;max-width:650px">Search registered users, grant or update Creator, Viewer, Editor and Approver permissions, remove access, resend access emails and review activity. No automatic signup access.</p>
+  <div class="actions" style="margin-top:20px">
+   <a href="/admin-panel.html#studio-access" class="btn gold" target="_top">Open AI Studio Access Manager →</a>
+   <button type="button" data-page="create" class="btn">Back to Studio</button>
+  </div>
+ </section>
+</section>
 <section id="page-sources" class="page"><div class="intro"><div><div class="upper">SYSTEM HEALTH</div><h1>News Sources</h1><p>RSS ingestion status, failure counts and source controls.</p></div><button class="btn" id="refreshSources">↻ Refresh Sources</button></div><section class="card"><p class="note">Sources are fetched in the background. HOT is a headline-based relevance label, not verified market impact.</p><div id="sourceList" class="list"></div><div id="sourceStatus" class="status" aria-live="polite"></div></section></section>
 </div>
 <nav class="mobile-bottom" aria-label="Mobile Studio"><button data-page="create" class="active"><b>✦</b>Create</button><button data-page="projects"><b>▣</b>My Scripts</button></nav>
@@ -283,7 +294,7 @@ function displayPage(page){
  if(page==="projects")loadProjects();
  if(page==="planner")loadPlanner();
  if(page==="sources")loadSources();
- if(page==="access")loadAccessList();
+ // Permissions are managed only in Admin Panel → AI Studio Access.
 }
 document.querySelectorAll("[data-page]").forEach(x=>x.addEventListener("click",()=>displayPage(x.dataset.page)));
 $("theme").addEventListener("click",()=>{const t=document.documentElement.dataset.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=t;try{localStorage.setItem("smshahid-site-theme",t)}catch(e){}});
@@ -641,28 +652,6 @@ $("scheduleForm").addEventListener("submit",async e=>{
  const date=new Date($("scheduleDate").value);if(!Number.isFinite(date.getTime()))return say("Choose a valid date","error");
  const r=await sb.from("content_schedules").insert({project_id:$("scheduleProject").value,scheduled_by:state.user.id,scheduled_at:date.toISOString(),platform:$("schedulePlatform").value,status:"planned"});
  if(r.error)return say(r.error.message,"error");say("Content scheduled for planning (not automatic publishing).","ok");loadPlanner();
-});
-async function loadAccessList(){
- if(!state.admin)return;
- const [people,access]=await Promise.all([sb.from("profiles").select("id,email,full_name").limit(500),sb.from("content_access").select("user_id,role,enabled,granted_at").limit(500)]);
- $("accessList").replaceChildren();if(people.error||access.error)return status("accessStatus","Could not load user directory","error");
- const map=new Map((people.data||[]).map(x=>[x.id,x]));
- for(const a of access.data||[]){
-  const p=map.get(a.user_id),e=mk("div","item");
-  e.append(mk("strong","",(p?.full_name||"User")+" · "+(p?.email||a.user_id)),mk("p","",a.role.toUpperCase()+" · "+(a.enabled?"ACTIVE":"REVOKED")));
-  if(p?.email){const b=mk("button","btn small","Manage");b.addEventListener("click",()=>{$("accessEmail").value=p.email;$("accessRole").value=a.role});e.append(b)}
-  $("accessList").append(e);
- }
- if(!access.data?.length)$("accessList").append(mk("div","empty","No assigned Studio users. Existing website admins retain admin access."));
-}
-$("accessForm").addEventListener("submit",async e=>{
- e.preventDefault();const action=e.submitter?.value||"grant",email=$("accessEmail").value.trim(),role=$("accessRole").value;
- if(!state.admin)return;status("accessStatus","Updating permissions…");
- try{
-  const x=await callEdge("shahid-studio-access",{action,email,role});
-  status("accessStatus","Access "+(x.enabled?"enabled":"revoked")+". Email: "+(x.email_status||"not confirmed")+(x.email_error?" ("+x.email_error+")":""),x.email_status==="failed"?"error":"ok");
-  await loadAccessList();
- }catch(error){status("accessStatus",error.message,"error")}
 });
 async function loadSources(){
  if(!state.admin)return;
