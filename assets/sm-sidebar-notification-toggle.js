@@ -36,6 +36,18 @@
    quiet_end:old?.quiet_end??null
   };
  }
+ function restoreSettings(old){
+  return {
+   in_app_enabled:old?.in_app_enabled===true,
+   breaking_enabled:old?.breaking_enabled===true,
+   economic_enabled:old?.economic_enabled===true,
+   keyword_alerts_enabled:old?.keyword_alerts_enabled===true,
+   topics:Array.isArray(old?.topics)?old.topics:[],
+   reminders:Array.isArray(old?.reminders)?old.reminders:[],
+   timezone:old?.timezone||"Asia/Karachi",
+   quiet_start:old?.quiet_start??null,quiet_end:old?.quiet_end??null
+  };
+ }
  async function bootSDK(config){
   if(sdk)return sdk;
   if(sdkLoading)return sdkLoading;
@@ -97,7 +109,7 @@
    preferences=(await api("preferences")).settings;
   }catch(e){
    // Revert consent options if server-side registration was unsuccessful.
-   if(old)await api("",{action:"save_preferences",settings:settings(old,Boolean(old.in_app_enabled))}).catch(()=>{});
+   if(old)await api("",{action:"save_preferences",settings:restoreSettings(old)}).catch(()=>{});
    await sub.optOut().catch(()=>{});
    throw e;
   }
@@ -142,7 +154,9 @@
    preferences=pref.settings;
    if(!configResponse?.configured||!configResponse?.app_id)throw Error("Browser notifications are not configured.");
    if(typeof Notification==="undefined")throw Error("Notifications are unsupported in this browser.");
-   if(Notification.permission==="denied")throw Error("Blocked in browser settings");
+   if(Notification.permission==="denied"){
+    ready=true;render(false,"Blocked by browser · Check site settings");checkbox.disabled=false;return;
+   }
    const one=await bootSDK(configResponse);
    if(one.Notifications?.isPushSupported?.()===false)throw Error("Install the app to enable notifications.");
    ready=true;
