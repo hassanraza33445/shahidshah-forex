@@ -37,7 +37,9 @@ jobs:
             if(!js.includes(token))throw new Error('Personal tools implementation missing '+token);
           for(const token of ['ENABLE ROW LEVEL SECURITY','user_id = (SELECT auth.uid())','REFERENCES auth.users(id) ON DELETE CASCADE','ON CONFLICT'])
             if(!sql.includes(token)&&token!=='ON CONFLICT')throw new Error('Private RLS policy missing '+token);
-          const sidebar=app.match(/<nav class="side-links"[^>]*>[\\s\\S]*?<\\/nav>/)?.[0]||'';
+          const navStart=app.indexOf('<nav class="side-links"');
+          const sidebar=navStart>=0?app.slice(navStart,app.indexOf('</nav>',navStart)):'';
+          if(!sidebar)throw new Error('Sidebar navigation section missing');
           if(sidebar.includes('Notifications &amp; Alerts</a>'))
             throw new Error('Old notifications navigation link was not removed');
           const first=app.indexOf('id="smSidebarNotifyToggle"');
