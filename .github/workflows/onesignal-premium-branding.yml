@@ -1,0 +1,50 @@
+name: Premium OneSignal notification branding
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/market-push-dispatch/**'
+      - 'supabase/functions/market-push-test-once/**'
+      - '.github/workflows/onesignal-premium-branding.yml'
+jobs:
+  branding:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Verify Edge Function TypeScript
+        run: |
+          deno check supabase/functions/market-push-dispatch/index.ts
+          deno check supabase/functions/market-push-test-once/index.ts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate premium brand icon, source safety and single-target test
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const push=fs.readFileSync('supabase/functions/market-push-dispatch/index.ts','utf8');
+          const test=fs.readFileSync('supabase/functions/market-push-test-once/index.ts','utf8');
+          for(const code of [push,test]){
+            for(const token of [
+              'BRAND_ICON=ORIGIN+"/icon-192.png"',
+              'chrome_web_icon:BRAND_ICON',
+              'S M Shahid Shah',
+              'include_subscription_ids:'
+            ])if(!code.includes(token))throw new Error('Missing brand or narrow target: '+token);
+          }
+          if(!push.includes('🔥 HOT Market News · S M Shahid Shah')||
+             !push.includes('📅 Economic Calendar · S M Shahid Shah')||
+             !push.includes('notice.trust_status==="verified"'))
+            throw new Error('Verified market and calendar presentation contract missing');
+          if(!test.includes('TEST PREVIEW')||
+             !test.includes('idempotency_key:token')||
+             !test.includes('include_subscription_ids:[claim.subscription_id]'))
+            throw new Error('Test needs clear label and one-device recipient');
+          if(!fs.existsSync('icon-192.png'))throw new Error('Website brand image not present');
+          console.log('PASS brand icon + verified news titles + test-only single recipient');
+          NODE
