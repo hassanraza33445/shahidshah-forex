@@ -44,7 +44,7 @@ Deno.serve(async(req:Request)=>{
   const role=action==="grant"?clip(body.role,20):current?.role||"viewer";
   if(!["viewer","creator","editor","approver","admin"].includes(role))return send({success:false,error:"Invalid role"},400);
   if(action==="grant"){
-   const {error:change}=await db.from("content_access").upsert({user_id:target.id,role,enabled:true,granted_at:new Date().toISOString()},{onConflict:"user_id"});
+   const {error:change}=await db.from("content_access").upsert({user_id:target.id,role,enabled:true,granted_at:new Date().toISOString(),granted_by:user.id},{onConflict:"user_id"});
    if(change)throw change;
   }else if(action==="revoke"){
    const {error:change}=await db.from("content_access").upsert({user_id:target.id,role,enabled:false},{onConflict:"user_id"});
