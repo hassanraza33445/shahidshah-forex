@@ -78,7 +78,8 @@ async function ingestSource(source:any):Promise<{added:number,error:string}>{
   const xml=await fetchSourceXML(source.feed_url);
   const parsed=parser.parse(xml);
   const items=arr(parsed?.rss?.channel?.item||parsed?.feed?.entry||parsed?.RDF?.item).slice(0,50);
-  if(!items.length)throw new Error("Feed returned no readable entries");
+  // Valid empty RSS searches mean no new coverage, not a broken source.
+  if(!parsed?.rss?.channel && !parsed?.feed && !parsed?.RDF)throw new Error("Invalid RSS or Atom document");
   const rows:any[]=[],seen=new Set<string>();
   for(const item of items){
    const row=normalize(item,source);
