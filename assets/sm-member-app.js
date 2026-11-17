@@ -68,13 +68,13 @@ function renderStudioAccess(){
   studioGate.classList.toggle("is-checking",checking);
   studioGate.classList.toggle("is-error",error);
   studioGate.classList.toggle("is-denied",!checking&&!error);
-  $("studioGateTitle").textContent=checking?"Verifying your private access…":error?"Your access could not be checked":"Free Creator access could not be verified";
-  $("studioGateHint").textContent=checking?"Checking your account permissions securely.":error?"The permission service could not be reached. Your access status has not been confirmed.":"Every signed-in member receives free Creator access. Please retry your session check.";
+  $("studioGateTitle").textContent=checking?"Verifying your private access…":error?"Your access could not be checked":"Studio access has not been approved";
+  $("studioGateHint").textContent=checking?"Checking your account permissions securely.":error?"The permission service could not be reached. Your access status has not been confirmed.":"Only administrator-approved accounts can open AI Studio.";
   $("studioGateBadge").textContent=checking?"CHECKING":error?"CONNECTION ISSUE":"ACCESS CHECK";
-  $("studioGateInstruction").textContent=checking?"Your account permissions are being checked. Creator features remain protected during verification.":error?"Check your connection and retry. If the issue continues, contact the platform administrator.":"Free Studio access is automatic. Retry the check, or sign out and sign in again if this persists.";
+  $("studioGateInstruction").textContent=checking?"Your account permissions are being checked. Creator features remain protected during verification.":error?"Check your connection and retry. If the issue continues, contact the platform administrator.":"Ask your website administrator to grant access, then refresh this page.";
   const retry=$("studioRecheckAccess");
   retry.disabled=checking;
-  retry.textContent=checking?"Checking permission…":error?"Retry Access Check ↻":"Retry Free Access Check ↻";
+  retry.textContent=checking?"Checking permission…":error?"Retry Access Check ↻":"Retry Access Check ↻";
   retry.onclick=()=>{
    if(state.studioStatus==="checking"||!state.client||!state.user)return;
    state.studioStatus="checking";renderStudioAccess();
@@ -101,9 +101,19 @@ async function checkStudioAccess(){
   state.studioRole=admin?"admin":permitted?access.value.data.role:null;
   state.studioStatus=state.studioRole?"allowed":"denied";
   const creator=["admin","creator","editor","approver"].includes(state.studioRole);
+  document.documentElement.dataset.smStudio=state.studioStatus==="allowed"?"allowed":"denied";
+  document.documentElement.dataset.smStudioCreate=creator?"allowed":"denied";
+  if(state.news.length&&state.currentTab==="markets")renderMarketNews();
   document.querySelectorAll("#studioSubnav [data-studio-page]").forEach(button=>{if(button.dataset.studioPage==="create"){button.disabled=!creator;button.title=creator?"":"Creator access required"}});
   if(!creator&&state.studioPage==="create")state.studioPage="projects";
- }catch(_){state.studioRole=null;state.studioStatus="error"}
+ }catch(_){state.studioRole=null;state.studioStatus="error";
+  document.documentElement.dataset.smStudio="denied";
+  document.documentElement.dataset.smStudioCreate="denied";
+ }
+ if(state.studioStatus!=="allowed"&&state.currentTab==="studio"){
+  if(state.studioFrame){state.studioFrame.remove();state.studioFrame=null;state.studioFrameReady=false}
+  openTab("home",true);
+ }
  renderStudioAccess();
 }
 function mountStudio(){
@@ -177,6 +187,7 @@ function openTab(name,push=true){
  if(name==="library"){name="studio";state.studioPage="projects"}
  if(name==="notifications")name="markets";
  if(!views.has(name))name="home";
+ if(name==="studio"&&state.studioStatus!=="allowed")name="home";
  state.currentTab=name;
  for(const section of views) $("view-"+section)?.classList.toggle("active",section===name);
  document.querySelectorAll("[data-section]").forEach(node=>{
@@ -450,11 +461,13 @@ function marketNewsCard(item){
  read.type="button";
  read.addEventListener("click",()=>window.SMNewsReader?.open(item,{trigger:read}));
  actions.append(read);
- const link=create("a","mi-card-script","+ Create AI Script");
- link.href="/app/?tab=studio&studio=create"+(item.id?"&news="+encodeURIComponent(String(item.id)):"");
- link.setAttribute("aria-label","Open AI Script Studio for: "+safe(item.title));
- if(!item.id)link.title="Open AI Studio and select a news topic";
- actions.append(link);
+ if(state.studioStatus==="allowed"&&["admin","creator","editor","approver"].includes(state.studioRole)){
+  const link=create("a","mi-card-script","+ Create AI Script");
+  link.href="/app/?tab=studio&studio=create"+(item.id?"&news="+encodeURIComponent(String(item.id)):"");
+  link.setAttribute("aria-label","Open AI Script Studio for: "+safe(item.title));
+  if(!item.id)link.title="Open AI Studio and select a news topic";
+  actions.append(link);
+ }
  article.append(actions);
  return article;
 }
