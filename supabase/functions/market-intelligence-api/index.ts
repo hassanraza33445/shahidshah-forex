@@ -8,7 +8,7 @@ try { secretKeys=JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") || "{}"); } cat
 const SECRET = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || secretKeys.default || "";
 const db = createClient(SUPABASE_URL, SECRET || "missing", {auth:{persistSession:false, autoRefreshToken:false}});
 const parser = new XMLParser({ignoreAttributes:false,attributeNamePrefix:"@_",textNodeName:"#text",trimValues:true,parseTagValue:false,processEntities:true,removeNSPrefix:true});
-const domains = new Set(["news.google.com","www.federalreserve.gov","www.bls.gov","www.ecb.europa.eu","www.whitehouse.gov"]);
+const domains = new Set(["news.google.com","www.federalreserve.gov","www.bls.gov","www.ecb.europa.eu","www.whitehouse.gov","www.eia.gov"]);
 const cors = {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"authorization, apikey, content-type, x-client-info","Access-Control-Allow-Methods":"GET, POST, OPTIONS"};
 const reply = (body:unknown,status=200,cache=false) => new Response(JSON.stringify(body),{status,headers:{...cors,"Content-Type":"application/json; charset=utf-8",...(cache?{"Cache-Control":"public, s-maxage=45, stale-while-revalidate=150"}:{"Cache-Control":"no-store"})}});
 const str = (v:any):string => typeof v==="string"?v:(v && typeof v==="object" ? String(v["#text"]||v.__cdata||v["@_href"]||"") : String(v||""));
@@ -117,7 +117,7 @@ async function refreshOnce():Promise<{started:boolean,added:number,errors:string
  if(claimError||!claimed)return {started:false,added:0,errors:claimError?[claimError.message]:[]};
  let added=0;const errors:string[]=[];
  try{
-  const {data:sources,error}=await db.from("news_sources").select("id,name,feed_url,category,polling_minutes,last_success_at,last_attempt_at,next_retry_at,consecutive_failures").eq("enabled",true).limit(30);
+  const {data:sources,error}=await db.from("news_sources").select("id,name,feed_url,category,polling_minutes,last_success_at,last_attempt_at,next_retry_at,consecutive_failures").eq("enabled",true).limit(80);
   if(error)throw new Error(error.message);
   const now=Date.now();
   const eligible=(sources||[]).filter((src:any)=>{
@@ -150,7 +150,8 @@ async function listNews(url:URL){
  const limit=Math.max(1,Math.min(36,Number(url.searchParams.get("limit")||24)||24));
  const page=Math.max(1,Math.min(30,Number(url.searchParams.get("page")||1)||1));
  const category=(url.searchParams.get("category")||"").slice(0,80);
- const priority=["HOT","WARM","COLD"].includes(url.searchParams.get("priority")||"")?url.searchParams.get("priority")||"":"";
+ const requestedPriority=(url.searchParams.get("priority")||url.searchParams.get("heat")||"").toUpperCase();
+ const priority=["HOT","WARM","COLD"].includes(requestedPriority)?requestedPriority:"";
  const search=(url.searchParams.get("q")||"").trim().replace(/[%_,()]/g," ").slice(0,80);
  const {data,error}=await db.rpc("market_news_feed_v2",{
   p_category:category&&category!=="All"?category:null,
@@ -171,6 +172,77 @@ async function listNews(url:URL){
  const {data:control}=await db.from("news_ingestion_control").select("last_finished_at").eq("id",1).maybeSingle();
  return {success:true,items:rows,page,limit,last_refresh:control?.last_finished_at||null,grouping:error?"legacy":"strict_headline"};
 }
+
+/* Homepage-focused feed: balanced, real Gold + Forex + general headlines.
+   Each article comes from the same deduplicated, source-linked database RPC.
+   No invented stories, synthetic timestamps or duplicated clusters. */
+async function listBalancedNews(url:URL){
+ // Larger topic-focused pool; the final display order is ALWAYS newest-first.
+ const maxItems=Math.max(12,Math.min(120,Number(url.searchParams.get("limit")||120)||120));
+ const specs:[string|null,number][]=[
+  ["Gold",0],["Gold",36],["Forex",0],["Forex",36],[null,0],[null,36]
+ ];
+ const result=await Promise.allSettled(specs.map(([category,offset])=>
+  db.rpc("market_news_feed_v2",{
+   p_category:category,p_priority:null,p_search:null,p_limit:36,p_offset:offset
+  })
+ ));
+ const groups:[any[],any[],any[]]=[[],[],[]];
+ for(let i=0;i<result.length;i++){
+  const r=result[i];
+  if(r.status==="fulfilled"&&!r.value.error&&Array.isArray(r.value.data))
+   groups[i<2?0:i<4?1:2].push(...r.value.data);
+ }
+ if(groups.every(x=>x.length===0))return listNews(url);
+ const cutoff=Date.now()-72*60*60*1000;
+ const fresh=(rows:any[])=>rows.filter(x=>{
+  const ts=Date.parse(String(x.published_at||""));
+  return Number.isFinite(ts)&&ts>=cutoff&&ts<=Date.now()+15*60*1000;
+ });
+ const gold=fresh(groups[0]),forex=fresh(groups[1]),other=fresh(groups[2]);
+ const seenClusters=new Set<string>(),seenTitles=new Set<string>(),seenIds=new Set<string>(),output:any[]=[];
+ const push=(item:any)=>{
+  if(!item||output.length>=maxItems)return false;
+  const id=String(item.id||"").trim();
+  const cluster=String(item.cluster_id||"").trim();
+  const title=clean(item.title,300).toLowerCase()
+   .replace(/\s+[-–|]\s+[^–|-]+$/,"").replace(/[^a-z0-9]+/g," ").trim();
+  if(seenIds.has(id)||cluster&&seenClusters.has(cluster)||title&&seenTitles.has(title))return false;
+  if(id)seenIds.add(id);
+  if(cluster)seenClusters.add(cluster);
+  if(title)seenTitles.add(title);
+  output.push(item);
+  return true;
+ };
+ // Fill from genuine Gold/Forex sources first without fabricating headlines.
+ let gi=0,fi=0,oi=0;
+ const take=(rows:any[],kind:"gold"|"forex"|"other")=>{
+  while(output.length<maxItems){
+   const next=kind==="gold"?gi++:kind==="forex"?fi++:oi++;
+   if(next>=rows.length)return;
+   if(push(rows[next]))return;
+  }
+ };
+ for(let i=0;i<80&&output.length<maxItems;i++){
+  const before=output.length;
+  take(gold,"gold");take(forex,"forex");take(gold,"gold");take(forex,"forex");take(other,"other");
+  if(before===output.length)break;
+ }
+ for(const item of [...gold,...forex,...other]){
+  if(output.length>=maxItems)break;
+  push(item);
+ }
+ // Critical invariant: latest published headline is always at the top.
+ output.sort((a,b)=>{
+  const delta=Date.parse(String(b.published_at||""))-Date.parse(String(a.published_at||""));
+  return delta||String(b.id||"").localeCompare(String(a.id||""));
+ });
+ const {data:control}=await db.from("news_ingestion_control")
+  .select("last_finished_at").eq("id",1).maybeSingle();
+ return {success:true,items:output,page:1,limit:maxItems,
+  last_refresh:control?.last_finished_at||null,
+  grouping:"deduplicated_gold_forex_latest",order:"newest_first"};
+}
 Deno.serve(async (req:Request)=>{
  if(req.method==="OPTIONS")return new Response(null,{status:204,headers:cors});
  if(!SECRET||!SUPABASE_URL)return reply({success:false,error:"News service is not configured"},503);
@@ -178,7 +250,25 @@ Deno.serve(async (req:Request)=>{
   const url=new URL(req.url);const mode=url.searchParams.get("mode")||"feed";
   if(req.method==="GET"&&(mode==="feed"||mode==="warm")){
     if(mode==="warm"){backgroundRefresh();return reply({success:true,refresh_requested:true},202)}
-    const output=await listNews(url);backgroundRefresh();return reply(output,200,true);
+    const output=mode==="feed"&&url.searchParams.get("focus")==="gold-forex"?await listBalancedNews(url):await listNews(url);backgroundRefresh();return reply(output,200,true);
+  }
+  if(req.method==="GET"&&mode==="health"){
+    const token=(req.headers.get("authorization")||"").replace(/^Bearer\s+/i,"");
+    if(!await authorized(token))return reply({success:false,error:"Admin access required"},403);
+    const {data:sources,error:sourceError}=await db.from("news_sources").select("id,name,category,enabled,polling_minutes,priority_weight,last_success_at,last_attempt_at,next_retry_at,consecutive_failures,last_error,average_latency_ms").order("priority_weight",{ascending:false}).limit(150);
+    if(sourceError)throw new Error("Source health unavailable");
+    const {data:control}=await db.from("news_ingestion_control").select("last_started_at,last_finished_at,last_success_count").eq("id",1).maybeSingle();
+    const now=Date.now();
+    const records=(sources||[]).map((s:any)=>{
+      const last=s.last_success_at?Date.parse(s.last_success_at):0;
+      const healthy=s.enabled&&!s.last_error&&last>0&&now-last<Math.max(20,Number(s.polling_minutes||5)*3)*60000;
+      return {...s,health_status:!s.enabled?"disabled":healthy?"healthy":s.last_error?"error":"stale"};
+    });
+    return reply({success:true,sources:records,source_count:records.length,
+      enabled_count:records.filter(s=>s.enabled).length,
+      healthy_count:records.filter(s=>s.health_status==="healthy").length,
+      failed_count:records.filter(s=>s.health_status==="error").length,
+      last_refresh:control?.last_finished_at||null,last_added:control?.last_success_count||0},200,false);
   }
   if(req.method==="GET"&&mode==="stats"){
     const {count}=await db.from("news_articles").select("id",{head:true,count:"exact"}).eq("is_visible",true);
