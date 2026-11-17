@@ -66,7 +66,8 @@
 <script defer src="/assets/sm-news-reader.js?v=20261114-pkt-2"></script>
 <script defer src="/assets/sm-mentorship-paid-mobile-2026.js?v=20261115-mobile-mentor-steps-1"></script>
 <script defer src="/assets/sm-member-tool-catalog-2026.js?v=20261114-native-downloads-1"></script>
-<script defer src="/assets/sm-member-app.js?v=20261115-latest-first-120-1"></script>
+<script defer src="/assets/sm-sidebar-notification-toggle.js?v=20261117-single-toggle-1"></script>
+<script defer src="/assets/sm-member-app.js?v=20261117-single-toggle-1"></script>
 <script defer src="/assets/sm-member-icons.js?v=20261114-four-products-1"></script><link rel="stylesheet" href="/assets/sm-dashboard-finishing-2026.css?v=20261114-3">
 <link rel="stylesheet" href="/assets/sm-four-products-2026.css?v=20261114-products-1">
 <link rel="stylesheet" href="/assets/sm-market-uniform-cards.css?v=20261114-1">
@@ -89,6 +90,7 @@
 <link rel="stylesheet" href="/assets/sm-mobile-drawer-fix-20261115.css?v=20261115-mobile-sidebar-1" media="screen and (max-width:720px)">
 <script defer src="/assets/sm-pwa-install.js?v=20261115-pwa-install-1"></script>
 <link rel="stylesheet" href="/assets/sm-hide-public-links-20261115.css?v=hide-personal-1">
+<link rel="stylesheet" href="/assets/sm-sidebar-notification-toggle.css?v=20261117-single-toggle-1">
 </head>
 <body class="member-boot">
 <div id="bootScreen" class="boot-screen"><img class="boot-avatar" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><strong>Opening your workspace…</strong><small>Connecting securely to your account</small></div>
@@ -98,12 +100,19 @@
  <nav class="side-links" aria-label="Member sections">
   <button type="button" data-section="home" class="active"><span class="nav-icon">⌂</span>Dashboard</button>
   <button type="button" data-section="markets"><span class="nav-icon">▥</span>Market Intelligence</button>
-  <a href="/market-intelligence/?panel=inbox" aria-label="Open notifications and alerts"><span class="nav-icon" aria-hidden="true">🔔</span>Notifications &amp; Alerts</a>
   <button type="button" data-section="studio" data-studio-page="dashboard"><span class="nav-icon">✦</span>AI Studio &amp; AI Scripts</button>
   <button type="button" data-section="tools"><span class="nav-icon">◈</span>Prompt Tools</button>
   <button type="button" data-section="mentorship"><span class="nav-icon">♢</span>Mentorship</button>
  </nav>
  <div class="side-bottom">
+  <div class="sm-sidebar-notifications" aria-label="Notifications">
+   <span class="sm-sidebar-notify-icon" aria-hidden="true">🔔</span>
+   <span class="sm-sidebar-notify-info"><b>Notifications</b><small id="smSidebarNotifyStatus" role="status" aria-live="polite">Checking…</small></span>
+   <label class="sm-sidebar-switch" title="Turn all supported notifications on or off">
+    <input type="checkbox" id="smSidebarNotifyToggle" role="switch" aria-label="Notifications" aria-checked="false" disabled>
+    <span class="sm-sidebar-switch-track" aria-hidden="true"></span>
+   </label>
+  </div>
   <button type="button" id="smInstallApp" class="sm-install-trigger" style="display:none" aria-haspopup="dialog" aria-controls="smInstallSheet"><span class="sm-install-icon" aria-hidden="true">↓</span><span><b>Download App</b><small>Add to Home Screen · Free</small></span><span class="sm-install-arrow" aria-hidden="true">›</span></button>
   <button type="button" class="side-account-link" data-section="profile"><span aria-hidden="true">♙</span> Account settings</button>
   <a href="/" class="public-link">← Public Website</a>
