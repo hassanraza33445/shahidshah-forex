@@ -103,7 +103,7 @@ async function checkStudioAccess(){
   const creator=["admin","creator","editor","approver"].includes(state.studioRole);
   document.documentElement.dataset.smStudio=state.studioStatus==="allowed"?"allowed":"denied";
   document.documentElement.dataset.smStudioCreate=creator?"allowed":"denied";
-  if(state.news.length&&state.currentTab==="markets")renderMarketNews();
+  if(state.news.length&&state.currentTab==="markets")renderNews();
   document.querySelectorAll("#studioSubnav [data-studio-page]").forEach(button=>{if(button.dataset.studioPage==="create"){button.disabled=!creator;button.title=creator?"":"Creator access required"}});
   if(!creator&&state.studioPage==="create")state.studioPage="projects";
  }catch(_){state.studioRole=null;state.studioStatus="error";
