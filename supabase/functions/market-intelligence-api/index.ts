@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.8";
 import { XMLParser } from "npm:fast-xml-parser@4.5.3";
+import { classifyHeadline, deduplicateHeadlineFeed, nearDuplicateHeadline, isEvergreenListing } from "./news-quality.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 let secretKeys: Record<string,string> = {};
@@ -21,23 +22,17 @@ function extractLink(item:any):string {
   if(Array.isArray(link))link=link.find((x:any)=>x?.["@_rel"]==="alternate")||link[0];
   return str(link).trim();
 }
-function classify(title:string, category:string):{priority:string,reason:string} {
- const t=title.toLowerCase();
- if(/\b(fomc|cpi|nfp|nonfarm|rate decision|rate cut|rate hike|federal reserve decision|emergency|intervention|sanctions|tariffs|war|attack|inflation surprise|jobs report|central bank decision)\b/i.test(t))return {priority:"HOT",reason:"Major macroeconomic or policy development"};
- if(/\b(gold|xauusd|bitcoin|crypto|forex|currency|dollar|yield|oil|inflation|federal reserve|ecb|opec|equities|stocks|treasury)\b/i.test(t) || /Gold|Forex|Crypto|Central Banks|Economic Data/.test(category))return {priority:"WARM",reason:"Market-relevant financial coverage"};
- return {priority:"COLD",reason:"General market context"};
-}
 function normalize(item:any,source:any){
  const title=clean(item.title,340);
  const original_url=extractLink(item);
- if(!title || title.length<14 || !/^https?:\/\//i.test(original_url))return null;
+ if(!title || title.length<14 || !/^https?:\/\//i.test(original_url) || isEvergreenListing(title))return null;
  const ts=item.pubDate||item.published||item.updated||item["dc:date"];
  const published=new Date(str(ts));
  if(!Number.isFinite(published.getTime()) || published.getTime()<Date.now()-7*86400000 || published.getTime()>Date.now()+900000)return null;
  const fromSource=clean(item.source,90);
  const publisher=fromSource || (title.match(/[-–]\s*([^–-]{3,55})$/)?.[1]||source.name).trim();
  const description=clean(item.description||item.summary||item.content,550);
- const {priority,reason}=classify(title,source.category);
+ const {priority,reason}=classifyHeadline(title,source.category,source.name);
  return {source_id:source.id,title,original_url,publisher,summary:description,published_at:published.toISOString(),category:source.category,priority,priority_reason:reason,fingerprint:fp(title),verification_status:"unverified",is_visible:true};
 }
 async function authorized(token:string):Promise<boolean>{
@@ -170,6 +165,8 @@ async function listNews(url:URL){
   if(fallback.error)throw new Error(fallback.error.message);
   rows=fallback.data||[];
  }
+ // Display-only near-duplicate guard: preserve original publisher records in storage.
+ rows=deduplicateHeadlineFeed(rows);
  const {data:control}=await db.from("news_ingestion_control").select("last_finished_at").eq("id",1).maybeSingle();
  return {success:true,items:rows,page,limit,last_refresh:control?.last_finished_at||null,grouping:error?"legacy":"strict_headline"};
 }
@@ -209,6 +206,7 @@ async function listBalancedNews(url:URL){
   const title=clean(item.title,300).toLowerCase()
    .replace(/\s+[-–|]\s+[^–|-]+$/,"").replace(/[^a-z0-9]+/g," ").trim();
   if(seenIds.has(id)||cluster&&seenClusters.has(cluster)||title&&seenTitles.has(title))return false;
+  if(output.some((prior:any)=>nearDuplicateHeadline(prior,item)))return false;
   if(id)seenIds.add(id);
   if(cluster)seenClusters.add(cluster);
   if(title)seenTitles.add(title);
