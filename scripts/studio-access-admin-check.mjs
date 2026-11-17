@@ -17,7 +17,7 @@ for(const token of [
  'const admin=()=>typeof isLoggedIn', 'currentAdmin?.is_admin===true',
  'from("profiles")','from("content_access")','from("content_access_notifications")',
  'functions.invoke("shahid-studio-access"','window.confirm(',
- 'type==="grant"','type==="revoke"','type==="resend"',
+ 'type==="grant"','type==="revoke"','action("resend")',
  'user.is_admin','S.actionBusy','textContent','Promise.all([metrics(),history()])',
  'submitted to SMTP provider (delivery not guaranteed)'
 ])assert.ok(js.includes(token),"Missing safe live function "+token);
