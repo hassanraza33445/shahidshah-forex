@@ -364,6 +364,7 @@
     .courses-grid { grid-template-columns: 1fr; }
   }
 </style>
+<link rel="stylesheet" href="/assets/sm-admin-studio-access.css?v=20261117-admin-v1">
 </head>
 <body>
 
@@ -428,7 +429,7 @@
       <div class="menu-item" data-page="courses" onclick="showPage('courses', this)"><span class="menu-icon">🎓</span>Courses</div>
       <div class="menu-item" data-page="news" onclick="showPage('news', this)"><span class="menu-icon">📰</span>News & Events</div>
       <div class="menu-item" data-page="newshub" onclick="showPage('newshub', this)"><span class="menu-icon">📡</span>World News Hub<span style="margin-left:auto;font-size:8px;padding:2px 6px;background:var(--red);color:white;border-radius:10px;font-weight:700;">LIVE</span></div>
-      <div class="menu-item" title="Grant or revoke Studio access for registered users" onclick="window.open('/content-studio/?view=access','_blank','noopener')"><span class="menu-icon">🔐</span>AI Studio Access</div>
+      <div class="menu-item" data-page="studioaccess" onclick="showPage('studioaccess', this)"><span class="menu-icon">🔐</span>AI Studio Access</div>
       <div class="menu-item" data-page="quiz" onclick="showPage('quiz', this)"><span class="menu-icon">🎯</span>Quiz Questions</div>
       <div class="menu-item" data-page="youtube" onclick="showPage('youtube', this)"><span class="menu-icon">▶️</span>YouTube Videos</div>
       
@@ -1518,6 +1519,9 @@
         </div>
       </div>
       
+      <!-- Native AI Studio Access controls: the same Admin Panel theme. -->
+      <div class="page" id="page-studioaccess"><div id="saRoot" aria-live="polite">Loading Studio Access controls…</div></div>
+
       <!-- ========== ADMIN PROFILE ========== -->
       <div class="page" id="page-profile">
         <div class="card">
@@ -1604,6 +1608,7 @@ window.addEventListener('load', async () => {
       isLoggedIn = true;
       setTimeout(initCharts, 100);
       loadDashboardStats();
+      if (location.hash === '#studio-access') showPage('studioaccess',document.querySelector('[data-page="studioaccess"]'));
       return;
     }
   }
@@ -1659,6 +1664,7 @@ async function loginAdmin() {
     isLoggedIn = true;
     setTimeout(initCharts, 100);
     loadDashboardStats();
+    if (location.hash === '#studio-access') showPage('studioaccess',document.querySelector('[data-page="studioaccess"]'));
     
   } catch (e) {
     errorEl.textContent = '❌ Network error: ' + e.message;
@@ -1703,6 +1709,7 @@ function showPage(page, el) {
     settings: ['Platform Settings', 'Configure your platform'],
     appearance: ['Appearance & Branding', 'Customize colors, logos, theme'],
     logs: ['Activity Logs', 'System and user activity history'],
+    studioaccess: ['AI Studio Access', 'Approve, update and remove AI Creator Studio users'],
     profile: ['Admin Profile', 'Your account settings']
   };
   const t = titles[page];
@@ -1714,6 +1721,7 @@ function showPage(page, el) {
   window.scrollTo(0, 0);
   
   // Load real data for each page
+  if (page === 'studioaccess') window.SMStudioAccessAdmin?.load();
   if (page === 'dashboard') loadDashboardStats();
   if (page === 'users') loadAdminUsers();
   if (page === 'trades') loadAdminTrades();
@@ -2651,5 +2659,6 @@ async function initCharts() {
   </div>
 </div>
 
+<script src="/assets/sm-admin-studio-access.js?v=20261117-admin-v1" defer></script>
 </body>
 </html>
