@@ -1,0 +1,59 @@
+name: Sidebar Notification Toggle integration
+on:
+  pull_request:
+    paths:
+      - 'app/index.html'
+      - 'assets/sm-sidebar-notification-toggle.*'
+      - 'assets/sm-member-app.js'
+      - 'assets/sm-pwa-install.js'
+      - '.github/workflows/sidebar-notification-toggle.yml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax checks (user-facing toggle and existing scripts)
+        run: |
+          node --check assets/sm-sidebar-notification-toggle.js
+          node --check assets/sm-member-app.js
+          node --check assets/sm-pwa-install.js
+          node scripts/check-site-scripts.mjs
+      - name: Validate exact sidebar order, all-topics scope and user consent gates
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const html=fs.readFileSync('app/index.html','utf8');
+          const js=fs.readFileSync('assets/sm-sidebar-notification-toggle.js','utf8');
+          const member=fs.readFileSync('assets/sm-member-app.js','utf8');
+          const pwa=fs.readFileSync('assets/sm-pwa-install.js','utf8');
+          const first=html.indexOf('id="smSidebarNotifyToggle"');
+          const second=html.indexOf('id="smInstallApp"');
+          const third=html.indexOf('class="side-account-link"');
+          if(first<0||second<0||third<0||!(first<second&&second<third))
+            throw Error('Sidebar must contain Notifications, Download App (PWA), Account Settings in order');
+          if(html.includes('>Notifications &amp; Alerts</a>'))
+            throw Error('Remove the old Notifications sidebar menu item');
+          for(const s of ['sm-sidebar-notification-toggle.js','sm-sidebar-notification-toggle.css','role="switch"'])
+            if(!html.includes(s))throw Error('Missing toggle wiring '+s);
+          for(const s of ['SMSidebarPush?.init(c,user)','const user=data.user;state.user=user;'])
+            if(!member.includes(s))throw Error('Sidebar must initialize only after authentication '+s);
+          const all=['Gold','Forex','Crypto','Central Banks','Economic Data','Energy','Geopolitics'];
+          for(const topic of all)if(!js.includes('"'+topic+'"'))throw Error('Missing topic '+topic);
+          if(!js.includes('const REMINDERS=[60,15,0]'))throw Error('Missing safe reminder presets');
+          for(const token of ['register_push_device','unregister_all_push_devices','save_preferences',
+                              'Notification.permission','serviceWorkerParam:{scope:"/onesignal/"}',
+                              'aria-checked','requestPermission()','getSubscriptionId()','restoreSettings'])
+            if(!js.includes(token))throw Error('Missing consent or state safeguard '+token);
+          const init=js.split('async function init(c,verifiedUser)')[1]||'';
+          if(init.includes('requestPermission()'))throw Error('Never prompt the browser automatically on load');
+          if(!pwa.includes('trigger.addEventListener("click"'))throw Error('Original PWA installation shortcut broken');
+          if(js.includes('ONESIGNAL_REST_API_KEY')||js.includes('ONESIGNAL_DISPATCH_ENABLED'))
+            throw Error('No OneSignal private credentials or dispatch controls in browser code');
+          console.log('PASS sidebar ordering, desktop/mobile PWA and voluntary all-topics push opt-in');
+          NODE
