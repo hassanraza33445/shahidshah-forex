@@ -1,0 +1,39 @@
+name: OneSignal one-time test safety checks
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/market-push-test-once/**'
+      - 'supabase/sql/market-push-one-time-test-*.sql'
+      - '.github/workflows/onesignal-single-device-test.yml'
+jobs:
+  safety:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Check test endpoint TypeScript
+        run: deno check supabase/functions/market-push-test-once/index.ts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify one-time token, single-device target, RLS and no bulk dispatch
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const api=fs.readFileSync('supabase/functions/market-push-test-once/index.ts','utf8');
+          const sql=fs.readFileSync('supabase/sql/market-push-one-time-test-20261117.sql','utf8');
+          for(const t of ['x-test-token','is("used_at",null)','include_subscription_ids:[claim.subscription_id]',
+            'browser_permission_granted','push_enabled','in_app_enabled','idempotency_key:token','ttl:300'])
+            if(!api.includes(t))throw new Error('Test must be single-use and targeted: '+t);
+          for(const t of ['ENABLE ROW LEVEL SECURITY','REVOKE ALL','GRANT SELECT, INSERT, UPDATE','expires_at','used_at'])
+            if(!sql.includes(t))throw new Error('Privileged test request isolation missing: '+t);
+          if(api.includes('included_segments')||api.includes('include_player_ids:["All"]')||api.includes('ONESIGNAL_DISPATCH_ENABLED')||
+             /notifications\s*:\s*\[?\s*All/.test(api))
+            throw new Error('Do not send a test broadcast or modify automatic dispatch');
+          console.log('PASS targeted, expiring, single-use provider test endpoint');
+          NODE
