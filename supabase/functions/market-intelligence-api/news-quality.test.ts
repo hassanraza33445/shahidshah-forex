@@ -7,6 +7,9 @@ Deno.test("publisher suffix and rearranged wording collapse only for near-identi
  const b=item("Gold prices climb as Dollar weakens ahead of Federal Reserve meeting - Publisher B","Gold","Publisher B");
  check(nearDuplicateHeadline(a,b),"same reported headline should collapse");
  check(deduplicateHeadlineFeed([a,b]).length===1,"one story shown");
+ const c=item("Gold prices climb as Dollar weakens ahead of the Federal Reserve meeting - Publisher C","Gold","Publisher C");
+ check(nearDuplicateHeadline(a,c),"minor rewording across publishers should collapse");
+ check(deduplicateHeadlineFeed([a,b,c]).length===1,"minor wording differences collapse together");
 });
 Deno.test("conflicting economic announcements are not merged",()=>{
  const a=item("US crude stocks rise as gasoline inventories fall in weekly report","Energy");
