@@ -104,7 +104,7 @@ async function privateGet(req:Request,mode:string){
   let notices:any[]=[];
   if(ids.length){
    const result=await db.from("market_notification_events")
-    .select("id,kind,title,body,topic,impact,trust_status,target_url,reminder_minutes,created_at,expires_at,is_active")
+    .select("id,kind,title,body,topic,impact,trust_status,target_url,source_article_id,reminder_minutes,created_at,expires_at,is_active")
     .in("id",ids).eq("is_active",true).gt("expires_at",new Date().toISOString());
    if(result.error)throw Error("Notification items unavailable");
    notices=result.data||[];
@@ -128,9 +128,9 @@ async function changeDevice(user:any,body:any,req:Request){
    return reply({success:false,error:"Use the www website to enable push"},403);
   if(body.browser_permission_granted!==true)return reply({success:false,error:"Browser consent required"},422);
   const {data:pref,error:prefError}=await db.from("market_notification_preferences")
-   .select("in_app_enabled,breaking_enabled,economic_enabled").eq("user_id",user.id).maybeSingle();
+   .select("in_app_enabled,breaking_enabled,economic_enabled,keyword_alerts_enabled").eq("user_id",user.id).maybeSingle();
   if(prefError)throw Error("Unable to read notification preferences");
-  if(!pref?.in_app_enabled||!(pref.breaking_enabled||pref.economic_enabled))
+  if(!pref?.in_app_enabled||!(pref.breaking_enabled||pref.economic_enabled||pref.keyword_alerts_enabled))
    return reply({success:false,error:"Save your enabled notification preferences first"},422);
   const {data:prior,error:priorError}=await db.from("market_push_subscriptions")
    .select("user_id").eq("subscription_id",sub).maybeSingle();
