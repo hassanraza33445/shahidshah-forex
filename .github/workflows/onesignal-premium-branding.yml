@@ -41,7 +41,8 @@ jobs:
              !push.includes('📅 Economic Calendar · S M Shahid Shah')||
              !push.includes('notice.trust_status==="verified"'))
             throw new Error('Verified market and calendar presentation contract missing');
-          if(!test.includes('TEST PREVIEW')||
+          if(!['DEMO 1/4','DEMO 2/4','DEMO 3/4','DEMO 4/4'].every(x=>test.includes(x))||
+             !test.includes('chrome_web_icon:BRAND_ICON')||
              !test.includes('idempotency_key:token')||
              !test.includes('include_subscription_ids:[claim.subscription_id]'))
             throw new Error('Test needs clear label and one-device recipient');
