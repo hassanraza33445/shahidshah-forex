@@ -5,7 +5,7 @@ const BASE="https://qggtdwixwafcmorepkks.supabase.co";
 const KEY="sb_publishable_HnYmHQbt42OfjmRk09OfoQ_fq5TPYpb";
 const TOPICS=["Gold","Forex","Crypto","Central Banks","Economic Data","Energy","Geopolitics"];
 const $=(t,cls,text)=>{const n=document.createElement(t);if(cls)n.className=cls;if(text!==undefined)n.textContent=String(text);return n};
-const state={client:null,user:null,ready:false,init:false,loading:null,saved:new Map(),watch:[],prefs:null,dialog:null,tab:"saved",toolbar:null,status:null,body:null};
+const state={client:null,user:null,ready:false,init:false,loading:null,saved:new Map(),watch:[],prefs:null,inbox:[],dialog:null,tab:"saved",toolbar:null,status:null,body:null};
 const badge=(t)=>$("span","sm-personal-muted",t);
 function setStatus(text,error=false){if(state.status){state.status.textContent=text;state.status.dataset.error=String(error)}const tip=document.getElementById("smNewsPersonalCount");if(tip)tip.textContent=text||state.saved.size+" saved • "+state.watch.length+" watchwords"}
 function addButton(parent,label,onClick){const b=$("button","",label);b.type="button";b.addEventListener("click",onClick);parent.append(b);return b}
@@ -21,7 +21,7 @@ async function fetchWatch(){
  if(error)throw error;state.watch=data||[];
 }
 async function fetchPrefs(){
- const {data,error}=await state.client.from("market_notification_preferences").select("user_id,in_app_enabled,breaking_enabled,economic_enabled,topics,timezone").eq("user_id",state.user.id).maybeSingle();
+ const {data,error}=await state.client.from("market_notification_preferences").select("user_id,in_app_enabled,breaking_enabled,economic_enabled,keyword_alerts_enabled,push_enabled,topics,timezone").eq("user_id",state.user.id).maybeSingle();
  if(error)throw error;state.prefs=data;
 }
 async function loadPrivate(){
@@ -68,7 +68,7 @@ function drawDialog(){
  const close=addButton(head,"×",()=>dialog.close());close.className="sm-personal-close";close.setAttribute("aria-label","Close news workspace");
  head.prepend(titles);dialog.append(head);
  const nav=$("div","sm-personal-tabs");nav.setAttribute("role","tablist");
- for(const [tab,label] of [["saved","Saved Articles"],["watch","Watchlist"],["prefs","Alerts"]]){
+ for(const [tab,label] of [["saved","Saved Articles"],["watch","Watchlist"],["prefs","Alerts"],["inbox","Inbox"]]){
   const b=addButton(nav,label,()=>{state.tab=tab;renderCurrent()});b.dataset.tab=tab;b.setAttribute("role","tab");
  }
  dialog.append(nav);state.body=$("section","sm-personal-content");dialog.append(state.body);
@@ -138,7 +138,7 @@ function renderWatch(){
  b.append(sel);line.append(a,b);
  const submit=$("button","","Add");submit.type="submit";line.append(submit);form.append(line);
  form.addEventListener("submit",e=>{e.preventDefault();addWatch(input.value,sel.value)});
- state.body.append(form,badge("Keywords help you find matching headlines. Automatic keyword push alerts are not enabled yet."));
+ state.body.append(form,badge("Enable Keyword HOT Alerts under Alerts to receive matching headlines in your private inbox. Browser push needs separate permission."));
  for(const item of state.watch){
   const {card,actions}=rowItem(item.keyword,(item.category||"All categories")+" • "+(item.enabled?"Active":"Paused"));
   addButton(actions,"Search headlines",()=>searchWord(item));
@@ -158,6 +158,7 @@ function renderPrefs(){
  const inapp=optionCheck(form,"In-app notifications",p?.in_app_enabled===true,"in_app");
  const breaking=optionCheck(form,"Important HOT market news",p?.breaking_enabled===true,"breaking");
  const economic=optionCheck(form,"Confirmed economic calendar reminders",p?.economic_enabled===true,"economic");
+ const keywords=optionCheck(form,"HOT news matching my enabled watchlist keywords",p?.keyword_alerts_enabled===true,"keywords");
  form.append(badge("Choose which news topics you want in your in-app notification inbox."));
  const topics=$("div","sm-personal-topics");const selected=Array.isArray(p?.topics)?p.topics:["Gold","Forex","Crypto","Central Banks","Economic Data"];
  for(const topic of TOPICS)optionCheck(topics,topic,selected.includes(topic),"topic",topic);form.append(topics);
@@ -165,7 +166,7 @@ function renderPrefs(){
  form.addEventListener("submit",async e=>{
   e.preventDefault();if(!ensureLogin()||!state.ready)return;
   const values={user_id:state.user.id,in_app_enabled:inapp.checked,breaking_enabled:breaking.checked,
-   economic_enabled:economic.checked,topics:Array.from(topics.querySelectorAll("input:checked")).map(x=>x.value)};
+   economic_enabled:economic.checked,keyword_alerts_enabled:keywords.checked,topics:Array.from(topics.querySelectorAll("input:checked")).map(x=>x.value)};
   submit.disabled=true;
   try{
    const {error}=await state.client.from("market_notification_preferences").upsert(values,{onConflict:"user_id"});
@@ -183,6 +184,7 @@ function renderCurrent(){
  if(!state.ready){state.body.append(badge("Loading your private news preferences…"));return}
  if(state.tab==="saved"){renderSaved().catch(()=>setStatus("Could not display saved articles.",true))}
  else if(state.tab==="watch")renderWatch();
+ else if(state.tab==="inbox")renderInbox().catch(()=>setStatus("Unable to load inbox.",true));
  else renderPrefs();
 }
 function open(tab){
