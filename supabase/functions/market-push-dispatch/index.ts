@@ -7,6 +7,8 @@ const SECRET=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")||secrets.default||"";
 const APP=Deno.env.get("ONESIGNAL_APP_ID")||"";
 const KEY=Deno.env.get("ONESIGNAL_REST_API_KEY")||"";
 const ORIGIN="https://www.smshahidshah.com";
+// Consistent PWA brand icon for Android Chrome/Web Push. The OS may still show Chrome as the sending app.
+const BRAND_ICON=ORIGIN+"/icon-192.png";
 const db=createClient(DB,SECRET||"unconfigured",{auth:{persistSession:false,autoRefreshToken:false}});
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{
  status,headers:{"Content-Type":"application/json","Cache-Control":"no-store"}
@@ -74,13 +76,20 @@ async function handle(job:any){
    await finalize(job.id,"quiet_hours","Quiet hours suppress this time-sensitive alert");return "skipped";
   }
   const link=notice.target_url.startsWith("/")?ORIGIN+notice.target_url:notice.target_url;
+  const isCalendar=notice.kind==="economic_reminder";
+  const heading=isCalendar?"📅 Economic Calendar · S M Shahid Shah":"🔥 HOT Market News · S M Shahid Shah";
+  // Display only the stored real headline; do not fabricate market conclusions.
+  const headline=String(notice.title||"Market update").replace(/\\s+/g," ").trim();
+  const prefix=isCalendar?"":notice.topic==="Gold"?"🟡 Gold · ":notice.topic==="Forex"?"💱 Forex · ":"";
+  const bodyText=(prefix+headline).slice(0,185);
   const response=await fetch("https://api.onesignal.com/notifications",{
    method:"POST",signal:AbortSignal.timeout(12000),
    headers:{"Authorization":"Key "+KEY,"Content-Type":"application/json"},
    body:JSON.stringify({
     app_id:APP,target_channel:"push",include_subscription_ids:[job.subscription_id],
-    headings:{en:notice.kind==="economic_reminder"?"Upcoming Economic Event":"Verified Market News"},
-    contents:{en:String(notice.title).slice(0,170)},
+    headings:{en:heading},
+    contents:{en:bodyText},
+    chrome_web_icon:BRAND_ICON,
     url:link,idempotency_key:job.idempotency_key,
     ttl:notice.kind==="economic_reminder"?300:900,
     data:{notice_id:notice.id,kind:notice.kind}
