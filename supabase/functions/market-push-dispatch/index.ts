@@ -36,7 +36,7 @@ async function handle(job:any){
  try{
   const [n,d,p]=await Promise.all([
    db.from("market_notification_events")
-    .select("id,title,body,kind,impact,trust_status,topic,reminder_minutes,source_article_id,target_url,expires_at,created_at,is_active")
+    .select("id,dedupe_key,title,body,kind,impact,trust_status,topic,reminder_minutes,source_article_id,target_url,expires_at,created_at,is_active")
     .eq("id",job.notice_id).maybeSingle(),
    db.from("market_push_subscriptions").select("user_id,active,browser_permission_granted")
     .eq("subscription_id",job.subscription_id).maybeSingle(),
@@ -112,7 +112,11 @@ async function handle(job:any){
   }
   const prefix=isCalendar?"":notice.topic==="Gold"?"🟡 Gold · ":notice.topic==="Forex"?"💱 Forex · ":"";
   const sourceLabel=isCalendar?"":"Via "+publisher+" · ";
-  const bodyText=(prefix+sourceLabel+headline).slice(0,185);
+  // PipSePaisa HOT mirror events show the same exact headline (up to the
+  // original provider's 156-character push content limit), under Shahid branding.
+  const isPipMirror=isCalendar===false&&String(notice.dedupe_key||"").startsWith("pip-hot:");
+  const bodyText=isPipMirror?String(notice.title||"Market update").replace(/\s+/g," ").trim().slice(0,156):
+   (prefix+sourceLabel+headline).slice(0,185);
   const response=await fetch("https://api.onesignal.com/notifications",{
    method:"POST",signal:AbortSignal.timeout(12000),
    headers:{"Authorization":"Key "+KEY,"Content-Type":"application/json"},
