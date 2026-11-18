@@ -251,7 +251,7 @@ function startMarketNewsClock(){
  window.setInterval(()=>{
   if(document.visibilityState==="visible"&&["markets","home"].includes(state.currentTab||""))
    void loadNews();
- },120000);
+ },60000);
 }
 function domainSource(value){try{const u=new URL(value);return u.protocol==="https:"?u.hostname.replace(/^www\./,""):"External source"}catch{return"Source"}}
 function hrefSafe(input){try{const u=new URL(input,location.origin);return u.protocol==="https:"||u.origin===location.origin&&u.protocol==="http:"?u.href:"#"}catch{return"#"}}
