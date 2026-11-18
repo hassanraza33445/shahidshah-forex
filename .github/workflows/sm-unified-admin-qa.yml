@@ -3,6 +3,9 @@ on:
   pull_request:
     paths:
       - "admin/index.html"
+      - "assets/sm-admin-six-navigation.js"
+      - "assets/sm-admin-six-navigation.css"
+      - "scripts/sm-admin-six-nav-qa.mjs"
       - "assets/sm-admin-premium-dashboard.js"
       - "assets/sm-admin-premium-dashboard.css"
       - "scripts/sm-admin-premium-dashboard-qa.mjs"
@@ -19,6 +22,9 @@ on:
     branches: [main]
     paths:
       - "admin/index.html"
+      - "assets/sm-admin-six-navigation.js"
+      - "assets/sm-admin-six-navigation.css"
+      - "scripts/sm-admin-six-nav-qa.mjs"
       - "assets/sm-admin-premium-dashboard.js"
       - "assets/sm-admin-premium-dashboard.css"
       - "scripts/sm-admin-premium-dashboard-qa.mjs"
@@ -43,3 +49,5 @@ jobs:
       - run: node scripts/sm-clean-admin-route-qa.mjs
       - run: node --check assets/sm-admin-premium-dashboard.js
       - run: node scripts/sm-admin-premium-dashboard-qa.mjs
+      - run: node --check assets/sm-admin-six-navigation.js
+      - run: node scripts/sm-admin-six-nav-qa.mjs
