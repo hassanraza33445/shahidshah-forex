@@ -7,6 +7,7 @@ on:
       - 'assets/sm-member-app.js'
       - 'assets/sm-pwa-install.js'
       - 'app/sw.js'
+      - 'scripts/sm-news-push-reconnect-qa.mjs'
       - '.github/workflows/sidebar-notification-toggle.yml'
 jobs:
   test:
@@ -60,10 +61,12 @@ jobs:
              !appSW.includes('sm-member-offline-v1') ||
              !fs.readFileSync('onesignal/OneSignalSDKWorker.js','utf8').includes('OneSignalSDK.sw.js'))
             throw Error('PWA and Chrome must keep separate, functional push workers');
-          if(!html.includes('sm-sidebar-notification-toggle.js?v=20261117-pwa-scope-2'))
+          if(!html.includes('sm-sidebar-notification-toggle.js?v=20261118-browser-repair-1'))
             throw Error('Installed app worker selection must bypass cached sidebar script');
           if(!pwa.includes('trigger.addEventListener("click"'))throw Error('Original PWA installation shortcut broken');
           if(js.includes('ONESIGNAL_REST_API_KEY')||js.includes('ONESIGNAL_DISPATCH_ENABLED'))
             throw Error('No OneSignal private credentials or dispatch controls in browser code');
           console.log('PASS sidebar ordering, desktop/mobile PWA and voluntary all-topics push opt-in');
           NODE
+      - name: Validate stale browser subscription reconnect safety
+        run: node scripts/sm-news-push-reconnect-qa.mjs
