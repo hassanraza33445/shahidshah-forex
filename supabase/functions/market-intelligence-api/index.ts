@@ -54,8 +54,27 @@ async function fetchSourceXML(url:string):Promise<string>{
  let last:unknown=null;
  for(let attempt=0;attempt<2;attempt++){
   try{
-   const r=await fetch(url,{headers:{"User-Agent":"SMShahidShah-MarketIntelligence/2.0 (RSS reader)","Accept":"application/rss+xml,application/atom+xml,application/xml,text/xml"},signal:AbortSignal.timeout(7000),redirect:"follow"});
-   if(!safeUrl(r.url))throw new Error("RSS redirected to an unapproved host");
+   // Never follow an unapproved intermediate redirect (including private-network
+   // redirects). Every hop must stay HTTPS and on one of our exact RSS hosts.
+   let nextUrl=url;
+   let r:Response|null=null;
+   for(let hop=0;hop<4;hop++){
+    if(!safeUrl(nextUrl))throw new Error("RSS host is not approved");
+    const result=await fetch(nextUrl,{
+     headers:{"User-Agent":"SMShahidShah-MarketIntelligence/2.0 (RSS reader)","Accept":"application/rss+xml,application/atom+xml,application/xml,text/xml"},
+     signal:AbortSignal.timeout(7000),redirect:"manual"
+    });
+    if([301,302,303,307,308].includes(result.status)){
+     const redirectTo=result.headers.get("location");
+     if(!redirectTo||hop>=3)throw new Error("RSS redirect chain is too long");
+     const target=new URL(redirectTo,nextUrl).href;
+     if(!safeUrl(target))throw new Error("RSS redirected to an unapproved host");
+     nextUrl=target;continue;
+    }
+    r=result;break;
+   }
+   if(!r)throw new Error("RSS request did not complete");
+   if(!safeUrl(r.url))throw new Error("RSS source final URL is not approved");
    if(!r.ok){
     const e=new Error("RSS HTTP "+r.status);
     if((r.status===429||r.status>=500)&&attempt===0){last=e;await new Promise(ok=>setTimeout(ok,400));continue}
