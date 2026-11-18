@@ -58,7 +58,7 @@
    });
    const header=$("adminSectionNav");
    if(header){
-     header.hidden=group.id==="dashboard";
+     header.hidden=group.id==="webinar"; // Webinar already has its 11 management tabs.
      $("adminSectionName").textContent=group.title;
      $("adminSectionDescription").textContent=group.summary;
      renderTabs(group,page);
