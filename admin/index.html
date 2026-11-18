@@ -369,6 +369,7 @@
 <link rel="stylesheet" href="/assets/sm-admin-studio-access.css?v=20261117-admin-v1">
 <link rel="stylesheet" href="/assets/sm-admin-unified.css?v=20261118-single-admin-1">
 <link rel="stylesheet" href="/assets/sm-admin-premium-dashboard.css?v=20261118-v1">
+<link rel="stylesheet" href="/assets/sm-admin-six-navigation.css?v=20261118-v1">
 </head>
 <body>
 
@@ -419,38 +420,39 @@
       <span class="admin-badge">ADMIN</span>
     </div>
     
-    <div class="menu-label">Overview</div>
-    <nav class="menu">
-      <div class="menu-item active" data-page="dashboard" onclick="showPage('dashboard', this)"><span class="menu-icon">📊</span>Dashboard</div>
-      <div class="menu-item" data-page="analytics" onclick="showPage('analytics', this)"><span class="menu-icon">📈</span>Analytics</div>
-      
-      <div class="menu-label">Audience Management</div>
-      <div class="menu-item" data-page="users" onclick="showPage('users', this)"><span class="menu-icon">👥</span>Registered Accounts<span class="badge-count" id="sidebarUsersCount">0</span></div>
-
-      <div class="menu-item" data-page="subscriptions" onclick="showPage('subscriptions', this)"><span class="menu-icon">💎</span>Subscriptions</div>
-      
-      <div class="menu-label">Content Management</div>
-
-      <div class="menu-item" data-page="news" onclick="showPage('news', this)"><span class="menu-icon">📰</span>News & Events</div>
-      <div class="menu-item" data-page="newshub" onclick="showPage('newshub', this)"><span class="menu-icon">📡</span>World News Hub<span style="margin-left:auto;font-size:8px;padding:2px 6px;background:var(--red);color:white;border-radius:10px;font-weight:700;">LIVE</span></div>
-      <div class="menu-item" data-page="studioaccess" onclick="showPage('studioaccess', this)"><span class="menu-icon">🔐</span>AI Studio Access</div>
-      <div class="menu-item" data-page="quiz" onclick="showPage('quiz', this)"><span class="menu-icon">🎯</span>Quiz Questions</div>
-      <div class="menu-item" data-page="youtube" onclick="showPage('youtube', this)"><span class="menu-icon">▶️</span>YouTube Videos</div>
-      
-      <div class="menu-label">Webinars &amp; Clients</div>
-      <div class="menu-item" data-page="webinar" onclick="showPage('webinar', this)"><span class="menu-icon">🎙️</span>Webinar Management</div>
-      <div class="menu-item" data-page="leads" onclick="showPage('leads', this)"><span class="menu-icon">👥</span>All Clients &amp; Leads</div>
-
-      <div class="menu-label">Communication</div>
-      <div class="menu-item" data-page="messages" onclick="showPage('messages', this)"><span class="menu-icon">💬</span>Messages</div>
-      <div class="menu-item" data-page="notifications" onclick="showPage('notifications', this)"><span class="menu-icon">🔔</span>Notifications</div>
-      <div class="menu-item" data-page="emails" onclick="showPage('emails', this)"><span class="menu-icon">📧</span>Email Campaigns</div>
-      
-      <div class="menu-label">System</div>
-      <div class="menu-item" data-page="settings" onclick="showPage('settings', this)"><span class="menu-icon">⚙️</span>Settings</div>
-      <div class="menu-item" data-page="appearance" onclick="showPage('appearance', this)"><span class="menu-icon">🎨</span>Appearance</div>
-      <div class="menu-item" data-page="logs" onclick="showPage('logs', this)"><span class="menu-icon">📋</span>Activity Logs</div>
-      <div class="menu-item" data-page="profile" onclick="showPage('profile', this)"><span class="menu-icon">👤</span>Admin Profile</div>
+    <nav class="menu admin-six-navigation" aria-label="Admin sections">
+      <div class="admin-six-eyebrow">Command Center <span>6 SECTIONS</span></div>
+      <button type="button" class="menu-item admin-nav-main active" data-page="dashboard" data-admin-group="dashboard" onclick="showPage('dashboard',this)" aria-current="page">
+        <span class="admin-nav-icon" aria-hidden="true">▦</span>
+        <span class="admin-nav-text"><span class="admin-nav-name">Dashboard</span><span class="admin-nav-desc">Overview & insights</span></span>
+        <span class="admin-nav-arrow" aria-hidden="true">›</span>
+      </button>
+      <button type="button" class="menu-item admin-nav-main" data-page="leads" data-admin-group="audience" onclick="showPage('leads',this)">
+        <span class="admin-nav-icon" aria-hidden="true">♙</span>
+        <span class="admin-nav-text"><span class="admin-nav-name">Clients & Users</span><span class="admin-nav-desc">All leads & accounts</span></span>
+        <span class="admin-nav-arrow" aria-hidden="true">›</span>
+      </button>
+      <button type="button" class="menu-item admin-nav-main" data-page="newshub" data-admin-group="market" onclick="showPage('newshub',this)">
+        <span class="admin-nav-icon" aria-hidden="true">◉</span>
+        <span class="admin-nav-text"><span class="admin-nav-name">Market Intelligence</span><span class="admin-nav-desc">News, feeds & alerts</span></span>
+        <span class="admin-nav-arrow" aria-hidden="true">›</span>
+      </button>
+      <button type="button" class="menu-item admin-nav-main" data-page="studioaccess" data-admin-group="studio" onclick="showPage('studioaccess',this)">
+        <span class="admin-nav-icon" aria-hidden="true">✦</span>
+        <span class="admin-nav-text"><span class="admin-nav-name">AI Studio</span><span class="admin-nav-desc">Scripts & permissions</span></span>
+        <span class="admin-nav-arrow" aria-hidden="true">›</span>
+      </button>
+      <button type="button" class="menu-item admin-nav-main" data-page="webinar" data-admin-group="webinar" onclick="showPage('webinar',this)">
+        <span class="admin-nav-icon" aria-hidden="true">▣</span>
+        <span class="admin-nav-text"><span class="admin-nav-name">Webinar Management</span><span class="admin-nav-desc">Events & registrations</span></span>
+        <span class="admin-nav-arrow" aria-hidden="true">›</span>
+      </button>
+      <button type="button" class="menu-item admin-nav-main" data-page="settings" data-admin-group="settings" onclick="showPage('settings',this)">
+        <span class="admin-nav-icon" aria-hidden="true">⚙</span>
+        <span class="admin-nav-text"><span class="admin-nav-name">Settings</span><span class="admin-nav-desc">Platform & account</span></span>
+        <span class="admin-nav-arrow" aria-hidden="true">›</span>
+      </button>
+      <div class="admin-six-footnote">Single Admin workspace · S M Shahid Shah</div>
     </nav>
     
     <div class="sidebar-footer">
@@ -458,12 +460,13 @@
       <div class="menu-item" onclick="logoutAdmin()"><span class="menu-icon">🚪</span>Logout</div>
     </div>
   </aside>
+  <div id="adminNavShade" hidden aria-hidden="true"></div>
   
   <!-- ========== MAIN ========== -->
   <main class="main">
     
     <div class="topbar">
-      <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+      <button class="mobile-toggle" type="button" onclick="toggleSidebar()" aria-expanded="false" aria-label="Open admin navigation" aria-controls="sidebar">☰</button>
       <div class="page-title">
         <h2 id="pageTitle">Admin Dashboard</h2>
         <p id="pageSubtitle">Overview of your platform</p>
@@ -482,6 +485,13 @@
     </div>
     
     <div class="content" id="content">
+      <section class="admin-section-nav" id="adminSectionNav" aria-label="Section navigation" hidden>
+        <div class="admin-section-heading">
+          <span class="admin-section-kicker" id="adminSectionName">Workspace</span>
+          <span class="admin-section-summary" id="adminSectionDescription">Manage existing platform operations</span>
+        </div>
+        <nav class="admin-section-tabs" id="adminSectionTabs" aria-label="Section tabs"></nav>
+      </section>
       
       <!-- Unified webinar management: original webinar tables and workflows remain untouched. -->
       <div class="page" id="page-webinar">
@@ -1726,6 +1736,7 @@ function showPage(page, el) {
     document.getElementById('pageTitle').textContent = t[0];
     document.getElementById('pageSubtitle').textContent = t[1];
   }
+  window.SMAdminNav?.onPage(page);
   document.getElementById('sidebar').classList.remove('open');
   window.scrollTo(0, 0);
   
@@ -1743,7 +1754,8 @@ function showPage(page, el) {
 }
 
 function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
+  if (window.SMAdminNav?.toggleSidebar) window.SMAdminNav.toggleSidebar();
+  else document.getElementById('sidebar').classList.toggle('open');
 }
 
 function toggleTheme() {
@@ -2562,5 +2574,6 @@ async function initCharts() {
 <script src="/assets/sm-admin-studio-access.js?v=20261117-admin-v1" defer></script>
 <script src="/assets/sm-admin-unified.js?v=20261118-single-admin-1" defer></script>
 <script defer src="/assets/sm-admin-premium-dashboard.js?v=20261118-v1"></script>
+<script defer src="/assets/sm-admin-six-navigation.js?v=20261118-v1"></script>
 </body>
 </html>
