@@ -1,0 +1,24 @@
+name: Distinct HOT web push notifications
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/market-push-dispatch/index.ts'
+      - 'scripts/check-distinct-web-push-topic.mjs'
+      - '.github/workflows/distinct-web-push-topic.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/functions/market-push-dispatch/index.ts'
+      - 'scripts/check-distinct-web-push-topic.mjs'
+      - '.github/workflows/distinct-web-push-topic.yml'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/check-distinct-web-push-topic.mjs
