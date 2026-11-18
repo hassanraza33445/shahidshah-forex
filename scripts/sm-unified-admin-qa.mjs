@@ -21,7 +21,7 @@ const required=[
  ["child ready handshake",/sm:unified-webinar-ready/,webinar],
  ["frame origin/source verification",/event\.origin!==location\.origin\|\|event\.source!==window\.parent/,webinar],
  ["parent origin/source verification",/event\.origin!==location\.origin\|\|!frame\|\|event\.source!==frame\.contentWindow/,unified],
- ["client directory read-only",/No copy or merge/,unified],
+ ["client directory read-only",/No data copies/,unified],
  ["admin-only access protection",/currentAdmin\?\.is_admin===true/,unified],
  ["main theme preserved",/html lang="en" data-theme="dark"/,admin],
  ["unified stylesheet",/admin-unified-frame/,style]
