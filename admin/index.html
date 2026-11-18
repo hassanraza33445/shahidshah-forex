@@ -368,6 +368,7 @@
 </style>
 <link rel="stylesheet" href="/assets/sm-admin-studio-access.css?v=20261117-admin-v1">
 <link rel="stylesheet" href="/assets/sm-admin-unified.css?v=20261118-single-admin-1">
+<link rel="stylesheet" href="/assets/sm-admin-premium-dashboard.css?v=20261118-v1">
 </head>
 <body>
 
@@ -423,13 +424,13 @@
       <div class="menu-item active" data-page="dashboard" onclick="showPage('dashboard', this)"><span class="menu-icon">📊</span>Dashboard</div>
       <div class="menu-item" data-page="analytics" onclick="showPage('analytics', this)"><span class="menu-icon">📈</span>Analytics</div>
       
-      <div class="menu-label">Users & Trades</div>
-      <div class="menu-item" data-page="users" onclick="showPage('users', this)"><span class="menu-icon">👥</span>Users<span class="badge-count" id="sidebarUsersCount">0</span></div>
-      <div class="menu-item" data-page="trades" onclick="showPage('trades', this)"><span class="menu-icon">📈</span>All Trades</div>
+      <div class="menu-label">Audience Management</div>
+      <div class="menu-item" data-page="users" onclick="showPage('users', this)"><span class="menu-icon">👥</span>Registered Accounts<span class="badge-count" id="sidebarUsersCount">0</span></div>
+
       <div class="menu-item" data-page="subscriptions" onclick="showPage('subscriptions', this)"><span class="menu-icon">💎</span>Subscriptions</div>
       
       <div class="menu-label">Content Management</div>
-      <div class="menu-item" data-page="courses" onclick="showPage('courses', this)"><span class="menu-icon">🎓</span>Courses</div>
+
       <div class="menu-item" data-page="news" onclick="showPage('news', this)"><span class="menu-icon">📰</span>News & Events</div>
       <div class="menu-item" data-page="newshub" onclick="showPage('newshub', this)"><span class="menu-icon">📡</span>World News Hub<span style="margin-left:auto;font-size:8px;padding:2px 6px;background:var(--red);color:white;border-radius:10px;font-weight:700;">LIVE</span></div>
       <div class="menu-item" data-page="studioaccess" onclick="showPage('studioaccess', this)"><span class="menu-icon">🔐</span>AI Studio Access</div>
@@ -470,14 +471,13 @@
       
       <div class="search-box" style="margin-left: auto;">
         <span class="search-icon">🔍</span>
-        <input type="text" placeholder="Search users, courses, trades...">
+        <input type="search" id="smpGlobalSearch" placeholder="Search clients by name or email..." aria-label="Search client directory">
       </div>
-      
       <div class="topbar-actions">
-        <button class="icon-btn" onclick="alert('Notifications panel - 5 new')" title="Notifications">🔔<span class="notif-dot"></span></button>
-        <button class="icon-btn" onclick="alert('Quick messages - 12 unread')" title="Messages">💬</button>
+        <button class="icon-btn" onclick="showPage('notifications', document.querySelector('[data-page=notifications]'))" title="Market Notifications">🔔</button>
+        <button class="icon-btn" onclick="showPage('leads', document.querySelector('[data-page=leads]'))" title="Clients &amp; Leads">👥</button>
         <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">🌙</button>
-        <button class="btn btn-sm" onclick="alert('Quick add: User, Course, News, Quiz Question')">+ Quick Add</button>
+        <button class="btn btn-sm" onclick="showPage('studioaccess', document.querySelector('[data-page=studioaccess]'))">✦ AI Studio Access</button>
       </div>
     </div>
     
@@ -527,143 +527,95 @@
         </div>
       </div>
 
-      <!-- ========== DASHBOARD ========== -->
-      <div class="page active" id="page-dashboard">
-        <div class="stats-grid">
-          <div class="stat-card" onclick="showPage('users', document.querySelector('[data-page=users]'))">
-            <div class="stat-header">
-              <div class="stat-icon blue">👥</div>
-              <span class="stat-tag">Total</span>
-            </div>
-            <div class="stat-label">Total Users</div>
-            <div class="stat-value">1,247</div>
-            <div class="stat-meta">All registered users</div>
+      <!-- ========== PREMIUM ADMIN COMMAND CENTER ========== -->
+      <div class="page active smp-dashboard" id="page-dashboard">
+        <section class="smp-hero" aria-labelledby="smpHeroTitle">
+          <div>
+            <div class="smp-eyebrow"><span class="smp-led" aria-hidden="true"></span> PLATFORM INTELLIGENCE · ADMIN CONTROL</div>
+            <h2 id="smpHeroTitle">Your Platform. One Clear View.</h2>
+            <p>Live market intelligence, audience activity and AI Studio operations. One premium workspace, without unnecessary trading or course statistics.</p>
+            <p style="margin-top:7px"><small>Signed in as <strong id="smpCurrentAdmin">Authorized Admin</strong></small></p>
           </div>
-          
-          <div class="stat-card" onclick="showPage('trades', document.querySelector('[data-page=trades]'))">
-            <div class="stat-header">
-              <div class="stat-icon green">📈</div>
-              <span class="stat-tag">Total</span>
-            </div>
-            <div class="stat-label">Total Trades</div>
-            <div class="stat-value">15,843</div>
-            <div class="stat-meta">Trades by all users</div>
+          <div class="smp-hero-actions">
+            <button type="button" class="smp-action primary" data-smp-open="newshub">◉ Market Intelligence</button>
+            <button type="button" class="smp-action" data-smp-open="leads">↗ Client Directory</button>
           </div>
-          
-          <div class="stat-card" onclick="showPage('subscriptions', document.querySelector('[data-page=subscriptions]'))">
-            <div class="stat-header">
-              <div class="stat-icon gold">💎</div>
-              <span class="stat-tag">Total</span>
+        </section>
+
+        <section class="smp-metrics" aria-label="Live platform metrics">
+          <article class="smp-metric">
+            <div class="smp-metric-top"><span class="smp-metric-icon" aria-hidden="true">👥</span><span class="smp-metric-tag">Audience</span></div>
+            <h3 id="smpUsers" aria-live="polite">—</h3>
+            <div class="smp-metric-name">Total Users</div>
+            <div class="smp-metric-detail" id="smpUsersDetail">Unique accounts and client contacts</div>
+          </article>
+          <article class="smp-metric">
+            <div class="smp-metric-top"><span class="smp-metric-icon" aria-hidden="true">▤</span><span class="smp-metric-tag">Live</span></div>
+            <h3 id="smpNewsCount" aria-live="polite">—</h3>
+            <div class="smp-metric-name">Market Headlines</div>
+            <div class="smp-metric-detail" id="smpNewsDetail">Published market news</div>
+          </article>
+          <article class="smp-metric">
+            <div class="smp-metric-top"><span class="smp-metric-icon" aria-hidden="true">✦</span><span class="smp-metric-tag">Studio</span></div>
+            <h3 id="smpStudioCount" aria-live="polite">—</h3>
+            <div class="smp-metric-name">AI Studio Projects</div>
+            <div class="smp-metric-detail" id="smpStudioDetail">Created scripts and production projects</div>
+          </article>
+          <article class="smp-metric">
+            <div class="smp-metric-top"><span class="smp-metric-icon" aria-hidden="true">◈</span><span class="smp-metric-tag">Sources</span></div>
+            <h3 id="smpSources" aria-live="polite">—</h3>
+            <div class="smp-metric-name">Active RSS Feeds</div>
+            <div class="smp-metric-detail" id="smpSourcesDetail">Enabled market news feeds</div>
+          </article>
+        </section>
+
+        <div class="smp-panels">
+          <section class="smp-panel" aria-labelledby="smpNewsHeading">
+            <div class="smp-panelhead">
+              <div><h3 id="smpNewsHeading">◉ Latest Market Headlines</h3><p>Freshly published news from your live Market Intelligence feed</p></div>
+              <button type="button" class="smp-panel-link" data-smp-open="newshub">View News Hub ↗</button>
             </div>
-            <div class="stat-label">Premium Members</div>
-            <div class="stat-value">189</div>
-            <div class="stat-meta">Premium subscribers</div>
-          </div>
-          
-          <div class="stat-card" onclick="showPage('courses', document.querySelector('[data-page=courses]'))">
-            <div class="stat-header">
-              <div class="stat-icon purple">🎓</div>
-              <span class="stat-tag">12 active</span>
-            </div>
-            <div class="stat-label">Active Courses</div>
-            <div class="stat-value">12</div>
-            <div class="stat-meta">Published courses</div>
-          </div>
-        </div>
-        
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-header">
-              <div class="stat-icon green">💰</div>
-              <span class="stat-tag">MRR</span>
-            </div>
-            <div class="stat-label">Monthly Revenue</div>
-            <div class="stat-value" id="statRevenue">$0</div>
-            <div class="stat-meta">From premium subscriptions</div>
-          </div>
-          
-          <div class="stat-card">
-            <div class="stat-header">
-              <div class="stat-icon pink">🎯</div>
-              <span class="stat-tag">Today</span>
-            </div>
-            <div class="stat-label">Quiz Plays</div>
-            <div class="stat-value" id="statQuizPlays">0</div>
-            <div class="stat-meta">Total quiz attempts</div>
-          </div>
-          
-          <div class="stat-card">
-            <div class="stat-header">
-              <div class="stat-icon blue">📰</div>
-              <span class="stat-tag">Live</span>
-            </div>
-            <div class="stat-label">News Posts</div>
-            <div class="stat-value" id="statNewsCount">0</div>
-            <div class="stat-meta">Published news</div>
-          </div>
-          
-          <div class="stat-card">
-            <div class="stat-header">
-              <div class="stat-icon red">🎯</div>
-              <span class="stat-tag">Bank</span>
-            </div>
-            <div class="stat-label">Quiz Questions</div>
-            <div class="stat-value" id="statQuizCount">0</div>
-            <div class="stat-meta">In question bank</div>
-          </div>
-        </div>
-        
-        <div class="two-col">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">📊 User Growth (Last 30 Days)</div>
-              <div class="tabs" style="margin-bottom: 0;">
-                <button class="tab">Daily</button>
-                <button class="tab active">Weekly</button>
-                <button class="tab">Monthly</button>
+            <div class="smp-feed" id="smpNewsList" aria-live="polite"><div class="smp-loader">Loading live market headlines…</div></div>
+          </section>
+          <div class="smp-stack">
+            <section class="smp-panel" aria-labelledby="smpStatusHeading">
+              <div class="smp-panelhead"><div><h3 id="smpStatusHeading">◈ Platform Health</h3><p>Actual backend status, not demo counters</p></div></div>
+              <div class="smp-operation">
+                <div><div class="smp-operation-label">News Source Health</div><div class="smp-operation-sub" id="smpSourceDetail">Checking last polling results…</div></div>
+                <span class="smp-operation-value" id="smpSourceHealth">Checking…</span>
               </div>
-            </div>
-            <div class="chart-container">
-              <canvas id="growthChart"></canvas>
-            </div>
-          </div>
-          
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">🔔 Recent Signups</div>
-              <span class="card-meta">Latest registered users</span>
-            </div>
-            <div id="recentSignupsList">
-              <div class="empty-state" style="height: 150px;"><div class="empty-icon">👥</div><div style="font-size: 12px;">Loading...</div></div>
-            </div>
+              <div class="smp-operation">
+                <div><div class="smp-operation-label">Market Notifications</div><div class="smp-operation-sub" id="smpAlertDetail">Checking active notice events…</div></div>
+                <span class="smp-operation-value" id="smpAlertStatus">Checking…</span>
+              </div>
+              <div class="smp-operation">
+                <div><div class="smp-operation-label">AI Studio Access</div><div class="smp-operation-sub">Manage creator permissions securely</div></div>
+                <button type="button" class="smp-panel-link" data-smp-open="studioaccess">Manage ↗</button>
+              </div>
+            </section>
+            <section class="smp-panel" aria-labelledby="smpScriptHeading">
+              <div class="smp-panelhead">
+                <div><h3 id="smpScriptHeading">✦ AI Studio Activity</h3><p>Recently saved scripts and projects</p></div>
+                <button type="button" class="smp-panel-link" data-smp-open="studioaccess">Manage Access ↗</button>
+              </div>
+              <div id="smpProjectsList" aria-live="polite"><div class="smp-loader">Loading AI Studio activity…</div></div>
+            </section>
           </div>
         </div>
-        
-        <div class="three-col">
-          <div class="card">
-            <div class="card-title">🥇 Top Traded Pairs</div>
-            <div id="topPairsList" style="margin-top: 12px;">
-              <div class="empty-state" style="height: 120px;"><div style="font-size: 12px;">Loading...</div></div>
-            </div>
+        <section class="smp-panel" aria-labelledby="smpRecentHeading" style="margin-bottom:12px">
+          <div class="smp-panelhead">
+            <div><h3 id="smpRecentHeading">◎ Latest Audience Activity</h3><p>One combined view of new accounts and clients — no separate source counters</p></div>
+            <button type="button" class="smp-panel-link" data-smp-open="leads">All Clients &amp; Leads ↗</button>
           </div>
-          
-          <div class="card">
-            <div class="card-title">🏆 Top Users by Profit</div>
-            <div id="topUsersList" style="margin-top: 12px;">
-              <div class="empty-state" style="height: 120px;"><div style="font-size: 12px;">Loading...</div></div>
-            </div>
-          </div>
-          
-          <div class="card">
-            <div class="card-title">📈 Platform Stats</div>
-            <div id="platformStatsList" style="margin-top: 12px;">
-              <div class="empty-state" style="height: 120px;"><div style="font-size: 12px;">Loading...</div></div>
-            </div>
-          </div>
+          <div id="smpRecentUsers" class="smp-activity" aria-live="polite"><div class="smp-loader">Loading recent audience activity…</div></div>
+        </section>
+        <div class="smp-footer">
+          <span id="smpRefreshed" role="status">Waiting for live admin access…</span>
+          <button type="button" id="smpRefresh">↻ Refresh Live Data</button>
         </div>
       </div>
-      
-      <!-- ========== USERS ========== -->
+
+            <!-- ========== USERS ========== -->
       <div class="page" id="page-users">
         <div class="stats-grid">
           <div class="stat-card"><div class="stat-header"><div class="stat-icon blue">👥</div><span class="stat-tag">Total</span></div><div class="stat-label">All Users</div><div class="stat-value" id="usersAllCount">0</div></div>
@@ -1803,119 +1755,9 @@ function toggleTheme() {
 
 // ============ LOAD REAL STATS FROM DATABASE ============
 async function loadDashboardStats() {
-  if (!sb) return;
-  
-  try {
-    // Counts
-    const { count: usersCount } = await sb.from('profiles').select('*', { count: 'exact', head: true });
-    const { count: tradesCount } = await sb.from('trades').select('*', { count: 'exact', head: true });
-    const { count: premiumCount } = await sb.from('profiles').select('*', { count: 'exact', head: true }).eq('is_premium', true);
-    const { count: coursesCount } = await sb.from('courses').select('*', { count: 'exact', head: true }).eq('is_published', true);
-    const { count: quizCount } = await sb.from('quiz_questions').select('*', { count: 'exact', head: true });
-    const { count: newsCount } = await sb.from('news_posts').select('*', { count: 'exact', head: true }).eq('is_published', true);
-    const { count: quizPlaysCount } = await sb.from('quiz_history').select('*', { count: 'exact', head: true });
-    
-    // Calculate revenue (premium users × $30 default)
-    const revenue = (premiumCount || 0) * 30;
-    
-    // Update top 4 stat cards
-    const statValues = document.querySelectorAll('#page-dashboard .stats-grid:first-of-type .stat-value');
-    if (statValues[0]) statValues[0].textContent = (usersCount || 0).toLocaleString();
-    const sidebarCount = document.getElementById('sidebarUsersCount');
-    if (sidebarCount) sidebarCount.textContent = (usersCount || 0).toLocaleString();
-    if (statValues[1]) statValues[1].textContent = (tradesCount || 0).toLocaleString();
-    if (statValues[2]) statValues[2].textContent = (premiumCount || 0).toLocaleString();
-    if (statValues[3]) statValues[3].textContent = (coursesCount || 0).toLocaleString();
-    
-    // Update bottom 4 stat cards
-    const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-    setEl('statRevenue', '$' + revenue.toLocaleString());
-    setEl('statQuizPlays', (quizPlaysCount || 0).toLocaleString());
-    setEl('statNewsCount', (newsCount || 0).toLocaleString());
-    setEl('statQuizCount', (quizCount || 0).toLocaleString());
-    
-    // Recent signups
-    const { data: recentUsers } = await sb.from('profiles').select('full_name, email, created_at').order('created_at', { ascending: false }).limit(5);
-    const signupsList = document.getElementById('recentSignupsList');
-    if (signupsList) {
-      if (recentUsers && recentUsers.length > 0) {
-        signupsList.innerHTML = recentUsers.map(u => {
-          const initials = (u.full_name || u.email || 'U').slice(0, 2).toUpperCase();
-          const timeAgo = new Date(u.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-          return `<div class="activity-item">
-            <div class="activity-icon" style="background: var(--green-bg); color: var(--green);">${initials}</div>
-            <div class="activity-content">
-              <div class="activity-text"><strong>${u.full_name || u.email.split('@')[0]}</strong> signed up</div>
-              <div class="activity-time">${timeAgo} · ${u.email}</div>
-            </div>
-          </div>`;
-        }).join('');
-      } else {
-        signupsList.innerHTML = '<div class="empty-state" style="height: 120px;"><div class="empty-icon">👥</div><div style="font-size: 12px;">No signups yet</div></div>';
-      }
-    }
-    
-    // Top traded pairs (group by pair)
-    const { data: allTrades } = await sb.from('trades').select('pair, pnl, user_id');
-    if (allTrades) {
-      const pairCounts = {};
-      const userPLs = {};
-      allTrades.forEach(t => {
-        pairCounts[t.pair] = (pairCounts[t.pair] || 0) + 1;
-        userPLs[t.user_id] = (userPLs[t.user_id] || 0) + parseFloat(t.pnl || 0);
-      });
-      const topPairs = Object.entries(pairCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
-      
-      const topPairsList = document.getElementById('topPairsList');
-      if (topPairsList) {
-        if (topPairs.length > 0) {
-          const medals = ['🥇', '🥈', '🥉', '4.', '5.'];
-          topPairsList.innerHTML = topPairs.map(([pair, count], i) => 
-            `<div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border);"><span>${medals[i]} ${pair}</span><strong>${count}</strong></div>`
-          ).join('');
-        } else {
-          topPairsList.innerHTML = '<div class="empty-state" style="height: 120px;"><div style="font-size: 12px;">No trades yet</div></div>';
-        }
-      }
-      
-      // Top users by profit
-      const topUserIds = Object.entries(userPLs).sort((a, b) => b[1] - a[1]).slice(0, 5);
-      const topUsersList = document.getElementById('topUsersList');
-      if (topUsersList && topUserIds.length > 0) {
-        const userIds = topUserIds.map(([id]) => id);
-        const { data: topUserProfiles } = await sb.from('profiles').select('id, full_name, email').in('id', userIds);
-        const profileMap = {};
-        (topUserProfiles || []).forEach(p => { profileMap[p.id] = p; });
-        
-        const medals = ['🥇', '🥈', '🥉', '4.', '5.'];
-        topUsersList.innerHTML = topUserIds.map(([uid, pl], i) => {
-          const profile = profileMap[uid];
-          const name = profile ? (profile.full_name || profile.email.split('@')[0]) : 'Unknown';
-          const color = pl >= 0 ? 'var(--green)' : 'var(--red)';
-          const prefix = pl >= 0 ? '+$' : '-$';
-          return `<div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border);"><span>${medals[i]} ${name}</span><strong style="color: ${color};">${prefix}${Math.abs(pl).toFixed(2)}</strong></div>`;
-        }).join('');
-      } else if (topUsersList) {
-        topUsersList.innerHTML = '<div class="empty-state" style="height: 120px;"><div style="font-size: 12px;">No traders yet</div></div>';
-      }
-    }
-    
-    // Platform stats card
-    const platformStatsList = document.getElementById('platformStatsList');
-    if (platformStatsList) {
-      platformStatsList.innerHTML = `
-        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border);"><span>Total Signups</span><strong style="color: var(--green);">${usersCount || 0}</strong></div>
-        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border);"><span>Premium Users</span><strong style="color: var(--gold);">${premiumCount || 0}</strong></div>
-        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border);"><span>Total Trades</span><strong>${tradesCount || 0}</strong></div>
-        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border);"><span>Quiz Plays</span><strong>${quizPlaysCount || 0}</strong></div>
-        <div style="display: flex; justify-content: space-between; padding: 10px 0;"><span>Active Courses</span><strong>${coursesCount || 0}</strong></div>
-      `;
-    }
-    
-    console.log('✅ Dashboard stats loaded');
-  } catch (e) {
-    console.error('Stats load error:', e);
-  }
+  // Only real, permission-scoped platform data. All user and client records
+  // remain in their original tables; no courses/trades are part of the KPI set.
+  return window.SMAdminPremium?.refresh();
 }
 
 // ============ LOAD REAL USERS LIST ============
@@ -2719,5 +2561,6 @@ async function initCharts() {
 
 <script src="/assets/sm-admin-studio-access.js?v=20261117-admin-v1" defer></script>
 <script src="/assets/sm-admin-unified.js?v=20261118-single-admin-1" defer></script>
+<script defer src="/assets/sm-admin-premium-dashboard.js?v=20261118-v1"></script>
 </body>
 </html>
