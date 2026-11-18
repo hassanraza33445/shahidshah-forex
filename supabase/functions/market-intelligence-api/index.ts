@@ -113,7 +113,9 @@ async function refreshOnce():Promise<{started:boolean,added:number,errors:string
  if(claimError||!claimed)return {started:false,added:0,errors:claimError?[claimError.message]:[]};
  let added=0;const errors:string[]=[];
  try{
-  const {data:sources,error}=await db.from("news_sources").select("id,name,feed_url,category,polling_minutes,last_success_at,last_attempt_at,next_retry_at,consecutive_failures").eq("enabled",true).limit(80);
+  // Read every registered feed; the earlier 80-row cap silently starved new
+  // sources once the registry grew beyond 80.
+  const {data:sources,error}=await db.from("news_sources").select("id,name,feed_url,category,polling_minutes,last_success_at,last_attempt_at,next_retry_at,consecutive_failures").eq("enabled",true).limit(250);
   if(error)throw new Error(error.message);
   const now=Date.now();
   const eligible=(sources||[]).filter((src:any)=>{
@@ -123,8 +125,17 @@ async function refreshOnce():Promise<{started:boolean,added:number,errors:string
    const elapsed=last?now-Date.parse(last):Number.POSITIVE_INFINITY;
    return elapsed>=Math.max(1,Math.min(120,Number(src.polling_minutes)||5))*60000;
   });
-  for(let i=0;i<eligible.length;i+=4){
-   const group=await Promise.allSettled(eligible.slice(i,i+4).map((src:any)=>ingestSource(src)));
+  // Fair oldest-first rotation: poll a bounded batch every minute instead of
+  // opening 190+ upstream HTTP connections per request. This also lets each
+  // source recover from a failed or empty poll without blocking other feeds.
+  const due=eligible.sort((a:any,b:any)=>{
+   const lastA=a.last_attempt_at?Date.parse(a.last_attempt_at):0;
+   const lastB=b.last_attempt_at?Date.parse(b.last_attempt_at):0;
+   return (Number.isFinite(lastA)?lastA:0)-(Number.isFinite(lastB)?lastB:0)||
+    String(a.id).localeCompare(String(b.id));
+  }).slice(0,56);
+  for(let i=0;i<due.length;i+=4){
+   const group=await Promise.allSettled(due.slice(i,i+4).map((src:any)=>ingestSource(src)));
    for(const result of group){
     if(result.status==="fulfilled"){added+=result.value.added;if(result.value.error)errors.push(result.value.error)}
     else errors.push(String(result.reason).slice(0,160));
