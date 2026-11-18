@@ -11,7 +11,7 @@ AS $function$
 DECLARE inserted_count integer:=0;
 BEGIN
  WITH due AS(
-   SELECT n.id,n.kind,n.topic,n.reminder_minutes,n.source_article_id,n.trust_status,n.created_at
+   SELECT n.id,n.dedupe_key,n.kind,n.topic,n.reminder_minutes,n.source_article_id,n.trust_status,n.created_at
    FROM public.market_notification_events n
    WHERE n.is_active AND n.expires_at>now() AND n.created_at<=now()
    AND (
@@ -30,7 +30,7 @@ BEGIN
    AND ((
     n.kind='breaking_news' AND n.topic=ANY(pref.topics)
     AND (
-      (n.id IN (SELECT id FROM public.market_notification_events WHERE dedupe_key LIKE 'pip-hot:%') AND pref.breaking_enabled)
+      (n.dedupe_key LIKE 'pip-hot:%' AND pref.breaking_enabled)
       OR (
         pref.keyword_alerts_enabled
         AND EXISTS (
