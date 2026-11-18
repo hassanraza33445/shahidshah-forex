@@ -1,0 +1,28 @@
+name: Single Admin Panel integration checks
+on:
+  pull_request:
+    paths:
+      - "admin-panel.html"
+      - "webinar-admin.html"
+      - "assets/sm-admin-unified.js"
+      - "assets/sm-admin-unified.css"
+      - "scripts/sm-unified-admin-qa.mjs"
+      - ".github/workflows/sm-unified-admin-qa.yml"
+  push:
+    branches: [main]
+    paths:
+      - "admin-panel.html"
+      - "webinar-admin.html"
+      - "assets/sm-admin-unified.js"
+      - "assets/sm-admin-unified.css"
+      - "scripts/sm-unified-admin-qa.mjs"
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node --check assets/sm-admin-unified.js
+      - run: node scripts/sm-unified-admin-qa.mjs
