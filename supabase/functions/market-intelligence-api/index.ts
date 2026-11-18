@@ -9,7 +9,14 @@ try { secretKeys=JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") || "{}"); } cat
 const SECRET = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || secretKeys.default || "";
 const db = createClient(SUPABASE_URL, SECRET || "missing", {auth:{persistSession:false, autoRefreshToken:false}});
 const parser = new XMLParser({ignoreAttributes:false,attributeNamePrefix:"@_",textNodeName:"#text",trimValues:true,parseTagValue:false,processEntities:true,removeNSPrefix:true});
-const domains = new Set(["news.google.com","www.federalreserve.gov","www.bls.gov","www.ecb.europa.eu","www.whitehouse.gov","www.eia.gov"]);
+// Exact publisher/official RSS hosts used by the shared 173-source baseline.
+// Each request must originate and end on a host from this explicit allowlist.
+const domains = new Set([
+ "news.google.com","www.federalreserve.gov","www.bls.gov","www.ecb.europa.eu",
+ "www.whitehouse.gov","www.eia.gov","www.cnbc.com","www.investing.com",
+ "feeds.content.dowjones.io","www.bloomberg.com","www.ecb.int",
+ "news.yahoo.com","www.bankofengland.co.uk"
+]);
 const cors = {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"authorization, apikey, content-type, x-client-info","Access-Control-Allow-Methods":"GET, POST, OPTIONS"};
 const reply = (body:unknown,status=200,cache=false) => new Response(JSON.stringify(body),{status,headers:{...cors,"Content-Type":"application/json; charset=utf-8",...(cache?{"Cache-Control":"public, s-maxage=45, stale-while-revalidate=150"}:{"Cache-Control":"no-store"})}});
 const str = (v:any):string => typeof v==="string"?v:(v && typeof v==="object" ? String(v["#text"]||v.__cdata||v["@_href"]||"") : String(v||""));
@@ -47,8 +54,27 @@ async function fetchSourceXML(url:string):Promise<string>{
  let last:unknown=null;
  for(let attempt=0;attempt<2;attempt++){
   try{
-   const r=await fetch(url,{headers:{"User-Agent":"SMShahidShah-MarketIntelligence/2.0 (RSS reader)","Accept":"application/rss+xml,application/atom+xml,application/xml,text/xml"},signal:AbortSignal.timeout(7000),redirect:"follow"});
-   if(!safeUrl(r.url))throw new Error("RSS redirected to an unapproved host");
+   // Never follow an unapproved intermediate redirect (including private-network
+   // redirects). Every hop must stay HTTPS and on one of our exact RSS hosts.
+   let nextUrl=url;
+   let r:Response|null=null;
+   for(let hop=0;hop<4;hop++){
+    if(!safeUrl(nextUrl))throw new Error("RSS host is not approved");
+    const result=await fetch(nextUrl,{
+     headers:{"User-Agent":"SMShahidShah-MarketIntelligence/2.0 (RSS reader)","Accept":"application/rss+xml,application/atom+xml,application/xml,text/xml"},
+     signal:AbortSignal.timeout(7000),redirect:"manual"
+    });
+    if([301,302,303,307,308].includes(result.status)){
+     const redirectTo=result.headers.get("location");
+     if(!redirectTo||hop>=3)throw new Error("RSS redirect chain is too long");
+     const target=new URL(redirectTo,nextUrl).href;
+     if(!safeUrl(target))throw new Error("RSS redirected to an unapproved host");
+     nextUrl=target;continue;
+    }
+    r=result;break;
+   }
+   if(!r)throw new Error("RSS request did not complete");
+   if(!safeUrl(r.url))throw new Error("RSS source final URL is not approved");
    if(!r.ok){
     const e=new Error("RSS HTTP "+r.status);
     if((r.status===429||r.status>=500)&&attempt===0){last=e;await new Promise(ok=>setTimeout(ok,400));continue}
@@ -115,7 +141,7 @@ async function refreshOnce():Promise<{started:boolean,added:number,errors:string
  try{
   // Read every registered feed; the earlier 80-row cap silently starved new
   // sources once the registry grew beyond 80.
-  const {data:sources,error}=await db.from("news_sources").select("id,name,feed_url,category,polling_minutes,last_success_at,last_attempt_at,next_retry_at,consecutive_failures").eq("enabled",true).limit(250);
+  const {data:sources,error}=await db.from("news_sources").select("id,name,feed_url,category,polling_minutes,last_success_at,last_attempt_at,next_retry_at,consecutive_failures").eq("enabled",true).limit(500);
   if(error)throw new Error(error.message);
   const now=Date.now();
   const eligible=(sources||[]).filter((src:any)=>{
@@ -265,7 +291,7 @@ Deno.serve(async (req:Request)=>{
   if(req.method==="GET"&&mode==="health"){
     const token=(req.headers.get("authorization")||"").replace(/^Bearer\s+/i,"");
     if(!await authorized(token))return reply({success:false,error:"Admin access required"},403);
-    const {data:sources,error:sourceError}=await db.from("news_sources").select("id,name,category,enabled,polling_minutes,priority_weight,last_success_at,last_attempt_at,next_retry_at,consecutive_failures,last_error,average_latency_ms").order("priority_weight",{ascending:false}).limit(150);
+    const {data:sources,error:sourceError}=await db.from("news_sources").select("id,name,category,enabled,polling_minutes,priority_weight,last_success_at,last_attempt_at,next_retry_at,consecutive_failures,last_error,average_latency_ms").order("priority_weight",{ascending:false}).limit(500);
     if(sourceError)throw new Error("Source health unavailable");
     const {data:control}=await db.from("news_ingestion_control").select("last_started_at,last_finished_at,last_success_count").eq("id",1).maybeSingle();
     const now=Date.now();
