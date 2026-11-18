@@ -97,8 +97,9 @@
  function nav(page){
   if(!authorized())return;
   if(typeof showPage!=="function")return;
-  const target=document.querySelector('.menu-item[data-page="'+page+'"]');
-  if(target)showPage(page,target);
+  const target=document.querySelector('.admin-nav-main[data-page="'+page+'"]')||null;
+  // Pages in grouped tabs do not each have their own sidebar item.
+  showPage(page,target);
  }
  async function refresh(){
   if(fetching||!authorized())return;
