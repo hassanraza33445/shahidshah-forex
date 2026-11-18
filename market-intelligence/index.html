@@ -105,11 +105,11 @@ function display(items){
  el("resultCount").textContent=items.length+" headlines on page "+state.page;
  el("pageIndicator").textContent="Page "+state.page;
  el("previous").disabled=state.page===1;
- el("next").disabled=items.length<24;
+ el("next").disabled=items.length<36;
  window.dispatchEvent(new Event("sm:news-displayed"));
 }
 function queryURL(){
- const u=new URL(ENDPOINT);u.searchParams.set("mode","feed");u.searchParams.set("page",state.page);u.searchParams.set("limit","24");
+ const u=new URL(ENDPOINT);u.searchParams.set("mode","feed");u.searchParams.set("page",state.page);u.searchParams.set("limit","36");
  if(el("category").value!=="All")u.searchParams.set("category",el("category").value);
  if(el("priority").value)u.searchParams.set("priority",el("priority").value);
  if(el("query").value.trim())u.searchParams.set("q",el("query").value.trim());
@@ -141,11 +141,11 @@ el("category").addEventListener("change",()=>{state.page=1;state.items=[];loadNe
 el("priority").addEventListener("change",()=>{state.page=1;state.items=[];loadNews()});
 el("reload").addEventListener("click",()=>loadNews(true));
 el("previous").addEventListener("click",()=>{if(state.page>1){state.page--;loadNews();window.scrollTo({top:400,behavior:"smooth"})}});
-el("next").addEventListener("click",()=>{if(!state.loading&&state.items.length===24){state.page++;loadNews();window.scrollTo({top:400,behavior:"smooth"})}});
+el("next").addEventListener("click",()=>{if(!state.loading&&state.items.length===36){state.page++;loadNews();window.scrollTo({top:400,behavior:"smooth"})}});
 loadNews();
 document.addEventListener("sm:studio-access",()=>display(state.items));
 // Keep cached headlines instantly visible; poll only while the page is in use.
-setInterval(()=>{if(!document.hidden&&!state.loading)loadNews()},180000);
+setInterval(()=>{if(!document.hidden&&!state.loading)loadNews()},60000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!state.loading)loadNews()});
 </script>
 </body></html>
