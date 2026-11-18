@@ -365,6 +365,7 @@
   }
 </style>
 <link rel="stylesheet" href="/assets/sm-admin-studio-access.css?v=20261117-admin-v1">
+<link rel="stylesheet" href="/assets/sm-admin-unified.css?v=20261118-single-admin-1">
 </head>
 <body>
 
@@ -433,6 +434,10 @@
       <div class="menu-item" data-page="quiz" onclick="showPage('quiz', this)"><span class="menu-icon">🎯</span>Quiz Questions</div>
       <div class="menu-item" data-page="youtube" onclick="showPage('youtube', this)"><span class="menu-icon">▶️</span>YouTube Videos</div>
       
+      <div class="menu-label">Webinars &amp; Clients</div>
+      <div class="menu-item" data-page="webinar" onclick="showPage('webinar', this)"><span class="menu-icon">🎙️</span>Webinar Management</div>
+      <div class="menu-item" data-page="leads" onclick="showPage('leads', this)"><span class="menu-icon">👥</span>All Clients &amp; Leads</div>
+
       <div class="menu-label">Communication</div>
       <div class="menu-item" data-page="messages" onclick="showPage('messages', this)"><span class="menu-icon">💬</span>Messages</div>
       <div class="menu-item" data-page="notifications" onclick="showPage('notifications', this)"><span class="menu-icon">🔔</span>Notifications</div>
@@ -476,6 +481,49 @@
     
     <div class="content" id="content">
       
+      <!-- Unified webinar management: original webinar tables and workflows remain untouched. -->
+      <div class="page" id="page-webinar">
+        <div class="admin-unified-intro">
+          <div><h2>Webinar Management</h2><p>Manage registrations, attendance insights, event settings, reviews, learning content and downloads without leaving Admin Panel.</p></div>
+        </div>
+        <div class="admin-unified-panel">
+          <div class="admin-unified-tabs" id="unifiedWebinarTabs" aria-label="Webinar management sections"></div>
+          <p class="admin-unified-status" id="unifiedWebinarStatus" role="status" aria-live="polite">Select a webinar section to load.</p>
+          <iframe id="unifiedWebinarFrame" class="admin-unified-frame" title="Secure webinar administration workspace" referrerpolicy="same-origin" loading="lazy"></iframe>
+        </div>
+      </div>
+
+      <!-- All contacts are read directly from their existing source tables. No copy or merge. -->
+      <div class="page" id="page-leads">
+        <div class="admin-unified-intro">
+          <div><h2>All Clients &amp; Leads</h2><p>Single read-only directory for webinar clients, the old login-free AI Prompt Tool and Expo leads.</p></div>
+        </div>
+        <div class="admin-unified-stats">
+          <div class="admin-unified-stat"><strong id="unifiedWebinarLeadCount">—</strong><small>Webinar Registrations</small></div>
+          <div class="admin-unified-stat"><strong id="unifiedPromptLeadCount">—</strong><small>Old Prompt Tool Leads</small></div>
+          <div class="admin-unified-stat"><strong id="unifiedExpoLeadCount">—</strong><small>Expo Clients</small></div>
+        </div>
+        <div class="admin-unified-panel">
+          <div class="admin-unified-filters">
+            <input id="unifiedLeadSearch" type="search" autocomplete="off" placeholder="Search name, email or WhatsApp" aria-label="Search all saved leads">
+            <select id="unifiedLeadFilter" aria-label="Filter leads by source">
+              <option value="all">All Sources</option>
+              <option value="webinar">Webinar</option>
+              <option value="prompt">Old Prompt Tool</option>
+              <option value="expo">Expo</option>
+            </select>
+            <button type="button" class="admin-unified-button" id="unifiedLeadRefresh">↻ Refresh</button>
+            <button type="button" class="admin-unified-button" id="unifiedLeadExport">Export CSV</button>
+          </div>
+          <p class="admin-unified-status" id="unifiedLeadsStatus" role="status" aria-live="polite">Open this section to load saved clients.</p>
+          <div class="admin-unified-tablewrap"><table class="admin-unified-table">
+            <thead><tr><th>Name</th><th>Email</th><th>WhatsApp</th><th>Source</th><th>Registered At</th></tr></thead>
+            <tbody id="unifiedLeadsBody"></tbody>
+          </table></div>
+          <p class="admin-unified-hint">All records stay in their original Supabase tables. Filtering or CSV export never deletes, updates, or merges clients. A person registered through multiple forms can appear more than once.</p>
+        </div>
+      </div>
+
       <!-- ========== DASHBOARD ========== -->
       <div class="page active" id="page-dashboard">
         <div class="stats-grid">
@@ -1609,6 +1657,8 @@ window.addEventListener('load', async () => {
       setTimeout(initCharts, 100);
       loadDashboardStats();
       if (location.hash === '#studio-access') showPage('studioaccess',document.querySelector('[data-page="studioaccess"]'));
+      else if (location.hash === '#webinar') showPage('webinar', document.querySelector('[data-page="webinar"]'));
+      else if (location.hash === '#leads') showPage('leads', document.querySelector('[data-page="leads"]'));
       return;
     }
   }
@@ -1665,6 +1715,8 @@ async function loginAdmin() {
     setTimeout(initCharts, 100);
     loadDashboardStats();
     if (location.hash === '#studio-access') showPage('studioaccess',document.querySelector('[data-page="studioaccess"]'));
+      else if (location.hash === '#webinar') showPage('webinar', document.querySelector('[data-page="webinar"]'));
+      else if (location.hash === '#leads') showPage('leads', document.querySelector('[data-page="leads"]'));
     
   } catch (e) {
     errorEl.textContent = '❌ Network error: ' + e.message;
@@ -1710,6 +1762,8 @@ function showPage(page, el) {
     appearance: ['Appearance & Branding', 'Customize colors, logos, theme'],
     logs: ['Activity Logs', 'System and user activity history'],
     studioaccess: ['AI Studio Access', 'Approve, update and remove AI Creator Studio users'],
+    webinar: ['Webinar Management', 'All event, webinar and learning hub controls in one admin panel'],
+    leads: ['All Clients & Leads', 'Webinar, old Prompt Tool and Expo contacts — read-only'],
     profile: ['Admin Profile', 'Your account settings']
   };
   const t = titles[page];
@@ -1722,6 +1776,7 @@ function showPage(page, el) {
   
   // Load real data for each page
   if (page === 'studioaccess') window.SMStudioAccessAdmin?.load();
+  if (page === 'webinar' || page === 'leads') window.SMAdminUnified?.onPage(page);
   if (page === 'dashboard') loadDashboardStats();
   if (page === 'users') loadAdminUsers();
   if (page === 'trades') loadAdminTrades();
@@ -2660,5 +2715,6 @@ async function initCharts() {
 </div>
 
 <script src="/assets/sm-admin-studio-access.js?v=20261117-admin-v1" defer></script>
+<script src="/assets/sm-admin-unified.js?v=20261118-single-admin-1" defer></script>
 </body>
 </html>
