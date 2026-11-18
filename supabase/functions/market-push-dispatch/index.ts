@@ -126,6 +126,11 @@ async function handle(job:any){
     contents:{en:bodyText},
     chrome_web_icon:BRAND_ICON,
     url:link,idempotency_key:job.idempotency_key,
+    // Each individual HOT headline must remain separately visible on Android
+    // and desktop Chrome. Without this unique Web Push topic, OneSignal's
+    // default tag can replace previous notifications from the same site.
+    // Stable by source notice ID across retries, different across headlines.
+    web_push_topic:"sm-news-"+notice.id.replace(/-/g,""),
     ttl:notice.kind==="economic_reminder"?300:900,
     data:{notice_id:notice.id,kind:notice.kind}
    })
