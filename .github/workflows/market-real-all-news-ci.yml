@@ -47,7 +47,8 @@ jobs:
           for(const x of [
             'authorizedByCron','authorizedByService',
             '.eq("id",true).maybeSingle()', 'runtime.dispatch_enabled!==true',
-            'UNVERIFIED REPORT','📰 Market News','🔥 HOT Market News',
+            'Via "+publisher+" · ','articleUrl!==notice.target_url',
+            '.select("publisher,original_url")','📰 Market News','🔥 HOT Market News',
             'pref?.push_enabled','pref.in_app_enabled',
             'idempotency_key:job.idempotency_key',
             'include_subscription_ids:[job.subscription_id]'
