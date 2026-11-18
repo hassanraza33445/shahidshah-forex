@@ -82,7 +82,7 @@ for(const [page,group] of [
  assert.equal(primaries.filter(n=>n.classSet.has("active")).length,1,"Exactly one active main group for "+page);
  assert.equal(primaries.find(n=>n.classSet.has("active"))?.dataset.adminGroup,group,"Wrong group for "+page);
  assert.equal(ids.get("adminSectionTabs").children.filter(n=>n.className?.includes(" active")).length,1,"One active child tab "+page);
- assert.equal(ids.get("adminSectionNav").hidden,page==="dashboard","Dashboard header does not need extra tabs");
+ assert.equal(ids.get("adminSectionNav").hidden,["dashboard","analytics"].includes(page),"Dashboard group intentionally hides secondary header");
 }
 api.openPage("notifications");assert.equal(lastPage,"notifications","Market subtab should open existing handler");
 api.openPage("leads");assert.equal(lastPage,"leads","Client directory should remain accessible");
