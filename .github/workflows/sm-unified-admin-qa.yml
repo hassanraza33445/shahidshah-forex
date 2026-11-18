@@ -3,6 +3,9 @@ on:
   pull_request:
     paths:
       - "admin/index.html"
+      - "assets/sm-admin-premium-dashboard.js"
+      - "assets/sm-admin-premium-dashboard.css"
+      - "scripts/sm-admin-premium-dashboard-qa.mjs"
       - "webinar-admin/index.html"
       - "vercel.json"
       - "scripts/sm-clean-admin-route-qa.mjs"
@@ -16,6 +19,9 @@ on:
     branches: [main]
     paths:
       - "admin/index.html"
+      - "assets/sm-admin-premium-dashboard.js"
+      - "assets/sm-admin-premium-dashboard.css"
+      - "scripts/sm-admin-premium-dashboard-qa.mjs"
       - "webinar-admin/index.html"
       - "vercel.json"
       - "scripts/sm-clean-admin-route-qa.mjs"
@@ -35,3 +41,5 @@ jobs:
       - run: node --check assets/sm-admin-unified.js
       - run: node scripts/sm-unified-admin-qa.mjs
       - run: node scripts/sm-clean-admin-route-qa.mjs
+      - run: node --check assets/sm-admin-premium-dashboard.js
+      - run: node scripts/sm-admin-premium-dashboard-qa.mjs
