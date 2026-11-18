@@ -127,6 +127,7 @@
     change("smpUsers",humanNum(distinctPeople(rows)));
     change("smpUsersDetail","Unique accounts and contacts · no duplicate emails/phones");
     renderRecentPeople(rows);
+    change("sidebarUsersCount",humanNum(good.profiles.data.length));
    }else{
     change("smpUsers","—");
     change("smpUsersDetail","Some contact sources could not be loaded");
@@ -173,6 +174,14 @@
  window.SMAdminPremium={refresh,nav};
  document.addEventListener("DOMContentLoaded",()=>{
   $("smpRefresh")?.addEventListener("click",()=>void refresh());
+  $("smpGlobalSearch")?.addEventListener("keydown",event=>{
+    if(event.key!=="Enter")return;
+    event.preventDefault();
+    const query=event.currentTarget.value.trim();
+    nav("leads");
+    const search=$("unifiedLeadSearch");
+    if(search){search.value=query;search.dispatchEvent(new Event("input",{bubbles:true}));}
+  });
   document.querySelectorAll("[data-smp-open]").forEach(button=>button.addEventListener("click",()=>nav(button.dataset.smpOpen)));
  });
 })();
