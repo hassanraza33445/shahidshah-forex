@@ -8,12 +8,16 @@
  const ORIGIN="https://www.smshahidshah.com";
  const TOPICS=["Gold","Forex","Crypto","Central Banks","Economic Data","Energy","Geopolitics"];
  const REMINDERS=[60,15,0];
- let client=null,user=null,checkbox=null,status=null,ready=false,busy=false,sdk=null,preferences=null;
+ let client=null,user=null,checkbox=null,status=null,repairBtn=null,ready=false,busy=false,sdk=null,preferences=null;
  let sdkLoading=null;
  const msg=(v)=>{if(status)status.textContent=v};
  function render(on,detail){
   if(checkbox){checkbox.checked=Boolean(on);checkbox.setAttribute("aria-checked",String(Boolean(on)));checkbox.disabled=!ready||busy}
-  msg(detail|| (on?"ON · All market alerts":"OFF · Tap to enable"));
+  msg(detail|| (on?"ON · Browser linked":"OFF · Tap to enable"));
+  if(repairBtn){
+   repairBtn.hidden=!ready || !preferences?.push_enabled;
+   repairBtn.disabled=!ready || busy || typeof Notification==="undefined" || Notification.permission!=="granted";
+  }
  }
  async function api(mode="",body=null){
   const {data:{session},error}=await client.auth.getSession();
@@ -128,6 +132,37 @@
   preferences=(await api("preferences")).settings;
   render(false,"OFF · Tap to enable");
  }
+ // Explicit repair of THIS browser only; never revoke devices on other browsers.
+ async function reconnectCurrentDevice(){
+  if(!ready||busy)return;
+  if(!preferences?.push_enabled){msg("Turn Notifications ON before reconnecting.");return;}
+  if(typeof Notification==="undefined"||Notification.permission!=="granted"){
+   msg("Allow notifications for this site in browser settings first.");return;
+  }
+  busy=true;checkbox.disabled=true;
+  if(repairBtn)repairBtn.disabled=true;
+  msg("Reconnecting this device to OneSignal…");
+  try{
+   const sub=sdk?.User?.PushSubscription;
+   if(!sub)throw Error("Push service is not available in this browser.");
+   const previousId=sub.id||"";
+   // Refresh Web Push subscription using an explicit user click. In particular,
+   // installed PWAs may need to reattach to /app/sw.js after a browser update.
+   if(sub.optedIn===true)await sub.optOut();
+   await sub.optIn();
+   const id=await getSubscriptionId();
+   const saved=await api("",{action:"register_push_device",subscription_id:id,browser_permission_granted:true});
+   if(!saved.registered)throw Error("Device registration was not confirmed.");
+   if(previousId && previousId!==id){
+    await api("",{action:"unregister_push_device",subscription_id:previousId}).catch(()=>{});
+   }
+   preferences=(await api("preferences")).settings;
+   render(true,"Connected · Browser subscription renewed. Check next HOT alert.");
+  }catch(e){
+   const active=await currentDeviceActive().catch(()=>false);
+   render(active,e instanceof Error?e.message:"Reconnection unsuccessful. Check browser permissions.");
+  }finally{busy=false;checkbox.disabled=!ready;if(repairBtn)repairBtn.disabled=!ready || Notification.permission!=="granted";}
+ }
  async function onChange(){
   if(!ready||busy)return;
   const requested=checkbox.checked;
@@ -145,8 +180,10 @@
   client=c;user=verifiedUser;
   checkbox=document.getElementById("smSidebarNotifyToggle");
   status=document.getElementById("smSidebarNotifyStatus");
+  repairBtn=document.getElementById("smSidebarNotifyRepair");
   if(!checkbox||!status)return;
   checkbox.checked=false;checkbox.disabled=true;checkbox.addEventListener("change",onChange);
+  repairBtn?.addEventListener("click",()=>void reconnectCurrentDevice());
   msg("Checking notifications…");
   try{
    if(location.origin!==ORIGIN)throw Error("Open the www website for browser notifications.");
@@ -165,7 +202,9 @@
    const one=await bootSDK(configResponse);
    if(one.Notifications?.isPushSupported?.()===false)throw Error("Install the app to enable notifications.");
    ready=true;
-   render(await currentDeviceActive(),"");
+   const active=await currentDeviceActive();
+   render(active,active?"ON · Device linked · Reconnect if alerts don't appear":
+    preferences?.push_enabled?"Not connected on this browser · Turn ON to subscribe":"OFF · Tap to enable");
    checkbox.disabled=false;
   }catch(e){
    ready=false;render(false,e instanceof Error?e.message:"Notifications unavailable");
