@@ -41,7 +41,9 @@ jobs:
              !push.includes('📰 Market News')||
              !push.includes('📅 Economic Calendar')||
              !push.includes('["verified","unverified"].includes(notice.trust_status)')||
-             !push.includes('UNVERIFIED REPORT')||
+             !push.includes('Via "+publisher+" · ')||
+             !push.includes('articleUrl!==notice.target_url')||
+             push.includes('UNVERIFIED REPORT · ')||
              !push.includes('"\\n"+BRAND_LINE')||
              !test.includes('demo.title+"\\n"+BRAND_LINE')||
              ![push,test].every(s=>s.includes('S\\u00a0M\\u00a0Shahid\\u00a0Shah'))||
