@@ -77,16 +77,42 @@ async function handle(job:any){
    // Never send event-time reminders after user's quiet hours have passed.
    await finalize(job.id,"quiet_hours","Quiet hours suppress this time-sensitive alert");return "skipped";
   }
+  // RSS discovery is not independent fact-checking. Require a linked HTTPS
+  // publisher record for each report; attribute it without claiming verification.
+  let publisher="";
+  if(notice.kind==="breaking_news"){
+   const {data:article,error:articleError}=await db.from("news_articles")
+    .select("publisher,original_url").eq("id",notice.source_article_id).maybeSingle();
+   if(articleError)throw Error("Unable to check news attribution");
+   const articleUrl=String(article?.original_url||"");
+   publisher=String(article?.publisher||"").replace(/[<>\u0000-\u001f]/g," ").replace(/\s+/g," ").trim().slice(0,65);
+   let sourceIsHttps=false;
+   try{
+    const u=new URL(articleUrl);
+    sourceIsHttps=u.protocol==="https:"&&!!u.hostname&&!u.username&&!u.password;
+   }catch{}
+   if(!publisher||!sourceIsHttps||articleUrl!==notice.target_url){
+    await finalize(job.id,"no_recipient","News publisher or source link could not be validated");
+    return "skipped";
+   }
+  }
   const link=notice.target_url.startsWith("/")?ORIGIN+notice.target_url:notice.target_url;
   const isCalendar=notice.kind==="economic_reminder";
   const heading=(isCalendar?"📅 Economic Calendar":notice.impact==="HOT"?"🔥 HOT Market News":"📰 Market News")+"\n"+BRAND_LINE;
-  // Display only the stored real headline; do not fabricate market conclusions.
-  const headline=String(notice.title||"Market update").replace(/\s+/g," ").trim();
+  // Publisher attribution is not a claim that this article was independently fact-checked.
+  // Preserve the stored headline, dropping only an exact redundant publisher suffix.
+  let headline=String(notice.title||"Market update").replace(/\s+/g," ").trim();
+  if(publisher){
+   for(const separator of [" - "," – "," — "]){
+    const suffix=separator+publisher;
+    if(headline.toLowerCase().endsWith(suffix.toLowerCase())){
+     headline=headline.slice(0,-suffix.length).trim();break;
+    }
+   }
+  }
   const prefix=isCalendar?"":notice.topic==="Gold"?"🟡 Gold · ":notice.topic==="Forex"?"💱 Forex · ":"";
-  // Every non-official/unverified source is clearly labeled. These are headlines,
-  // not independent fact checks, predictions, or trading signals.
-  const tag=!isCalendar&&notice.trust_status!=="verified"?"UNVERIFIED REPORT · ":"";
-  const bodyText=(tag+prefix+headline).slice(0,185);
+  const sourceLabel=isCalendar?"":"Via "+publisher+" · ";
+  const bodyText=(prefix+sourceLabel+headline).slice(0,185);
   const response=await fetch("https://api.onesignal.com/notifications",{
    method:"POST",signal:AbortSignal.timeout(12000),
    headers:{"Authorization":"Key "+KEY,"Content-Type":"application/json"},
