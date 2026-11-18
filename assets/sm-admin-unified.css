@@ -1,0 +1,25 @@
+/* Unified admin only. Existing desktop/member pages remain untouched. */
+.admin-unified-intro{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px}
+.admin-unified-intro p{font-size:12px;color:var(--text-muted);line-height:1.6;margin-top:5px}
+.admin-unified-panel{border:1px solid var(--border);border-radius:14px;background:var(--bg-card);padding:16px;min-width:0}
+.admin-unified-tabs{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+.admin-unified-tab{min-height:36px;padding:8px 11px;border-radius:9px;border:1px solid var(--border);color:var(--text-secondary);background:var(--bg-elevated);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.admin-unified-tab:hover{border-color:var(--gold);color:var(--gold)}
+.admin-unified-tab.active{background:var(--gold);color:#101010;border-color:var(--gold)}
+.admin-unified-frame{display:block;width:100%;min-height:760px;border:0;background:var(--bg-main);border-radius:12px}
+.admin-unified-status{color:var(--text-muted);font-size:12px;margin:8px 0;line-height:1.6}
+.admin-unified-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.admin-unified-stat{background:var(--bg-elevated);border:1px solid var(--border);border-radius:12px;padding:14px}
+.admin-unified-stat strong{font-size:24px;color:var(--gold);display:block}
+.admin-unified-stat small{font-size:11px;color:var(--text-muted)}
+.admin-unified-filters{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.admin-unified-filters input,.admin-unified-filters select{min-height:38px;padding:8px 11px;background:var(--bg-elevated);color:var(--text-primary);border:1px solid var(--border);border-radius:9px;font:inherit;font-size:12px}
+.admin-unified-filters input{flex:1;min-width:180px}
+.admin-unified-button{padding:10px 14px;background:var(--gold);border:0;border-radius:9px;color:#101010;font-weight:700;font-size:11px;cursor:pointer}
+.admin-unified-tablewrap{max-width:100%;overflow-x:auto;border:1px solid var(--border);border-radius:12px}
+.admin-unified-table{width:100%;border-collapse:collapse;min-width:640px;font-size:12px}
+.admin-unified-table th{background:var(--bg-elevated);text-align:left;color:var(--text-muted);font-size:10px;text-transform:uppercase;letter-spacing:.55px;padding:12px}
+.admin-unified-table td{padding:12px;color:var(--text-primary);border-top:1px solid var(--border);word-break:break-word}
+.admin-unified-table td small{color:var(--text-muted);display:block;margin-top:3px}
+.admin-unified-hint{font-size:11px;color:var(--text-muted);margin-top:12px;line-height:1.55}
+@media(max-width:720px){.admin-unified-panel{padding:11px}.admin-unified-stats{grid-template-columns:1fr 1fr}.admin-unified-tabs{flex-wrap:nowrap;overflow-x:auto;padding-bottom:7px}.admin-unified-frame{min-height:600px}.admin-unified-filters>*{flex:1;min-width:130px}}
