@@ -134,6 +134,12 @@
     setStatus("unifiedWebinarStatus","Webinar access could not be verified. Please refresh your admin session.");
    }
   });
+  $("unifiedWebinarRefresh")?.addEventListener("click",()=>{
+    if(!isAuthorized())return;
+    const frame=$("unifiedWebinarFrame");
+    frame?.contentWindow?.postMessage({type:"sm:unified-webinar-refresh"},location.origin);
+    setStatus("unifiedWebinarStatus","Refreshing webinar data…");
+  });
   $("unifiedLeadSearch")?.addEventListener("input",renderLeads);
   $("unifiedLeadFilter")?.addEventListener("change",renderLeads);
   $("unifiedLeadRefresh")?.addEventListener("click",()=>void loadLeads(true));
