@@ -24,8 +24,8 @@ assert.match(admin,/sm-admin-six-navigation\.js\?v=/);
 assert.match(admin,/sm-admin-six-navigation\.css\?v=/);
 assert.match(admin,/window\.SMAdminNav\?\.onPage\(page\)/,"showPage must synchronize active group");
 assert.match(admin,/window\.SMAdminNav\.toggleSidebar\(\)/,"Mobile menu needs proper backdrop");
-for(const url of ["/admin/#webinar","/admin/#leads","#studio-access"]){
- assert.ok(admin.includes(url)||url==="/admin/#webinar","Known clean Admin links must remain available");
+for(const deepLink of ["#webinar","#leads","#studio-access"]){
+ assert.ok(admin.includes("location.hash === '"+deepLink+"'"),"Known login deep link must remain accessible: "+deepLink);
 }
 assert.match(dashboard,/showPage\(page,target\)/,"Dashboard shortcuts must navigate grouped sub-pages");
 assert.match(styles,/@media\(max-width:768px\)/,"Mobile responsive CSS");
