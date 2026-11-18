@@ -2,6 +2,10 @@ name: Single Admin Panel integration checks
 on:
   pull_request:
     paths:
+      - "admin/index.html"
+      - "webinar-admin/index.html"
+      - "vercel.json"
+      - "scripts/sm-clean-admin-route-qa.mjs"
       - "admin-panel.html"
       - "webinar-admin.html"
       - "assets/sm-admin-unified.js"
@@ -11,6 +15,10 @@ on:
   push:
     branches: [main]
     paths:
+      - "admin/index.html"
+      - "webinar-admin/index.html"
+      - "vercel.json"
+      - "scripts/sm-clean-admin-route-qa.mjs"
       - "admin-panel.html"
       - "webinar-admin.html"
       - "assets/sm-admin-unified.js"
@@ -26,3 +34,4 @@ jobs:
           node-version: "22"
       - run: node --check assets/sm-admin-unified.js
       - run: node scripts/sm-unified-admin-qa.mjs
+      - run: node scripts/sm-clean-admin-route-qa.mjs

@@ -15,7 +15,7 @@ const required=[
  ["AI Form lead read",/from\("ai_tool_access_leads"\)/,unified],
  ["Expo client read",/from\("expo_clients"\)/,unified],
  ["webinar-only auth preserved",/await isAdmin\(\)/,webinar],
- ["legacy webinar redirect",/location\.replace\("\/admin-panel\.html#webinar"\)/,webinar],
+ ["legacy webinar redirect",/location\.replace\("\/admin\/#webinar"\)/,webinar],
  ["webinar embedded mode",/data-admin-embedded/,webinar],
  ["admin frame navigation listener",/sm:unified-webinar-nav/,webinar],
  ["child ready handshake",/sm:unified-webinar-ready/,webinar],

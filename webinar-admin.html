@@ -15,7 +15,7 @@
     const embedded=new URLSearchParams(location.search).get("embedded")==="1" && window.parent!==window;
     window.SM_WEBINAR_EMBEDDED=embedded;
     if(embedded)document.documentElement.dataset.adminEmbedded="1";
-    else location.replace("/admin-panel.html#webinar");
+    else location.replace("/admin/#webinar");
    })();
   </script>
 
