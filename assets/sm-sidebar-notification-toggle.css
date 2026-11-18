@@ -16,6 +16,23 @@
 .member-app .sm-sidebar-switch input:checked+.sm-sidebar-switch-track::before{transform:translateX(17px)}
 .member-app .sm-sidebar-switch input:focus-visible+.sm-sidebar-switch-track{outline:2px solid var(--gold);outline-offset:3px}
 .member-app .sm-sidebar-switch input:disabled+.sm-sidebar-switch-track{opacity:.48;cursor:wait}
+
+/* Current-device repair is opt-in and preserves the existing sidebar theme. */
+.member-app .side-bottom .sm-sidebar-notify-reconnect{
+ display:flex;align-items:center;justify-content:center;gap:7px;width:100%;
+ min-height:32px;margin:-4px 0 9px;padding:7px 10px;border:1px solid var(--line);
+ border-radius:10px;background:var(--surface2);color:var(--muted);
+ font-size:10px;font-weight:750;letter-spacing:.1px;cursor:pointer;
+}
+.member-app .side-bottom .sm-sidebar-notify-reconnect:hover:not(:disabled){
+ color:var(--gold);border-color:var(--gold);
+}
+.member-app .side-bottom .sm-sidebar-notify-reconnect:disabled{opacity:.52;cursor:wait}
+.member-app .side-bottom .sm-sidebar-notify-reconnect[hidden]{display:none!important}
+@media(max-width:720px){
+ .member-app .side-bottom .sm-sidebar-notify-reconnect{background:#2f251b;border-color:#6b5033;color:#d0bc9d}
+}
+
 @media(min-width:721px){
  .member-app .side-bottom .sm-install-trigger{
   display:flex!important;align-items:center;gap:9px;width:100%;min-height:56px;
