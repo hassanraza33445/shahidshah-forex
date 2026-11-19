@@ -446,9 +446,9 @@ function miMatchesPeriod(item){
  return state.newsPeriod==="today"?day===miPKTDay(new Date(now)):
  state.newsPeriod==="yesterday"?day===miPKTDay(new Date(now-86400000)):true;
 }
-function miNewsMatch(item){
+function miNewsMatch(item,ignorePriority=false){
  if(!miNewsCategoryMatch(item,state.filter))return false;
- if(state.newsPriority!=="All"&&String(item.priority||"").toUpperCase()!==state.newsPriority)return false;
+ if(!ignorePriority&&state.newsPriority!=="All"&&String(item.priority||"").toUpperCase()!==state.newsPriority)return false;
  if(state.newsPublisher!=="All"&&String(item.publisher||"").trim()!==state.newsPublisher)return false;
  if(!miMatchesPeriod(item))return false;
  const query=state.marketSearch.trim().toLowerCase();
@@ -525,6 +525,16 @@ function renderMarketEditorial(){
  $("miTotalStories").textContent=state.news.length?String(state.news.length):"—";
  $("miGoldStories").textContent=state.news.length?String(counts.Gold||0):"—";
  $("miForexStories").textContent=state.news.length?String(counts.Forex||0):"—";
+ const priorityPool=state.news.filter(item=>miNewsMatch(item,true));
+ const priorityTotals={All:priorityPool.length,HOT:priorityPool.filter(item=>String(item.priority||"").toUpperCase()==="HOT").length};
+ document.querySelectorAll("[data-news-priority]").forEach(button=>{
+  const value=button.dataset.newsPriority;
+  const active=state.newsPriority===value;
+  button.classList.toggle("active",active);
+  button.setAttribute("aria-pressed",String(active));
+  const count=button.querySelector("[data-mi-priority-count]");
+  if(count)count.textContent="("+(priorityTotals[value]||0)+")";
+ });
  const filtered=state.news.filter(miNewsMatch);
  // The actual article publication time determines order across ALL categories.
  // No HOT/Gold/Forex score is allowed to put older news above newer news.
@@ -728,6 +738,12 @@ function setupNavigation(){
  document.querySelectorAll("[data-news-filter]").forEach(button=>button.addEventListener("click",()=>{
   state.filter=button.dataset.newsFilter;state.marketVisible=12;
   document.querySelectorAll("[data-news-filter]").forEach(x=>{x.classList.toggle("active",x===button);x.setAttribute("aria-pressed",String(x===button))});
+  renderNews();
+ }));
+ document.querySelectorAll("[data-news-priority]").forEach(button=>button.addEventListener("click",()=>{
+  state.newsPriority=button.dataset.newsPriority;
+  $("miPriority").value=state.newsPriority;
+  state.marketVisible=12;
   renderNews();
  }));
  $("miSearch").addEventListener("input",e=>{state.marketSearch=e.target.value.slice(0,100);state.marketVisible=12;renderNews()});
