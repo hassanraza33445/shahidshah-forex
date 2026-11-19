@@ -535,7 +535,7 @@ function renderMarketEditorial(){
   const count=button.querySelector("[data-mi-priority-count]");
   if(count)count.textContent="("+(priorityTotals[value]||0)+")";
  });
- const filtered=state.news.filter(miNewsMatch);
+ const filtered=state.news.filter(item=>miNewsMatch(item));
  // The actual article publication time determines order across ALL categories.
  // No HOT/Gold/Forex score is allowed to put older news above newer news.
  const sorted=[...filtered].sort((a,b)=>{
