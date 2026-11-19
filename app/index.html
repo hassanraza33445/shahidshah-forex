@@ -99,6 +99,7 @@ html:not([data-sm-studio-create="allowed"]) .mi-guide-card,
 html:not([data-sm-studio-create="allowed"]) .mi-card-script {display:none!important}
 @media(max-width:720px){html:not([data-sm-studio="allowed"]) .mobile-dock{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
 </style>
+<link rel="stylesheet" href="/assets/sm-news-filters-20261119.css?v=20261119-newsfilters-1">
 </head>
 <body class="member-boot">
 <div id="bootScreen" class="boot-screen"><img class="boot-avatar" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><strong>Opening your workspace…</strong><small>Connecting securely to your account</small></div>
@@ -247,12 +248,31 @@ html:not([data-sm-studio-create="allowed"]) .mi-card-script {display:none!import
      <div class="mi-filter-panel">
       <div class="pills mi-categories" role="group" aria-label="Filter market news by category">
        <button type="button" class="pill active" data-news-filter="All" aria-pressed="true">All <span data-mi-category-count="All"></span></button>
+       <button type="button" class="pill" data-news-filter="Market Focus" aria-pressed="false">Market Focus</button>
        <button type="button" class="pill" data-news-filter="Forex" aria-pressed="false">Forex <span data-mi-category-count="Forex"></span></button>
        <button type="button" class="pill" data-news-filter="Gold" aria-pressed="false">Gold <span data-mi-category-count="Gold"></span></button>
        <button type="button" class="pill" data-news-filter="Crypto" aria-pressed="false">Crypto <span data-mi-category-count="Crypto"></span></button>
        <button type="button" class="pill" data-news-filter="Economic Data" aria-pressed="false">Economy <span data-mi-category-count="Economic Data"></span></button>
+       <button type="button" class="pill" data-news-filter="Central Banks" aria-pressed="false">Central Banks</button>
+       <button type="button" class="pill" data-news-filter="Geopolitics" aria-pressed="false">Geopolitics</button>
+       <button type="button" class="pill" data-news-filter="US News" aria-pressed="false">US News</button>
       </div>
       <label class="mi-search-label"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.2-4.2"/></svg><input id="miSearch" type="search" maxlength="100" placeholder="Search news, topics or publishers…" aria-label="Search market news headlines"></label>
+     </div>
+     <div class="mi-filter-extras" role="group" aria-label="Additional market news filters">
+      <label for="miPriority">Priority
+       <select id="miPriority"><option value="All">All priorities</option><option value="HOT">HOT</option><option value="WARM">WARM</option><option value="COLD">COLD</option></select>
+      </label>
+      <label for="miPeriod">Time
+       <select id="miPeriod"><option value="All">All time</option><option value="today">Today (PKT)</option><option value="yesterday">Yesterday (PKT)</option><option value="24h">Last 24 hours</option><option value="7d">Last 7 days</option></select>
+      </label>
+      <label for="miSource">Source
+       <select id="miSource"><option value="All">All sources</option></select>
+      </label>
+      <label for="miSort">Sort by
+       <select id="miSort"><option value="newest">Latest first</option><option value="oldest">Oldest first</option></select>
+      </label>
+      <button id="miResetFilters" type="button" class="mi-reset-news">Reset filters</button>
      </div>
      <div id="marketNewsList" class="mi-news-grid mi-uniform-grid" aria-live="polite"><div class="mi-skeleton">Loading the latest news…</div></div>
      <div class="mi-load-more-wrap"><button id="miLoadMore" type="button" class="mi-load-more" hidden>View More Headlines ↓</button></div>
