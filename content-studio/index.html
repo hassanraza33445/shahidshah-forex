@@ -186,7 +186,7 @@ html.sm-embedded #page-projects>.card{min-height:0}
      </div>
     </div>
     <div id="aiStatus" class="status studio-creation-status" aria-live="polite"></div>
-    <p class="note">AI-generated scripts require source and fact verification before publishing.</p>
+    <p class="note">News scripts use available publisher metadata and related reports, not necessarily the full original article. Verify facts with the original source before publishing.</p>
    </div>
   </div>
  </section>
@@ -339,7 +339,16 @@ function rawScript(){
  if(s.fact_check.length)result+="FACT CHECK BEFORE PUBLISHING:\n"+s.fact_check.map(x=>"- "+x).join("\n");
  return result;
 }
-function calcWords(){const n=rawScript().trim().split(/\s+/).filter(Boolean).length;$("wordCount").textContent=n+" words · approximately "+Math.ceil(n/130)+" minute(s) spoken";renderScriptPreview()}
+function calcWords(){
+ const keys=["hook","introduction","explanation","impact","key_takeaway","closing","cta"];
+ const spoken=keys.map(key=>$("field-"+key)?.value?.trim()||"").join(" ");
+ const words=(spoken.match(/[\p{L}\p{N}]+(?:['’\-][\p{L}\p{N}]+)*/gu)||[]).length;
+ const wpm=$("language").value==="English"?145:130;
+ const seconds=Math.round(words*60/wpm);
+ $("wordCount").textContent=words+" spoken words · approximately "+seconds+" sec";
+ renderScriptPreview();
+}
+$("language").addEventListener("change",calcWords);
 for(const [key,label] of FIELDS){const wrap=mk("div"),lab=mk("label","",label),area=mk("textarea",key==="explanation"||key==="description"?"long":"");area.id="field-"+key;area.placeholder="Edit "+label.toLowerCase()+"…";lab.htmlFor=area.id;area.addEventListener("input",calcWords);wrap.append(lab,area);$("scriptFields").append(wrap)}
 $("projectTitle").addEventListener("input",calcWords);$("factCheck").addEventListener("input",calcWords);
 function showStudioConnectionError(message){
@@ -569,7 +578,7 @@ function resetProject(){
 $("newProject").addEventListener("click",resetProject);
 async function callEdge(slug,data){
  const token=checkedSession();
- const res=await fetch(DB_URL+"/functions/v1/"+slug,{method:"POST",headers:{"Content-Type":"application/json","apikey":PUB,"authorization":"Bearer "+token},body:JSON.stringify(data)});
+ const res=await fetch(DB_URL+"/functions/v1/"+slug,{method:"POST",headers:{"Content-Type":"application/json","apikey":PUB,"authorization":"Bearer "+token},body:JSON.stringify(data),signal:AbortSignal.timeout(slug==="shahid-content-ai"?115000:65000)});
  const out=await res.json().catch(()=>({error:"Invalid server response"}));
  if(!res.ok||out.success===false)throw Error(out.message||out.error||"Request failed");
  return out;
@@ -588,10 +597,31 @@ async function generate(action){
  setDisabled(["generate","rewrite","seo"],true);status("aiStatus",action==="seo"?"Generating SEO pack…":"Creating your script…");
  try{
   const out=await callEdge("shahid-content-ai",{action,news_article_id:$("newsChoice").value||null,topic:$("topic").value,language:$("language").value,duration:$("duration").value,platform:$("platform").value,tone:$("tone").value,existing:action==="generate"?null:currentScript()});
-  fillFields(out.script);$("projectState").textContent=state.projectId?state.projectStatus.toUpperCase():"UNSAVED";
-  // Keep model/provider information internal; the existing fact-check note stays visible.
-  status("aiStatus","");
- }catch(e){status("aiStatus",e.message||"AI service unavailable","error")}
+  if(!out?.script||typeof out.script!=="object")throw Error("AI returned an incomplete script. Please try again.");
+  if(action==="seo"){
+   // SEO is deliberately non-destructive: never replace previously edited spoken fields.
+   for(const key of ["seo_title","description","hashtags"]){
+    const value=out.script[key];
+    if(key==="hashtags")$("field-"+key).value=Array.isArray(value)?value.join(", "):String(value||"");
+    else $("field-"+key).value=String(value||"");
+   }
+   state.script={...state.script,...out.script};
+   calcWords();
+   status("aiStatus","SEO pack updated. Your video script was not changed.","ok");
+  }else{
+   fillFields(out.script);
+   const estimate=Number(out.estimated_seconds),limit=Number($("duration").value.match(/\d+/)?.[0]||60);
+   let message=action==="rewrite"?"Script refined successfully.":"AI script generated successfully.";
+   if(Number.isFinite(estimate)&&estimate>0)message+=" Approximately "+estimate+" seconds of spoken content (target "+limit+" sec).";
+   if(out.duration_match===false)message+=" Review pacing before recording.";
+   if(out.source_context_limited)message+=" Source summary is brief; verify the publisher report before publishing.";
+   status("aiStatus",message,out.duration_match===false?"":"ok");
+  }
+  $("projectState").textContent=state.projectId?state.projectStatus.toUpperCase():"UNSAVED";
+ }catch(e){
+  const message=e?.name==="TimeoutError"?"AI request timed out. Please try again.":e?.message||"AI service unavailable";
+  status("aiStatus",message,"error");
+ }
  finally{
   if(brainLoader)brainLoader.hidden=true;
   setDisabled(["generate","rewrite","seo"],false);
