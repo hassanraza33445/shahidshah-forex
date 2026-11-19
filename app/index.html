@@ -67,7 +67,7 @@
 <script defer src="/assets/sm-mentorship-paid-mobile-2026.js?v=20261115-mobile-mentor-steps-1"></script>
 <script defer src="/assets/sm-member-tool-catalog-2026.js?v=20261114-native-downloads-1"></script>
 <script defer src="/assets/sm-sidebar-notification-toggle.js?v=20261118-browser-repair-1"></script>
-<script defer src="/assets/sm-member-app.js?v=20261117-studio-permission-1"></script>
+<script defer src="/assets/sm-member-app.js?v=20261119-hot-pills-1"></script>
 <script defer src="/assets/sm-member-icons.js?v=20261114-four-products-1"></script><link rel="stylesheet" href="/assets/sm-dashboard-finishing-2026.css?v=20261114-3">
 <link rel="stylesheet" href="/assets/sm-four-products-2026.css?v=20261114-products-1">
 <link rel="stylesheet" href="/assets/sm-market-uniform-cards.css?v=20261114-1">
@@ -99,7 +99,7 @@ html:not([data-sm-studio-create="allowed"]) .mi-guide-card,
 html:not([data-sm-studio-create="allowed"]) .mi-card-script {display:none!important}
 @media(max-width:720px){html:not([data-sm-studio="allowed"]) .mobile-dock{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
 </style>
-<link rel="stylesheet" href="/assets/sm-news-filters-20261119.css?v=20261119-newsfilters-1">
+<link rel="stylesheet" href="/assets/sm-news-filters-20261119.css?v=20261119-hot-pills-1">
 </head>
 <body class="member-boot">
 <div id="bootScreen" class="boot-screen"><img class="boot-avatar" src="/shahid-shah-profile.jpg" alt="S M Shahid Shah"><strong>Opening your workspace…</strong><small>Connecting securely to your account</small></div>
@@ -256,6 +256,10 @@ html:not([data-sm-studio-create="allowed"]) .mi-card-script {display:none!import
        <button type="button" class="pill" data-news-filter="Central Banks" aria-pressed="false">Central Banks</button>
        <button type="button" class="pill" data-news-filter="Geopolitics" aria-pressed="false">Geopolitics</button>
        <button type="button" class="pill" data-news-filter="US News" aria-pressed="false">US News</button>
+      </div>
+      <div class="pills mi-priority-pills" role="group" aria-label="Filter news by priority">
+       <button type="button" class="pill active" data-news-priority="All" aria-pressed="true">All News <span data-mi-priority-count="All"></span></button>
+       <button type="button" class="pill" data-news-priority="HOT" aria-pressed="false">🔥 Hot News <span data-mi-priority-count="HOT"></span></button>
       </div>
       <label class="mi-search-label"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.2-4.2"/></svg><input id="miSearch" type="search" maxlength="100" placeholder="Search news, topics or publishers…" aria-label="Search market news headlines"></label>
      </div>
